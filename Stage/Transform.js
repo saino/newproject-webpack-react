@@ -1,9 +1,11 @@
 define(['_', 'bC'], function (_, bC) {
 
   var eventParser = {
-    'start': 'mousedown',
-    'move': 'mousemove',
-    'end': 'mouseup'
+    enter: 'mouseover',
+    leave: 'mouseleave',
+    start: 'mousedown',
+    move: 'mousemove',
+    end: 'mouseup'
   };
 
   var elProcesser = {
@@ -45,12 +47,6 @@ define(['_', 'bC'], function (_, bC) {
 
       _.extend(this, options);
 
-      // 是否拖拽中
-      this.isDroping = false;
-
-      // 是否缩放中
-      this.isScaling = false;
-
       // 是否按住空格键
       this.isEnterSpace = false;
 
@@ -76,12 +72,18 @@ define(['_', 'bC'], function (_, bC) {
         };
       };
 
+      var context = this;
       var mouseHandler = function (evt) {
-        var context = this,
-            currLeft = elProcesser.css(context.el, 'left'),
+        if (!this.isEnterSpace)
+          return;
+
+        var currLeft = elProcesser.css(context.el, 'left'),
             currTop = elProcesser.css(context.el, 'top');
 
         var moveHandler = function (evtM) {
+          if (!context.isEnterSpace)
+            return;
+
           var newLeft, newTop, offsetLeft, offsetTop, offsetMax;
 
           offsetMax = getOffsetMax.call(context);
@@ -109,32 +111,56 @@ define(['_', 'bC'], function (_, bC) {
 
           elProcesser.css(context.el, 'left', newLeft + 'px');
           elProcesser.css(context.el, 'top', newTop + 'px');
-          elProcesser.css(context.el, 'cursor', 'move');
           elProcesser.clearPreDef(evtM);
         };
         var endHandler = function (evt) {
           cleanUp();
-          elProcesser.css(context.el, 'cursor', 'default');
         };
         var cleanUp = function () {
-          context.unbind(document, 'selectstart', elProcesser.clearPreDef);
-          context.unbind(document, 'dragstart', elProcesser.clearPreDef);
-          context.unbind(document, eventParser.move, moveHandler);
-          context.unbind(document, eventParser.end, endHandler);
+          context._unbind(document, 'selectstart', elProcesser.clearPreDef);
+          context._unbind(document, 'dragstart', elProcesser.clearPreDef);
+          context._unbind(document, eventParser.move, moveHandler);
+          context._unbind(document, eventParser.end, endHandler);
         }
 
-        context.bind(document, 'selectstart', elProcesser.clearPreDef);
-        context.bind(document, 'dragstart', elProcesser.clearPreDef);
-        context.bind(document, eventParser.move, moveHandler);
-        context.bind(document, eventParser.end, endHandler);
-      }
+        context._bind(document, 'selectstart', elProcesser.clearPreDef);
+        context._bind(document, 'dragstart', elProcesser.clearPreDef);
+        context._bind(document, eventParser.move, moveHandler);
+        context._bind(document, eventParser.end, endHandler);
+      };
+      var mouseEnterHandler = function (evt) {
+        elProcesser.css(this.el, 'cursor', 'move');
 
-      this.bind(this.el, eventParser.start, mouseHandler.bind(this));
+        var mouseLeaveHandler = function (evt) {
+          elProcesser.css(context.el, 'cursor', 'default');
+          context._unbind(context.el, eventParser.leave, mouseLeaveHandler);
+        };
+
+        this._bind(this.el, eventParser.leave, mouseLeaveHandler);
+      };
+      var keyDownHandler = function (evt) {
+        this.isEnterSpace = evt.keyCode == 32 ? true : false;
+
+        var keyUpHandler = function (evt) {
+          context.isEnterSpace = false;
+          context._unbind(document, 'keyup', keyUpHandler);
+        };
+
+        this._bind(document, 'keyup', keyUpHandler.bind(this));
+      };
+
+
+      this._bind(this.el, eventParser.start, mouseHandler.bind(this));
+      this._bind(this.el, eventParser.enter, mouseEnterHandler.bind(this));
+      this._bind(document, 'keydown', keyDownHandler.bind(this));
     },
 
     /**
      * 缩放
      */
+    scale: function () {
+
+    },
 
     /**
      * 绑定事件
@@ -143,7 +169,7 @@ define(['_', 'bC'], function (_, bC) {
      * @param { String } eventName 事件名
      * @param { Function } handler 处理函数
      */
-    bind: function (el, eventName, handler) {
+    _bind: function (el, eventName, handler) {
       el.addEventListener(eventName, handler, false);
     },
 
@@ -154,7 +180,7 @@ define(['_', 'bC'], function (_, bC) {
      * @param { String } eventName 事件名
      * @param { Function } handler 处理函数
      */
-    unbind: function (el, eventName, handler) {
+    _unbind: function (el, eventName, handler) {
       el.removeEventListener(eventName, handler, false);
     }
 

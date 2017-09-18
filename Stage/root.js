@@ -32,5 +32,4 @@ require.config({
 // 初始化入口文件
 require(['Stage'], function (Stage) {
   (new Stage).startUp();
-  //Stage.startUp();
 });
