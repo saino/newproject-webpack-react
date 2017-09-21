@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classNames';
 import DraggableCore from './DraggableCore.js';
 
+const emptyFn = () => {};
+
 export default class Draggable extends Component {
 
   static propTypes = {
@@ -49,13 +51,15 @@ export default class Draggable extends Component {
 
     this.state = {
 
-      deltaX: this.props.defaultPosition.x,
+      deltaX: 0,
 
-      deltaY: this.props.defaultPosition.y,
+      deltaY: 0,
 
-      cursor: 'default',
+      x: this.props.defaultPosition.x,
 
-      hasPressSpace: false
+      y: this.props.defaultPosition.y,
+
+      cursor: 'default'
 
     };
   }
@@ -63,23 +67,22 @@ export default class Draggable extends Component {
   onDragStart(currX, currY) {
     const { onDragStart } = this.props;
     onDragStart(currX, currY);
+
+    this.setState({ x: currX, y: currY });
   }
 
   onDrag(newDeltaX, newDeltaY) {
-    const { onDrag, defaultPosition: { x, y } } = this.props;
+    const { onDrag } = this.props;
     onDrag(newDeltaX, newDeltaY);
 
-    this.setState({ x: newDeltaX + x, y: newDeltaY + y });
+    this.setState({ deltaX: this.state.x + newDeltaX, deltaY: this.state.y + newDeltaY });
   }
 
-  onDragEnd() {
+  onDragEnd(endX, endY) {
     const { onDragEnd } = this.props;
-    onDragEnd();
-  }
+    onDragEnd(endX, endY);
 
-  onPressSpace(hasPressSpace) {
-    console.log(hasPressSpace, 'md');
-    this.setState({ hasPressSpace });
+    this.setState({ x: endX, y: endY });
   }
 
   onHover(cursor) {
@@ -91,12 +94,12 @@ export default class Draggable extends Component {
     return (
       <DraggableCore
         position={{ x: this.state.x, y: this.state.y }}
+        deltaPosition={{ x: this.state.deltaX, y: this.state.deltaY }}
         cursor={ this.state.cursor }
         onDragStart={ this.onDragStart.bind(this) }
-        onDrag={ this.state.hasPressSpace ? this.onDrag.bind(this) : void 0 }
+        onDrag={ this.onDrag.bind(this) }
         onDragEnd={ this.onDragEnd.bind(this) }
-        onHover={ this.onHover.bind(this) }
-        onPressSpace={ this.onPressSpace.bind(this) }>
+        onHover={ this.onHover.bind(this) }>
 
         {React.cloneElement(React.Children.only(this.props.children), {
           className: classNames(this.props.children.props.className, this.props.className),

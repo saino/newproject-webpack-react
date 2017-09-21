@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { addEvent, removeEvent } from './utils/eventFn';
-import { getOuterWidth, getOuterHeight, getInnerWidth, getInnerHeight } from './utils/domFn';
+import {
+  getOuterWidth, getOuterHeight, getInnerWidth,
+  getInnerHeight, getPosition
+} from './utils/domFn';
 
 const eventAlias = {
   start: 'mousedown',
@@ -24,6 +27,11 @@ export default class DraggableCore extends Component {
       y: PropTypes.number
     }),
 
+    deltaPosition: PropTypes.shape({
+      x: PropTypes.number,
+      y: PropTypes.number
+    }),
+
     cursor: PropTypes.string,
 
     onDragStart: PropTypes.func,
@@ -31,8 +39,6 @@ export default class DraggableCore extends Component {
     onDrag: PropTypes.func,
 
     onDragEnd: PropTypes.func,
-
-    onPressSpace: PropTypes.func,
 
     onHover: PropTypes.func,
 
@@ -49,6 +55,8 @@ export default class DraggableCore extends Component {
 
   tempX = 0;
   tempY = 0;
+  hasPressSpace = false;
+
   handleDrag = this.handleDrag.bind(this);
   handleDragEnd = this.handleDragEnd.bind(this);
   handleDragStart = this.handleDragStart.bind(this);
@@ -58,13 +66,15 @@ export default class DraggableCore extends Component {
   handleMouseOut = this.handleMouseOut.bind(this);
 
   handleDragStart(evt) {
-    const { ownerDocument } = findDOMNode(this);
-    const { onDragStart, position: { x, y } } = this.props;
+    const el = findDOMNode(this);
+    const { ownerDocument } = el;
+    const { onDragStart } = this.props;
+    const [ currX, currY ] = getPosition(el);
+
+    onDragStart(currX, currY);
 
     this.tempX = evt.clientX;
     this.tempY = evt.clientY;
-
-    onDragStart(x, y);
 
     addEvent(ownerDocument, 'selectstart', clearPreDev);
     addEvent(ownerDocument, 'dragstart', clearPreDev);
@@ -75,6 +85,10 @@ export default class DraggableCore extends Component {
   }
 
   handleDrag(evt) {
+    console.log(this.hasPressSpace, 'wx');
+    if (!this.hasPressSpace)
+      return;
+
     const el = findDOMNode(this);
     const { ownerDocument } = el;
     const maxX = getInnerWidth(ownerDocument) - getOuterWidth(el);
@@ -86,26 +100,19 @@ export default class DraggableCore extends Component {
     offsetX = evt.clientX - this.tempX;
     offsetY = evt.clientY - this.tempY;
 
-    // if (newX < 0) {
-    //   newX = 0;
-    // } else if (newX > maxX) {
-    //   newX = maxX;
-    // }
-    //
-    // if (newY < 0) {
-    //   newY = 0;
-    // } else if (newY > maxY) {
-    //   newY = maxY;
-    // }
-
     onDrag(offsetX, offsetY);
   }
 
   handleDragEnd(evt) {
-    const { onDragEnd } = this.props;
-    const { ownerDocument } = findDOMNode(this);
+    if (!this.hasPressSpace)
+      return;
 
-    onDragEnd();
+    const { onDragEnd } = this.props;
+    const el = findDOMNode(this);
+    const { ownerDocument } = el;
+    const [ endX, endY ] = getPosition(el);
+
+    onDragEnd(endX, endY);
 
     removeEvent(ownerDocument, 'selectstart', clearPreDev);
     removeEvent(ownerDocument, 'dragstart', clearPreDev);
@@ -116,13 +123,11 @@ export default class DraggableCore extends Component {
   }
 
   handlePressSpaceStart(evt) {
-    const { onPressSpace } = this.props;
-    onPressSpace(evt.keyCode == 32);
+    this.hasPressSpace = evt.keyCode == 32;
   }
 
   handlePressSpaceEnd() {
-    const { onPressSpace } = this.props;
-    onPressSpace(false);
+    this.hasPressSpace = false;
   }
 
   handleMouseOver() {
@@ -136,23 +141,14 @@ export default class DraggableCore extends Component {
   }
 
   getCurrStyle() {
-    const { cursor, position: { x, y } } = this.props;
+    const { cursor, position, deltaPosition } = this.props;
 
     return {
       position: 'relative',
       cursor: cursor,
-      left: x,
-      top: y
+      left: deltaPosition.x,
+      top: deltaPosition.y
     };
-  }
-
-  componentWillReceiveProps(nextProps: Object) {
-    if (nextProps &&
-      nextProps.position.x != this.props.position.x ||
-      nextProps.position.y != this.props.position.y
-    ) {
-      this.setState({ position: nextProps.position });
-    }
   }
 
   render() {

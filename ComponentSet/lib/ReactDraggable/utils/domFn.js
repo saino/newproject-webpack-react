@@ -21,3 +21,9 @@ export const getOuterHeight = (el) => {
 export const getInnerWidth = (el) => el.clientWidth;
 
 export const getInnerHeight = (el) => el.clientHeight;
+
+export const getPosition = (el) => {
+  const computedStyle = document.defaultView.getComputedStyle(el, null);
+
+  return [ parseFloat(computedStyle.getPropertyValue('left')), parseFloat(computedStyle.getPropertyValue('top')) ];
+};
