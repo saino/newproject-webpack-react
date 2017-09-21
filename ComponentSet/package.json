@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cleanup:com": "rimraf -rf com-dist",
+    "cleanup:pro": "rimraf -rf dist",
+    "build:com": "webpack --config webpack.config.com.js",
+    "build:pro": "cnpm run cleanup:pro && webpack --config webpack.config.pro.js",
+    "start": "cnpm run build:pro"
   },
   "author": "",
   "license": "ISC",
@@ -15,9 +19,12 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "rimraf": "^2.6.2",
     "webpack": "^3.6.0"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
+    "prop-types": "^15.5.10",
     "react": "^15.5.4",
     "react-dom": "^15.6.1"
   }

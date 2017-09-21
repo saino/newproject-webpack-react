@@ -2,7 +2,8 @@
  * React拖拽组件
  */
 
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classNames';
 import DraggableCore from './DraggableCore.js';
 
@@ -10,7 +11,7 @@ export default class Draggable extends Component {
 
   static propTypes = {
 
-    position: PropTypes.shape({
+    defaultPosition: PropTypes.shape({
       x: PropTypes.number,
       y: PropTypes.number
     }),
@@ -29,7 +30,7 @@ export default class Draggable extends Component {
 
   static defaultProps = {
 
-    position: { x: 0, y: 0 },
+    defaultPosition: { x: 0, y: 0 },
 
     className: '',
 
@@ -48,50 +49,62 @@ export default class Draggable extends Component {
 
     this.state = {
 
-      x: props.position.x,
+      deltaX: this.props.defaultPosition.x,
 
-      y: props.position.y,
+      deltaY: this.props.defaultPosition.y,
+
+      cursor: 'default',
 
       hasPressSpace: false
 
     };
   }
 
-  componentWillReceiveProps(nextProps: Object) {
-    if (nextProps &&
-      nextProps.position.x != this.props.position.x ||
-      nextProps.position.y != this.props.position.y
-    ) {
-      this.setState({ x: nextProps.position.x, y: nextProps.position.y });
-    }
+  onDragStart(currX, currY) {
+    const { onDragStart } = this.props;
+    onDragStart(currX, currY);
+  }
+
+  onDrag(newDeltaX, newDeltaY) {
+    const { onDrag, defaultPosition: { x, y } } = this.props;
+    onDrag(newDeltaX, newDeltaY);
+
+    this.setState({ x: newDeltaX + x, y: newDeltaY + y });
+  }
+
+  onDragEnd() {
+    const { onDragEnd } = this.props;
+    onDragEnd();
+  }
+
+  onPressSpace(hasPressSpace) {
+    console.log(hasPressSpace, 'md');
+    this.setState({ hasPressSpace });
+  }
+
+  onHover(cursor) {
+    this.setState({ cursor });
   }
 
   render() {
 
     return (
-      <DraggableCore position={ this.props.position } onDragStart={ this.onDragStart } onDrag={ this.onDrag } onDragEnd={ this.onDragEnd } onPressSpace={ this.onPressSpace } >
+      <DraggableCore
+        position={{ x: this.state.x, y: this.state.y }}
+        cursor={ this.state.cursor }
+        onDragStart={ this.onDragStart.bind(this) }
+        onDrag={ this.state.hasPressSpace ? this.onDrag.bind(this) : void 0 }
+        onDragEnd={ this.onDragEnd.bind(this) }
+        onHover={ this.onHover.bind(this) }
+        onPressSpace={ this.onPressSpace.bind(this) }>
+
         {React.cloneElement(React.Children.only(this.props.children), {
-          className: classNames(this.props.children.props.className, this.props.className)
+          className: classNames(this.props.children.props.className, this.props.className),
           style: { ...this.props.children.props.style, ...this.props.style }
         })}
+
       </DraggableCore>
     );
   }
 
-  onDragStart(e, currX, currY) {
-    this.props.onDragStart(e, currX, currY)
-  }
-
-  onDrag(e, deltaX, deltaY) {
-    this.props.onDrag(e, deltaX, deltaY);
-  }
-
-  onDragEnd(e) {
-    this.props.onDragEnd(e);
-  }
-
-  onPressSpace() {
-    this.setState({ hasPressSpace: true });
-  }
-  
 }

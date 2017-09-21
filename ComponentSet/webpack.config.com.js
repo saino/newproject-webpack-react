@@ -6,15 +6,15 @@ module.exports = function () {
 
     entry: {
 
-      'ReactDraggable': './example/ReactDraggable.js'
+      'ReactDraggable': './lib/ReactDraggable/Draggable.js'
 
     },
 
     output: {
 
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'com-dist'),
 
-      filename: '[name].compiled.js'
+      filename: '[name].js'
 
     },
 
