@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Link,Route ,Redirect} from 'react-router-dom'
-import Works from './works'
-import Profile from './profile'
+import { Link,Route ,Redirect,NavLink} from 'react-router-dom'
+import Works from '../../containers/UserWork'
+import UserInfo from '../../containers/UserInfo'
 import Nav from '../nav'
+
 
 export default class User extends Component {
     
@@ -10,35 +11,51 @@ export default class User extends Component {
       isFetching: true,
       loadingLabel: 'Loading...'
     }
-  
+    constructor(props){
+        super(props)
+        this.logOut=this.logOut.bind(this);
+        if(!props.userInfo.name){
+            props.getUser(function () {
+                props.history.push('/login',{from: props.location})
+            })
+        }
+    }
+    logOut(){
+        this.props.logout();
+        this.props.history.push('/')
+    }
     render() {
-        const {match,user}=this.props;
-        const { login, avatarUrl, name } = user;
-        if(login){
+
+        const {match,userInfo}=this.props;
+
+        if(!userInfo.name){
+            return(<div>
+                <Nav/>
+                loading
+            </div>)
+        }
+        const active={color: 'red'}
             return (
                 <div>
                     <Nav/>
                     <ul>
                         <li>
-                            <Link to={match.url}>我的作品</Link>
+                            <NavLink exact activeStyle={active} to={match.url}>我的作品</NavLink>
                         </li>
                         <li>
-                            <Link to={`${match.url}/profile`}> 个人中心</Link>
+                            <NavLink  activeStyle={active} to={`${match.url}/profile`}> 个人中心</NavLink>
                         </li>
                         <li>
-                            <Link to={`${match.url}/profile`}> 退dd出</Link>
+                            <button  onClick={this.logOut}>退出</button>
                         </li>
                     </ul>
-                    <Route path={`${match.url}/profile`} component={Profile}></Route>
+                    <div>
+
+                    </div>
+                    <Route path={`${match.url}/profile`} component={UserInfo}></Route>
                     <Route exact path={match.url} component={Works}></Route>
                 </div>
             )
-        }else{
-           return  <Redirect to={{
-                pathname: '/login',
-                state: { from: this.props.location }
-            }}/>
-        }
 
     }
   }

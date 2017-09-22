@@ -1,19 +1,19 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import './style.css'
 
 export default () => {
     return (<div className="nav">
-        <div><Link to='/'>home </Link></div>
+        <div><NavLink exact to='/' activeClassName="active">home </NavLink></div>
         <div>
-            <Link to='/login'>login </Link>
+            <NavLink to='/login'  activeClassName="active">login </NavLink>
         </div>
         <div>
-            <Link to='/register'>register</Link>
+            <NavLink to='/register'  activeClassName="active">register</NavLink>
         </div>
         <div>
-            <Link to='/user'>个人中心</Link>
+            <NavLink to='/user'  activeClassName="active">个人中心</NavLink>
         </div>
 
     </div >)
