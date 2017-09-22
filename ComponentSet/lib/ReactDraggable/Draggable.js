@@ -5,7 +5,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classNames';
-import DraggableCore from './DraggableCore.js';
+import DraggableCore from './DraggableCore';
+import { getOuterWidth, getOuterHeight, getInnerWidth, getInnerHeight } from './utils/domFn';
 
 const emptyFn = () => {};
 
@@ -71,11 +72,29 @@ export default class Draggable extends Component {
     this.setState({ x: currX, y: currY });
   }
 
-  onDrag(newDeltaX, newDeltaY) {
+  onDrag(newDeltaX, newDeltaY, el) {
     const { onDrag } = this.props;
+    const { ownerDocument } = el;
+    const maxX = getInnerWidth(ownerDocument.documentElement) - getOuterWidth(el);
+    const maxY = getInnerHeight(ownerDocument.documentElement) - getOuterHeight(el);
+    let newX, newY;
+
     onDrag(newDeltaX, newDeltaY);
 
-    this.setState({ deltaX: this.state.x + newDeltaX, deltaY: this.state.y + newDeltaY });
+    newX = this.state.x + newDeltaX;
+    newY = this.state.y + newDeltaY;
+
+    if (newX < 0)
+      newX = 0;
+    else if (newX > maxX)
+      newX = maxX;
+
+    if (newY < 0)
+      newY = 0;
+    else if (newY > maxY)
+      newY = maxY;
+
+    this.setState({ deltaX: newX, deltaY: newY });
   }
 
   onDragEnd(endX, endY) {

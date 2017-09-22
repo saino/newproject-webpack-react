@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { addEvent, removeEvent } from './utils/eventFn';
-import {
-  getOuterWidth, getOuterHeight, getInnerWidth,
-  getInnerHeight, getPosition
-} from './utils/domFn';
+import { getPosition } from './utils/domFn';
 
 const eventAlias = {
   start: 'mousedown',
@@ -66,6 +63,9 @@ export default class DraggableCore extends Component {
   handleMouseOut = this.handleMouseOut.bind(this);
 
   handleDragStart(evt) {
+    if (!this.hasPressSpace)
+      return;
+
     const el = findDOMNode(this);
     const { ownerDocument } = el;
     const { onDragStart } = this.props;
@@ -80,27 +80,20 @@ export default class DraggableCore extends Component {
     addEvent(ownerDocument, 'dragstart', clearPreDev);
     addEvent(ownerDocument, eventAlias.move, this.handleDrag);
     addEvent(ownerDocument, eventAlias.end, this.handleDragEnd);
-    addEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
-    addEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
 
   handleDrag(evt) {
-    console.log(this.hasPressSpace, 'wx');
     if (!this.hasPressSpace)
       return;
 
     const el = findDOMNode(this);
-    const { ownerDocument } = el;
-    const maxX = getInnerWidth(ownerDocument) - getOuterWidth(el);
-    const maxY = getInnerHeight(ownerDocument) - getOuterHeight(el);
-
     let { onDrag } = this.props;
     let offsetX, offsetY;
 
     offsetX = evt.clientX - this.tempX;
     offsetY = evt.clientY - this.tempY;
 
-    onDrag(offsetX, offsetY);
+    onDrag(offsetX, offsetY, el);
   }
 
   handleDragEnd(evt) {
@@ -118,16 +111,20 @@ export default class DraggableCore extends Component {
     removeEvent(ownerDocument, 'dragstart', clearPreDev);
     removeEvent(ownerDocument, eventAlias.move, this.handleDrag);
     removeEvent(ownerDocument, eventAlias.end, this.handleDragEnd);
-    removeEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
-    removeEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
 
   handlePressSpaceStart(evt) {
+    const { ownerDocument } = findDOMNode(this);
+
     this.hasPressSpace = evt.keyCode == 32;
+    addEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
 
   handlePressSpaceEnd() {
+    const { ownerDocument } = findDOMNode(this);
+
     this.hasPressSpace = false;
+    removeEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
 
   handleMouseOver() {
@@ -159,6 +156,12 @@ export default class DraggableCore extends Component {
       onMouseOver: this.handleMouseOver,
       onMouseOut: this.handleMouseOut
     });
+  }
+
+  componentDidMount() {
+    const { ownerDocument } = findDOMNode(this);
+
+    addEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
   }
 
 }
