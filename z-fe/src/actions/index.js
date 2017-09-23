@@ -135,3 +135,62 @@ export const getUserFailure = (msg) => ({
     type: GETUSER_FAILURE,
     msg
 })
+
+
+export const GETWORKS_REQUEST = 'GETWORKS_REQUEST'
+export const GETWORKS_SUCCESS = 'GETWORKS_SUCCESS'
+export const SHOWWORKPAGE = 'SHOWWORKPAGE'
+export const GETWORKS_FAILURE = 'GETWORKS_FAILURE'
+const showWorkPage=(page)=>({
+    type:SHOWWORKPAGE,
+    page
+})
+const getWorksStart = () => ({
+    type: GETWORKS_REQUEST
+})
+export const getWorksSuc = (works) => ({
+    type: GETWORKS_SUCCESS,
+    works
+})
+export const getWorksFailure = (msg) => ({
+    type: GETWORKS_FAILURE,
+    msg
+})
+
+const shouldGetWorks=(state,page)=>{
+        if(state.worksInfo.page&&state.worksInfo.page[page]&&state.worksInfo.page[page].length!==0){
+            return false
+        }
+        return true
+}
+
+export const removeWork=(page,index)=>{
+
+}
+export const getWorksIfNeeded=(page,limit)=>{
+    return (dispatch,getState)=>{
+        if (shouldGetWorks(getState(),page)) {
+            dispatch(getWorksStart())
+            getServerJson({
+                url:window.api+'worklist',
+                data:{
+                    page:page-1,
+                    limit:limit
+                },
+                success:function (d) {
+                    if(d.status===0){
+                        dispatch(getWorksSuc({...d.data,currentPage:page}))
+                    }else {
+                        dispatch(getWorksFailure(d.msg))
+                    }
+                },
+                error:function (msg) {
+                    dispatch(getWorksFailure(msg))
+                }
+            })
+        }else{
+            dispatch(showWorkPage(page))
+        }
+    }
+
+}

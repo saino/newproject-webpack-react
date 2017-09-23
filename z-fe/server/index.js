@@ -51,11 +51,17 @@ app.post('/updateuser',function (req, res) {
     res.send(Object.assign({status:0},{data:userInfo}));
 })
 app.get('/worklist',function (req, res) {
-    console.log(req.par);
-    var list=[]
-    // for(var i=1;)
 
-    res.send(Object.assign({status:0},{data:userInfo}));
+setTimeout(()=>{
+    var list=[]
+    var page=+req.query.page;
+    var counts=+req.query.limit;
+    for(var i=1;i<counts+1;i++){
+        list.push({itemNo:page*counts+i})
+    }
+    res.send(Object.assign({status:0},{data:{list,total:400}}));
+},500)
+
 })
 app.listen(3002,function (err) {
     if(!err){

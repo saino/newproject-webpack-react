@@ -1,15 +1,10 @@
 import { connect } from 'react-redux'
-import Work from '../components/user/works'
-import {logout} from '../actions'
+import Works from '../components/user/works'
 
 const mapStateToProps=(state)=>{
   return{
-      user:{
-          userID:state.userInfo.id,
-          name:state.userInfo.login,
-          fullInfo:state.userInfo.fullInfo
-      }
+      worksInfo:state.worksInfo
   }
 }
 
-export default connect(mapStateToProps,{logout} )(Work)
+export default connect(mapStateToProps )(Works)
