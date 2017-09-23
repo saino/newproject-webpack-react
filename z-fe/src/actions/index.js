@@ -1,7 +1,8 @@
-import {getServerJson, postInfo, setUserInfo} from "../utils/index";
+import {getServerJson, postInfo, setUserInfo,removeEntity} from "../utils/index";
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGOUT = 'LOGOUT'
+export const PAGESIZE=10
 
 export const loginSuc = (userInfo) => ({
     type: LOGIN_SUCCESS,
@@ -141,6 +142,12 @@ export const GETWORKS_REQUEST = 'GETWORKS_REQUEST'
 export const GETWORKS_SUCCESS = 'GETWORKS_SUCCESS'
 export const SHOWWORKPAGE = 'SHOWWORKPAGE'
 export const GETWORKS_FAILURE = 'GETWORKS_FAILURE'
+export const REMOVEWORK = 'REMOVEWORK'
+const removeStoreWork=(page,limit)=>({
+    type:REMOVEWORK,
+    page,
+    limit
+})
 const showWorkPage=(page)=>({
     type:SHOWWORKPAGE,
     page
@@ -164,8 +171,22 @@ const shouldGetWorks=(state,page)=>{
         return true
 }
 
-export const removeWork=(page,index)=>{
+export const removeWork=(itemNo,page,limit,index)=>{
+    return (dispatch,getState)=>{
+        removeEntity({
+            url:window.api+'worklist',
+            data:{itemNo,page:page-1,index,limit},
+            success:function (d) {
+                if(d.status===0){
+                    dispatch(removeStoreWork(page,limit))
+                    dispatch(getWorksIfNeeded(page,limit))
+                }
+            },
+            error:function (msg) {
 
+            }
+        })
+        }
 }
 export const getWorksIfNeeded=(page,limit)=>{
     return (dispatch,getState)=>{

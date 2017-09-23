@@ -46,14 +46,20 @@ export function postInfo(opt) {
     }else{
         $.ajax(Object.assign({type:"POST",dataType:'json'},opt))
     }
-
-    // $.ajax({
-    //     type: 'POST',
-    //     url: opt.url,
-    //     headers: {
-    //         "logintoken":"first value",
-    //     }
-    //
-    //
-    // })
+}
+export function removeEntity(opt) {
+    var user=getUserInfo();
+    var header;
+    if(user){
+        header={
+            'logintoken':user.loginToken,
+            'userID':user.id
+        }
+    }
+    // var tmp=
+    if(header){
+        $.ajax(Object.assign({type:"DELETE",dataType:'json'},opt,{headers:header}))
+    }else{
+        opt.error("没有登录")
+    }
 }

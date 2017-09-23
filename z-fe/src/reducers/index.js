@@ -19,7 +19,7 @@ const userInfo = (state = {}, action) => {
     }
 }
 
-const worksInfo=(state={currentPage:0},action)=>{
+const worksInfo=(state={currentPage:0,page:{}},action)=>{
     switch (action.type){
         case ActionTypes.GETWORKS_SUCCESS:
             var newWorksInfo={...state};
@@ -36,6 +36,8 @@ const worksInfo=(state={currentPage:0},action)=>{
         case ActionTypes.SHOWWORKPAGE:
             // debugger
             return {...state,currentPage:action.page}
+        case ActionTypes.REMOVEWORK:
+            return {...state,page:{}}
     }
 
     return state
