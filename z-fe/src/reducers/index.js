@@ -5,9 +5,6 @@ import {combineReducers} from 'redux'
 
 
 const userInfo = (state = {}, action) => {
-    if (action.type === ActionTypes.LOGIN_SUCCESS||action.type ===ActionTypes.GETUSER_SUCCESS) {
-
-    }
     switch (action.type){
         case ActionTypes.LOGIN_SUCCESS:
         case ActionTypes.GETUSER_SUCCESS:
@@ -49,5 +46,3 @@ const rootReducer = combineReducers({
 })
 
 export default rootReducer
-
-

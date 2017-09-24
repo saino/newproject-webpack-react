@@ -7,7 +7,6 @@ export function getUserInfo() {
     return undefined
 }
 export function setUserInfo(user) {
-    debugger;
     if(user){
         localStorage.setItem('user',JSON.stringify(user))
     }else{
