@@ -1,10 +1,10 @@
 import { connect } from 'react-redux'
 import Login from '../components/login'
-import { login } from '../actions'
+import {loginSuc} from '../actions'
 
-const mapStateToProps=(state)=>{
-    return{
-        login:state.userInfo.login,
-    }
-  }
-export default connect(mapStateToProps, {login})(Login)
+// const mapStateToProps=(state)=>{
+//     return{
+//         userInfo:state.userInfo,
+//     }
+//   }
+export default connect(null, {loginSuc})(Login)

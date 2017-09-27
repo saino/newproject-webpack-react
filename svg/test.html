@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>SVG Pen</title>
+	<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.js"></script>
+	<script type="text/javascript" src="https://cdn.staticfile.org/snap.svg/0.5.1/snap.svg-min.js"></script>
+	<style type="text/css">
+		#container {width: 100vw; height: 100vh;}
+		.outline path {fill: rgba(0, 0, 0, 0.3); stroke: black; stroke-width: 1;}
+		.focus path {fill: none; stroke-width: 2; stroke: lightskyblue;}
+		.control path {stroke: red;}
+		.points circle {fill: white; stroke: blue; stroke-width: 1;}
+		.points circle.selected {fill: lightskyblue;}
+		.points circle.control {fill: red; stroke: transparent;}
+	</style>
+</head>
+<body>
+
+<svg id="container"></svg>
+
+<script type="text/javascript">
+
+const RADIUS = 3;
+
+var paper = Snap('#container');
+var gPoints, gControlLine, gPath, gPathFocus;
+
+var pathData,
+	drawStatus,	// 绘制状态：0 未开始 | 1 未闭合 | 2 已闭合
+	dragging,	// 是否拖拽
+	pointSelected,	// 选中点
+	movingControl,	// 拖拽的是否是控制点
+	lastX,	// 拖拽上下文
+	lastY;
+
+class Point {
+	static get CONTROL1() { return 1; }	// 控制点类型1
+	static get CONTROL2() { return 2; }	// 控制点类型2
+
+	constructor(x, y, cx1, cy1, cx2, cy2){
+		this.x = x;
+		this.y = y;
+		if( cx1 ){
+			this.cx1 = cx1;
+			this.cy1 = cy1;
+		}
+		if( cx2 ){
+			this.cx2 = cx2;
+			this.cy2 = cy2;
+		}
+	}
+	setControl(type, arr){
+		if( type == Point.CONTROL1 ){
+			this.cx1 = arr[0];
+			this.cy1 = arr[1];
+		} else {
+			this.cx2 = arr[0];
+			this.cy2 = arr[1];
+		}
+	}
+	getControl(type){
+		return type == Point.CONTROL1 ? [this.cx1, this.cy1] : [this.cx2, this.cy2];
+	}
+	getOppositeControl(type){
+		var x = this.x * 2;
+		var y = this.y * 2;
+		switch( type ){
+			case Point.CONTROL1:
+				x -= this.cx1;
+				y -= this.cy1;
+				break;
+			case Point.CONTROL2:
+				x -= this.cx2;
+				y -= this.cy2;
+				break;
+			default:
+				if( type instanceof Array ){
+					x -= type[0];
+					y -= type[1];
+				}
+		}
+		return [x, y];
+	}
+	move(dx, dy, movingControl){
+		if( movingControl == Point.CONTROL1 && this.cx1 ){
+			this.cx1 += dx;
+			this.cy1 += dy;
+		}
+		if( movingControl == Point.CONTROL2 && this.cx2 ){
+			this.cx2 += dx;
+			this.cy2 += dy;
+		}
+		if( !movingControl ){
+			this.x += dx;
+			this.y += dy;
+		}
+	}
+	generatePath(moveOnly){
+		if( moveOnly ){
+			return 'M' + this.x + ' ' + this.y;
+		}
+		if( this.cx1 && this.cx2 ){
+			return 'C' + this.cx1 + ' ' + this.cy1 + ' ' + this.cx2 + ' ' + this.cy2 + ' ' + this.x + ' ' + this.y;
+		} else if( this.cx1 || this.cx2 ){
+			var cx = this.cx1 || this.cx2;
+			var cy = this.cy1 || this.cy2;
+			return 'Q' + cx + ' ' + cy + ' ' + this.x + ' ' + this.y;
+		}
+		return 'L' + this.x + ' ' + this.y;
+	}
+	isInside(x, y){
+		return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) < RADIUS * RADIUS;
+	}
+}
+
+class Path {
+	// TODO: 改成多组
+	constructor() {
+		this.points = [];
+		this.floatingPoint = false;
+		this.closed = false;
+	}
+	firstPoint(){
+		return this.points[0];
+	}
+	lastPoint(){
+		return this.points[this.points.length - 1];
+	}
+	prevPoint(index){
+		if( index > 0 || this.closed ){
+			var i = index > 0 ? index - 1 : this.points.length - 1;
+			return this.points[i];
+		}
+	}
+	nextPoint(index){
+		if( index < this.points.length - 1 || this.closed ){
+			var i = index < this.points.length - 1 ? index + 1 : 0;
+			return this.points[i];
+		}
+	}
+	indexOf(p){
+		return this.points.indexOf(p);
+	}
+	confirmFloating(){
+		this.points.push(this.floatingPoint);
+		this.floatingPoint = false;
+	}
+	removePoint(p){
+		var i = this.points.indexOf(p);
+		this.points.splice(i, 1);
+	}
+	insertPoint(index, p){
+		this.points.splice(index, 0, p);
+	}
+	movePoint(p, dx, dy, movingControl){
+		var i = this.indexOf(p);
+		try {	// 对面控制点不存在就忽略
+			switch( movingControl ){
+				case Point.CONTROL1:
+					p.move(dx, dy, movingControl);
+					this.prevPoint(i).setControl(Point.CONTROL2, this.prevPoint(i).getOppositeControl([p.cx1, p.cy1]));
+					break;
+				case Point.CONTROL2:
+					p.move(dx, dy, movingControl);
+					this.nextPoint(i).setControl(Point.CONTROL1, p.getOppositeControl(Point.CONTROL2));
+					break;
+				default:
+					p.move(dx, dy);
+					p.move(dx, dy, Point.CONTROL2);
+					this.nextPoint(i).move(dx, dy, Point.CONTROL1);
+			}
+		} catch(e) {}
+	}
+}
+
+var init = function(){
+	drawStatus = 0;
+	dragging = pointSelected = movingControl = false;
+	lastX = lastY = 0;
+
+	pathData = new Path();
+
+	paper.clear();
+	gPath = paper.g();
+	gPathFocus = paper.g();
+	gControlLine = paper.g();
+	gPoints = paper.g();
+	
+	gPath.addClass('outline');
+	gPathFocus.addClass('focus');
+	gControlLine.addClass('control');
+	gPoints.addClass('points');
+}
+
+init();
+
+var drawPoint = function(p, prevPoint, isFloating){
+	var className;
+	var circle = paper.circle(p.x, p.y, RADIUS);
+	circle.node.point = p;
+	if( isFloating ){
+		className = 'floating';
+	} else if( p == pointSelected ){
+		className = 'selected';
+	}
+	if( className ){
+		circle.addClass(className);
+	}
+	gPoints.add(circle);
+	if( p.cx1 ){
+		circle = paper.circle(p.cx1, p.cy1, RADIUS);
+		circle.addClass('control');
+		circle.node.targetPoint = p;
+		circle.node.controlType = Point.CONTROL1;
+		gPoints.add(circle);
+		gControlLine.add(paper.path(prevPoint.generatePath(true) + 'L' + p.cx1 + ' ' + p.cy1));
+	}
+	if( p.cx2 ){
+		circle = paper.circle(p.cx2, p.cy2, RADIUS);
+		circle.addClass('control');
+		circle.node.targetPoint = p;
+		circle.node.controlType = Point.CONTROL2;
+		gPoints.add(circle);
+		gControlLine.add(paper.path(p.generatePath(true) + 'L' + p.cx2 + ' ' + p.cy2));
+	}
+}
+
+var computePath = function(){
+	var path = '', p;
+
+	gPoints.clear();
+	gControlLine.clear();
+	// 浮动点本身必须在最下面才会触发固定点的 mousedown
+	if( pathData.floatingPoint ){
+		drawPoint(pathData.floatingPoint, pathData.lastPoint(), true);
+	}
+	for( var i in pathData.points ){
+		p = pathData.points[i];
+		path += p.generatePath(i == 0);
+		drawPoint(p, pathData.prevPoint(i));
+	}
+	if( pathData.points.length > 0 && pathData.floatingPoint ){	// 只有有固定点的情况浮动点 path 才有效
+		path += pathData.floatingPoint.generatePath();
+	}
+	if( pathData.closed ){
+		path += pathData.firstPoint().generatePath();
+		path += 'Z';
+	}
+	gPath.clear();
+	gPath.add(paper.path(path).attr('fill-rule', 'evenodd'));	// 多条的情况固定交叉相减，不走顺时针逆时针
+	gPathFocus.clear();
+	if( pointSelected && pathData.points.length > 1 ){
+		var i = pathData.indexOf(pointSelected);
+		if( i > 0 || pathData.closed ){
+			var focusPath = pathData.prevPoint(i).generatePath(true) + pointSelected.generatePath();
+			gPathFocus.add(paper.path(focusPath));
+		}
+	}
+}
+
+$('body').on('mousedown', function(e){
+	var x = e.offsetX;
+	var y = e.offsetY;
+
+	dragging = true;
+	if( drawStatus == 0 ){
+		pathData.floatingPoint = new Point(x, y);
+		drawStatus = 1;
+	}
+	computePath();
+});
+
+$('body').on('mousedown', 'circle:not(.floating)', function(e){
+	var x = e.offsetX;
+	var y = e.offsetY;
+
+	dragging = true;
+	if( drawStatus == 1 ){
+		drawStatus = 2;
+		pathData.closed = true;
+		pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
+		pathData.floatingPoint = false;
+	} else {
+		lastX = x;
+		lastY = y;
+		if( e.target.point ){
+			pointSelected = e.target.point;
+		} else if (e.target.targetPoint){
+			pointSelected = e.target.targetPoint;
+			movingControl = e.target.controlType;
+		}
+	}
+	e.stopPropagation();
+	computePath();
+});
+
+$('body').on('mousemove', function(e){
+	var x = e.offsetX;
+	var y = e.offsetY;
+	var redraw = false;
+	if( !dragging ){
+		if( pathData.floatingPoint || drawStatus == 1 ){
+			pathData.floatingPoint = new Point(x, y);
+			pathData.floatingPoint.setControl(Point.CONTROL1, pathData.lastPoint().getOppositeControl(Point.CONTROL2));
+			// hover 到起点的时候使用起点的控制点2
+			var p1 = pathData.firstPoint();
+			if( pathData.points.length > 1 && p1.isInside(x, y) ){
+				pathData.floatingPoint.setControl(Point.CONTROL2, p1.getControl(Point.CONTROL2));
+			}
+			redraw = true;
+		}
+	} else {
+		redraw = true;
+		switch( drawStatus ){
+			case 1:
+				pathData.floatingPoint.setControl(Point.CONTROL2, pathData.floatingPoint.getOppositeControl([x, y]));
+				break;
+			case 2:
+				pathData.firstPoint().setControl(Point.CONTROL2, pathData.firstPoint().getOppositeControl([x, y]));
+				break;
+			default:
+				if( pointSelected ){
+					pathData.movePoint(pointSelected, x - lastX, y - lastY, movingControl);
+					lastX = x;
+					lastY = y;
+				}
+		}
+	}
+	if( redraw ){
+		computePath();
+	}
+});
+
+$('body').on('mouseup', function(e){
+	if( dragging ){
+		if( pathData.floatingPoint ){
+			pathData.confirmFloating();
+			if( drawStatus == 0 ){
+				drawStatus = 1;
+			}
+		}
+		movingControl = false;
+		dragging = false;
+		computePath();
+	}
+	if( drawStatus == 2 ){
+		drawStatus = 0;
+	}
+});
+
+$('body').on('keyup', function(e){
+	switch( e.keyCode ){
+		case 8:		// "backspace"
+			if( pointSelected && !movingControl ){
+				pathData.removePoint(pointSelected);
+				pointSelected = false;
+				computePath();
+			}
+			break;
+		case 220:	// "\"
+			if( pointSelected ){
+				var ele = gPathFocus.children()[0];	// 选中的线段
+				if( ele ){
+					var length = ele.getTotalLength();
+					var params = Snap.parsePathString(ele.getSubpath(0, length / 2))[1];	// 前半段
+					var p = new Point(params[5], params[6], params[1], params[2], params[3], params[4]);
+					params = Snap.parsePathString(ele.getSubpath(length / 2, length))[1];	// 后半段
+					pathData.insertPoint(pathData.indexOf(pointSelected), p);
+					pointSelected.setControl(Point.CONTROL1, [params[1], params[2]]);
+					pointSelected.setControl(Point.CONTROL2, [params[3], params[4]]);
+					computePath();
+				}
+			}
+			break;
+		case 82:	// "r"
+			init();
+			break;
+		case 27:	// "esc"
+			drawStatus = 0;
+			dragging = false;
+			pathData.floatingPoint = false;
+			pointSelected = false;
+			movingControl = false;
+			computePath();
+			break;
+	}
+});
+
+</script>
+
+</body>
+</html>

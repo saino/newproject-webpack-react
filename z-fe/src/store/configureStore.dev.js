@@ -1,6 +1,5 @@
 import {createStore, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
-import api from '../middleware/api'
 import rootReducer from '../reducers'
 
 const configureStore = preloadedState => {
@@ -11,7 +10,7 @@ const configureStore = preloadedState => {
             rootReducer,
             preloadedState,
             compose(
-                applyMiddleware(thunk, api),
+                applyMiddleware(thunk),
                 window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
             )
         ) 
@@ -19,20 +18,20 @@ const configureStore = preloadedState => {
      store =  createStore(
             rootReducer,
             preloadedState,
-            applyMiddleware(thunk, api)
+            applyMiddleware(thunk)
           )
     }
 
     /* eslint-enable */
 
-    if (module.hot) {
-        // Enable Webpack hot module replacement for reducers
-        module.hot.accept('../reducers', () => {
-            // debugger;
-            const nextRootReducer = require('../reducers').default
-            store.replaceReducer(nextRootReducer)
-        })
-    }
+    // if (module.hot) {
+    //     // Enable Webpack hot module replacement for reducers
+    //     module.hot.accept('../reducers', () => {
+    //         console.log("store module.hot")
+    //         const nextRootReducer = require('../reducers').default
+    //         store.replaceReducer(nextRootReducer)
+    //     })
+    // }
 
     return store
 }

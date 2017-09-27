@@ -1,143 +1,217 @@
-import { CALL_API, Schemas } from '../middleware/api'
+import {getServerJson, postInfo, setUserInfo,removeEntity} from "../utils/index";
 
-export const USER_REQUEST = 'USER_REQUEST'
-export const USER_SUCCESS = 'USER_SUCCESS'
-export const USER_FAILURE = 'USER_FAILURE'
-
-// Fetches a single user from Github API.
-// Relies on the custom API middleware defined in ../middleware/api.js.
-const fetchUser = login => ({
-  [CALL_API]: {
-    types: [ USER_REQUEST, USER_SUCCESS, USER_FAILURE ],
-    endpoint: `users/${login}`,
-    schema: Schemas.USER
-  }
-})
-
-// Fetches a single user from Github API unless it is cached.
-// Relies on Redux Thunk middleware.
-export const loadUser = (login, requiredFields = []) => (dispatch, getState) => {
-  const user = getState().entities.users[login]
-  if (user && requiredFields.every(key => user.hasOwnProperty(key))) {
-    return null
-  }
-
-  return dispatch(fetchUser(login))
-}
-
-export const REPO_REQUEST = 'REPO_REQUEST'
-export const REPO_SUCCESS = 'REPO_SUCCESS'
-export const REPO_FAILURE = 'REPO_FAILURE'
-
-// Fetches a single repository from Github API.
-// Relies on the custom API middleware defined in ../middleware/api.js.
-const fetchRepo = fullName => ({
-  [CALL_API]: {
-    types: [ REPO_REQUEST, REPO_SUCCESS, REPO_FAILURE ],
-    endpoint: `repos/${fullName}`,
-    schema: Schemas.REPO
-  }
-})
-
-// Fetches a single repository from Github API unless it is cached.
-// Relies on Redux Thunk middleware.
-export const loadRepo = (fullName, requiredFields = []) => (dispatch, getState) => {
-  const repo = getState().entities.repos[fullName]
-  if (repo && requiredFields.every(key => repo.hasOwnProperty(key))) {
-    return null
-  }
-
-  return dispatch(fetchRepo(fullName))
-}
-
-export const STARRED_REQUEST = 'STARRED_REQUEST'
-export const STARRED_SUCCESS = 'STARRED_SUCCESS'
-export const STARRED_FAILURE = 'STARRED_FAILURE'
-
-// Fetches a page of starred repos by a particular user.
-// Relies on the custom API middleware defined in ../middleware/api.js.
-const fetchStarred = (login, nextPageUrl) => ({
-  login,
-  [CALL_API]: {
-    types: [ STARRED_REQUEST, STARRED_SUCCESS, STARRED_FAILURE ],
-    endpoint: nextPageUrl,
-    schema: Schemas.REPO_ARRAY
-  }
-})
-
-// Fetches a page of starred repos by a particular user.
-// Bails out if page is cached and user didn't specifically request next page.
-// Relies on Redux Thunk middleware.
-export const loadStarred = (login, nextPage) => (dispatch, getState) => {
-  const {
-    nextPageUrl = `users/${login}/starred`,
-    pageCount = 0
-  } = getState().pagination.starredByUser[login] || {}
-
-  if (pageCount > 0 && !nextPage) {
-    return null
-  }
-
-  return dispatch(fetchStarred(login, nextPageUrl))
-}
-
-export const STARGAZERS_REQUEST = 'STARGAZERS_REQUEST'
-export const STARGAZERS_SUCCESS = 'STARGAZERS_SUCCESS'
-export const STARGAZERS_FAILURE = 'STARGAZERS_FAILURE'
-
-// Fetches a page of stargazers for a particular repo.
-// Relies on the custom API middleware defined in ../middleware/api.js.
-const fetchStargazers = (fullName, nextPageUrl) => ({
-  fullName,
-  [CALL_API]: {
-    types: [ STARGAZERS_REQUEST, STARGAZERS_SUCCESS, STARGAZERS_FAILURE ],
-    endpoint: nextPageUrl,
-    schema: Schemas.USER_ARRAY
-  }
-})
-
-// Fetches a page of stargazers for a particular repo.
-// Bails out if page is cached and user didn't specifically request next page.
-// Relies on Redux Thunk middleware.
-export const loadStargazers = (fullName, nextPage) => (dispatch, getState) => {
-  const {
-    nextPageUrl = `repos/${fullName}/stargazers`,
-    pageCount = 0
-  } = getState().pagination.stargazersByRepo[fullName] || {}
-
-  if (pageCount > 0 && !nextPage) {
-    return null
-  }
-
-  return dispatch(fetchStargazers(fullName, nextPageUrl))
-}
-
-export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE'
-
-// Resets the currently visible error message.
-export const resetErrorMessage = () => ({
-    type: RESET_ERROR_MESSAGE
-})
-
-export const LOGIN_REQUEST = 'LOGIN_REQUEST'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
-export const LOGIN_FAILURE = 'LOGIN_FAILURE'
-const  loginStart= () => ({
-    type: LOGIN_REQUEST
-})
-const  loginSuc= (userInfo) => ({
+export const LOGOUT = 'LOGOUT'
+export const PAGESIZE=10
+
+export const loginSuc = (userInfo) => ({
     type: LOGIN_SUCCESS,
     userInfo
 })
-const  loginFailure= (msg) => ({
-    type: LOGIN_FAILURE,
+
+const logoutSuc = () => ({
+    type: LOGOUT
+})
+export const logout = () => {
+    return function (dispatch) {
+        setUserInfo()
+        dispatch(logoutSuc());
+    }
+
+}
+
+export const REGISTER_REQUEST = 'REGISTER_REQUEST'
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
+export const REGISTER_FAILURE = 'REGISTER_FAILURE'
+const registerStart = () => ({
+    type: REGISTER_REQUEST
+})
+const registerSuc = (userInfo) => ({
+    type: REGISTER_SUCCESS,
+    userInfo
+})
+const registerFailure = (msg) => ({
+    type: REGISTER_FAILURE,
     msg
 })
-export const login = (name,pwd) => {
-  return function (dispatch, getState) {
-      dispatch(loginStart());
-      setTimeout(()=>{
-          dispatch(loginSuc({name}));
-      },1000)
-  }
+export const register = (obj) => {
+    var cb=obj.cb;
+    delete obj.cb;
+    return function (dispatch) {
+        dispatch(registerStart());
+        postInfo({
+            url: `${window.api}register`,
+            data:obj,
+            success: function (d) {
+                dispatch(registerSuc(d));
+                if(cb){
+                    cb();
+                }
+            }, error: function (msg) {
+                dispatch(registerFailure(msg))
+            }
+        })
+    }
+}
+
+export const UPDATEUSER_REQUEST = 'UPDATEUSER_REQUEST'
+export const UPDATEUSER_SUCCESS = 'UPDATEUSER_SUCCESS'
+export const UPDATEUSER_FAILURE = 'UPDATEUSER_FAILURE'
+const updateUserStart = (userInfo) => ({
+    type: UPDATEUSER_REQUEST,
+    userInfo
+})
+const updateUserSuc = (userInfo) => ({
+    type: UPDATEUSER_SUCCESS,
+    userInfo
+})
+const updateUserFailure = (msg) => ({
+    type: UPDATEUSER_FAILURE,
+    msg
+})
+export const updateUser = userInfo => {
+    return (dispatch, getState) => {
+        var user = getState().userInfo;
+        if (!user.fullInfo) {
+            dispatch(getUserStart())
+            postInfo({
+                url: `${window.api}updateuser`,
+                success: function (d) {
+                    setUserInfo(d)
+                    dispatch(getUserSuc(d));
+                }, error: function (msg) {
+                    dispatch(getUserFailure(msg))
+                }
+            })
+        } else {
+            dispatch(getUserSuc(user))
+        }
+
+    }
+
+}
+export const GETUSER_REQUEST = 'GETUSER_REQUEST'
+export const GETUSER_SUCCESS = 'GETUSER_SUCCESS'
+export const GETUSER_FAILURE = 'GETUSER_FAILURE'
+
+export const getUser = (redirect) => {
+    return (dispatch, getState) => {
+        var user = getState().userInfo;
+        if (!user.name) {
+            dispatch(getUserStart())
+            getServerJson({
+                url: `${window.api}userinfo`,
+                success: function (d) {
+                    if(d.status==0){
+                        const {data}=d
+                        dispatch(getUserSuc(data));
+                    }else {
+                        if(redirect){
+                            redirect()
+                        }else{
+                            window.location.pathname="/login"
+                        }
+                    }
+
+
+                }, error: function (msg) {
+                    dispatch(getUserFailure(msg))
+                }
+            })
+        } else {
+            dispatch(getUserSuc(user))
+        }
+
+    }
+}
+
+const getUserStart = () => ({
+    type: GETUSER_REQUEST
+})
+export const getUserSuc = (userInfo) => ({
+    type: GETUSER_SUCCESS,
+    userInfo
+})
+export const getUserFailure = (msg) => ({
+    type: GETUSER_FAILURE,
+    msg
+})
+
+
+export const GETWORKS_REQUEST = 'GETWORKS_REQUEST'
+export const GETWORKS_SUCCESS = 'GETWORKS_SUCCESS'
+export const SHOWWORKPAGE = 'SHOWWORKPAGE'
+export const GETWORKS_FAILURE = 'GETWORKS_FAILURE'
+export const REMOVEWORK = 'REMOVEWORK'
+const removeStoreWork=(page,limit)=>({
+    type:REMOVEWORK,
+    page,
+    limit
+})
+const showWorkPage=(page)=>({
+    type:SHOWWORKPAGE,
+    page
+})
+const getWorksStart = () => ({
+    type: GETWORKS_REQUEST
+})
+export const getWorksSuc = (works) => ({
+    type: GETWORKS_SUCCESS,
+    works
+})
+export const getWorksFailure = (msg) => ({
+    type: GETWORKS_FAILURE,
+    msg
+})
+
+const shouldGetWorks=(state,page)=>{
+        if(state.worksInfo.page&&state.worksInfo.page[page]&&state.worksInfo.page[page].length!==0){
+            return false
+        }
+        return true
+}
+
+export const removeWork=(itemNo,page,limit,index)=>{
+    return (dispatch,getState)=>{
+        removeEntity({
+            url:window.api+'worklist',
+            data:{itemNo,page:page-1,index,limit},
+            success:function (d) {
+                if(d.status===0){
+                    dispatch(removeStoreWork(page,limit))
+                    dispatch(getWorksIfNeeded(page,limit))
+                }
+            },
+            error:function (msg) {
+
+            }
+        })
+        }
+}
+export const getWorksIfNeeded=(page,limit)=>{
+    return (dispatch,getState)=>{
+        if (shouldGetWorks(getState(),page)) {
+            dispatch(getWorksStart())
+            getServerJson({
+                url:window.api+'worklist',
+                data:{
+                    page:page-1,
+                    limit:limit
+                },
+                success:function (d) {
+                    if(d.status===0){
+                        dispatch(getWorksSuc({...d.data,currentPage:page}))
+                    }else {
+                        dispatch(getWorksFailure(d.msg))
+                    }
+                },
+                error:function (msg) {
+                    dispatch(getWorksFailure(msg))
+                }
+            })
+        }else{
+            dispatch(showWorkPage(page))
+        }
+    }
+
 }

@@ -33,8 +33,8 @@ module.exports = {
     // This means they will be the "root" imports that are included in JS bundle.
     // The first two entry points enable "hot" CSS and auto-refreshes for JS.
     entry: [
-        // We ship a few polyfills by default:
-        require.resolve('./polyfills'),
+        'react-hot-loader/patch',
+
         // Include an alternative client for WebpackDevServer. A client's job is to
         // connect to WebpackDevServer by a socket and get notified about changes.
         // When you save a file, the client will either apply hot updates (in case
@@ -46,6 +46,8 @@ module.exports = {
         // require.resolve('webpack-dev-server/client') + '?/',
         // require.resolve('webpack/hot/dev-server'),
         require.resolve('react-dev-utils/webpackHotDevClient'),
+        // We ship a few polyfills by default:
+        require.resolve('./polyfills'),
         // Finally, this is your app's code:
         paths.appIndexJs,
         // We include the app code last so that if there is a runtime error during
@@ -151,6 +153,9 @@ module.exports = {
                             // It enables caching results in ./node_modules/.cache/babel-loader/
                             // directory for faster rebuilds.
                             cacheDirectory: true,
+                            plugins: [
+                                'react-hot-loader/babel'
+                            ]
                         },
                     },
                     // "postcss" loader applies autoprefixer to our CSS.
@@ -221,7 +226,7 @@ module.exports = {
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             inject: true,
-            origin: "'http://localhost:3000/'",
+            origin: "'http://localhost:3002/'",
             template: paths.appHtml
         }),
         // Add module names to factory functions so they appear in browser profiler.

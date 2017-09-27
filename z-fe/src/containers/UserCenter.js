@@ -1,13 +1,15 @@
 import { connect } from 'react-redux'
 import User from '../components/user/index'
+import {logout,getUser} from '../actions'
 
 const mapStateToProps=(state)=>{
   return{
-      user:{
-          login:state.userInfo.login,
-          name:state.userInfo.login
+      userInfo:{
+          userID:state.userInfo.id,
+          name:state.userInfo.name,
+          nick:state.userInfo.nick
       }
   }
 }
 
-export default connect(mapStateToProps)(User)
+export default connect(mapStateToProps,{logout,getUser} )(User)
