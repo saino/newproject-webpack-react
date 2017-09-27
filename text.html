@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <div id="xx" name="gg" style="width: 100px;height: 100px; background:green">dd</div>
+    <script>
+      var xx = document.querySelector('#xx');
+      xx.onclick = function (e) {
+        console.log(e.target.name);
+      }
+    </script>
+  </body>
+</html>

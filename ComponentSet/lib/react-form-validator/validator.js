@@ -1,4 +1,4 @@
-const catchRuleValueRE = /(?:\:)([^\s\t\r\:]+)/g;
+const catchRuleValueRE = /(?:\:)([^\s\t\r\:\|]+)/g;
 
 const customRuleREMap = {
 
@@ -45,12 +45,8 @@ function bedeckRuleMap (arr) {
  *
  */
 export default (value, rules) => {
-  const parseRuleMap = bedeckRuleMap(ruleMap);
-  let method;
+  const parseRuleMap = bedeckRuleMap(rules),
+        errorRules = Object.keys(parseRuleMap).filter(key => !parseRuleMap[ key ](value));
 
-  return Object.keys(parseRuleMap).every(key => {
-    method = parseRuleMap[ key ];
-
-    return method(value);
-  });
+  return !res.length ? false : errorRules;
 };

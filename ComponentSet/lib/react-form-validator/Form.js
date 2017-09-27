@@ -1,10 +1,10 @@
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import Button from './childrens/Button';
+import Submit from './childrens/Submit';
 import Input from './childrens/Input';
 import Checkbox from './childrens/Checkbox';
 import Radio from './childrens/Radio';
-import validate from './validate';
+import validator from './validator';
 
 export default class Form extends Component {
 
@@ -13,51 +13,78 @@ export default class Form extends Component {
 
     ruleMap: PropTypes.object,
 
-    errorMesMap: PropTypes.object
+    errorRuleMesMap: PropTypes.object
 
   };
   static defaultProps = {
 
     ruleMap: {},
 
-    errorMesMap: {}
+    errorRuleMesMap: {}
 
   };
 
-  validate(name) {
+  state = {
 
+    errors: {},
 
+    values: {}
+
+  };
+
+  validate(name, value) {
+    const { errorRuleMesMap } = this.props;
+    const ruleStr = this.ruleMap[ name ];
+    const rules = ruleStr ? ruleStr.split('|') : [];
+    const errorRules = validator(value, rules);
+
+    if (!errorRules)
+      return;
+
+    this.setState({
+      errors: {
+        ...this.state.errors,
+        [ name ]: this.props.errorRuleMesMap[ errorRules[0] ]
+      }
+    });
   }
 
-  validateChangeOrBlur(name, evt) {
-    const ruleStr = this.props.ruleMap[ name ];
-    const rules = ruleStr.split('|');
+  onChange(name, { target }) {
+    this.setState({ values: { ...this.state.values, [ name ]: target.value } });
+  }
+
+  onSubmit(name) {
+    const children = Children.toArray(this.props.children).filter(child => child.props.name !== name);
+
+    children.forEach(child => {
+      const { name, value } = child.props;
+
+      this.validate(name, value);
+    })
   }
 
   render() {
 
     return Children.map(this.props.children, child => {
-      const { name, errorMesMap } = child.props;
-      let params;
+      const { name, value, type } = child.props;
+      const setValue = this.state.values[ name ] || value;
 
       if (!name)
         return cloneElement(child);
 
-      params = [ child, this, errorMesMap[name] ];
-
-      switch (name.toLowerCase()) {
+      switch (type.toLowerCase()) {
 
         case 'input':
-          return Input.apply(null, params);
+          return Input(child, this, setValue, this.state.errors[ name ]);
 
-        case 'button':
-          return Button.apply(null, params);
+        case 'submit':
+          return Submit.apply(null, this);
 
         case 'checkbox':
-          return Checkbox.apply(null, params);
+          return Checkbox();
 
         case 'radio':
-          return Radio.apply(null, params);
+          return Radio();
 
         default:
           return cloneElement(child);

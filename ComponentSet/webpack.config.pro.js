@@ -6,7 +6,9 @@ module.exports = function () {
 
     entry: {
 
-      'ReactDraggable': './example/ReactDraggable.js'
+      'ReactDraggable': './example/ReactDraggable.js',
+
+      'ReactFormValidator': './example/ReactFormValidator.js'
 
     },
 

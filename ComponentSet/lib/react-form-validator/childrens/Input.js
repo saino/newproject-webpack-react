@@ -1,14 +1,24 @@
 import React, { cloneElement } from 'react';
 
-export defaunt (child, parent, errorMsg) => {
-  const { name, value, onKeyUp } = child.props;
+const color = '#ff0000';
+
+export default (child, parent, value, errorMsg) => {
+  const { name, onKeyUp } = child.props;
+  const style = errorMsg ? { borderColor: color } : void 0;
 
   return cloneElement(child, {
 
     value,
 
+    style,
+
+    children: errorMsg ? (<div style={{ color, marginTop: 10 }}>{ errorMsg }</div>) : void 0,
+
+    onBlur: evt =>
+      parent.validate(name, value),
+
     onChange: evt =>
-      parent.validateChangeOrBlur(name, evt),
+      parent.onChange(name, evt),
 
     onKeyUp: evt => {
       onKeyUp && onKeyUp(evt);
@@ -16,7 +26,7 @@ export defaunt (child, parent, errorMsg) => {
       if (evt.keyCode != 13)
         return;
 
-      parent.validate(name);
+      parent.validate(name, value);
 
     }
 
