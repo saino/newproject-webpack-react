@@ -1,9 +1,10 @@
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import Button from './Button';
-import Input from './Input';
-import Checkbox from './Checkbox';
-import Radio from './Radio';
+import Button from './childrens/Button';
+import Input from './childrens/Input';
+import Checkbox from './childrens/Checkbox';
+import Radio from './childrens/Radio';
+import validate from './validate';
 
 export default class Form extends Component {
 
@@ -23,39 +24,44 @@ export default class Form extends Component {
 
   };
 
-  validate() {
+  validate(name) {
 
 
   }
 
-  onBlurOrChange() {
-
+  validateChangeOrBlur(name, evt) {
+    const ruleStr = this.props.ruleMap[ name ];
+    const rules = ruleStr.split('|');
   }
 
   render() {
 
     return Children.map(this.props.children, child => {
-      const { name, type } = child.props;
+      const { name, errorMesMap } = child.props;
+      let params;
 
       if (!name)
         return cloneElement(child);
 
+      params = [ child, this, errorMesMap[name] ];
+
       switch (name.toLowerCase()) {
 
         case 'input':
-          return Input(child, this, { ...child.props }, this.props.errorMesMap[name] || '');
+          return Input.apply(null, params);
 
         case 'button':
-          return Button(child, this, this.props.errorMesMap[name] || '');
+          return Button.apply(null, params);
 
         case 'checkbox':
-          return Checkbox(child, this, this.props.errorMesMap[name] || '');
+          return Checkbox.apply(null, params);
 
         case 'radio':
-          return Radio(child, this, this.props.errorMesMap[name] || '');
+          return Radio.apply(null, params);
 
         default:
           return cloneElement(child);
+
       }
 
     });
