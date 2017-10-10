@@ -2,6 +2,7 @@ import * as ActionTypes from '../actions'
 import merge from 'lodash/merge'
 import paginate from './paginate'
 import {combineReducers} from 'redux'
+import user from './user';
 
 
 const userInfo = (state = {}, action) => {
@@ -41,6 +42,7 @@ const worksInfo=(state={currentPage:0,page:{}},action)=>{
 }
 
 const rootReducer = combineReducers({
+    user,
     userInfo,
     worksInfo
 })

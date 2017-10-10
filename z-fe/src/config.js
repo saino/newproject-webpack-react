@@ -11,7 +11,7 @@ export default ({
 
   // 数据请求
   api: {
-    host: 'http://localhost:7878',
+    host: window.api,
     path: '/api',
     timeout: 15000
   },
