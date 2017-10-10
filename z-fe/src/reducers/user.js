@@ -12,26 +12,40 @@ const actionTypes = {
 
 const defState = {
 
-  userId: '',
+  userInfo: {},
 
-  username: '',
+  token: ''
 
-  nickname: '',
-
-  auth: {
-    token: ''
-  }
 };
 
-const actions = {
+export const actions = {
 
   login: (username, password) => dispatch => {
-    post('/login', { username, password })
-      .then(resp => dispatch({
-        type: actionTypes.LOGIN,
-        username,
-        password
-      }));
-  }
+    post('/login', { username, password }, resp => dispatch({
+      type: actionTypes.LOGIN,
+      token: resp.token
+    }));
+  },
 
+  register: (username, password) => dispatch => {
+    post('/register', { username, password }, resp => dispatch({
+      type: actionTypes.REGISTER,
+      username,
+      password
+    }))
+  },
+
+  getUserInfo() {
+
+  },
+
+  destroy: () => ({})
+
+};
+
+export default (state = defState, action) => {
+  switch (action.type) {
+    case actionTypes.LOGIN:
+
+  }
 };

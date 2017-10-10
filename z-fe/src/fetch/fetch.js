@@ -49,18 +49,20 @@ const request = (path: String, method: String, body: Object) => {
   .then(checkErrorCodeStatus);
 };
 
-export function get(path: String, qs = {}, success, fail) {
+export function get(path: String, qs = {}, success: Function, fail: Function) {
   return request(path, 'GET', qs)
-   .then(resp => success(resp))
+   .then(resp => success(resp.data))
    .catch(error => {
+     message.error(error.message);
      fail && fail(error.message);
    });
 };
 
-export function post(path: String, body = {}, success, fail) {
+export function post(path: String, body = {}, success: Function, fail: Function) {
   return request(path, 'POST', body)
-   .then(resp => success(resp))
+   .then(resp => success(resp.data))
    .catch(error => {
+     message.error(error.message);
      fail && fail(error.message);
    });
 };
