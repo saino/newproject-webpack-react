@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { message, Form } from 'antd';
-import { Form } from 'antd';
+import { message, Form, Button } from 'antd';
+import style from './style.css';
 const FormItem = Form.Item;
 
 class CustomForm extends Component {
@@ -11,6 +11,7 @@ class CustomForm extends Component {
    * item: { key: 'username', rules: [], widget: <xx /> }
    */
   static propTypes = {
+    okText: PropTypes.string.isRequired,
     fieldDecorators: PropTypes.array.isRequired,
     onSubmit: PropTypes.func.isRequired
   };
@@ -24,7 +25,7 @@ class CustomForm extends Component {
   };
 
   render() {
-    const { form: { getFieldDecorator }, fieldDecorators } = this.props;
+    const { form: { getFieldDecorator }, fieldDecorators, okText,  } = this.props;
 
     return (
       <Form onSubmit={ this.handleSubmit }>
@@ -37,6 +38,9 @@ class CustomForm extends Component {
             </FormItem>
           )
         })}
+        <FormItem>
+          <Button type="primary" htmlType="submit" className={ style.btn }>{ okText }</Button>
+        </FormItem>
       </Form>
     );
   }

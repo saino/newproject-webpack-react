@@ -49,7 +49,7 @@ const request = (path: String, method: String, body: Object) => {
   .then(checkErrorCodeStatus);
 };
 
-export function get(path: String, qs = {}, success: Function, fail: Function) {
+export function get (path: String, qs = {}, success: Function, fail: Function) {
   return request(path, 'GET', qs)
    .then(resp => success(resp.data))
    .catch(error => {
@@ -58,7 +58,7 @@ export function get(path: String, qs = {}, success: Function, fail: Function) {
    });
 };
 
-export function post(path: String, body = {}, success: Function, fail: Function) {
+export function post (path: String, body = {}, success: Function, fail: Function) {
   return request(path, 'POST', body)
    .then(resp => success(resp.data))
    .catch(error => {
