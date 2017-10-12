@@ -16,6 +16,12 @@ export default ({
     timeout: 15000
   },
 
+  // 对话框
+  dialog: {
+    width: 450,
+    footerVisible: false
+  },
+
   // 图片/视频上传(单位：KB)
   upload: {
     imgSizeLimit: 1500,   // 默认的图片上传大小

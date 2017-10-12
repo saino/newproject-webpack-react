@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { message, Form, Button } from 'antd';
-import style from './style.css';
 const FormItem = Form.Item;
+
+const style = () => ({
+  display: 'block',
+  width: '100%',
+  background: '#ff6b00',
+  borderColor: '#ff6b00'
+});
 
 class CustomForm extends Component {
 
@@ -16,11 +22,13 @@ class CustomForm extends Component {
     onSubmit: PropTypes.func.isRequired
   };
 
-  handleSubmit = () => {
+  handleSubmit = (e) => {
     const { form: { validateFields }, onSubmit } = this.props;
     validateFields((err, values) => {
       if (!err)
         onSubmit(values);
+
+      e.preventDefault();
     });
   };
 
@@ -33,13 +41,13 @@ class CustomForm extends Component {
           const { key, rules, widget } = item;
 
           return (
-            <FormItem>
+            <FormItem hasFeedback>
               {getFieldDecorator(key, { rules })(widget)}
             </FormItem>
           )
         })}
         <FormItem>
-          <Button type="primary" htmlType="submit" className={ style.btn }>{ okText }</Button>
+          <Button type="primary" htmlType="submit" style={ style() }>{ okText }</Button>
         </FormItem>
       </Form>
     );

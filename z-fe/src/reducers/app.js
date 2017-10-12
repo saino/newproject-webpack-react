@@ -9,6 +9,13 @@ const actionTypes = {
   FETCH_END: 'FETCH_END'
 
 };
+const actions = {
+
+  fetchStart: () => ({ type: actionTypes.FETCH_START }),
+
+  fetchEnd: () => ({ type: actionTypes.FETCH_END })
+
+};
 const defState = {
 
   // 是否正在与服务端发生交互

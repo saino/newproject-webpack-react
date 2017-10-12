@@ -1,4 +1,4 @@
-import { post } from '../../fetch/fetch';
+import { post } from '../fetch/fetch';
 import { getAuth, setAuth, removeAuth }  from '../utils/auth';
 import packageToken from '../utils/packageToken';
 

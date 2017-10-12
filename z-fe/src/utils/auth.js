@@ -1,4 +1,4 @@
-export function getAuth = () =>
+export const getAuth = () =>
   JSON.parse(localStorage.getItem('auth'));
 
 export const setAuth = (token, expired) =>
@@ -8,7 +8,7 @@ export const removeAuth = () =>
   localStorage.removeItem('auth');
 
 export const checkExpiredStatus = () => {
-  const { token, expired } = this.getAuth() || {};
+  const { token, expired } = getAuth() || {};
   const currTime = Date.now();
   const diffTime = currTime - expired;
 

@@ -1,10 +1,12 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 // import { BrowserRouter as Router } from 'react-router-dom'
-import Routers from './routers/Routers'
-import configureStore from './store/configureStore'
-import { AppContainer } from 'react-hot-loader'
-import {getUserInfo}from './utils'
+import Routers from './routers/Routers';
+import configureStore from './store/configureStore';
+import { AppContainer } from 'react-hot-loader';
+import {getUserInfo}from './utils';
+import 'antd/dist/antd.css';
+
 
 const store = configureStore({userInfo:getUserInfo()})
 

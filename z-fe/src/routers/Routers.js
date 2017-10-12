@@ -4,12 +4,12 @@ import PropTypes from 'prop-types'
 import {Route, BrowserRouter} from 'react-router-dom'
 import Loadable from 'react-loadable';
 import PageLoading from '../components/pageLoading'
-import Home from '../components/home'
+import Home from '../components/home/Home'
 import {Provider} from 'react-redux'
 // import User from '../components/User'
-import Login from '../containers/Login'
-import Register from '../containers/Register'
-import UserCenter from '../containers/UserCenter'
+import Login from '../containers/Login';
+import Register from '../containers/Register';
+import UserCenter from '../containers/UserCenter';
 
 
 
@@ -46,4 +46,3 @@ Routers.propTypes = {
 }
 
 export default Routers
-
