@@ -187,7 +187,7 @@ class Home extends Component {
           footer={ config.dialog.footerVisible }
           width={ config.dialog.width }
           visible={ visibleLoginForm }>
-          <Login />
+          <Login onLogin={ this.handleCloseLoginForm } />
         </Modal>
         <Modal
           title="注册"

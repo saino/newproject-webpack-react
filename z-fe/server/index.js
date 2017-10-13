@@ -14,24 +14,33 @@ var worklist = Array.apply(null, Array(100)).map(function (item, i) {
     return {itemNo: i};
 });
 // console.log(list);
-app.all('*', function (req, res, next) {
+app.all('*', function (req, res, next) {    
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,logintoken,userid");
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE");
     res.header("X-Powered-By", ' 3.2.1')
     res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
 
 
-app.post('/login', function (req, res) {
-    if (req.body.pwd == 123) {
-        userInfo.name = req.body.name;
-        res.send({data: {'id': "1234567", loginToken: "asdfsdfasdfas", name: userInfo.name}, status: 0});
+app.post('/api/login', function (req, res) {
+    if (req.body.password == 123) {
+        res.send({
+          errorCode: 0,
+          errorMsg: '',
+          data: {
+            token: '123AAA456BBB',
+            expired: Date.now() + 3600000
+          }
+        });
     } else {
-        res.send({msg: "密码错误", status: 2});
+      res.send({
+        errorCode: 3000,
+        errorMsg: '用户名或密码错误',
+        data: null
+      });
     }
-
 })
 app.post('/register', function (req, res) {
     console.log(req);

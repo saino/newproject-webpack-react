@@ -28,54 +28,51 @@ const defState = {
 function empty () {
   return (dispatch) => {
     removeAuth();
-    dispatch({ type: actions.LOGOUT });
+    dispatch({ type: actionTypes.LOGOUT });
   };
 }
 
-export const actions = {
+export const login = (username, password, success: Function, fail: Function) => dispatch => {
+  post('/login', { username, password }, resp => {
+    const { token, expired } = resp;
 
-  login: (username, password) => dispatch => {
-    post('/login', { username, password }, resp => {
-      const { token, expired } = resp;
+    // 持续化存储token
+    setAuth(token, expired);
 
-      // 持续化存储token
-      setAuth(token, expired);
-
-      dispatch({
-       type: actionTypes.LOGIN,
-       token,
-       expired
-      });
+    dispatch({
+     type: actionTypes.LOGIN,
+     token,
+     expired
     });
-  },
 
-  register: (username, password) => dispatch => {
-    post('/register', { username, password }, resp => {
-      const { token, expired } = resp;
-
-      // 持续化存储token
-      setAuth(token, expired);
-
-      dispatch({
-        type: actionTypes.REGISTER,
-        token,
-        expired
-      });
-    });
-  },
-
-  getUserInfo: packageToken(dispatch => {
-    const { token } = getAuth();
-
-    post('/getUserInfo', { token }, resp => dispatch({
-      type: actionTypes.GET_USERINFO,
-      user: resp
-    }));
-  }, empty),
-
-  logout: empty
-
+    success();
+  }, fail);
 };
+export const register = (username, password, success: Function, fail: Function) => dispatch => {
+  post('/register', { username, password }, resp => {
+    const { token, expired } = resp;
+
+    // 持续化存储token
+    setAuth(token, expired);
+
+    dispatch({
+      type: actionTypes.REGISTER,
+      token,
+      expired
+    });
+
+    success();
+  }, fail);
+};
+export const getUserInfo = packageToken(dispatch => {
+  const { token } = getAuth();
+
+  post('/getUserInfo', { token }, resp => dispatch({
+    type: actionTypes.GET_USERINFO,
+    user: resp
+  }));
+}, empty);
+export const logout = empty;
 
 export default (state = defState, action) => {
   switch (action.type) {

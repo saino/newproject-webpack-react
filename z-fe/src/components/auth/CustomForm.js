@@ -17,6 +17,7 @@ class CustomForm extends Component {
    * item: { key: 'username', rules: [], widget: <xx /> }
    */
   static propTypes = {
+    isFetching: PropTypes.bool.isRequired,
     okText: PropTypes.string.isRequired,
     fieldDecorators: PropTypes.array.isRequired,
     onSubmit: PropTypes.func.isRequired
@@ -25,15 +26,15 @@ class CustomForm extends Component {
   handleSubmit = (e) => {
     const { form: { validateFields }, onSubmit } = this.props;
     validateFields((err, values) => {
+      e.preventDefault();
+      
       if (!err)
         onSubmit(values);
-
-      e.preventDefault();
     });
   };
 
   render() {
-    const { form: { getFieldDecorator }, fieldDecorators, okText,  } = this.props;
+    const { form: { getFieldDecorator }, fieldDecorators, okText, isFetching } = this.props;
 
     return (
       <Form onSubmit={ this.handleSubmit }>
@@ -47,7 +48,7 @@ class CustomForm extends Component {
           )
         })}
         <FormItem>
-          <Button type="primary" htmlType="submit" style={ style() }>{ okText }</Button>
+          <Button type="primary" loading={ isFetching } htmlType="submit" style={ style() }>{ okText }</Button>
         </FormItem>
       </Form>
     );
