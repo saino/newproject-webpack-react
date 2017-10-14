@@ -150,7 +150,7 @@ class Home extends Component {
           </div>
 
           {/* 产品介绍 */}
-          <div style={ intro }>
+          <div id='intro' style={ intro }>
             <h3 style={ introCaption }>产品介绍</h3>
             <img src={ introJPG } style={ introSumary } />
           </div>
@@ -161,7 +161,7 @@ class Home extends Component {
           </div>
 
           {/* 如何使用 */}
-          <div style={ use }>
+          <div id='use' style={ use }>
             <div style={ useOne }>
               <img src={ useOneJPG } style={ useImg } />
             </div>

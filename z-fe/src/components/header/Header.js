@@ -120,15 +120,15 @@ class Header extends Component {
 
           <ul style={ nav }>
             <li style={ navItem } onMouseOver={ this.handleShowBottomLine } onMouseOut={ this.handleHideBottomLine }>
-              <NavLink to="/intro" style={ navItemText }>网站介绍</NavLink>
+              <a href="#intro" style={ navItemText }>网站介绍</a>
               <span style={ navBottomLine }></span>
             </li>
             <li style={ navItem } onMouseOver={ this.handleShowBottomLine } onMouseOut={ this.handleHideBottomLine }>
-              <NavLink to="/use" style={ navItemText }>如何使用</NavLink>
+              <a href="#use" style={ navItemText }>如何使用</a>
               <span style={ navBottomLine }></span>
             </li>
             <li style={ navItem } onMouseOver={ this.handleShowBottomLine } onMouseOut={ this.handleHideBottomLine }>
-              <NavLink to="/about" style={ navItemText }>联系我们</NavLink>
+              <a href="#about" style={ navItemText }>联系我们</a>
               <span style={ navBottomLine }></span>
             </li>
           </ul>
