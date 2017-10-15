@@ -28,7 +28,7 @@ app.post('/api/auth/login', function (req, res) {
     if (req.body.password == 123) {
         res.send({
           errorCode: 0,
-          errorMsg: '',
+          errorMessage: '',
           data: {
             token: '123AAA456BBB',
             expired: Date.now() + 3600000
@@ -37,7 +37,7 @@ app.post('/api/auth/login', function (req, res) {
     } else {
       res.send({
         errorCode: 3000,
-        errorMsg: '用户名或密码错误',
+        errorMessage: '手机号或密码错误',
         data: null
       });
     }
@@ -46,7 +46,7 @@ app.post('/api/auth/currUser', function (req, res) {
   if (req.body.token) {
     return res.send({
       errorCode: 0,
-      errorMsg: '',
+      errorMessage: '',
       data: {
         usernick: '八级大狂风',
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
@@ -56,20 +56,28 @@ app.post('/api/auth/currUser', function (req, res) {
 
   res.send({
     errorCode: 1000,
-    errorMsg: '请先登录',
+    errorMessage: '请先登录',
     data: null
   });
 });
 
 app.post('/api/auth/register', function (req, res) {
-  res.send({
-    errorCode: 0,
-    errorMsg: '',
-    data: {
-      token: '123AAA456BBB',
-      expired: Date.now() + 3600000
-    }
-  });
+  if (req.body.phone == 123) {
+      res.send({
+        errorCode: 1000,
+        errorMessage: '手机号已存在',
+        data: null
+      });
+  } else {
+    res.send({
+      errorCode: 0,
+      errorMessage: '',
+      data: {
+        token: '123AAA456BBB',
+        expired: Date.now() + 3600000
+      }
+    });
+  }
 })
 app.get('/userinfo', function (req, res) {
 

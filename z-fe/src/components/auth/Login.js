@@ -26,14 +26,14 @@ class Login extends Component {
     onLogin: PropTypes.func.isRequired
   };
 
-  handleLogin = ({ username, password }) => {
+  handleLogin = ({ phone, password }) => {
     const { fetchStart, fetchEnd, login, onLogin } = this.props;
 
     // 请求后端中，显示请求状态
     fetchStart();
 
     // 登录操作
-    login(username, password, () => {
+    login(phone, password, () => {
       // 登录成功，删除请求状态
       fetchEnd();
       onLogin();
@@ -54,12 +54,12 @@ class Login extends Component {
           isFetching={ app.isFetching }
           okText="登录"
           fieldDecorators={[{
-            key: 'username',
+            key: 'phone',
             rules: [{
               required: true,
-              message: '请输入您的用户名'
+              message: '请输入您的手机号'
             }],
-            widget: (<Input prefix={ <Icon type="user" /> } style={ input } placeholder="请输入您的用户名" />)
+            widget: (<Input prefix={ <Icon type="phone" /> } style={ input } placeholder="请输入您的手机号" />)
           }, {
             key: 'password',
             rules: [{

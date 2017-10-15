@@ -16,7 +16,7 @@ function checkErrorCodeStatus (resp: Object) {
   if (resp.errorCode == 0)
     return resp;
 
-   throw new Error(resp.errorMsg);
+   throw new Error(resp.errorMessage);
 }
 
 function parseResp (resp: Object) {

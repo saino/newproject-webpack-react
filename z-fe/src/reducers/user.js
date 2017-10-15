@@ -32,8 +32,8 @@ function empty () {
   };
 }
 
-export const login = (username, password, success: Function, fail: Function) => dispatch => {
-  post('/auth/login', { username, password }, resp => {
+export const login = (phone, password, success: Function, fail: Function) => dispatch => {
+  post('/auth/login', { phone, password }, resp => {
     const { token, expired } = resp;
 
     // 持续化存储token
@@ -48,8 +48,8 @@ export const login = (username, password, success: Function, fail: Function) => 
     success();
   }, fail);
 };
-export const register = (username, password, success: Function, fail: Function) => dispatch => {
-  post('/auth/register', { username, password }, resp => {
+export const register = (phone, password, success: Function, fail: Function) => dispatch => {
+  post('/auth/register', { phone, password }, resp => {
     const { token, expired } = resp;
 
     // 持续化存储token

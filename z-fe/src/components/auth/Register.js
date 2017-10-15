@@ -26,7 +26,7 @@ class Register extends Component {
     onRegister: PropTypes.func.isRequired
   };
 
-  handleRegister = ({ username, newPassword, againNewPassword }) => {
+  handleRegister = ({ phone, newPassword, againNewPassword }) => {
     const { fetchStart, fetchEnd, register, onRegister } = this.props;
 
     // 将表单验证单独封装成组件，ant design无法做到自定义验证，这里采取的就是用message.error，以后再优化
@@ -39,7 +39,7 @@ class Register extends Component {
     fetchStart();
 
     // 注册
-    register(username, newPassword, () => {
+    register(phone, newPassword, () => {
       fetchEnd();
       onRegister();
     }, () => {
@@ -58,12 +58,12 @@ class Register extends Component {
           isFetching={ app.isFetching }
           okText="注册"
           fieldDecorators={[{
-            key: 'username',
+            key: 'phone',
             rules: [{
               required: true,
-              message: '请输入您的用户名'
+              message: '请输入您的手机号'
             }],
-            widget: (<Input prefix={ <Icon type="user" /> } style={ input } placeholder="请输入您的用户名" />)
+            widget: (<Input prefix={ <Icon type="phone" /> } style={ input } placeholder="请输入您的手机号" />)
           }, {
             key: 'newPassword',
             rules: [{

@@ -6,8 +6,8 @@ import { Modal } from 'antd';
 /* 自定义组件 */
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
-import Login from '../auth/Login';
-import Register from '../auth/Register';
+import Login from '../../components/auth/Login';
+import Register from '../../components/auth/Register';
 
 /* 资源（后续将写入css文件中） */
 import hdJPG from '../../statics/zr_bg.jpg';
