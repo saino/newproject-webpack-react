@@ -14,7 +14,7 @@ var worklist = Array.apply(null, Array(100)).map(function (item, i) {
     return {itemNo: i};
 });
 // console.log(list);
-app.all('*', function (req, res, next) {    
+app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,logintoken,userid");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE");
@@ -24,7 +24,7 @@ app.all('*', function (req, res, next) {
 });
 
 
-app.post('/api/login', function (req, res) {
+app.post('/api/auth/login', function (req, res) {
     if (req.body.password == 123) {
         res.send({
           errorCode: 0,
@@ -41,10 +41,35 @@ app.post('/api/login', function (req, res) {
         data: null
       });
     }
-})
-app.post('/register', function (req, res) {
-    console.log(req);
-    res.send(userInfo);
+});
+app.post('/api/auth/currUser', function (req, res) {
+  if (req.body.token) {
+    return res.send({
+      errorCode: 0,
+      errorMsg: '',
+      data: {
+        usernick: '八级大狂风',
+        avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+      }
+    });
+  }
+
+  res.send({
+    errorCode: 1000,
+    errorMsg: '请先登录',
+    data: null
+  });
+});
+
+app.post('/api/auth/register', function (req, res) {
+  res.send({
+    errorCode: 0,
+    errorMsg: '',
+    data: {
+      token: '123AAA456BBB',
+      expired: Date.now() + 3600000
+    }
+  });
 })
 app.get('/userinfo', function (req, res) {
 

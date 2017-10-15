@@ -19,7 +19,28 @@ export default ({
   // 对话框
   dialog: {
     width: 450,
-    footerVisible: false
+    footerVisible: false,
+    wrapClassName: 'vertical-center-modal',
+    centerStyle: `
+    .vertical-center-modal {
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .vertical-center-modal:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+      width: 0;
+    }
+
+    .vertical-center-modal .ant-modal {
+      display: inline-block;
+      vertical-align: middle;
+      top: 0;
+      text-align: left;
+    }`
   },
 
   // 图片/视频上传(单位：KB)

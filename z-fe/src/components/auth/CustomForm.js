@@ -17,32 +17,36 @@ class CustomForm extends Component {
    * item: { key: 'username', rules: [], widget: <xx /> }
    */
   static propTypes = {
-    isFetching: PropTypes.bool.isRequired,
+    isFetching: PropTypes.bool,
     okText: PropTypes.string.isRequired,
     fieldDecorators: PropTypes.array.isRequired,
     onSubmit: PropTypes.func.isRequired
   };
+  static defaultProps = {
+    isFetching: false
+  };
 
   handleSubmit = (e) => {
     const { form: { validateFields }, onSubmit } = this.props;
+
     validateFields((err, values) => {
-      e.preventDefault();
-      
       if (!err)
         onSubmit(values);
     });
+    e.preventDefault();
   };
+
 
   render() {
     const { form: { getFieldDecorator }, fieldDecorators, okText, isFetching } = this.props;
 
     return (
       <Form onSubmit={ this.handleSubmit }>
-        {fieldDecorators.map(item => {
-          const { key, rules, widget } = item;
+        {fieldDecorators.map((item, index) => {
+          let { key, rules, widget } = item;
 
           return (
-            <FormItem hasFeedback>
+            <FormItem key={ index } hasFeedback>
               {getFieldDecorator(key, { rules })(widget)}
             </FormItem>
           )

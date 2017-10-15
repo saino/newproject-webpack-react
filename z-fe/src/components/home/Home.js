@@ -185,6 +185,7 @@ class Home extends Component {
           title="登录"
           onCancel={ this.handleCloseLoginForm }
           footer={ config.dialog.footerVisible }
+          wrapClassName={ config.dialog.wrapClassName }
           width={ config.dialog.width }
           visible={ visibleLoginForm }>
           <Login onLogin={ this.handleCloseLoginForm } />
@@ -193,11 +194,14 @@ class Home extends Component {
           title="注册"
           onCancel={ this.handleCloseRegisterForm }
           footer={ config.dialog.footerVisible }
+          wrapClassName={ config.dialog.wrapClassName }
           width={ config.dialog.width }
           visible={ visibleRegisterForm }>
-          <Register />
+          <Register onRegister={ this.handleCloseRegisterForm } />
         </Modal>
 
+        {/* 对话框样式 */}
+        <style>{ config.dialog.centerStyle }</style>
       </div>
     );
   }

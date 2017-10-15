@@ -26,14 +26,14 @@ const defState = {
 };
 
 function empty () {
-  return (dispatch) => {
+  return dispatch => {
     removeAuth();
     dispatch({ type: actionTypes.LOGOUT });
   };
 }
 
 export const login = (username, password, success: Function, fail: Function) => dispatch => {
-  post('/login', { username, password }, resp => {
+  post('/auth/login', { username, password }, resp => {
     const { token, expired } = resp;
 
     // 持续化存储token
@@ -49,7 +49,7 @@ export const login = (username, password, success: Function, fail: Function) => 
   }, fail);
 };
 export const register = (username, password, success: Function, fail: Function) => dispatch => {
-  post('/register', { username, password }, resp => {
+  post('/auth/register', { username, password }, resp => {
     const { token, expired } = resp;
 
     // 持续化存储token
@@ -67,7 +67,7 @@ export const register = (username, password, success: Function, fail: Function) 
 export const getUserInfo = packageToken(dispatch => {
   const { token } = getAuth();
 
-  post('/getUserInfo', { token }, resp => dispatch({
+  post('/auth/currUser', { token }, resp => dispatch({
     type: actionTypes.GET_USERINFO,
     user: resp
   }));

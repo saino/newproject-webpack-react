@@ -66,7 +66,7 @@ class Login extends Component {
               required: true,
               message: '请输入您的密码'
             }],
-            widget: (<Input prefix={ <Icon type="lock" /> } style={ input } placeholder="请输入您的密码" />)
+            widget: (<Input type="password" prefix={ <Icon type="lock" /> } style={ input } placeholder="请输入您的密码" />)
           }]}
           onSubmit={ this.handleLogin }></CustomForm>
 
