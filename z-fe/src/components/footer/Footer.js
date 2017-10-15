@@ -69,7 +69,7 @@ export default class Footer extends Component {
       companyCroxy, companyCroxyFlag, companyCroxyFlagItem, companyCroxyFlagItemText } = style();
 
     return (
-      <div style={ root }>
+      <div id='about' style={ root }>
         <div style={ rootInner }>
 
           <div style={ companyIntro }>
