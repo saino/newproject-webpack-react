@@ -5,7 +5,7 @@ import Loadable from 'react-loadable';
 import {Provider} from 'react-redux'
 import PageLoading from '../components/pageLoading'
 import Home from '../containers/home/Home';
-
+import NotMatch from '../containers/NotMatch';
 
 
 
@@ -27,7 +27,8 @@ const Routers = ({store}) => (
     <Provider store={store}>
         <BrowserRouter>
             <Switch>
-                <Route path="/" component={Home}/>
+                <Route exact path="/" component={ Home } />
+                <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>
     </Provider>
