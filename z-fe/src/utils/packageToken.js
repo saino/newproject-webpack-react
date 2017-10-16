@@ -1,4 +1,4 @@
-import { checkExpiredStatus } from './auth';
+import { checkExpiredStatus, getAuth } from './auth';
 import { message } from 'antd';
 
 export default (fn, quit: Function) => () => dispatch => {
@@ -9,5 +9,5 @@ export default (fn, quit: Function) => () => dispatch => {
     return;
   }
 
-  fn(dispatch);
+  fn(dispatch, getAuth().token);
 }

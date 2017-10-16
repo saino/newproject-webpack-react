@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 
 /* 自定义组件 */
@@ -27,13 +28,29 @@ const style = () => ({
   },
 
   hd: {
-    height: 750
+    height: 750,
+    position: 'relative'
   },
   hdImg: {
     display: 'block',
     width: '100%',
     height: '100%',
     objectFit: 'cover'
+  },
+  makeBtn: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    width: 150,
+    margin: '0 auto',
+    border: '0 none',
+    borderRadius: 65,
+    bottom: 235,
+    lineHeight: '50px',
+    color: '#000',
+    background: '#FEF200',
+    fontSize: 14,
+    textAlign: 'center'
   },
 
   intro: {
@@ -131,7 +148,7 @@ class Home extends Component {
   render() {
     const {
       root,
-      hd, hdImg,
+      hd, hdImg, makeBtn,
       intro, introCaption, introSumary,
       introCategory, introCategoryInner, introCategoryImg,
       use, useOne, useImg, useTwo, useTwoInner, useThree } = style();
@@ -147,6 +164,7 @@ class Home extends Component {
           {/* 广告 */}
           <div style={ hd }>
             <img src={ hdJPG } style={ hdImg } />
+            <Link to="/make" style={ makeBtn }>开始制作</Link>
           </div>
 
           {/* 产品介绍 */}

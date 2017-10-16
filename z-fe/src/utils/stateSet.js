@@ -8,47 +8,45 @@ const inArray = (arr: Array, item) =>
   arr.find(item) != null;
 
 // 添加元素，避免重复
-export const add = (target: Object, key: String, origin) => {
-  const arr = target[ key ];
-
-  if (!arr || origin == null)
+export const add = (target: Array, origin) => {
+  if (!target || origin == null)
     return target;
 
-  if (inArray(arr, origin))
+  if (inArray(target, origin))
     return target;
 
-  return { ...target, [ key ]: [ ...arr, origin ] };
+  return [ ...target, origin ];
 };
 
-export const update = (target: Object, key: String, idKey = 'id', idValue, origin: Object) => {
-  let arr = tarObj[key], waitUpdate, waitUpdateIndex;
+export const update = (target: Array, idKey = 'id', idValue, origin: Object) => {
+  let waitUpdate, waitUpdateIndex;
 
-  if (!arr || origin == null)
+  if (!target || origin == null)
     return target;
 
-  waitUpdateIndex = arr.findIndex(item => item[ idKey ] == idValue);
+  waitUpdateIndex = target.findIndex(item => item[ idKey ] == idValue);
 
   if (waitUpdateIndex < 0)
     return target;
 
-  waitupdate = arr[waitUpdateIndex];
-  arr.splice(waitUpdateIndex, 1, { ...waitupdate, ...origin });
+  waitUpdate = target[waitUpdateIndex];
+  target.splice(waitUpdateIndex, 1, { ...waitUpdate, ...origin });
 
-  return { ...target, [ key ]: [ ...arr ] };
+  return [ ...target ];
 };
 
-export const remove = (target: Object, key: String, idKey = 'id', idValue) => {
-  let arr = tarObj[key], waitUpdateIndex;
+export const remove = (target: Array, idKey = 'id', idValue) => {
+  let waitUpdateIndex;
 
-  if (!arr)
+  if (!target)
     return target;
 
-  waitUpdateIndex = arr.findIndex(item => item[ idKey ] == idValue);
+  waitUpdateIndex = target.findIndex(item => item[ idKey ] == idValue);
 
   if (waitUpdateIndex < 0)
     return target;
 
-  arr.splice(waitUpdateIndex, 1);
+  target.splice(waitUpdateIndex, 1);
 
-  return { ...target, [ key ]: [ ...arr ] };
+  return [ ...target ];
 };

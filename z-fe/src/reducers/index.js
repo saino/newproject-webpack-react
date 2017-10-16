@@ -4,7 +4,8 @@ import paginate from './paginate'
 import {combineReducers} from 'redux'
 import app from './app';
 import user from './user';
-
+import step from './step';
+import sceneType from './sceneType';
 
 const userInfo = (state = {}, action) => {
     switch (action.type){
@@ -44,8 +45,9 @@ const worksInfo=(state={currentPage:0,page:{}},action)=>{
 
 const rootReducer = combineReducers({
     app,
-
     user,
+    step,
+    sceneType,
     userInfo,
     worksInfo
 })

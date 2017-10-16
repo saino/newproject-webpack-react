@@ -5,6 +5,7 @@ import Loadable from 'react-loadable';
 import {Provider} from 'react-redux'
 import PageLoading from '../components/pageLoading'
 import Home from '../containers/home/Home';
+import Make from '../containers/make/Make';
 import NotMatch from '../containers/NotMatch';
 
 
@@ -28,6 +29,7 @@ const Routers = ({store}) => (
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={ Home } />
+                <Route exact path="/make" component={ Make } />
                 <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>

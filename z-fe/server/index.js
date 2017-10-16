@@ -48,7 +48,7 @@ app.post('/api/auth/currUser', function (req, res) {
       errorCode: 0,
       errorMessage: '',
       data: {
-        usernick: '八级大狂风',
+        usernick: '致戎科技',
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
       }
     });

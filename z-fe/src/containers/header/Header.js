@@ -16,7 +16,8 @@ const style = () => ({
     color: '#fff',
     fontSize: 14,
     fontFamily: 'microsoft Yahei',
-    background: 'rgba(30,30,30,.5)'
+    background: 'rgba(30,30,30,.5)',
+    zIndex: 1
   },
 
   rootInner: {
