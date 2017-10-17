@@ -16,7 +16,7 @@ class Make extends Component {
 
         <div className="top">
         {/* 选择步骤 */}
-        {/*<Step />*/}
+        <Step />
         </div>
 
         <div className="main">
@@ -24,7 +24,7 @@ class Make extends Component {
         <SceneType />
 
         {/* 控制面板 */}
-        {/*<ControllerPanel />*/}  
+        {/*<ControllerPanel />*/}
         </div>
 
         <div className="bottom">
@@ -38,6 +38,7 @@ class Make extends Component {
             display: flex;
             flex-flow: column nowrap;
             align-items: stretch;
+            height: 100%;
           }
 
           .make .main {

@@ -11,11 +11,11 @@ class SceneType extends PureComponent {
     return (
       <div className="scenetype">
 
-        <ul>{ sceneType.map(type => {
+        <ul>{ sceneType.map((type, index) => {
           const { key, name, selected } = type;
 
           return (
-            <li key={ key } className={ selected ? 'active' : void 0 }>{ name }</li>
+            <li key={ key } className={ selected ? 'active' : void 0 }>镜头{ index + 1 } : { name }</li>
           );
         }) }</ul>
 
@@ -30,7 +30,7 @@ class SceneType extends PureComponent {
           }
           .scenetype ul li {
             line-height: 60px;
-            text-align: center;
+            padding: 0 20px;
           }
           .scenetype ul li.active {
             background: #124967;

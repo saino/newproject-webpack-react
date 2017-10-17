@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { checkExpiredStatus } from '../../utils/auth';
 import LoginBefore from './LoginBefore';
 import LoginAfter from './LoginAfter';
@@ -113,10 +114,10 @@ class Header extends Component {
       <div style={ root }>
         <div style={ rootInner }>
 
-          <a href="/" style={ logo } >
+          <Link to="/" style={ logo } >
             <img style={ logoImg } src={ logoPNG } />
             <span style={ logoText }>LIANGZIVFX</span>
-          </a>
+          </Link>
 
           <ul style={ nav }>
             <li style={ navItem } onMouseOver={ this.handleShowBottomLine } onMouseOut={ this.handleHideBottomLine }>
