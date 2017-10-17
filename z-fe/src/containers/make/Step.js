@@ -12,13 +12,16 @@ class Step extends Component {
     return (
       <div className="step">
         <div className="step-inner">
-          <ul className="step-to">
 
+          <div className="logo">
+            <Link className="logo-inner" to="/">
+              <img className="logo-img" src={ logoPNG } />
+              <label className="logo-text">LIANGZIVFX</label>
+            </Link>
+          </div>
+
+          <ul className="step-to">
             <li className="materials complete">
-              <Link className="logo" to="/">
-                <img className="logo-img" src={ logoPNG } />
-                <label className="logo-text">LIANGZIVFX</label>
-              </Link>
               <a className="item middle">1.素材上传</a>
             </li>
 
@@ -26,10 +29,13 @@ class Step extends Component {
               <a className="item middle" href="javaScript:;">2.镜头特效</a>
             </li>
             <li className="combine middle item">
-              <a href="javaScript:;">3.镜头组合</a>
+              <a className="item middle" href="javaScript:;">3.镜头组合</a>
+            </li>
+            <li className="combine middle item">
+              <a className="item middle" href="javaScript:;">4.视频配音</a>
             </li>
             <li className="publish middle item">
-              <a href="javaScript:;">4.视频发布</a>
+              <a className="item middle" href="javaScript:;">5.视频发布</a>
             </li>
           </ul>
         </div>
@@ -40,6 +46,7 @@ class Step extends Component {
           }
 
           .step-inner {
+            position: relative;
             display: flex;
             flex-flow: row nowrap;
             align-items: center;
@@ -63,7 +70,6 @@ class Step extends Component {
           }
 
           .step-to .item {
-            display: block;
             width: 135px;
             height: 100%;
           }
@@ -78,25 +84,33 @@ class Step extends Component {
 
           .step-to .materials {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: stretch;
             width: 509px;
             padding-left: 20px;
           }
 
-          .step-to .logo {
-            display: flex;
-            align-items: center;
+          .step-inner .logo {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
           }
 
-          .step-to .logo-img {
+          .step-inner .logo-inner {
+            display: flex;
+            align-items: center;
+            height: 100%;
+          }
+
+          .step-inner .logo-img {
             display: inline-block;
             width: 36px;
             height: 31px;
             vertical-align: middle;
           }
 
-          .step-to .logo-text {
+          .step-inner .logo-text {
             margin-left: 10px;
             font-size: 20px;
             vertical-align: middle;

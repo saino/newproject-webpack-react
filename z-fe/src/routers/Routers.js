@@ -4,6 +4,7 @@ import {Route, BrowserRouter, Switch} from 'react-router-dom'
 import Loadable from 'react-loadable';
 import {Provider} from 'react-redux'
 import PageLoading from '../components/pageLoading'
+import { requireAuth } from '../utils/preRouter';
 import Home from '../containers/home/Home';
 import Make from '../containers/make/Make';
 import NotMatch from '../containers/NotMatch';
@@ -29,7 +30,7 @@ const Routers = ({store}) => (
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={ Home } />
-                <Route exact path="/make" component={ Make } />
+                <Route exact path="/make" render={ requireAuth(Make) } />
                 <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>

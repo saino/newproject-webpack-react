@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 /* 第三方组件 */
 import Step from './Step';
 import SceneType from './SceneType';
+import SceneCenter from './SceneCenter';
 import ControllerPanel from './ControllerPanel';
 import Timeline from './Timeline';
 
@@ -15,21 +16,28 @@ class Make extends Component {
       <div className="make">
 
         <div className="top">
-        {/* 选择步骤 */}
-        <Step />
+          {/* 选择步骤 */}
+          <Step />
         </div>
 
         <div className="main">
-        {/* 镜头类型 */}
-        <SceneType />
 
-        {/* 控制面板 */}
-        {/*<ControllerPanel />*/}
+          {/* 镜头类型 */}
+          <SceneType />
+
+          {/* 场景中心 */}
+          <SceneCenter />
+
+          {/* 控制面板 */}
+          <ControllerPanel />
+
         </div>
 
         <div className="bottom">
-        {/* 时间轴 */}
-        {/*<Timeline />*/}
+
+          {/* 时间轴 */}
+          <Timeline />
+
         </div>
 
 
@@ -52,7 +60,7 @@ class Make extends Component {
           }
 
           .make .bottom {
-            flex: 0 0 54px;
+            flex: 0 0 128px;
           }
         `}</style>
       </div>
