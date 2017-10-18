@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchStart, fetchEnd } from '../../reducers/app';
 
 class PrePick extends Component {
+  static propTypes = {
+    onNext: PropTypes.func.isRequired
+  };
+
   render() {
     return (
       <div className="pre-pick">
@@ -14,7 +19,7 @@ class PrePick extends Component {
         </div>
 
         <div className="auto-start">
-          <button>开始云端AI自动抠像</button>
+          <button onClick={ this.props.onNext }>开始云端AI自动抠像</button>
         </div>
 
         <style>{`

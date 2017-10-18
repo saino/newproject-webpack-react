@@ -4,7 +4,7 @@ import PrePick from './PrePick';
 
 export default class Pick extends Component {
   state = {
-    index: 1
+    index: 0
   };
 
   render() {
@@ -15,7 +15,8 @@ export default class Pick extends Component {
 
         <div className="main">
           { !this.state.index ?
-            (<PrePick />) : (<PerfectPick />)
+            (<PrePick onNext={ () => { this.setState({ index: 1 }) } } />) :
+            (<PerfectPick onPrev={ () => { this.setState({ index: 0 }) } } />)
           }
         </div>
 

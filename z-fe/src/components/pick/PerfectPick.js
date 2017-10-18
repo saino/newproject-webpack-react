@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Table } from 'antd';
@@ -9,6 +10,10 @@ function mapStateToProps ({ api }) {
 }
 
 class PerfectPick extends Component {
+  static propTypes = {
+    onPrev: PropTypes.func.isRequired
+  };
+
   columns = [{
     title: '帧',
     dataIndex: 'frameId',
@@ -60,7 +65,7 @@ class PerfectPick extends Component {
         </div>
 
         <div className="build">
-          <button>开始生成抠像素材</button>
+          <button onClick={ this.props.onPrev }>开始生成抠像素材</button>
         </div>
 
         <style>{`

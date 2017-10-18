@@ -48,6 +48,8 @@
     "react-modal": "^2.3.2",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.2",
+    "react-ruler": "^0.15.1",
+    "react-timeline-component": "^0.0.3",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
     "style-loader": "0.18.2",

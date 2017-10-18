@@ -23,12 +23,57 @@ export default class Timeline extends Component {
           </div>
 
           <div className="isloop">
-            <Checkbox>是否循环</Checkbox>
+            <Checkbox checked>是否循环</Checkbox>
           </div>
 
         </div>
 
-        <div className="wrapper"></div>
+        <div className="wrapper">
+
+          <div className="ruler">
+
+          </div>
+
+          <ul className="frames">
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+            <li className="frame"></li>
+          </ul>
+
+        </div>
 
         <style>{`
 
@@ -94,6 +139,22 @@ export default class Timeline extends Component {
             width: 100%;
             flex: 1;
             background: #264c61;
+          }
+
+          .timeline .wrapper .frames {
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+          }
+
+          .timeline .wrapper .frames .frame {
+            width: 44px;
+            height: 44px;
+            background: #ccc;
+            margin: 0 4px;
           }
 
         `}</style>
