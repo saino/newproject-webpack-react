@@ -34,44 +34,30 @@ export default class Timeline extends Component {
 
           </div>
 
-          <ul className="frames">
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-            <li className="frame"></li>
-          </ul>
+
+          <div className="frames">
+            <ul>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+              <li className="frame"></li>
+            </ul>
+          </div>
 
         </div>
 
@@ -137,24 +123,25 @@ export default class Timeline extends Component {
 
           .timeline .wrapper {
             width: 100%;
-            flex: 1;
             background: #264c61;
           }
 
           .timeline .wrapper .frames {
-            padding: 0 16px;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            width: 100%;
+            padding: 10px 16px;
             overflow: auto;
           }
 
+          .timeline .wrapper .frames ul {
+            white-space: nowrap;
+          }
+
           .timeline .wrapper .frames .frame {
+            display: inline-block;
             width: 44px;
             height: 44px;
             background: #ccc;
             margin: 0 4px;
+            vertical-align: top;
           }
 
         `}</style>

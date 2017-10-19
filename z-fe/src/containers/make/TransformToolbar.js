@@ -3,7 +3,7 @@ import dragPNG from '../../statics/drag_icon.png';
 import upPNG from '../../statics/up_icon.png';
 import downPNG from '../../statics/down_icon.png';
 
-export default class TransformTollbar extends Component {
+export default class TransformTollBar extends Component {
   render() {
     return (
       <div className="transform-toolbar">

@@ -58,10 +58,7 @@ class Make extends Component {
           .make .top {
             flex: 0 0 54px;
           }
-
-          .make .bottom {
-            flex: 0 0 128px;
-          }
+          
         `}</style>
       </div>
     );

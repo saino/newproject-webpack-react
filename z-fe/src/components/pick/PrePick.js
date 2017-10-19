@@ -14,7 +14,7 @@ class PrePick extends Component {
       <div className="pre-pick">
 
         <div className="video-info">
-          <label>视频名称</label>
+          <label>素材名称</label>
           <label>xxxx.avi</label>
         </div>
 

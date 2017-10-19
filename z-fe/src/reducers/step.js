@@ -1,36 +1,24 @@
 import { update }  from '../utils/stateSet';
 
 const defState = [{
-  key: 'materialUpload',
+  key: 'materials',
   name: '素材上传',
-  selected: false
+  status: 'complete'
 }, {
-  key: 'sceneEffect',
+  key: 'effect',
   name: '镜头特效',
-  selected: true
+  status: 'doing'
 }, {
-  key: 'sceneCombine',
+  key: 'combine',
   name: '镜头组合',
-  selected: false
+  status: 'wait'
 }, {
-  key: 'videoPublish',
+  key: 'publish',
   name: '视频发布',
-  selected: false
+  status: 'wait'
 }];
 
-const actionTypes = {
-
-  GET_STEP: 'GET_STEP',
-
-  UPDATE_STEP: 'UPDATE_STEP'
-
-};
-
-export function getStep () {
-  return {
-    type: actionTypes.GET_STEP
-  };
-}
+const actionTypes = { UPDATE_STEP: 'UPDATE_STEP' };
 
 export function updateStep (key, obj) {
   return {
@@ -44,8 +32,6 @@ export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_STEP:
       return update(state, 'key', action.key, action.obj);
-    case actionTypes.GET_STEP:
-      return [ ...state ];
     default:
       return state;
   }

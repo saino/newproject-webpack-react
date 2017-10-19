@@ -9,6 +9,8 @@ import { message } from 'antd';
 
 export const requireAuth = (SuccessComponent) => () => {
   if (checkExpiredStatus()) {
+    message.error('请您先登录', 1);
+
     return <Redirect to="/" />
   }
 

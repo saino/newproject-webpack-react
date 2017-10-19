@@ -4,11 +4,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { deepCompare } from 'pure-render-immutable-decorator';
-import { getStep } from '../../reducers/step';
+import { updateStep } from '../../reducers/step';
 import logoPNG from '../../statics/logo.png';
 
 class Step extends Component {
   render() {
+    const { step } = this.props;
+
     return (
       <div className="step">
         <div className="step-inner">
@@ -21,22 +23,11 @@ class Step extends Component {
           </div>
 
           <ul className="step-to">
-            <li className="materials complete">
-              <a className="item middle">1.素材上传</a>
-            </li>
-
-            <li className="effect active">
-              <a className="item middle" href="javaScript:;">2.镜头特效</a>
-            </li>
-            <li className="combine middle item">
-              <a className="item middle" href="javaScript:;">3.镜头组合</a>
-            </li>
-            <li className="combine middle item">
-              <a className="item middle" href="javaScript:;">4.视频配音</a>
-            </li>
-            <li className="publish middle item">
-              <a className="item middle" href="javaScript:;">5.视频发布</a>
-            </li>
+            {step.map(item => (
+              <li key={ item.key } className={ `${ item.key } ${ item.status }`}>
+                <a className="item middle">{ item.name }</a>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -78,8 +69,12 @@ class Step extends Component {
             background: #006699;
           }
 
-          .step-to .active {
+          .step-to .doing {
             background: #2d8bbd;
+          }
+
+          .step-to .wait {
+            background: #114967;
           }
 
           .step-to .materials {
@@ -133,7 +128,7 @@ function mapStateToProps ({ step }) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    getStep: bindActionCreators(getStep, dispatch)
+    updateStep: bindActionCreators(updateStep, dispatch)
   };
 };
 

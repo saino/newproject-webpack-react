@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import TransformToolbar from './TransformToolbar';
-import PenHandler from './PenHandler';
+import TransformToolBar from './TransformToolBar';
+import PenToolBar from './PenToolBar';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 export default class SceneCenter extends Component {
@@ -17,11 +17,11 @@ export default class SceneCenter extends Component {
         <div className="tooltip">
 
           <div className="node">
-            <PenHandler />    
+            <PenToolBar />
           </div>
 
           <div className="transform">
-            <TransformToolbar />
+            <TransformToolBar />
           </div>
 
         </div>
