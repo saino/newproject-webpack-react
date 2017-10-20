@@ -1,5 +1,7 @@
 import React, { Component, Children } from 'react';
 import PropTypes from 'prop-types';
+import config from '../../config';
+import VideoFrame from '../../utils/videoFrame';
 
 export default class VideoHandle extends Component {
   static propTypes = {
@@ -8,16 +10,19 @@ export default class VideoHandle extends Component {
   };
 
   videoEl = null;
+  videoFrame = null;
+
   handleLoadedMetaData = () => {
     this.videoEl.play();
-    console.log(this.videoEl.duration, '秒');
+    //console.log(!!VideoFrame);
+    //console.log(!!this.videoEl.getVideoPlaybackQuality);
   }
 
   render() {
     return (
       <div className="video-handle">
 
-        <video ref={ (el) => this.videoEl = el } controls>
+        <video id="video_player" ref={ (el) => this.videoEl = el } controls>
           <source src={ this.props.videoSrc } />
         </video>
 
@@ -32,27 +37,14 @@ export default class VideoHandle extends Component {
   }
 
   componentDidMount() {
-    function xx () {
-      var time = +new Date;
-      var diff = time - currTime;
-      console.log(diff);
-      currTime = time;
-
-      setTimeout(function () {
-        xx();
-      }, 0);
-    }
-
     this.videoEl.addEventListener('loadedmetadata', this.handleLoadedMetaData, false);
-    var self = this;
-    var currTime = +new Date;
-
-    this.videoEl.addEventListener('playing', function () {
-      if (self.videoEl.paused || self.videoEl.ended)
-        return;
-
-      //xx();
-    }, false);
+    //console.log(VideoFrame, 'mlgd');
+    //console.log(VideoFrame, 'ddd');
+    this.videoFrame = new VideoFrame({
+      id: 'video_player',
+      frameRate: config.frame.rate
+    });
+    console.log(this.videoFrame.toFrames(), 'frames');
   }
 
 };

@@ -1,7 +1,7 @@
 const defState = {
 
   // 每秒多少帧
-  frameSize: 0,
+  frameSize: 24,
 
   // 当前第几帧
   currFrame: 0,
@@ -18,7 +18,7 @@ const actionTypes = {
 
   SOLUTION_FRAME: 'SOLUTION_FRAME',
 
-  UPDATE_CURR_FRAME: 'UPDATE_CURR_FRAME',
+  SET_CURR_FRAME: 'SET_CURR_FRAME',
 
   PARSE_SECOND: 'PARSE_SECOND'
 
@@ -31,9 +31,9 @@ export function solutionFrame (frame) {
   };
 }
 
-export function updateCurrFrame (currFrame) {
+export function setCurrFrame (currFrame) {
   return {
-    type: actionTypes.UPDATE_CURR_FRAME,
+    type: actionTypes.SET_CURR_FRAME,
     currFrame
   };
 }
@@ -50,7 +50,7 @@ export default function (state = defState, action) {
     case actionTypes.SOLUTION_FRAME:
       return { ...state, ..action.frame };
 
-    case actionTypes.UPDATE_CURR_FRAME:
+    case actionTypes.SET_CURR_FRAME:
       return { ...state, currFrame: action.currFrame };
 
     case actionTypes.PARSE_SECOND:

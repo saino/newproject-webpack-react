@@ -12,7 +12,7 @@ export default class SceneCenter extends Component {
         <div className="scene-center-inner">
            <div className="canvas">
 
-             <VideoHandle videoSrc="http://localhost:7878/test.mp4" onComplete={ () => {} } />
+             <VideoHandle videoSrc="http://localhost/video/test.mp4" onComplete={ () => {} } />
 
            </div>
         </div>

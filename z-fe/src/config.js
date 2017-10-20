@@ -51,12 +51,17 @@ export default ({
 
   // 分页
   page: {
-    size: 10              // 每页10条
+    pageSize: 10              // 每页10条
   },
 
   // 进入其他页面的校验接口
   auth: {
     validate: 'requireAuth'
+  },
+
+  // 帧
+  frame: {
+    rate: 24  // 帧率
   },
 
   // 对请求host、path路径处理
