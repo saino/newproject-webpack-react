@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TransformToolBar from './TransformToolBar';
 import PenToolBar from './PenToolBar';
+import VideoHandle from '../../components/video/VideoHandle';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 export default class SceneCenter extends Component {
@@ -10,7 +11,9 @@ export default class SceneCenter extends Component {
 
         <div className="scene-center-inner">
            <div className="canvas">
-             <img src={ sceneBgJPG } />
+
+             <VideoHandle videoSrc="http://localhost:7878/test.mp4" onComplete={ () => {} } />
+
            </div>
         </div>
 
