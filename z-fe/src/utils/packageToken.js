@@ -1,13 +1,13 @@
 import { checkExpiredStatus, getAuth } from './auth';
 import { message } from 'antd';
 
-export default (fn, quit: Function) => () => dispatch => {
+export default (fn, logout: Function) => body => dispatch => {
   if (checkExpiredStatus()) {
     message.warning('请重新登录');
-    dispatch(quit());
+    dispatch(logout());
     window.location.replace('/');
     return;
   }
 
-  fn(dispatch, getAuth().token);
-}
+  fn(dispatch, { token: getAuth().token, ...body });
+};

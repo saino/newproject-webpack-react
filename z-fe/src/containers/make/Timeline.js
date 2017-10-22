@@ -18,9 +18,9 @@ export default class Timeline extends Component {
             <label>当前第</label><label>30</label><label>帧</label>
           </div>
 
-          <div className="singleframe">
+          {/*<div className="singleframe">
             <label>每秒</label><label>60</label><label>帧</label>
-          </div>
+          </div>*/}
 
           <div className="isloop">
             <Checkbox checked>是否循环</Checkbox>

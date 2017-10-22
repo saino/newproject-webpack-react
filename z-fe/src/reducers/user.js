@@ -64,7 +64,7 @@ export const register = (phone, password, success: Function, fail: Function) => 
     success();
   }, fail);
 };
-export const getUserInfo = packageToken((dispatch, token) => {
+export const getUserInfo = packageToken((dispatch, { token }) => {
   post('/auth/currUser', { token }, resp => dispatch({
     type: actionTypes.GET_USERINFO,
     user: resp

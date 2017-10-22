@@ -1,11 +1,14 @@
 /**
- * reducer中数组的增删改查
+ * 数组的增删改查
  */
 
 const uniq = (arr: Array, obj: Object) =>
   arr.filter((item, idx) => !idx || arr.indexOf(obj) === idx);
 const inArray = (arr: Array, item) =>
   arr.find(item) != null;
+
+export const getItemByKey = (target: Array, idValue, idKey = 'id') =>
+  target.find((item) => item[ idKey ] == idValue);
 
 // 添加元素，避免重复
 export const add = (target: Array, origin) => {
@@ -18,7 +21,7 @@ export const add = (target: Array, origin) => {
   return [ ...target, origin ];
 };
 
-export const update = (target: Array, idKey = 'id', idValue, origin: Object) => {
+export const update = (target: Array, origin: Object, idValue, idKey = 'id') => {
   let waitUpdate, waitUpdateIndex;
 
   if (!target || origin == null)
@@ -35,7 +38,7 @@ export const update = (target: Array, idKey = 'id', idValue, origin: Object) => 
   return [ ...target ];
 };
 
-export const remove = (target: Array, idKey = 'id', idValue) => {
+export const remove = (target: Array, idValue, idKey = 'id') => {
   let waitUpdateIndex;
 
   if (!target)

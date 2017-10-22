@@ -5,7 +5,9 @@ import {combineReducers} from 'redux'
 import app from './app';
 import user from './user';
 import step from './step';
-import sceneType from './sceneType';
+import frame from './frame';
+import scene from './scene';
+import material from './material';
 
 const userInfo = (state = {}, action) => {
     switch (action.type){
@@ -47,7 +49,9 @@ const rootReducer = combineReducers({
     app,
     user,
     step,
-    sceneType,
+    scene,
+    frame,
+    material,
     userInfo,
     worksInfo
 })

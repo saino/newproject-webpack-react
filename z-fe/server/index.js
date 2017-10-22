@@ -78,7 +78,47 @@ app.post('/api/auth/register', function (req, res) {
       }
     });
   }
-})
+});
+
+app.post('/api/scenes', function (req, res) {
+  var materialId = req.body.materialId;
+  var sceneId = 1;
+
+  res.send({
+    errorCode: 0,
+    errorMessage: '',
+    data: [{
+      materialId: materialId,
+      sceneId: sceneId++,
+      text: '固定广告植入'
+    }, {
+      materialId: materialId,
+      sceneId: sceneId++,
+      text: '固定广告植入'
+    }, {
+      materialId: materialId,
+      sceneId: sceneId++,
+      text: '固定广告植入'
+    }]
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get('/userinfo', function (req, res) {
 
     setTimeout(() => {
@@ -92,6 +132,8 @@ app.get('/userinfo', function (req, res) {
     }, 1000)
 
 })
+
+
 app.post('/updateuser', function (req, res) {
     Object.assign(userInfo, req.body)
     res.send(Object.assign({status: 0}, {data: userInfo}));

@@ -59,11 +59,6 @@ export default ({
     validate: 'requireAuth'
   },
 
-  // 帧
-  frame: {
-    rate: 24  // 帧率
-  },
-
   // 对请求host、path路径处理
   getApiPath() {
     let tempHost = this.api.host,

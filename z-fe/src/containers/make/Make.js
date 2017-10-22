@@ -2,15 +2,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { list as listScene } from '../../reducers/scene';
 
 /* 第三方组件 */
 import Step from './Step';
-import SceneType from './SceneType';
-import SceneCenter from './SceneCenter';
+import SceneList from './SceneList';
+import SceneDisplay from './SceneDisplay';
 import ControllerPanel from './ControllerPanel';
 import Timeline from './Timeline';
 
 class Make extends Component {
+  state = {
+    currMaterialId: 1, // 等素材做完后，在换初始默认值
+    currSceneId: null
+  };
+
+  componentWillMount() {
+    // 根据当前选中的作品
+    this.props.listScene({ materialId: this.state.currMaterialId });
+  }
+
   render() {
     return (
       <div className="make">
@@ -22,11 +33,11 @@ class Make extends Component {
 
         <div className="main">
 
-          {/* 镜头类型 */}
-          <SceneType />
+          {/* 镜头列表 */}
+          <SceneList onSelect={ ({ sceneId }) => this.setState({ currSceneId: sceneId }) } />
 
-          {/* 场景中心 */}
-          <SceneCenter />
+          {/* 镜头展示 */}
+          <SceneDisplay materialId={ this.state.currMaterialId } sceneId={ this.state.currSceneId } />
 
           {/* 控制面板 */}
           <ControllerPanel />
@@ -58,11 +69,21 @@ class Make extends Component {
           .make .top {
             flex: 0 0 54px;
           }
-          
+
         `}</style>
       </div>
     );
   }
 }
 
-export default Make;
+
+function mapDispatchToProps (dispatch) {
+  return {
+    listScene: bindActionCreators(listScene, dispatch)
+  };
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Make);

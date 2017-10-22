@@ -31,7 +31,7 @@ export function updateStep (key, obj) {
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_STEP:
-      return update(state, 'key', action.key, action.obj);
+      return update(state, action.obj, action.key, 'key');
     default:
       return state;
   }

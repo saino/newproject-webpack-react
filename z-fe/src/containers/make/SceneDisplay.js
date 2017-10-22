@@ -1,18 +1,36 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { getItemByKey } from '../../utils/stateSet';
+
 import TransformToolBar from './TransformToolBar';
 import PenToolBar from './PenToolBar';
 import VideoHandle from '../../components/video/VideoHandle';
+import ParseFrameToSecond from '../../components/video/ParseFrameToSecond';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
-export default class SceneCenter extends Component {
+class SceneDisplay extends Component {
+  static propTypes = {
+
+    materialId: PropTypes.string.isRequired,
+
+    sceneId: PropTypes.string.isRequired
+
+  };
+
   render() {
+    const { materialId, sceneId, material } = this.props;
+    const { src, totalFrame } = getItemByKey(material, materialId, 'materialId') || {};
+
     return (
       <div className="scene-center">
 
         <div className="scene-center-inner">
            <div className="canvas">
 
-             <VideoHandle videoSrc="http://localhost/video/test.mp4" onComplete={ () => {} } />
+             {/*<VideoHandle videoSrc="http://localhost:7878/test.mp4" frameRate={ 24 } onComplete={ () => { console.log(1) } } />*/}
+
+             <ParseFrameToSecond videoSrc={ src } totalFrame={ totalFrame }  />
 
            </div>
         </div>
@@ -74,3 +92,9 @@ export default class SceneCenter extends Component {
     );
   }
 }
+
+function mapStateToProps ({ material }) {
+  return { material };
+}
+
+export default connect(mapStateToProps)(SceneDisplay);

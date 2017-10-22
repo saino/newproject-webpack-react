@@ -1,13 +1,10 @@
 const defState = {
 
-  // 每秒多少帧
-  frameSize: 24,
-
   // 当前第几帧
   currFrame: 0,
 
   // 总帧数
-  total: 0,
+  totalFrame: 0,
 
   // 帧对应的秒
   second: 0
@@ -16,7 +13,7 @@ const defState = {
 
 const actionTypes = {
 
-  SOLUTION_FRAME: 'SOLUTION_FRAME',
+  SET_TOTAL_FRAME: 'SET_TOTAL_FRAME',
 
   SET_CURR_FRAME: 'SET_CURR_FRAME',
 
@@ -24,10 +21,10 @@ const actionTypes = {
 
 };
 
-export function solutionFrame (frame) {
+export function setTotalFrame (totalFrame) {
   return {
-    type: actionTypes.SOLUTION_FRAME,
-    frame
+    type: actionTypes.SET_TOTAL_FRAME,
+    totalFrame
   };
 }
 
@@ -47,8 +44,8 @@ export function parseFrameToSecond () {
 export default function (state = defState, action) {
   switch (action.type) {
 
-    case actionTypes.SOLUTION_FRAME:
-      return { ...state, ..action.frame };
+    case actionTypes.SET_TOTAL_FRAME:
+      return { ...state, totalFrame: action.totalFrame };
 
     case actionTypes.SET_CURR_FRAME:
       return { ...state, currFrame: action.currFrame };
