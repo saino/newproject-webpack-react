@@ -10,19 +10,16 @@ const defState = [];
 
 const actionTypes = { SOLUTION_FRAME: 'SOLUTION_FRAME' };
 
-export const solutionFrame = (materialId, cameraId, frameId, second) => ({
+export const solutionFrame = frames => ({
   type: actionTypes.SOLUTION_FRAME,
-  materialId,
-  cameraId,
-  frameId,
-  second
+  frames
 });
 
 export default (state = defState, action) => {
   switch (action.type) {
 
     case actionTypes.SOLUTION_FRAME:
-      return [ ...action.frames ];
+      return [ ...state, ...action.frames ];
 
     default:
       return state;

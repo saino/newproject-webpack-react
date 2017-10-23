@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { list as listScene } from '../../reducers/scene';
+import { getItemByKey } from '../../utils/stateSet';
 
 /* 第三方组件 */
 import Step from './Step';
@@ -14,11 +15,11 @@ import Timeline from './Timeline';
 class Make extends Component {
   state = {
     currMaterialId: 1, // 等素材做完后，在换初始默认值
-    currSceneId: null
+    currSceneId: 1
   };
 
   componentWillMount() {
-    // 根据当前选中的作品
+    // 根据当前选中的素材查找镜头
     this.props.listScene({ materialId: this.state.currMaterialId });
   }
 
@@ -37,7 +38,10 @@ class Make extends Component {
           <SceneList onSelect={ ({ sceneId }) => this.setState({ currSceneId: sceneId }) } />
 
           {/* 镜头展示 */}
-          <SceneDisplay materialId={ this.state.currMaterialId } sceneId={ this.state.currSceneId } />
+          <SceneDisplay
+            materialId={ this.state.currMaterialId }
+            sceneId={ this.state.currSceneId }
+            materials={ this.props.material } />
 
           {/* 控制面板 */}
           <ControllerPanel />
@@ -47,7 +51,11 @@ class Make extends Component {
         <div className="bottom">
 
           {/* 时间轴 */}
-          <Timeline />
+          <Timeline
+            materialId={ this.state.currMaterialId }
+            sceneId={ this.state.currSceneId }
+            materials={ this.props.material }
+            frames={ this.props.frame } />
 
         </div>
 
@@ -76,6 +84,12 @@ class Make extends Component {
   }
 }
 
+function mapStateToProps ({ material, frame }) {
+  return {
+    material,
+    frame
+  };
+}
 
 function mapDispatchToProps (dispatch) {
   return {
@@ -84,6 +98,6 @@ function mapDispatchToProps (dispatch) {
 }
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Make);

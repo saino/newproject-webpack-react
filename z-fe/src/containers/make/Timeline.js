@@ -1,10 +1,59 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, Checkbox } from 'antd';
+import { getItemByKey } from '../../utils/stateSet';
 
 export default class Timeline extends Component {
+  static propTypes = {
+
+    materialId: PropTypes.number.isRequired,
+
+    sceneId: PropTypes.number.isRequired,
+
+    materials: PropTypes.array.isRequired,
+
+    frames: PropTypes.array.isRequired
+
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoop: false,
+      isPlay: false,
+      currFrame: 1,
+      imageDatas: props.frames
+    };
+    this.videoEl = this.oriCanvasEl = this.tmpCanvasEl = null;
+  }
+
+  parseVideoSecondsToImageData(frames) {
+    this.videoEl.currentTime = frames[10].time;
+    // frames[0].forEach(({ time }) => {
+    //   this.videoEl.currentTime = time;
+    // });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.parseVideoSecondsToImageData(nextProps.frames);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return deepCompare(this, nextProps, nextState);
+  }
+
   render() {
+    const { materialId, sceneId, materials } = this.props;
+    const { src } = getItemByKey(materials, materialId, 'materialId') || {};
+
     return (
       <div className="timeline">
+
+        <canvas ref={ el => this.oriCanvasEl = el } style={{ display: 'none' }}></canvas>
+        <canvas ref={ el => this.tmpCanvasEl = el } style={{ display: 'none' }}></canvas>
+        <video ref={ el => this.videoEl = el } src={ src } controls></video>
 
         <div className="header">
 
@@ -15,7 +64,7 @@ export default class Timeline extends Component {
           </div>
 
           <div className="currframe">
-            <label>当前第</label><label>30</label><label>帧</label>
+            <label>当前第</label><label>{ this.state.currFrame }</label><label>帧</label>
           </div>
 
           {/*<div className="singleframe">
@@ -23,7 +72,7 @@ export default class Timeline extends Component {
           </div>*/}
 
           <div className="isloop">
-            <Checkbox checked>是否循环</Checkbox>
+            <Checkbox checked={ this.state.isLoop }>是否循环</Checkbox>
           </div>
 
         </div>
@@ -37,25 +86,9 @@ export default class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
-              <li className="frame"></li>
+              {this.state.imageDatas.map(item => (
+                <li className="frame"></li>
+              ))}
             </ul>
           </div>
 
@@ -148,5 +181,29 @@ export default class Timeline extends Component {
 
       </div>
     );
+  }
+
+  computeFrame() {
+    this.oriCanvasEl.drawImage(this.videoEl, 0, 0, 44, 44);
+
+    let frame = this.oriCanvasEl.getImageData(0, 0, 44, 44);
+    let l = frame.data.length / 4;
+
+    for (let i = 0; i < l; i++) {
+      let r = frame.data[i * 4 + 0];
+      let g = frame.data[i * 4 + 1];
+      let b = frame.data[i * 4 + 2];
+      if (g > 100 && r > 100 && b < 43)
+        frame.data[i * 4 + 3] = 0;
+    }
+    this.tmpCanvasEl.putImageData(frame, 0, 0);
+  }
+
+  componentDidMount() {
+    const { frames } = this.props;
+
+    this.videoEl.addEventListener('timeupdate', () => {
+      console.log(this.videoEl.currentTime, 'www');
+    }, false);
   }
 }

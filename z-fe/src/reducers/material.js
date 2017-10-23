@@ -12,11 +12,11 @@ import { logout } from './user';
 */
 const defState = [{
   materialId: 1,
-  src: 'http://localhost:7878/test.mp4',
+  src: 'http://localhost/video/test.mp4',
   thumb: '',
   title: '素材是视频，素材是视频',
   type: 0,
-  totalFrame: 200
+  totalFrame: 351
 }];
 
 const actionTypes = {

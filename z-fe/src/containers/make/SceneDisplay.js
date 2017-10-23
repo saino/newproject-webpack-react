@@ -1,26 +1,36 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 import TransformToolBar from './TransformToolBar';
 import PenToolBar from './PenToolBar';
-import VideoHandle from '../../components/video/VideoHandle';
+import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/ParseFrameToSecond';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 class SceneDisplay extends Component {
   static propTypes = {
 
-    materialId: PropTypes.string.isRequired,
+    materialId: PropTypes.number.isRequired,
 
-    sceneId: PropTypes.string.isRequired
+    sceneId: PropTypes.number.isRequired,
+
+    materials: PropTypes.array.isRequired
 
   };
 
+  parseFrameComplete = (frames) => {
+    const { materialId, sceneId, solutionFrame } = this.props;
+    
+    solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
+  };
+
   render() {
-    const { materialId, sceneId, material } = this.props;
-    const { src, totalFrame } = getItemByKey(material, materialId, 'materialId') || {};
+    const { materialId, sceneId, materials } = this.props;
+    const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
 
     return (
       <div className="scene-center">
@@ -28,9 +38,12 @@ class SceneDisplay extends Component {
         <div className="scene-center-inner">
            <div className="canvas">
 
-             {/*<VideoHandle videoSrc="http://localhost:7878/test.mp4" frameRate={ 24 } onComplete={ () => { console.log(1) } } />*/}
+             {/* 处理视频得到每帧对应的视频秒数 */}
+             <ParseFrameToSecond videoSrc={ src } totalFrame={ totalFrame } onComplete={ this.parseFrameComplete } />
 
-             <ParseFrameToSecond videoSrc={ src } totalFrame={ totalFrame }  />
+             {/* 画出在video中每帧对应的秒数的图片 */}
+             <VideoRender videoSrc={ src } second={ 3 } />
+
 
            </div>
         </div>
@@ -93,8 +106,13 @@ class SceneDisplay extends Component {
   }
 }
 
-function mapStateToProps ({ material }) {
-  return { material };
+function mapDispatchToProps (dispatch) {
+  return {
+    solutionFrame: bindActionCreators(solutionFrame, dispatch)
+  };
 }
 
-export default connect(mapStateToProps)(SceneDisplay);
+export default connect(
+  null,
+  mapDispatchToProps
+)(SceneDisplay);
