@@ -22,12 +22,16 @@ export const add = (target: Array, origin) => {
 };
 
 export const update = (target: Array, origin: Object, idValue, idKey = 'id') => {
-  let waitUpdate, waitUpdateIndex;
+  let waitUpdate, waitUpdateIndex, processer;
 
   if (!target || origin == null)
     return target;
 
-  waitUpdateIndex = target.findIndex(item => item[ idKey ] == idValue);
+  processer = typeof idValue === 'function' ?
+    (item) => idValue(item) :
+    (item) => item[ idKey ] == idValue;
+
+  waitUpdateIndex = target.findIndex(processer);
 
   if (waitUpdateIndex < 0)
     return target;

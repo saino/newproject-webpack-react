@@ -9,14 +9,16 @@ import { logout } from './user';
   item.thumb String 素材缩略图地址,
   item.title String 素材名称,
   item.type Number 素材类别  -- 0: 视频, 1: 图片
+  item.totalFrame Number 总帧数
+  item.frameRate Number 帧率 前端自己设置，无需服务端返回
 */
 const defState = [{
   materialId: 1,
-  src: 'http://localhost/video/test.mp4',
+  src: 'http://localhost:3000/test.mp4',
   thumb: '',
   title: '素材是视频，素材是视频',
   type: 0,
-  totalFrame: 351
+  totalFrame: 336
 }];
 
 const actionTypes = {
@@ -25,7 +27,9 @@ const actionTypes = {
 
   NEW_MATERIAL: 'NEW_MATERIAL',
 
-  REMOVE_MATERIAL: 'REMOVE_MATERIAL'
+  REMOVE_MATERIAL: 'REMOVE_MATERIAL',
+
+  SET_FRAME_RATE: 'SET_FRAME_RATE'
 
 };
 

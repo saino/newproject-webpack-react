@@ -1,59 +1,42 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, Checkbox } from 'antd';
+import { setFrameDataUrl } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
-export default class Timeline extends Component {
+import ParserFrameToImageData from '../../components/video/ParseFrameToImageData';
+
+class Timeline extends Component {
   static propTypes = {
-
     materialId: PropTypes.number.isRequired,
-
     sceneId: PropTypes.number.isRequired,
-
     materials: PropTypes.array.isRequired,
-
     frames: PropTypes.array.isRequired
-
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoop: false,
-      isPlay: false,
-      currFrame: 1,
-      imageDatas: props.frames
-    };
-    this.videoEl = this.oriCanvasEl = this.tmpCanvasEl = null;
-  }
-
-  parseVideoSecondsToImageData(frames) {
-    this.videoEl.currentTime = frames[10].time;
-    // frames[0].forEach(({ time }) => {
-    //   this.videoEl.currentTime = time;
-    // });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.parseVideoSecondsToImageData(nextProps.frames);
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return deepCompare(this, nextProps, nextState);
-  }
+  state = {
+    isLoop: false,
+    isPlay: false,
+    currFrame: 1
+  };
 
   render() {
-    const { materialId, sceneId, materials } = this.props;
-    const { src } = getItemByKey(materials, materialId, 'materialId') || {};
+    const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
+    const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
 
     return (
       <div className="timeline">
 
-        <canvas ref={ el => this.oriCanvasEl = el } style={{ display: 'none' }}></canvas>
-        <canvas ref={ el => this.tmpCanvasEl = el } style={{ display: 'none' }}></canvas>
-        <video ref={ el => this.videoEl = el } src={ src } controls></video>
+        {/* 列出每一帧对应的 */}
+        <ParserFrameToImageData
+          videoSrc={ src }
+          frames={ frames }
+          onComplete={ (dataUrl, frameId) => {
+            setFrameDataUrl(materialId, sceneId, frameId, dataUrl)}
+          }/>
 
         <div className="header">
 
@@ -86,8 +69,10 @@ export default class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              {this.state.imageDatas.map(item => (
-                <li className="frame"></li>
+              {frames.map(({ dataUrl }) => (
+                <li className="frame">
+                  <img src={ dataUrl } />
+                </li>
               ))}
             </ul>
           </div>
@@ -172,9 +157,16 @@ export default class Timeline extends Component {
             display: inline-block;
             width: 44px;
             height: 44px;
-            background: #ccc;
             margin: 0 4px;
             vertical-align: top;
+            cursor: pointer;
+          }
+
+          .timeline .wrapper .frames .frame img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
           }
 
         `}</style>
@@ -182,28 +174,10 @@ export default class Timeline extends Component {
       </div>
     );
   }
-
-  computeFrame() {
-    this.oriCanvasEl.drawImage(this.videoEl, 0, 0, 44, 44);
-
-    let frame = this.oriCanvasEl.getImageData(0, 0, 44, 44);
-    let l = frame.data.length / 4;
-
-    for (let i = 0; i < l; i++) {
-      let r = frame.data[i * 4 + 0];
-      let g = frame.data[i * 4 + 1];
-      let b = frame.data[i * 4 + 2];
-      if (g > 100 && r > 100 && b < 43)
-        frame.data[i * 4 + 3] = 0;
-    }
-    this.tmpCanvasEl.putImageData(frame, 0, 0);
-  }
-
-  componentDidMount() {
-    const { frames } = this.props;
-
-    this.videoEl.addEventListener('timeupdate', () => {
-      console.log(this.videoEl.currentTime, 'www');
-    }, false);
-  }
 }
+
+function mapDispatchToProps (dispatch) {
+  return { setFrameDataUrl: bindActionCreators(setFrameDataUrl, dispatch) };
+}
+
+export default connect(null, mapDispatchToProps)(Timeline);

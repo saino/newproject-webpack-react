@@ -18,6 +18,10 @@ class Make extends Component {
     currSceneId: 1
   };
 
+  drawFrame = () => {
+  
+  };
+
   componentWillMount() {
     // 根据当前选中的素材查找镜头
     this.props.listScene({ materialId: this.state.currMaterialId });
@@ -55,7 +59,8 @@ class Make extends Component {
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
             materials={ this.props.material }
-            frames={ this.props.frame } />
+            frames={ this.props.frame }
+            onDrawFrame={ this.drawFrame } />
 
         </div>
 
