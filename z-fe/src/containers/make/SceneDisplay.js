@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
-import TransformToolBar from './TransformToolBar';
+import TransformToolBar from './TransformToolbar';
 import PenToolBar from './PenToolBar';
 import VideoRender from '../../components/video/VideoRender';
-import ParseFrameToSecond from '../../components/video/ParseFrameToSecond';
+import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 class SceneDisplay extends Component {

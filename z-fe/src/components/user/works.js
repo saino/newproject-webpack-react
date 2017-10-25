@@ -33,7 +33,7 @@ export default class Works extends Component {
                     <div className='works'>
                         {works}
                     </div>
-                    <Pagination defaultCurrent={1} total={50} pageSize={PAGESIZE} onChange={this.onChange}/>
+                    <Pagination defaultCurrent={1} total={worksInfo.total} pageSize={PAGESIZE} onChange={this.onChange}/>
                 </div>)
         } else {
             return <div>加载中</div>
