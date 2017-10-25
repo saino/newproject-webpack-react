@@ -8,6 +8,9 @@ import { updateStep } from '../../reducers/step';
 import logoPNG from '../../statics/logo.png';
 
 class Step extends Component {
+  select(seletStepObj){
+      this.props.updateStep(seletStepObj.key,{...seletStepObj,status:"doing"})
+  }
   render() {
     const { step } = this.props;
 
@@ -24,7 +27,7 @@ class Step extends Component {
 
           <ul className="step-to">
             {step.map(item => (
-              <li key={ item.key } className={ `${ item.key } ${ item.status }`}>
+              <li key={ item.key } className={ `${ item.key } ${ item.status }`} onClick={this.select.bind(this,item)}>
                 <a className="item middle">{ item.name }</a>
               </li>
             ))}
