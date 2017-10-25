@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, Checkbox } from 'antd';
 import { setFrameDataUrl } from '../../reducers/frame';
-import { getItemByKey } from '../../utils/stateSet';
+import { getItemByKey, add } from '../../utils/stateSet';
 
-import ParserFrameToImageData from '../../components/video/ParseFrameToImageData';
+import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
 
 class Timeline extends Component {
   static propTypes = {
@@ -20,24 +20,42 @@ class Timeline extends Component {
   state = {
     isLoop: false,
     isPlay: false,
-    currFrame: 1
+    currFrame: 1,
+    dataUrls: []
+  };
+
+  parseFrameToImageDataComplete = dataUrl =>
+    this.setState({ dataUrls: [ ...this.state.dataUrls, dataUrl ] });
+
+  getKeyFrames = (frames) => {
+    const keyFrame = {};
+    let matchSecondRE = /^(.*)?(?=\.)/;
+    let second;
+
+    frames.forEach(frame => {
+      second = matchSecondRE.test(frame.time) && RegExp.$1;
+
+      if (!(second in keyFrame))
+        keyFrame[second] = frame;
+    });
+
+    return keyFrame;
   };
 
   render() {
     const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
+    const keyFrame = this.getKeyFrames(frames);
 
     return (
       <div className="timeline">
 
-        {/* 列出每一帧对应的 */}
-        <ParserFrameToImageData
+        {/* 列出每一帧对应 */}
+        <ParseFrameToImageData
           videoSrc={ src }
-          frames={ frames }
-          onComplete={ (dataUrl, frameId) => {
-            setFrameDataUrl(materialId, sceneId, frameId, dataUrl)}
-          }/>
-
+          keyFrame={ keyFrame }
+          onComplete={ this.parseFrameToImageDataComplete } />
+          {/* //setFrameDataUrl(materialId, sceneId, frameId, dataUrl)} */}
         <div className="header">
 
           <div className="player">
@@ -69,9 +87,9 @@ class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              {frames.map(({ dataUrl }) => (
+              {this.state.dataUrls.map(url => (
                 <li className="frame">
-                  <img src={ dataUrl } />
+                  <img src={ url } />
                 </li>
               ))}
             </ul>
