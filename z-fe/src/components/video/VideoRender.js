@@ -2,9 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { is } from 'immutable';
 
+/* 交互组件 */
+import Draggable from '../../components/interaction/react-draggable/Draggable';
+
 export default class VideoRender extends Component {
   static propTypes = {
-    frameDataUrl: PropTypes.string.isRequired
+    frameDataUrl: PropTypes.string.isRequired,
+    style: PropTypes.object.isRequired
   };
 
   shouldComponentUpdate(nextProps) {
@@ -13,16 +17,11 @@ export default class VideoRender extends Component {
 
   render() {
     return (
-      <div className="video-render">
+      <Draggable>
+        <div className="video-render" style={ this.props.style }>
         <div className="video-render-inner"></div>
         <img src={ this.props.frameDataUrl } />
         <style>{`
-
-          .video-render {
-            position: relative;
-            width: 100%;
-            height: 100%;
-          }
 
           .video-render-inner {
             position: absolute;
@@ -41,7 +40,8 @@ export default class VideoRender extends Component {
           }
 
         `}</style>
-      </div>
+        </div>
+      </Draggable>
     );
   }
 }

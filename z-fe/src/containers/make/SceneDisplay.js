@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
+/* 业务组件 */
 import TransformToolBar from './TransformToolBar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
@@ -45,7 +46,9 @@ class SceneDisplay extends Component {
                onComplete={ this.parseFrameComplete } />
 
              {/* 画出在video中每帧对应的秒数的图片 */}
-             <VideoRender frameDataUrl={ frameDataUrl } />
+             <VideoRender
+               style={{ width: '100%', height: '100%' }}
+               frameDataUrl={ frameDataUrl } />
 
            </div>
         </div>
