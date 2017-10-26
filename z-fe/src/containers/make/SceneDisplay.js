@@ -6,7 +6,7 @@ import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 /* 业务组件 */
-import TransformToolBar from './TransformToolBar';
+import TransformToolBar from './TransformToolbar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/parseFrameToSecond';

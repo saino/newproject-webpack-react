@@ -5,7 +5,7 @@ import dragPNG from '../../statics/drag_icon.png';
 import upPNG from '../../statics/up_icon.png';
 import downPNG from '../../statics/down_icon.png';
 
-export default class TransformTollBar extends Component {
+export default class TransformToolbar extends Component {
   static propTypes = {
     onZoomOut: PropTypes.func.isRequired,
     onZoomIn: PropTypes.func.isRequired

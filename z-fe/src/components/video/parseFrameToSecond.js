@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
-import videoFrame from '../../utils/videoFrame';
+import VideoFrame from '../../utils/VideoFrame';
 
 export default class ParseFrameToSecond extends Component {
   static propTypes = {

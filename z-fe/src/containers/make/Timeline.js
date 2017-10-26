@@ -186,7 +186,7 @@ class Timeline extends Component {
             margin: 0 4px;
             vertical-align: top;
             cursor: pointer;
-            background: #ccc;
+            background: rgba(0,0,0,.25);
           }
 
           .timeline .wrapper .frames .frame img {

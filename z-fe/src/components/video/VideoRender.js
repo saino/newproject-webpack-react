@@ -29,7 +29,7 @@ export default class VideoRender extends Component {
             height: 100%;
             left: 0;
             top: 0;
-            background: transparent;
+            background: rgba(0,0,0,.25);
           }
 
           .video-render img {

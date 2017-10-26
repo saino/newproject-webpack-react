@@ -4,9 +4,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { findDOMNode } from 'react-dom';
 import classNames from 'classNames';
 import DraggableCore from './DraggableCore';
 import { getOuterWidth, getOuterHeight, getInnerWidth, getInnerHeight } from './utils/domFn';
+import { addEvent } from './utils/eventFn';
 
 const emptyFn = () => {};
 
@@ -63,6 +65,8 @@ export default class Draggable extends Component {
       cursor: 'default'
 
     };
+
+    this.minX = this.minY = null;
   }
 
   onDragStart(currX, currY) {
@@ -78,21 +82,21 @@ export default class Draggable extends Component {
     const maxX = getInnerWidth(ownerDocument.documentElement) - getOuterWidth(el);
     const maxY = getInnerHeight(ownerDocument.documentElement) - getOuterHeight(el);
     let newX, newY;
-
+    console.log(maxX, maxY, 'ggg');
     onDrag(newDeltaX, newDeltaY);
 
     newX = this.state.x + newDeltaX;
     newY = this.state.y + newDeltaY;
-    console.log(el.getBoundingClientRect().left, 'dd');
-    if (newX < el.getBoundingClientRect().left)
-      newX = 0;
-    else if (newX > maxX)
-      newX = maxX;
 
-    if (newY < 0)
-      newY = 0;
-    else if (newY > maxY)
-      newY = maxY;
+    if (newX < this.minX)
+      newX = this.minX;
+    else if (newX > maxX + this.minX)
+      newX = maxX + this.minX;
+
+    if (newY < this.minY)
+      newY = this.minY;
+    else if (newY > maxY + this.minY)
+      newY = maxY + this.minY;
 
     this.setState({ deltaX: newX, deltaY: newY });
   }
@@ -127,6 +131,18 @@ export default class Draggable extends Component {
 
       </DraggableCore>
     );
+  }
+
+  componentDidMount() {
+    addEvent(findDOMNode(this), 'resize', () => this.setMinPos());
+    this.setMinPos();
+  }
+
+  setMinPos() {
+    const el = findDOMNode(this);
+
+    this.minX = -el.getBoundingClientRect().left;
+    this.minY = -el.getBoundingClientRect().top;
   }
 
 }

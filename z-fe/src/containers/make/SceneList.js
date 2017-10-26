@@ -43,7 +43,7 @@ class SceneList extends PureComponent {
 
         <style>{`
           .scenetype {
-            flex-basis: 218px;
+            flex: 0 0 218px;
             background: #f2f2f2;
           }
           .scenetype ul {

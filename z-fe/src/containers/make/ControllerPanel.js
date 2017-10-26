@@ -12,7 +12,7 @@ export default class ControllerPanel extends Component {
 
         <style>{`
           .controller-panel {
-            flex-basis: 300px;
+            flex: 0 0 300px;
             background: #e9e9e9;
           }
 
