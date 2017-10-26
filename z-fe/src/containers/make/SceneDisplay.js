@@ -6,30 +6,30 @@ import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 import TransformToolBar from './TransformToolBar';
-import PenToolBar from './PenToolBar';
+import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/ParseFrameToSecond';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 class SceneDisplay extends Component {
   static propTypes = {
-
     materialId: PropTypes.number.isRequired,
-
     sceneId: PropTypes.number.isRequired,
-
-    materials: PropTypes.array.isRequired
-
+    materials: PropTypes.array.isRequired,
+    frameDataUrl: PropTypes.object
+  };
+  static defaultProps = {
+    frameDataUrl: ''
   };
 
   parseFrameComplete = (frames) => {
     const { materialId, sceneId, solutionFrame } = this.props;
-    
+
     solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
   };
 
   render() {
-    const { materialId, sceneId, materials } = this.props;
+    const { materialId, sceneId, materials, frameDataUrl } = this.props;
     const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
 
     return (
@@ -39,11 +39,13 @@ class SceneDisplay extends Component {
            <div className="canvas">
 
              {/* 处理视频得到每帧对应的视频秒数 */}
-             <ParseFrameToSecond videoSrc={ src } totalFrame={ totalFrame } onComplete={ this.parseFrameComplete } />
+             <ParseFrameToSecond
+               videoSrc={ src }
+               totalFrame={ totalFrame }
+               onComplete={ this.parseFrameComplete } />
 
              {/* 画出在video中每帧对应的秒数的图片 */}
-             <VideoRender videoSrc={ src } second={ 3 } />
-
+             <VideoRender frameDataUrl={ frameDataUrl } />
 
            </div>
         </div>
@@ -51,7 +53,7 @@ class SceneDisplay extends Component {
         <div className="tooltip">
 
           <div className="node">
-            <PenToolBar />
+            <PenTool />
           </div>
 
           <div className="transform">
@@ -70,7 +72,7 @@ class SceneDisplay extends Component {
 
           .scene-center-inner {
             flex: 1;
-            padding: 80px 20px;
+            padding: 20px;
             display: flex;
             align-items: stretch;
             background: #fff;
@@ -83,12 +85,6 @@ class SceneDisplay extends Component {
 
           .scene-center-inner .canvas {
             flex: 1;
-          }
-
-          .scene-center-inner .canvas img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
           }
 
           .tooltip {

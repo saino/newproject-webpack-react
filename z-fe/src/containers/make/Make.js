@@ -15,11 +15,8 @@ import Timeline from './Timeline';
 class Make extends Component {
   state = {
     currMaterialId: 1, // 等素材做完后，在换初始默认值
-    currSceneId: 1
-  };
-
-  drawFrame = () => {
-  
+    currSceneId: 1,
+    frameDataUrl: ''
   };
 
   componentWillMount() {
@@ -45,7 +42,8 @@ class Make extends Component {
           <SceneDisplay
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
-            materials={ this.props.material } />
+            materials={ this.props.material }
+            frameDataUrl={ this.state.frameDataUrl } />
 
           {/* 控制面板 */}
           <ControllerPanel />
@@ -60,7 +58,7 @@ class Make extends Component {
             sceneId={ this.state.currSceneId }
             materials={ this.props.material }
             frames={ this.props.frame }
-            onDrawFrame={ this.drawFrame } />
+            onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />
 
         </div>
 

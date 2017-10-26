@@ -14,7 +14,8 @@ class Timeline extends Component {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
     materials: PropTypes.array.isRequired,
-    frames: PropTypes.array.isRequired
+    frames: PropTypes.array.isRequired,
+    onSelectDataUrl: PropTypes.func.isRequired
   };
 
   state = {
@@ -24,9 +25,10 @@ class Timeline extends Component {
     dataUrls: []
   };
 
-  parseFrameToImageDataComplete = dataUrl =>
+  parseFrameToImageDataComplete = dataUrl => {
+    this.props.onSelectDataUrl(dataUrl);
     this.setState({ dataUrls: [ ...this.state.dataUrls, dataUrl ] });
-
+  };
   getKeyFrames = (frames) => {
     const keyFrame = {};
     let matchSecondRE = /^(.*)?(?=\.)/;
@@ -42,6 +44,9 @@ class Timeline extends Component {
     return keyFrame;
   };
 
+  handleSelectDataUrl = (url) => () =>
+    this.props.onSelectDataUrl(url);
+
   render() {
     const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
@@ -55,7 +60,7 @@ class Timeline extends Component {
           videoSrc={ src }
           keyFrame={ keyFrame }
           onComplete={ this.parseFrameToImageDataComplete } />
-          {/* //setFrameDataUrl(materialId, sceneId, frameId, dataUrl)} */}
+
         <div className="header">
 
           <div className="player">
@@ -73,7 +78,7 @@ class Timeline extends Component {
           </div>*/}
 
           <div className="isloop">
-            <Checkbox checked={ this.state.isLoop }>是否循环</Checkbox>
+            <Checkbox checked={ this.state.isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
           </div>
 
         </div>
@@ -88,7 +93,7 @@ class Timeline extends Component {
           <div className="frames">
             <ul>
               {this.state.dataUrls.map(url => (
-                <li className="frame">
+                <li className="frame" onClick={ this.handleSelectDataUrl(url) }>
                   <img src={ url } />
                 </li>
               ))}
@@ -132,6 +137,9 @@ class Timeline extends Component {
             background: #97afbc;
             padding: 5px;
             border: 1px solid #647c89;
+            width: 40px;
+            text-align: center;
+            display: inline-block;
           }
 
           .player {
@@ -178,13 +186,14 @@ class Timeline extends Component {
             margin: 0 4px;
             vertical-align: top;
             cursor: pointer;
+            background: #ccc;
           }
 
           .timeline .wrapper .frames .frame img {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
           }
 
         `}</style>
