@@ -1,14 +1,27 @@
 import React, { Component } from 'react';
 import Pick from '../../components/pick/Pick';
+import ComposeControl from  './ComposeControl'
 // import { bindActionCreators } from 'redux';
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 // import { getSceneType } from '../../reducers/serverFrame';
 
-export default class ControllerPanel extends Component {
+ class ControllerPanel extends Component {
   render() {
+      const {selectStep}=this.props;
+      var Control;
+       switch (selectStep.key){
+           case 'effect':
+               Control=Pick;
+               break
+           case 'combine':
+               Control=ComposeControl;
+               break;
+           default:
+               Control=Pick;
+       }
     return (
       <div className="controller-panel">
-        <Pick />
+        <Control />
 
         <style>{`
           .controller-panel {
@@ -23,9 +36,9 @@ export default class ControllerPanel extends Component {
   }
 }
 
-// function mapStateToProps ({ sceneType }) {
-//   return { sceneType };
-// }
+function mapStateToProps ({ step }) {
+  return {selectStep:step.steps[step.current]};
+}
 //
 // function mapDispatchToProps (dispatch) {
 //   return {
@@ -33,7 +46,6 @@ export default class ControllerPanel extends Component {
 //   };
 // }
 //
-// export default connect(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(SceneType);
+export default connect(
+  mapStateToProps
+)(ControllerPanel);

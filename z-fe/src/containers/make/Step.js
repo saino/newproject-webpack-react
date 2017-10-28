@@ -1,40 +1,57 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { deepCompare } from 'pure-render-immutable-decorator';
-import { updateStep } from '../../reducers/step';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
+import {deepCompare} from 'pure-render-immutable-decorator';
+import {updateStep, selectStep} from '../../reducers/step';
 import logoPNG from '../../statics/logo.png';
+import classnames from 'classnames'
 
 class Step extends Component {
-  select(seletStepObj){
-      this.props.updateStep(seletStepObj.key,{...seletStepObj,status:"doing"})
-  }
-  render() {
-    const { step } = this.props;
+    constructor(props) {
+        super(props)
+        this.selectStep = this.selectStep.bind(this)
+    }
 
-    return (
-      <div className="step">
-        <div className="step-inner">
+    selectStep(index) {
+        const {step, selectStep} = this.props;
+        if (step.current != index) {
+            selectStep(index)
+        }
+    }
 
-          <div className="logo">
-            <Link className="logo-inner" to="/">
-              <img className="logo-img" src={ logoPNG } />
-              <label className="logo-text">LIANGZIVFX</label>
-            </Link>
-          </div>
+    render() {
+        const {step} = this.props;
 
-          <ul className="step-to">
-            {step.map(item => (
-              <li key={ item.key } className={ `${ item.key } ${ item.status }`} onClick={this.select.bind(this,item)}>
-                <a className="item middle">{ item.name }</a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        return (
+            <div className="step">
+                <div className="step-inner">
 
-        <style>{`
+                    <div className="logo">
+                        <Link className="logo-inner" to="/">
+                            <img className="logo-img" src={logoPNG}/>
+                            <label className="logo-text">LIANGZIVFX</label>
+                        </Link>
+                    </div>
+
+                    <ul className="step-to">
+                        {step.steps.map((item, index) => {
+                            let className = classnames({
+                                [item.key]: true,
+                                [item.status]: true,
+                                'selected': index == step.current
+                            })
+                            return (
+                                <li key={item.key} className={className}
+                                    onClick={this.selectStep.bind(this, index)}>
+                                    <a className="item middle">{item.name}</a>
+                                </li>)
+                        })}
+                    </ul>
+                </div>
+
+                <style>{`
           .step {
             background: #114967;
           }
@@ -79,7 +96,9 @@ class Step extends Component {
           .step-to .wait {
             background: #114967;
           }
-
+          .step-to .selected {
+            background: #2d8bbd;
+          }
           .step-to .materials {
             display: flex;
             justify-content: flex-end;
@@ -120,22 +139,21 @@ class Step extends Component {
           }
 
         `}</style>
-      </div>
-    );
-  }
+            </div>
+        );
+    }
 }
 
-function mapStateToProps ({ step }) {
-  return { step };
+function mapStateToProps({step}) {
+
+    return {step};
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    updateStep: bindActionCreators(updateStep, dispatch)
-  };
-};
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    {
+        updateStep,
+        selectStep
+    }
 )(Step);
