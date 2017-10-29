@@ -7,6 +7,7 @@ import configureStore from './store/configureStore';
 import { AppContainer } from 'react-hot-loader';
 import {getUserInfo}from './utils';
 import 'antd/dist/antd.css';
+import './theme.css';
 
 
 const store = configureStore({userInfo:getUserInfo()})

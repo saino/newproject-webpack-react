@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import ComposeControlP from '../../components/controls/ComposeControl'
-export default class ComposeControl extends Component{
-    render(){
-        return (<div >
-            <ComposeControlP></ComposeControlP>
-        </div>)
-    }
+import {connect} from 'react-redux'
+import {addMaterial,changeLayer,select} from '../../reducers/compose'
+
+function mapStateToProps({compose}) {
+    return {compose}
 }
+export default connect(mapStateToProps,{addMaterial,changeLayer,select})(ComposeControlP)

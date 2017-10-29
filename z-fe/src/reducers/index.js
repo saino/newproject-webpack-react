@@ -8,6 +8,8 @@ import step from './step';
 import frame from './frame';
 import scene from './scene';
 import material from './material';
+import compose from './compose';
+
 
 const userInfo = (state = {}, action) => {
     switch (action.type){
@@ -53,7 +55,8 @@ const rootReducer = combineReducers({
     frame,
     material,
     userInfo,
-    worksInfo
+    worksInfo,
+    compose
 })
 
 export default rootReducer

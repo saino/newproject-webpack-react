@@ -38,7 +38,7 @@ export function selectStep (stepIndex) {
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_STEP:
-      return {current:state.state,steps:update(state.steps, action.obj, action.key, 'key')};
+      return {current:state.current,steps:update(state.steps, action.obj, action.key, 'key')};
       case actionTypes.SELECT_STEP:
           return {...state,current:action.stepIndex,};
     default:
