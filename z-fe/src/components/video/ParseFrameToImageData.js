@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import { is, Map } from 'immutable';
+import { getItemByKey } from '../../utils/stateSet';
 
 export default class ParseFrameToImageData extends Component {
   static propTypes = {
@@ -37,14 +38,33 @@ export default class ParseFrameToImageData extends Component {
   }
 
   parseVideoSecondsToDataUrl(nextProps) {
-    const { frames } = nextProps;
+    console.log(nextProps.frames,'dd');
+    this.videoEl.play();
+    //this.draw(frames);
+    // frames.forEach(({ time }) =>
+    //   setTimeout(() =>
+    //     this.videoEl.currentTime = time,
+    //     time * 1000
+    //   )
+    // );
+  }
 
-    frames.forEach(({ time }) =>
-      setTimeout(
-        () => this.videoEl.currentTime = time,
-        time * 1000
-      )
-    );
+  draw() {
+    if (this.videoEl.paused || this.videoEl.ended) {
+      clearTimeout(rid);
+      return;
+    }
+
+    const { frames } = this.props;
+    const currentTime = this.videoEl.currentTime;
+    let rid;
+
+    console.log(currentTime);
+    if (getItemByKey(frames, currentTime, 'time')) {
+      console.log(currentTime, 'dd');
+    }
+
+    rid = setTimeout(this.draw.bind(this), Math.floor(1000 / 22.97436));
   }
 
   constructor(props) {
@@ -79,7 +99,7 @@ export default class ParseFrameToImageData extends Component {
     this.oriCanvasContext = this.oriCanvasEl.getContext('2d');
     this.tmpCanvasContext = this.tmpCanvasEl.getContext('2d');
 
-    this.videoEl.addEventListener('seeked', () => this.computeFrame(this.videoEl.currentTime), false);
+    this.videoEl.addEventListener('play', this.draw.bind(this), false);
   }
 
 }

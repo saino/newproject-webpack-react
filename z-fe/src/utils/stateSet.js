@@ -14,7 +14,7 @@ export const getItemByKey = (target: Array, idValue, idKey = 'id') =>
 export const add = (target: Array, origin) => {
   if (!target || origin == null)
     return target;
-    
+
   if (inArray(target, origin))
     return target;
 
@@ -28,8 +28,8 @@ export const update = (target: Array, origin: Object, idValue, idKey = 'id') => 
     return target;
 
   processer = typeof idValue === 'function' ?
-    (item) => idValue(item) :
-    (item) => item[ idKey ] == idValue;
+    item => idValue(item) :
+    item => item[ idKey ] == idValue;
 
   waitUpdateIndex = target.findIndex(processer);
 
