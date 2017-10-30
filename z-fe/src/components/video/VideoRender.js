@@ -12,7 +12,7 @@ export default class VideoRender extends Component {
   };
 
   shouldComponentUpdate(nextProps) {
-    return !is(this.props.frameDataUrl, nextProps.frameDataUrl);
+    return !is(this.props, nextProps);
   }
 
   render() {

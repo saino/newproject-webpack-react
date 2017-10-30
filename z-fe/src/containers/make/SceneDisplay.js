@@ -1,7 +1,9 @@
 import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
+import { findDOMNode } from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import config from '../../config';
 import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
@@ -17,20 +19,28 @@ class SceneDisplay extends Component {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
     materials: PropTypes.array.isRequired,
-    frameDataUrl: PropTypes.object
+    frameDataUrl: PropTypes.string
   };
   static defaultProps = {
     frameDataUrl: ''
   };
+  state = {
+    scale: 1
+  };
 
   parseFrameComplete = (frames) => {
     const { materialId, sceneId, solutionFrame } = this.props;
-
+    
     solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
   };
+  handleZoomOut = () =>
+    this.setState({ scale: this.state.scale + config.transform.stepScale });
+  handleZoomIn = () =>
+    this.setState({ scale: this.state.scale - config.transform.stepScale });
 
   render() {
     const { materialId, sceneId, materials, frameDataUrl } = this.props;
+    const { scale } = this.state;
     const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
 
     return (
@@ -47,7 +57,8 @@ class SceneDisplay extends Component {
 
              {/* 画出在video中每帧对应的秒数的图片 */}
              <VideoRender
-               style={{ width: '100%', height: '100%' }}
+               ref="video_render"
+               style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
                frameDataUrl={ frameDataUrl } />
 
            </div>
@@ -60,7 +71,9 @@ class SceneDisplay extends Component {
           </div>
 
           <div className="transform">
-            <TransformToolBar />
+            <TransformToolBar
+              onZoomOut={ this.handleZoomOut }
+              onZoomIn={ this.handleZoomIn } />
           </div>
 
         </div>
