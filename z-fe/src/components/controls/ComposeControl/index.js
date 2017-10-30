@@ -21,7 +21,7 @@ export default class ComposeControl extends Component{
         })
         return (<div className="compose-control">
             <div className="header"> 第四步 ：素材植入</div>
-            <div className="addMaterial" onClick={addMaterial.bind(null,{name:"素材名称"})}>
+            <div className="addMaterial" onClick={addMaterial.bind(null,{name:"素材名称",top:10,left:10,width:100,height:60})}>
                 <Button icon="plus"  type="primary">添加素材</Button>
             </div>
             <ul className="material-list">

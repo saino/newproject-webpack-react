@@ -11,6 +11,7 @@ import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
+import ComposeRender from './ComposeRender'
 
 class SceneDisplay extends Component {
   static propTypes = {
@@ -30,8 +31,26 @@ class SceneDisplay extends Component {
   };
 
   render() {
-    const { materialId, sceneId, materials, frameDataUrl } = this.props;
-    const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
+    const { materialId, sceneId, materials, frameDataUrl ,selectStep} = this.props;
+      let renderSomething;
+      switch (selectStep.key){
+          case 'effect':
+          {/* 画出在video中每帧对应的秒数的图片 */}
+              renderSomething=<VideoRender
+                style={{ width: '100%', height: '100%' }}
+                frameDataUrl={ frameDataUrl } />
+              break
+          case 'combine':
+             renderSomething=<ComposeRender
+                 style={{ width: '100%', height: '100%' }}
+                 frameDataUrl={ frameDataUrl }></ComposeRender>
+              break;
+          default:
+              renderSomething=<VideoRender
+                  style={{ width: '100%', height: '100%' }}
+                  frameDataUrl={ frameDataUrl } />
+      }
+      const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
 
     return (
       <div className="scene-center">
@@ -45,10 +64,7 @@ class SceneDisplay extends Component {
                totalFrame={ totalFrame }
                onComplete={ this.parseFrameComplete } />
 
-             {/* 画出在video中每帧对应的秒数的图片 */}
-             <VideoRender
-               style={{ width: '100%', height: '100%' }}
-               frameDataUrl={ frameDataUrl } />
+               {renderSomething}
 
            </div>
         </div>
@@ -88,6 +104,7 @@ class SceneDisplay extends Component {
 
           .scene-center-inner .canvas {
             flex: 1;
+            position:relative;
           }
 
           .tooltip {

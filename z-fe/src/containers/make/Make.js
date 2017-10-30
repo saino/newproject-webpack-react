@@ -43,6 +43,7 @@ class Make extends Component {
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
             materials={ this.props.material }
+            selectStep={this.props.selectStep}
             frameDataUrl={ this.state.frameDataUrl } />
 
           {/* 控制面板 */}
@@ -87,10 +88,10 @@ class Make extends Component {
   }
 }
 
-function mapStateToProps ({ material, frame }) {
+function mapStateToProps ({ material, frame ,step}) {
   return {
     material,
-    frame
+    frame, selectStep:step.steps[step.current]
   };
 }
 
