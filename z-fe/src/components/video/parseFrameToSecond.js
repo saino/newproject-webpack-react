@@ -51,6 +51,7 @@ export default class ParseFrameToSecond extends Component {
         duration: this.playerEl.duration,
         frames: this.props.totalFrame
       });
+      console.log(this.videoFrame.getFrameRate(), '帧率');
 
       this.props.onComplete(this.mapSecondAndFrame());
     }, false);

@@ -26,7 +26,7 @@ class Timeline extends Component {
   };
 
   parseFrameToImageDataComplete = (currentTime, dataUrl) => {
-    const { materialId, sceneId } = this.props;
+    const { materialId, sceneId, setFrameDataUrl } = this.props;
     setFrameDataUrl(materialId, sceneId, currentTime, dataUrl);
     // console.log(currentTime, 'currentTime');
     // console.log(dataUrl, 'dataUrl');
@@ -60,7 +60,7 @@ class Timeline extends Component {
     const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
     const keyFrames = this.getKeyFrames(frames);
-
+    //console.log(keyFrames,'dt');
     return (
       <div className="timeline">
 
@@ -213,7 +213,9 @@ class Timeline extends Component {
 }
 
 function mapDispatchToProps (dispatch) {
-  return { setFrameDataUrl: bindActionCreators(setFrameDataUrl, dispatch) };
+  return {
+    setFrameDataUrl: bindActionCreators(setFrameDataUrl, dispatch)
+  };
 }
 
 export default connect(null, mapDispatchToProps)(Timeline);
