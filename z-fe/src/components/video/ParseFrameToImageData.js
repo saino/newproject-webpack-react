@@ -6,16 +6,16 @@ import { is, Map } from 'immutable';
 export default class ParseFrameToImageData extends Component {
   static propTypes = {
     videoSrc: PropTypes.string,
-    keyFrame: PropTypes.object,
+    frames: PropTypes.array,
     onComplete: PropTypes.func
   };
   static defaultProps = {
     videoSrc: '',
-    keyFrame: {},
+    frames: [],
     onComplete: function () {}
   };
 
-  computeFrame(frameId) {
+  computeFrame(currentTime) {
     const width = this.oriCanvasEl.width;
     const height = this.oriCanvasEl.height;
 
@@ -33,16 +33,18 @@ export default class ParseFrameToImageData extends Component {
     }
 
     this.tmpCanvasContext.putImageData(frame, 0, 0);
-    this.props.onComplete(this.tmpCanvasEl.toDataURL());
+    this.props.onComplete(currentTime, this.tmpCanvasEl.toDataURL());
   }
 
   parseVideoSecondsToDataUrl(nextProps) {
-    const { keyFrame } = nextProps;
+    const { frames } = nextProps;
 
-    Object.keys(keyFrame).forEach(second => {
-      const { time } = keyFrame[ second ];
-      setTimeout(() => this.videoEl.currentTime = time, time * 1000);
-    });
+    frames.forEach(({ time }) =>
+      setTimeout(
+        () => this.videoEl.currentTime = time,
+        time * 1000
+      )
+    );
   }
 
   constructor(props) {
@@ -52,7 +54,7 @@ export default class ParseFrameToImageData extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const isUpdate = !(is(Map(this.props.keyFrame), Map(nextProps.keyFrame)))
+    const isUpdate = !(is(Map(this.props.frames), Map(nextProps.frames)))
       || !(is(this.props.videoSrc, nextProps.videoSrc))
       || !(is(this.props.onComplete, nextProps.onComplete));
 
@@ -63,6 +65,7 @@ export default class ParseFrameToImageData extends Component {
   }
 
   render() {
+
     return (
       <div className="parse-frame-to-image-data">
         <canvas ref={ el => this.oriCanvasEl = el } style={{ display: 'none' }}></canvas>
@@ -76,7 +79,7 @@ export default class ParseFrameToImageData extends Component {
     this.oriCanvasContext = this.oriCanvasEl.getContext('2d');
     this.tmpCanvasContext = this.tmpCanvasEl.getContext('2d');
 
-    this.videoEl.addEventListener('seeked', () => this.computeFrame(), false);
+    this.videoEl.addEventListener('seeked', () => this.computeFrame(this.videoEl.currentTime), false);
   }
 
 }

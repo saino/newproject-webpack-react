@@ -11,17 +11,19 @@ import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
-import ComposeRender from './ComposeRender'
 
 class SceneDisplay extends Component {
   static propTypes = {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
     materials: PropTypes.array.isRequired,
-    frameDataUrl: PropTypes.object
+    frameDataUrl: PropTypes.string
   };
   static defaultProps = {
     frameDataUrl: ''
+  };
+  state = {
+    scale: 1
   };
 
   parseFrameComplete = (frames) => {
@@ -29,16 +31,23 @@ class SceneDisplay extends Component {
 
     solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
   };
+  handleZoomOut = () =>
+    this.setState({ scale: this.state.scale + config.transform.stepScale });
+  handleZoomIn = () =>
+    this.setState({ scale: this.state.scale - config.transform.stepScale });
 
   render() {
     const { materialId, sceneId, materials, frameDataUrl ,selectStep} = this.props;
+      const { scale } = this.state;
+      const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
       let renderSomething;
       switch (selectStep.key){
           case 'effect':
           {/* 画出在video中每帧对应的秒数的图片 */}
-              renderSomething=<VideoRender
-                style={{ width: '100%', height: '100%' }}
-                frameDataUrl={ frameDataUrl } />
+              renderSomething= <VideoRender
+                  ref="video_render"
+                  style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+                  frameDataUrl={ frameDataUrl } />
               break
           case 'combine':
              renderSomething=<ComposeRender
@@ -76,7 +85,9 @@ class SceneDisplay extends Component {
           </div>
 
           <div className="transform">
-            <TransformToolBar />
+            <TransformToolBar
+              onZoomOut={ this.handleZoomOut }
+              onZoomIn={ this.handleZoomIn } />
           </div>
 
         </div>
@@ -104,7 +115,6 @@ class SceneDisplay extends Component {
 
           .scene-center-inner .canvas {
             flex: 1;
-            position:relative;
           }
 
           .tooltip {

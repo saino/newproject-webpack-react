@@ -25,23 +25,32 @@ class Timeline extends Component {
     dataUrls: []
   };
 
-  parseFrameToImageDataComplete = dataUrl => {
-    this.props.onSelectDataUrl(dataUrl);
-    this.setState({ dataUrls: [ ...this.state.dataUrls, dataUrl ] });
+  parseFrameToImageDataComplete = (currentTime, dataUrl) => {
+    const { materialId, sceneId } = this.props;
+    setFrameDataUrl(materialId, sceneId, currentTime, dataUrl);
+    // console.log(currentTime, 'currentTime');
+    // console.log(dataUrl, 'dataUrl');
+    //setFrameDataUrl()
+    //this.props.onSelectDataUrl(dataUrl);
+    //this.setState({ dataUrls: [ ...this.state.dataUrls, dataUrl ] });
   };
   getKeyFrames = (frames) => {
-    const keyFrame = {};
-    let matchSecondRE = /^(.*)?(?=\.)/;
+    const keyFrame = {},
+          res = [],
+          matchSecondRE = /^(.*)?(?=\.)/;
     let second;
 
     frames.forEach(frame => {
       second = matchSecondRE.test(frame.time) && RegExp.$1;
 
-      if (!(second in keyFrame))
+      if (!(second in keyFrame)) {
         keyFrame[second] = frame;
+        res.push(frame);
+      }
+
     });
 
-    return keyFrame;
+    return res;
   };
 
   handleSelectDataUrl = (url) => () =>
@@ -50,15 +59,15 @@ class Timeline extends Component {
   render() {
     const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
-    const keyFrame = this.getKeyFrames(frames);
+    const keyFrames = this.getKeyFrames(frames);
 
     return (
       <div className="timeline">
 
-        {/* 列出每一帧对应 */}
+        {/* 列出每一帧对应的图片 */}
         <ParseFrameToImageData
           videoSrc={ src }
-          keyFrame={ keyFrame }
+          frames={ frames }
           onComplete={ this.parseFrameToImageDataComplete } />
 
         <div className="header">
@@ -92,9 +101,9 @@ class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              {this.state.dataUrls.map(url => (
-                <li className="frame" onClick={ this.handleSelectDataUrl(url) }>
-                  <img src={ url } />
+              {keyFrames.map(({ dataUrl }) => (
+                <li className="frame" onClick={ this.handleSelectDataUrl(dataUrl) }>
+                  <img src={ dataUrl } />
                 </li>
               ))}
             </ul>

@@ -19,11 +19,11 @@ export const solutionFrame = frames => ({
   frames
 });
 
-export const setFrameDataUrl = (materialId, sceneId, frameId, dataUrl) => ({
+export const setFrameDataUrl = (materialId, sceneId, time, dataUrl) => ({
   type: actionTypes.SET_FRAME_DATA_URL,
   materialId,
   sceneId,
-  frameId,
+  time,
   dataUrl
 });
 
@@ -34,8 +34,7 @@ export default (state = defState, action) => {
       return [ ...state, ...action.frames ];
 
     case actionTypes.SET_FRAME_DATA_URL:
-      return update(state, { dataUrl: action.dataUrl }, (item) => item.materialId == action.materialId && item.sceneId == action.sceneId && item.frameId == action.frameId);
-
+      return update(state, { dataUrl: action.dataUrl }, ({ materialId, sceneId, time }) => materialId == action.materialId && sceneId == action.sceneId && time == action.time);
 
     default:
       return state;

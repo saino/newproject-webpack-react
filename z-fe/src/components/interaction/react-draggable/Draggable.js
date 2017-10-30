@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
-import classNames from 'classNames';
+import classNames from 'classnames';
 import DraggableCore from './DraggableCore';
 import { getOuterWidth, getOuterHeight, getInnerWidth, getInnerHeight } from './utils/domFn';
 import { addEvent } from './utils/eventFn';
