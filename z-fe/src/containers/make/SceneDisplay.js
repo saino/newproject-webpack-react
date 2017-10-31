@@ -54,11 +54,12 @@ class SceneDisplay extends Component {
           case 'combine':
              renderSomething=<ComposeRender
                  style={{ width: '100%', height: '100%' }}
-                 frameDataUrl={ frameDataUrl }></ComposeRender>
+                 frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
               break;
           default:
-              renderSomething=<VideoRender
-                  style={{ width: '100%', height: '100%' }}
+              renderSomething= <VideoRender
+                  ref="video_render"
+                  style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
                   frameDataUrl={ frameDataUrl } />
       }
 
@@ -117,6 +118,7 @@ class SceneDisplay extends Component {
 
           .scene-center-inner .canvas {
             flex: 1;
+            position:relative;
           }
 
           .tooltip {
