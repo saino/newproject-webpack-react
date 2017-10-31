@@ -143,8 +143,8 @@ export default class DraggableCore extends Component {
     return {
       position: 'relative',
       cursor: cursor,
-      left: deltaPosition.x,
-      top: deltaPosition.y
+      left: deltaPosition.x||position.x,
+      top: deltaPosition.y||position.y
     };
   }
 
