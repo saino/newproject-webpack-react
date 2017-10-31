@@ -1,10 +1,33 @@
+import { add } from '../utils/stateSet';
 /*
   item.materialId 素材id
   sceneId 镜头id
-  item.frameId 帧数
-  item.dataSource 帧对应的canvas解压的图片信息
+  dataSource: []
+  item.frameId 帧数 { Number }
+
 */
 
 const defState = [];
 
-const actionTypes = { GET_IMAGEDATA: 'GET_IMAGEDATA' };
+const actionTypes = { SET_IMAGEDATA: 'SET_IMAGEDATA' };
+
+export const setImageData = (materialId, sceneId, dataSource) => ({
+  type: actionTypes.SET_IMAGEDATA,
+  materialId,
+  sceneId,
+  dataSource
+});
+
+export default (state = defState, action) => {
+  switch (action.type) {
+
+    case actionTypes.SET_IMAGEDATA:
+      const { materialId, sceneId, dataSource } = action;
+
+      return add(state, { materialId, sceneId, dataSource });
+
+    default:
+      return state;
+
+  }
+};

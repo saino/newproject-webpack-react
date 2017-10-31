@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import VideoFrame from '../../utils/videoFrame';
+import { setDuration } from '../../reducers/material';
 
-export default class ParseFrameToSecond extends Component {
+class ParseFrameToSecond extends Component {
   static propTypes = {
     videoSrc: PropTypes.string,
+    materialId: PropTypes.string,
     totalFrame: PropTypes.number,
     onComplete: PropTypes.func
   };
   static defaultProps = {
     videoSrc: '',
+    materialId: '',
     totalFrame: 0,
     onComplete: function () {}
   };
@@ -51,10 +56,18 @@ export default class ParseFrameToSecond extends Component {
         duration: this.playerEl.duration,
         frames: this.props.totalFrame
       });
-      console.log(this.videoFrame.getFrameRate(), '帧率');
 
-      this.props.onComplete(this.mapSecondAndFrame());
+      const { materialId, setDuration, onComplete } = this.props;
+
+      // 得到素材的总时长
+      setDuration(materialId, this.playerEl.duration);
+      onComplete(this.mapSecondAndFrame());
     }, false);
   }
-
 }
+
+function mapDispatchToProps (dispatch) {
+  return { setDuration: bindActionCreators(setDuration, dispatch) };
+}
+
+export default connect(null, mapDispatchToProps)(ParseFrameToSecond);

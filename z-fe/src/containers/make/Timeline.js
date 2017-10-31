@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, Checkbox } from 'antd';
-import { setFrameDataUrl } from '../../reducers/frame';
+import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add } from '../../utils/stateSet';
 
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
@@ -26,13 +26,16 @@ class Timeline extends Component {
   };
 
   parseFrameToImageDataComplete = (currentTime, dataUrl) => {
-    const { materialId, sceneId, setFrameDataUrl } = this.props;
-    setFrameDataUrl(materialId, sceneId, currentTime, dataUrl);
-    // console.log(currentTime, 'currentTime');
-    // console.log(dataUrl, 'dataUrl');
-    //setFrameDataUrl()
-    //this.props.onSelectDataUrl(dataUrl);
-    //this.setState({ dataUrls: [ ...this.state.dataUrls, dataUrl ] });
+    console.log(currentTime, 'gg');
+    if (this.parseCount >= this.props.frames.length - 1) {
+      alert('转换');
+      this.parseCount = 0;
+      return;
+    }
+    this.parseCount++;
+    // const { materialId, sceneId, setFrameDataUrl } = this.props;
+    // console.log(currentTime, dataUrl.slice(0, 15), 'haha');
+    //setFrameDataUrl(materialId, sceneId, currentTime, dataUrl);
   };
   getKeyFrames = (frames) => {
     const keyFrame = {},
@@ -60,7 +63,7 @@ class Timeline extends Component {
     const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
     const keyFrames = this.getKeyFrames(frames);
-    //console.log(keyFrames,'dt');
+
     return (
       <div className="timeline">
 
@@ -101,8 +104,8 @@ class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              {keyFrames.map(({ dataUrl }) => (
-                <li className="frame" onClick={ this.handleSelectDataUrl(dataUrl) }>
+              {keyFrames.map(({ dataUrl, time, frameId }) => (
+                <li className="frame" data-time={ time } data-url={ dataUrl } data-frameid={ frameId } onClick={ this.handleSelectDataUrl(dataUrl) }>
                   <img src={ dataUrl } />
                 </li>
               ))}
@@ -214,7 +217,7 @@ class Timeline extends Component {
 
 function mapDispatchToProps (dispatch) {
   return {
-    setFrameDataUrl: bindActionCreators(setFrameDataUrl, dispatch)
+    setImageData: bindActionCreators(setImageData, dispatch)
   };
 }
 

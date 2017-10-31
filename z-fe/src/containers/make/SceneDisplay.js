@@ -2,6 +2,7 @@ import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import config from '../../config';
 import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
@@ -10,6 +11,7 @@ import TransformToolBar from './TransformToolbar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
+import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 class SceneDisplay extends Component {
@@ -59,7 +61,6 @@ class SceneDisplay extends Component {
                   style={{ width: '100%', height: '100%' }}
                   frameDataUrl={ frameDataUrl } />
       }
-      const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
 
     return (
       <div className="scene-center">
@@ -70,6 +71,7 @@ class SceneDisplay extends Component {
              {/* 处理视频得到每帧对应的视频秒数 */}
              <ParseFrameToSecond
                videoSrc={ src }
+               materialId={ this.props.materialId }
                totalFrame={ totalFrame }
                onComplete={ this.parseFrameComplete } />
 

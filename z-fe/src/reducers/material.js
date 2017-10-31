@@ -1,4 +1,4 @@
-import { add } from '../utils/stateSet';
+import { add, update } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -10,6 +10,7 @@ import { logout } from './user';
   item.title String 素材名称,
   item.type Number 素材类别  -- 0: 视频, 1: 图片
   item.totalFrame Number 总帧数
+  item.duration Number 总时长
   item.frameRate Number 帧率 前端自己设置，无需服务端返回
 */
 const defState = [{
@@ -29,7 +30,9 @@ const actionTypes = {
 
   REMOVE_MATERIAL: 'REMOVE_MATERIAL',
 
-  SET_FRAME_RATE: 'SET_FRAME_RATE'
+  SET_FRAME_RATE: 'SET_FRAME_RATE',
+
+  SET_DURATION: 'SET_DURATION'
 
 };
 
@@ -40,11 +43,20 @@ export const list = packageToken((dispatch, { token }) => {
   }));
 }, logout);
 
+export const setDuration = (materialId, duration) => ({
+  type: actionTypes.SET_DURATION,
+  materialId,
+  duration
+});
+
 export default (state = defState, action) => {
   switch (action.type) {
 
     case actionTypes.LIST_MATERIAL:
       return [ ...state, ...action.materials ];
+
+    case actionTypes.SET_DURATION:
+      return update(state, { duration: action.duration }, action.materialId, 'materialId')
 
     default:
       return state;
