@@ -32,14 +32,18 @@ export default class ComposeRender extends Component {
             let style = {top: 0, left: 0, width: item.width, height: item.height}
             return (
                 <div className='composed-material' style={style} key={item.id}>
-                    <DraggableCore position={{x:item.left,y:item.top}} deltaPosition={{x:0,y:0}}
+                    <DraggableCore handle='.move-handler' position={{x:item.left,y:item.top}} deltaPosition={{x:0,y:0}}
                                    cursor={ this.state.cursor }
                                onDrag={this.onControlledDrag.bind(this, item, index)}
                               onDragEnd={this.onDragEnd.bind(this, item, index)}
                                    onHover={ this.onHover.bind(this) }
                                    onDragStart={ this.onDragStart.bind(this) }
                     >
-                        <img className='thumb' src={this.props.frameDataUrl}/>
+                        <div>
+                            <div className='move-handler'>asdlkfs</div>
+                            <img className='thumb' src={this.props.frameDataUrl}/>
+                        </div>
+
                     </DraggableCore>
                 </div>)
         })

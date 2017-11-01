@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import { addEvent, removeEvent } from './utils/eventFn';
-import { getPosition } from './utils/domFn';
+import { getPosition ,matchesSelectorAndParentsTo} from './utils/domFn';
 
 const eventAlias = {
   start: 'mousedown',
@@ -38,6 +38,7 @@ export default class DraggableCore extends Component {
     onDragEnd: PropTypes.func,
 
     onHover: PropTypes.func,
+      handle:PropTypes.string
 
   };
   static defaultProps = {
@@ -46,7 +47,8 @@ export default class DraggableCore extends Component {
 
     onDrag: function () {},
 
-    onDragEnd: function () {}
+    onDragEnd: function () {},
+      handle:null
 
   };
 
@@ -66,9 +68,13 @@ export default class DraggableCore extends Component {
     if (!this.hasPressSpace)
       return;
 
+
     const el = findDOMNode(this);
     const { ownerDocument } = el;
-    const { onDragStart } = this.props;
+    const { onDragStart,handle } = this.props;
+      if(handle&&!matchesSelectorAndParentsTo(evt.target, handle, el)){
+          return ;
+      }
     const [ currX, currY ] = getPosition(el);
 
     onDragStart(currX, currY);
