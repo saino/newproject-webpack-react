@@ -14,41 +14,44 @@ class Timeline extends Component {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
     materials: PropTypes.array.isRequired,
+    imageData: PropTypes.array,
     frames: PropTypes.array.isRequired,
     onSelectDataUrl: PropTypes.func.isRequired
+  };
+  static defaultProps = {
+    imageData: []
   };
 
   state = {
     isLoop: false,
     isPlay: false,
-    currFrame: 1,
-    dataUrls: []
+    currFrame: 1
   };
+  imageUrls = [];
 
-  parseFrameToImageDataComplete = (currentTime, dataUrl) => {
-    console.log(currentTime, 'gg');
-    if (this.parseCount >= this.props.frames.length - 1) {
-      alert('转换');
-      this.parseCount = 0;
-      return;
+  parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
+    console.log(duration, currentTime);
+    // 根据帧的时长转成图片完成
+    if (duration == currentTime) {
+      const { materialId, sceneId, setImageData } = this.props;
+
+      setImageData(materialId, sceneId, this.imageUrls);
+    } else {
+      this.imageUrls.push({ time: currentTime, imageUrl });
     }
-    this.parseCount++;
-    // const { materialId, sceneId, setFrameDataUrl } = this.props;
-    // console.log(currentTime, dataUrl.slice(0, 15), 'haha');
-    //setFrameDataUrl(materialId, sceneId, currentTime, dataUrl);
   };
-  getKeyFrames = (frames) => {
+  getKeyFrames = (imageData) => {
     const keyFrame = {},
           res = [],
-          matchSecondRE = /^(.*)?(?=\.)/;
-    let second;
+          matchTimeRE = /^(.*)?(?=\.)/;
+    let time;
 
-    frames.forEach(frame => {
-      second = matchSecondRE.test(frame.time) && RegExp.$1;
+    imageData.forEach(item => {
+      time = matchTimeRE.test(item.time) && RegExp.$1;
 
-      if (!(second in keyFrame)) {
-        keyFrame[second] = frame;
-        res.push(frame);
+      if (!(time in keyFrame)) {
+        keyFrame[time] = item;
+        res.push(item);
       }
 
     });
@@ -60,16 +63,22 @@ class Timeline extends Component {
     this.props.onSelectDataUrl(url);
 
   render() {
-    const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
-    const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
-    const keyFrames = this.getKeyFrames(frames);
+    const {
+      materialId, sceneId, materials,
+      frames, imageData,
+      setFrameDataUrl } = this.props;
 
+    const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
+    const { dataSource = [] } = getItemByKey(imageData, item => materialId == item.materialId && sceneId == item.sceneId) || {};
+    const keyImageData = this.getKeyFrames(dataSource);
+    console.log(dataSource, 'dd');
     return (
       <div className="timeline">
 
         {/* 列出每一帧对应的图片 */}
         <ParseFrameToImageData
           videoSrc={ src }
+          duration={ duration }
           frames={ frames }
           onComplete={ this.parseFrameToImageDataComplete } />
 
@@ -104,9 +113,9 @@ class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              {keyFrames.map(({ dataUrl, time, frameId }) => (
-                <li className="frame" data-time={ time } data-url={ dataUrl } data-frameid={ frameId } onClick={ this.handleSelectDataUrl(dataUrl) }>
-                  <img src={ dataUrl } />
+              {keyImageData.map(({ time, imageUrl }) => (
+                <li className="frame" data-time={ time } onClick={ this.handleSelectDataUrl(imageUrl) }>
+                  <img src={ imageUrl } />
                 </li>
               ))}
             </ul>

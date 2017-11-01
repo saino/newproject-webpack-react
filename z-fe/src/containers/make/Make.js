@@ -59,6 +59,7 @@ class Make extends Component {
             sceneId={ this.state.currSceneId }
             materials={ this.props.material }
             frames={ this.props.frame }
+            imageData={ this.props.imageData }
             onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />
 
         </div>
@@ -88,10 +89,12 @@ class Make extends Component {
   }
 }
 
-function mapStateToProps ({ material, frame ,step}) {
+function mapStateToProps ({ material, frame, imageData, step }) {
   return {
     material,
-    frame, selectStep:step.steps[step.current]
+    frame,
+    imageData,
+    selectStep: step.steps[step.current]
   };
 }
 

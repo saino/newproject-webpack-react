@@ -8,6 +8,7 @@ import step from './step';
 import frame from './frame';
 import scene from './scene';
 import material from './material';
+import imageData from './imageData';
 import compose from './compose';
 
 
@@ -54,6 +55,7 @@ const rootReducer = combineReducers({
     scene,
     frame,
     material,
+    imageData,
     userInfo,
     worksInfo,
     compose

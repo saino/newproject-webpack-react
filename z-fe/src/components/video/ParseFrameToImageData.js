@@ -7,11 +7,13 @@ import { getItemByKey } from '../../utils/stateSet';
 export default class ParseFrameToImageData extends Component {
   static propTypes = {
     videoSrc: PropTypes.string,
+    duration: PropTypes.number,
     frames: PropTypes.array,
     onComplete: PropTypes.func
   };
   static defaultProps = {
     videoSrc: '',
+    duration: 0,
     frames: [],
     onComplete: function () {}
   };
@@ -35,7 +37,7 @@ export default class ParseFrameToImageData extends Component {
     }
 
     this.tmpCanvasContext.putImageData(frame, 0, 0);
-    this.props.onComplete(currentTime, this.tmpCanvasEl.toDataURL());
+    this.props.onComplete(this.props.duration, currentTime, this.tmpCanvasEl.toDataURL());
   }
 
   parseVideoSecondsToDataUrl(nextProps) {

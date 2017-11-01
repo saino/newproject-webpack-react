@@ -5,10 +5,15 @@
 const uniq = (arr: Array, obj: Object) =>
   arr.filter((item, idx) => !idx || arr.indexOf(obj) === idx);
 const inArray = (arr: Array, item) =>
-  arr.find(item) != null;
+  arr.indexOf(item) >= 0;
 
-export const getItemByKey = (target: Array, idValue, idKey = 'id') =>
-  target.find((item) => item[ idKey ] == idValue);
+export const getItemByKey = (target: Array, idValue, idKey = 'id') => {
+  let processer = typeof idValue === 'function'
+    ? item => idValue(item)
+    : item => item[ idKey ] == idValue;
+
+   return target.find(processer);
+};
 
 // 添加元素，避免重复
 export const add = (target: Array, origin) => {
