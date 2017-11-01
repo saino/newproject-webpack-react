@@ -30,7 +30,6 @@ class Timeline extends Component {
   imageUrls = [];
 
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
-    console.log(currentTime, 'dd');
     // 根据帧的时长转成图片完成
     if (duration == currentTime) {
       const { materialId, sceneId, setImageData } = this.props;

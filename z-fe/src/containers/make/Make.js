@@ -47,7 +47,7 @@ class Make extends Component {
             frameDataUrl={ this.state.frameDataUrl } />
 
           {/* 控制面板 */}
-          <ControllerPanel />
+          <ControllerPanel materialId={ this.state.currMaterialId } />
 
         </div>
 

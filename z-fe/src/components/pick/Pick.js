@@ -1,11 +1,27 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+//import { connect } from 'react-redux';
+
+/* 自定义组件 */
 import PerfectPick from './PerfectPick';
 import PrePick from './PrePick';
 
 export default class Pick extends Component {
+  static propTypes = {
+    material: PropTypes.object
+  };
+  static defaultProps = {
+    material: {}
+  };
   state = {
     index: 0
   };
+
+  getDontSuffixFilename() {
+    const { src } = this.props.material;
+
+    return /([^/]*\.\w*)$/.test(src) && RegExp.$1;
+  }
 
   render() {
     return (
@@ -15,7 +31,7 @@ export default class Pick extends Component {
 
         <div className="main">
           { !this.state.index ?
-            (<PrePick onNext={ () => { this.setState({ index: 1 }) } } />) :
+            (<PrePick filename={ this.getDontSuffixFilename() } onNext={ () => { this.setState({ index: 1 }) } } />) :
             (<PerfectPick onPrev={ () => { this.setState({ index: 0 }) } } />)
           }
         </div>
@@ -48,3 +64,9 @@ export default class Pick extends Component {
       (<PrePick />) : (<PerfectPick />);
   }
 }
+
+// function mapStateToProps ({ material }) {
+//   return { material };
+// }
+//
+// export default connect(mapStateToProps)(Pick);
