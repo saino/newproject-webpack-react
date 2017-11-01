@@ -115,7 +115,7 @@ export default class DraggableCore extends Component {
 
   handlePressSpaceStart(evt) {
     const { ownerDocument } = findDOMNode(this);
-
+    // debugger;
     this.hasPressSpace = evt.keyCode == 32;
     addEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
@@ -143,8 +143,8 @@ export default class DraggableCore extends Component {
     return {
       position: 'relative',
       cursor: cursor,
-      left: deltaPosition.x,
-      top: deltaPosition.y
+      left: deltaPosition.x||position.x,
+      top: deltaPosition.y||position.y
     };
   }
 
@@ -162,5 +162,10 @@ export default class DraggableCore extends Component {
 
     addEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
   }
+    componentWillUnmount() {
+        const { ownerDocument } = findDOMNode(this);
+
+        removeEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
+    }
 
 }
