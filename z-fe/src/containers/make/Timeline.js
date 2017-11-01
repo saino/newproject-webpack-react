@@ -8,6 +8,7 @@ import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add } from '../../utils/stateSet';
 
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
+import MaxMinize from '../../components/interaction/react-maxminize/MaxMinize';
 
 class Timeline extends Component {
   static propTypes = {
@@ -25,20 +26,24 @@ class Timeline extends Component {
   state = {
     isLoop: false,
     isPlay: false,
-    currFrame: 1
+    curr: 1
   };
   imageUrls = [];
 
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
     // 根据帧的时长转成图片完成
     if (duration == currentTime) {
-      const { materialId, sceneId, setImageData } = this.props;
+      const { materialId, sceneId, setImageData, onSelectDataUrl } = this.props;
 
       setImageData(materialId, sceneId, this.imageUrls);
+
+      // 默认选择第一张帧
+      onSelectDataUrl(this.imageUrls[0].imageUrl);
     } else {
       this.imageUrls.push({ time: currentTime, imageUrl });
     }
   };
+
   getKeyFrames = (imageData) => {
     const keyFrame = {},
           res = [],
@@ -61,6 +66,21 @@ class Timeline extends Component {
   handleSelectDataUrl = (url) => () =>
     this.props.onSelectDataUrl(url);
 
+  // 播放或暂停
+  handlePlayOrStop = () => {
+
+  };
+
+  // 前进
+  handleForward = () => {
+    alert('前进');
+  };
+
+  // 后退
+  handleBackward = () => {
+    alert('后退');
+  };
+
   render() {
     const {
       materialId, sceneId, materials,
@@ -81,27 +101,30 @@ class Timeline extends Component {
           frames={ frames }
           onComplete={ this.parseFrameToImageDataComplete } />
 
-        <div className="header">
+        <MaxMinize
+          min={ 1 }>
+          <div className="header">
 
-          <div className="player">
-            <div className="backward"><Icon type="backward" /></div>
-            <div className="playing"><Icon type="play-circle-o" /></div>
-            <div className="forward"><Icon type="forward" /></div>
+            <div className="player">
+              <div className="backward" onClick={ this.handleBackward }><Icon type="backward" /></div>
+              <div className="playing"><Icon type="play-circle-o" /></div>
+              <div className="forward" onClick={ this.handleForward }><Icon type="forward" /></div>
+            </div>
+
+            <div className="currframe">
+              <label>当前第</label><label>{ this.state.curr }</label><label>帧</label>
+            </div>
+
+            {/*<div className="singleframe">
+              <label>每秒</label><label>60</label><label>帧</label>
+            </div>*/}
+
+            <div className="isloop">
+              <Checkbox checked={ this.state.isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
+            </div>
+
           </div>
-
-          <div className="currframe">
-            <label>当前第</label><label>{ this.state.currFrame }</label><label>帧</label>
-          </div>
-
-          {/*<div className="singleframe">
-            <label>每秒</label><label>60</label><label>帧</label>
-          </div>*/}
-
-          <div className="isloop">
-            <Checkbox checked={ this.state.isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
-          </div>
-
-        </div>
+        </MaxMinize>
 
         <div className="wrapper">
 
@@ -170,6 +193,10 @@ class Timeline extends Component {
             width: 84px;
           }
 
+          .player > div {
+            cursor: pointer;
+          }
+
           .player .backward i:before,
           .player .playing i:before,
           .player .forward i:before {
@@ -191,7 +218,7 @@ class Timeline extends Component {
           }
 
           .timeline .wrapper .frames {
-            padding: 10px 16px;
+            padding: 10px 12px;
             overflow: auto;
           }
 
