@@ -27,3 +27,32 @@ export const getPosition = (el) => {
 
   return [ parseFloat(computedStyle.getPropertyValue('left')), parseFloat(computedStyle.getPropertyValue('top')) ];
 };
+
+export function matchesSelector(el, selector) {
+    if (!Element.prototype.matches) {
+        Element.prototype.matches =
+            Element.prototype.matchesSelector ||
+            Element.prototype.mozMatchesSelector ||
+            Element.prototype.msMatchesSelector ||
+            Element.prototype.oMatchesSelector ||
+            Element.prototype.webkitMatchesSelector ||
+            function(s) {
+                var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                    i = matches.length;
+                while (--i >= 0 && matches.item(i) !== this) {}
+                return i > -1;
+            };
+    }
+    return el.matches.call(el, selector);
+}
+
+export function matchesSelectorAndParentsTo(el, selector, baseNode){
+    let node = el;
+    do {
+        if (matchesSelector(node, selector)) return true;
+        if (node === baseNode) return false;
+        node = node.parentNode;
+    } while (node);
+
+    return false;
+}
