@@ -30,7 +30,7 @@ class Timeline extends Component {
   imageUrls = [];
 
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
-    console.log(duration, currentTime);
+    console.log(currentTime, 'dd');
     // 根据帧的时长转成图片完成
     if (duration == currentTime) {
       const { materialId, sceneId, setImageData } = this.props;
@@ -71,7 +71,7 @@ class Timeline extends Component {
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
     const { dataSource = [] } = getItemByKey(imageData, item => materialId == item.materialId && sceneId == item.sceneId) || {};
     const keyImageData = this.getKeyFrames(dataSource);
-    console.log(dataSource, 'dd');
+
     return (
       <div className="timeline">
 

@@ -17,7 +17,6 @@ export default class ParseFrameToImageData extends Component {
     frames: [],
     onComplete: function () {}
   };
-  currFrameId = 0;
 
   computeFrame(currentTime) {
     const width = this.oriCanvasEl.width;
@@ -44,30 +43,11 @@ export default class ParseFrameToImageData extends Component {
     const { frames } = nextProps;
 
     frames.forEach(({ time, frameId }) =>
-      setTimeout(() => {
-        this.currFrameId = frameId;
-        this.videoEl.currentTime = time;
-      },
-      time * 1000)
+      setTimeout(
+        () => this.videoEl.currentTime = time,
+        time * 1000
+      )
     );
-  }
-
-  draw() {
-    if (this.videoEl.paused || this.videoEl.ended) {
-      clearTimeout(rid);
-      return;
-    }
-
-    const { frames } = this.props;
-    const currentTime = this.videoEl.currentTime;
-    let rid;
-
-    console.log(currentTime);
-    if (getItemByKey(frames, currentTime, 'time')) {
-      console.log(currentTime, 'dd');
-    }
-
-    rid = setTimeout(this.draw.bind(this), Math.floor(1000 / 22.97436));
   }
 
   constructor(props) {

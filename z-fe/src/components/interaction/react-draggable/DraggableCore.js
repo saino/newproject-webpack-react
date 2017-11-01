@@ -162,10 +162,10 @@ export default class DraggableCore extends Component {
 
     addEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
   }
-    componentWillUnmount() {
-        const { ownerDocument } = findDOMNode(this);
 
-        removeEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
-    }
+  componentWillUnmount() {
+      const { ownerDocument } = findDOMNode(this);
 
+      removeEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
+  }
 }
