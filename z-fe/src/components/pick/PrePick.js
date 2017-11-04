@@ -6,7 +6,11 @@ import { fetchStart, fetchEnd } from '../../reducers/app';
 
 class PrePick extends Component {
   static propTypes = {
+    filename: PropTypes.string,
     onNext: PropTypes.func.isRequired
+  };
+  static defaultProps = {
+    filename: ''
   };
 
   render() {
@@ -15,7 +19,7 @@ class PrePick extends Component {
 
         <div className="video-info">
           <label>素材名称</label>
-          <label>xxxx.avi</label>
+          <label>{ this.props.filename }</label>
         </div>
 
         <div className="auto-start">

@@ -4,84 +4,127 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, Checkbox } from 'antd';
-import { setFrameDataUrl } from '../../reducers/frame';
+import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add } from '../../utils/stateSet';
 
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
+import MaxMinize from '../../components/interaction/react-maxminize/MaxMinize';
 
 class Timeline extends Component {
   static propTypes = {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
     materials: PropTypes.array.isRequired,
+    imageData: PropTypes.array,
     frames: PropTypes.array.isRequired,
     onSelectDataUrl: PropTypes.func.isRequired
+  };
+  static defaultProps = {
+    imageData: []
   };
 
   state = {
     isLoop: false,
     isPlay: false,
-    currFrame: 1,
-    dataUrls: []
+    curr: 1
+  };
+  imageUrls = [];
+
+  parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
+    // 根据帧的时长转成图片完成
+    if (duration == currentTime) {
+      const { materialId, sceneId, setImageData, onSelectDataUrl } = this.props;
+
+      setImageData(materialId, sceneId, this.imageUrls);
+
+      // 默认选择第一张帧
+      onSelectDataUrl(this.imageUrls[0].imageUrl);
+    } else {
+      this.imageUrls.push({ time: currentTime, imageUrl });
+    }
   };
 
-  parseFrameToImageDataComplete = dataUrl => {
-    this.props.onSelectDataUrl(dataUrl);
-    this.setState({ dataUrls: [ ...this.state.dataUrls, dataUrl ] });
-  };
-  getKeyFrames = (frames) => {
-    const keyFrame = {};
-    let matchSecondRE = /^(.*)?(?=\.)/;
-    let second;
+  getKeyFrames = (imageData) => {
+    const keyFrame = {},
+          res = [],
+          matchTimeRE = /^(.*)?(?=\.)/;
+    let time;
 
-    frames.forEach(frame => {
-      second = matchSecondRE.test(frame.time) && RegExp.$1;
+    imageData.forEach(item => {
+      time = matchTimeRE.test(item.time) && RegExp.$1;
 
-      if (!(second in keyFrame))
-        keyFrame[second] = frame;
+      if (!(time in keyFrame)) {
+        keyFrame[time] = item;
+        res.push(item);
+      }
+
     });
 
-    return keyFrame;
+    return res;
   };
 
   handleSelectDataUrl = (url) => () =>
     this.props.onSelectDataUrl(url);
 
+  // 播放或暂停
+  handlePlayOrStop = () => {
+
+  };
+
+  // 前进
+  handleForward = () => {
+    alert('前进');
+  };
+
+  // 后退
+  handleBackward = () => {
+    alert('后退');
+  };
+
   render() {
-    const { materialId, sceneId, materials, frames, setFrameDataUrl } = this.props;
+    const {
+      materialId, sceneId, materials,
+      frames, imageData,
+      setFrameDataUrl } = this.props;
+
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
-    const keyFrame = this.getKeyFrames(frames);
+    const { dataSource = [] } = getItemByKey(imageData, item => materialId == item.materialId && sceneId == item.sceneId) || {};
+    const keyImageData = this.getKeyFrames(dataSource);
 
     return (
       <div className="timeline">
 
-        {/* 列出每一帧对应 */}
+        {/* 列出每一帧对应的图片 */}
         <ParseFrameToImageData
           videoSrc={ src }
-          keyFrame={ keyFrame }
+          duration={ duration }
+          frames={ frames }
           onComplete={ this.parseFrameToImageDataComplete } />
 
-        <div className="header">
+        <MaxMinize
+          min={ 1 }>
+          <div className="header">
 
-          <div className="player">
-            <div className="backward"><Icon type="backward" /></div>
-            <div className="playing"><Icon type="play-circle-o" /></div>
-            <div className="forward"><Icon type="forward" /></div>
+            <div className="player">
+              <div className="backward" onClick={ this.handleBackward }><Icon type="backward" /></div>
+              <div className="playing"><Icon type="play-circle-o" /></div>
+              <div className="forward" onClick={ this.handleForward }><Icon type="forward" /></div>
+            </div>
+
+            <div className="currframe">
+              <label>当前第</label><label>{ this.state.curr }</label><label>帧</label>
+            </div>
+
+            {/*<div className="singleframe">
+              <label>每秒</label><label>60</label><label>帧</label>
+            </div>*/}
+
+            <div className="isloop">
+              <Checkbox checked={ this.state.isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
+            </div>
+
           </div>
-
-          <div className="currframe">
-            <label>当前第</label><label>{ this.state.currFrame }</label><label>帧</label>
-          </div>
-
-          {/*<div className="singleframe">
-            <label>每秒</label><label>60</label><label>帧</label>
-          </div>*/}
-
-          <div className="isloop">
-            <Checkbox checked={ this.state.isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
-          </div>
-
-        </div>
+        </MaxMinize>
 
         <div className="wrapper">
 
@@ -92,9 +135,9 @@ class Timeline extends Component {
 
           <div className="frames">
             <ul>
-              {this.state.dataUrls.map(url => (
-                <li className="frame" onClick={ this.handleSelectDataUrl(url) }>
-                  <img src={ url } />
+              {keyImageData.map(({ time, imageUrl }) => (
+                <li className="frame" data-time={ time } onClick={ this.handleSelectDataUrl(imageUrl) }>
+                  <img src={ imageUrl } />
                 </li>
               ))}
             </ul>
@@ -150,6 +193,10 @@ class Timeline extends Component {
             width: 84px;
           }
 
+          .player > div {
+            cursor: pointer;
+          }
+
           .player .backward i:before,
           .player .playing i:before,
           .player .forward i:before {
@@ -171,7 +218,7 @@ class Timeline extends Component {
           }
 
           .timeline .wrapper .frames {
-            padding: 10px 16px;
+            padding: 10px 12px;
             overflow: auto;
           }
 
@@ -204,7 +251,9 @@ class Timeline extends Component {
 }
 
 function mapDispatchToProps (dispatch) {
-  return { setFrameDataUrl: bindActionCreators(setFrameDataUrl, dispatch) };
+  return {
+    setImageData: bindActionCreators(setImageData, dispatch)
+  };
 }
 
 export default connect(null, mapDispatchToProps)(Timeline);

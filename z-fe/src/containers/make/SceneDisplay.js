@@ -2,6 +2,7 @@ import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import config from '../../config';
 import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
@@ -10,6 +11,7 @@ import TransformToolBar from './TransformToolbar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
+import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 class SceneDisplay extends Component {
@@ -17,10 +19,13 @@ class SceneDisplay extends Component {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
     materials: PropTypes.array.isRequired,
-    frameDataUrl: PropTypes.object
+    frameDataUrl: PropTypes.string
   };
   static defaultProps = {
     frameDataUrl: ''
+  };
+  state = {
+    scale: 1
   };
 
   parseFrameComplete = (frames) => {
@@ -28,10 +33,35 @@ class SceneDisplay extends Component {
 
     solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
   };
+  handleZoomOut = () =>
+    this.setState({ scale: this.state.scale + config.transform.stepScale });
+  handleZoomIn = () =>
+    this.setState({ scale: this.state.scale - config.transform.stepScale });
 
   render() {
-    const { materialId, sceneId, materials, frameDataUrl } = this.props;
-    const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
+    const { materialId, sceneId, materials, frameDataUrl ,selectStep} = this.props;
+      const { scale } = this.state;
+      const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
+      let renderSomething;
+      switch (selectStep.key){
+          case 'effect':
+          {/* 画出在video中每帧对应的秒数的图片 */}
+              renderSomething= <VideoRender
+                  ref="video_render"
+                  style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+                  frameDataUrl={ frameDataUrl } />
+              break
+          case 'combine':
+             renderSomething=<ComposeRender
+                 style={{ width: '100%', height: '100%' }}
+                 frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
+              break;
+          default:
+              renderSomething= <VideoRender
+                  ref="video_render"
+                  style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+                  frameDataUrl={ frameDataUrl } />
+      }
 
     return (
       <div className="scene-center">
@@ -42,13 +72,11 @@ class SceneDisplay extends Component {
              {/* 处理视频得到每帧对应的视频秒数 */}
              <ParseFrameToSecond
                videoSrc={ src }
+               materialId={ this.props.materialId }
                totalFrame={ totalFrame }
                onComplete={ this.parseFrameComplete } />
 
-             {/* 画出在video中每帧对应的秒数的图片 */}
-             <VideoRender
-               style={{ width: '100%', height: '100%' }}
-               frameDataUrl={ frameDataUrl } />
+               {renderSomething}
 
            </div>
         </div>
@@ -60,7 +88,9 @@ class SceneDisplay extends Component {
           </div>
 
           <div className="transform">
-            <TransformToolBar />
+            <TransformToolBar
+              onZoomOut={ this.handleZoomOut }
+              onZoomIn={ this.handleZoomIn } />
           </div>
 
         </div>
@@ -88,6 +118,7 @@ class SceneDisplay extends Component {
 
           .scene-center-inner .canvas {
             flex: 1;
+            position:relative;
           }
 
           .tooltip {

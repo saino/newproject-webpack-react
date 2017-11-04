@@ -59,6 +59,11 @@ export default ({
     validate: 'requireAuth'
   },
 
+  // 形变
+  transform: {
+    stepScale: 0.1  
+  },
+
   // 对请求host、path路径处理
   getApiPath() {
     let tempHost = this.api.host,
