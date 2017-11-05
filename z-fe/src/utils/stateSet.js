@@ -19,11 +19,11 @@ export const getItemByKey = (target: Array, idValue, idKey = 'id') => {
 export const add = (target: Array, origin) => {
   if (!target || origin == null)
     return target;
+  
+  Array.isArray(origin) || (origin = [ origin ]);
+  origin = origin.filter(item => !inArray(target, item));
 
-  if (inArray(target, origin))
-    return target;
-
-  return [ ...target, origin ];
+  return [ ...target, ...origin ];
 };
 
 export const update = (target: Array, origin: Object, idValue, idKey = 'id') => {

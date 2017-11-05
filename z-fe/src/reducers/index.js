@@ -10,6 +10,7 @@ import scene from './scene';
 import material from './material';
 import imageData from './imageData';
 import compose from './compose';
+import userWorks from './userWorks';
 
 
 const userInfo = (state = {}, action) => {
@@ -58,7 +59,8 @@ const rootReducer = combineReducers({
     imageData,
     userInfo,
     worksInfo,
-    compose
+    compose,
+    userWorks,
 })
 
 export default rootReducer
