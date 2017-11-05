@@ -30,7 +30,8 @@ export default class MaxMinize extends Component {
   render() {
     return cloneElement(Children.only(this.props.children), {
       isMax: this.isMax,
-      isMin: this.isMin
+      isMin: this.isMin,
+      ...{ this.props.children.props }
     })
   }
 }
