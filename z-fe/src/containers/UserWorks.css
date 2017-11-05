@@ -1,0 +1,12 @@
+.user-works{
+    position: relative;
+    height: 100%;
+    width: 100%;
+ }
+ .user-works-body{
+    position: absolute;
+    width: 100%;
+    margin-top: 54px;
+    height: calc(100% - 54px);
+    padding: 20px 11% 0px;
+}
