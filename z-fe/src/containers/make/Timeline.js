@@ -3,12 +3,11 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
-import { Icon, Checkbox } from 'antd';
+import { Icon, Checkbox, message } from 'antd';
 import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add } from '../../utils/stateSet';
 
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
-import MaxMinize from '../../components/interaction/react-maxminize/MaxMinize';
 
 class Timeline extends Component {
   static propTypes = {
@@ -19,16 +18,14 @@ class Timeline extends Component {
     frames: PropTypes.array.isRequired,
     onSelectDataUrl: PropTypes.func.isRequired
   };
-  static defaultProps = {
-    imageData: []
-  };
 
   state = {
     isLoop: false,
     isPlay: false,
-    curr: 1
+    currFrameId: 1
   };
   imageUrls = [];
+  currFrames = null;
 
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
     // 根据帧的时长转成图片完成
@@ -63,22 +60,36 @@ class Timeline extends Component {
     return res;
   };
 
+  checkFrameId = frameId =>
+    getItemByKey(this.currFrames, frameId, 'frameId');
+
   handleSelectDataUrl = (url) => () =>
     this.props.onSelectDataUrl(url);
 
   // 播放或暂停
-  handlePlayOrStop = () => {
-
-  };
+  handlePlayOrStop = () =>
+    this.setState({ isPlay: !this.state.isPlay })
 
   // 前进
   handleForward = () => {
-    alert('前进');
+    const currFrameId = this.state.currFrameId - 1;
+
+    if (this.checkFrameId(currFrameId)) {
+      this.setState({ currFrameId });
+    } else {
+      message.error('已经是第一帧了');
+    }
   };
 
   // 后退
   handleBackward = () => {
-    alert('后退');
+    const currFrameId = this.state.currFrameId + 1;
+
+    if (this.checkFrameId(currFrameId)) {
+      this.setState({ currFrameId });
+    } else {
+      message.error('已经是最后一帧了');
+    }
   };
 
   render() {
@@ -92,17 +103,16 @@ class Timeline extends Component {
     const keyImageData = this.getKeyFrames(dataSource);
 
     return (
-      <div className="timeline">
+        <div className="timeline">
 
-        {/* 列出每一帧对应的图片 */}
-        <ParseFrameToImageData
-          videoSrc={ src }
-          duration={ duration }
-          frames={ frames }
-          onComplete={ this.parseFrameToImageDataComplete } />
+          {/* 列出每一帧对应的图片 */}
+          <ParseFrameToImageData
+            videoSrc={ src }
+            duration={ duration }
+            frames={ frames }
+            onComplete={ this.parseFrameToImageDataComplete } />
 
-        <MaxMinize
-          min={ 1 }>
+
           <div className="header">
 
             <div className="player">
@@ -124,130 +134,139 @@ class Timeline extends Component {
             </div>
 
           </div>
-        </MaxMinize>
 
-        <div className="wrapper">
+          <div className="wrapper">
 
-          <div className="ruler">
+            <div className="ruler">
+
+            </div>
+
+
+            <div className="frames">
+              <ul>
+                {keyImageData.map(({ time, imageUrl }) => (
+                  <li className="frame" data-time={ time } onClick={ this.handleSelectDataUrl(imageUrl) }>
+                    <img src={ imageUrl } />
+                  </li>
+                ))}
+              </ul>
+            </div>
 
           </div>
 
+          <style>{`
 
-          <div className="frames">
-            <ul>
-              {keyImageData.map(({ time, imageUrl }) => (
-                <li className="frame" data-time={ time } onClick={ this.handleSelectDataUrl(imageUrl) }>
-                  <img src={ imageUrl } />
-                </li>
-              ))}
-            </ul>
-          </div>
+            .timeline {
+              display: flex;
+              flex-flow: column nowrap;
+              align-items: stretch;
+              height: 100%;
+              color: #fff;
+            }
+
+            .timeline .header {
+              background: #2f5f79;
+              width: 100%;
+              height: 42px;
+              display: flex;
+              align-items: center;
+              padding: 0 20px;
+            }
+
+            .timeline .currframe,
+            .timeline .singleframe {
+              margin: 0 31px;
+            }
+
+            .timeline .singleframe {
+              margin-left: 0;
+            }
+
+            .timeline .currframe label:nth-child(even),
+            .timeline .singleframe label:nth-child(even) {
+              margin: 0 10px;
+              color: #333;
+              background: #97afbc;
+              padding: 5px;
+              border: 1px solid #647c89;
+              width: 40px;
+              text-align: center;
+              display: inline-block;
+            }
+
+            .player {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              height: 100%;
+              width: 84px;
+            }
+
+            .player > div {
+              cursor: pointer;
+            }
+
+            .player .backward i:before,
+            .player .playing i:before,
+            .player .forward i:before {
+              color: #fff;
+            }
+
+            .player .backward i:before,
+            .player .forward i:before {
+              font-size: 14px;
+            }
+
+            .player .playing i:before {
+              font-size: 25px;
+            }
+
+            .timeline .wrapper {
+              width: 100%;
+              background: #264c61;
+            }
+
+            .timeline .wrapper .frames {
+              padding: 10px 12px;
+              overflow: auto;
+            }
+
+            .timeline .wrapper .frames ul {
+              white-space: nowrap;
+            }
+
+            .timeline .wrapper .frames .frame {
+              display: inline-block;
+              width: 44px;
+              height: 44px;
+              margin: 0 4px;
+              vertical-align: top;
+              cursor: pointer;
+              background: rgba(0,0,0,.25);
+            }
+
+            .timeline .wrapper .frames .frame img {
+              display: block;
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+
+          `}</style>
 
         </div>
-
-        <style>{`
-
-          .timeline {
-            display: flex;
-            flex-flow: column nowrap;
-            align-items: stretch;
-            height: 100%;
-            color: #fff;
-          }
-
-          .timeline .header {
-            background: #2f5f79;
-            width: 100%;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-          }
-
-          .timeline .currframe,
-          .timeline .singleframe {
-            margin: 0 31px;
-          }
-
-          .timeline .singleframe {
-            margin-left: 0;
-          }
-
-          .timeline .currframe label:nth-child(even),
-          .timeline .singleframe label:nth-child(even) {
-            margin: 0 10px;
-            color: #333;
-            background: #97afbc;
-            padding: 5px;
-            border: 1px solid #647c89;
-            width: 40px;
-            text-align: center;
-            display: inline-block;
-          }
-
-          .player {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100%;
-            width: 84px;
-          }
-
-          .player > div {
-            cursor: pointer;
-          }
-
-          .player .backward i:before,
-          .player .playing i:before,
-          .player .forward i:before {
-            color: #fff;
-          }
-
-          .player .backward i:before,
-          .player .forward i:before {
-            font-size: 14px;
-          }
-
-          .player .playing i:before {
-            font-size: 25px;
-          }
-
-          .timeline .wrapper {
-            width: 100%;
-            background: #264c61;
-          }
-
-          .timeline .wrapper .frames {
-            padding: 10px 12px;
-            overflow: auto;
-          }
-
-          .timeline .wrapper .frames ul {
-            white-space: nowrap;
-          }
-
-          .timeline .wrapper .frames .frame {
-            display: inline-block;
-            width: 44px;
-            height: 44px;
-            margin: 0 4px;
-            vertical-align: top;
-            cursor: pointer;
-            background: rgba(0,0,0,.25);
-          }
-
-          .timeline .wrapper .frames .frame img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
-
-        `}</style>
-
-      </div>
     );
   }
+
+  componentDidMount() {
+    const { materialId, sceneId, frames } = this.props;
+
+    this.currFrames = frames.filter(
+      frame =>
+        frame.materialId == materialId && frame.sceneId == sceneId
+    );
+  }
+
 }
 
 function mapDispatchToProps (dispatch) {

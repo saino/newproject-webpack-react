@@ -54,6 +54,7 @@ class Make extends Component {
         <div className="bottom">
 
           {/* 时间轴 */}
+
           <Timeline
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
