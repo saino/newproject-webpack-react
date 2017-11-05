@@ -42,6 +42,52 @@ app.post('/api/auth/login', function (req, res) {
       });
     }
 });
+
+app.post('/api/getWorks', function (req, res) {
+  if (req.body.token) {
+    const curr = req.body.curr;
+    const pageSize = req.body.pageSize;
+    const total = 56;
+    const pages = Math.ceil(total / pageSize);
+    let works = [];
+
+    if (curr > pages) {
+      return res.send({
+        errorCode: 0,
+        errorMessage: '',
+        data: {
+          works: [],
+          totalPages: 10
+        }
+      });
+    } else {
+
+      for (var i = 0; i < pageSize; i++) {
+        works.push({
+          workId: '' + curr + i,
+          title: '作品作品',
+          thumb: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1509882716343&di=3cc4e245f69a07faceaec315db28fd51&imgtype=0&src=http%3A%2F%2F365jia.cn%2Fuploads%2Fnews%2Ffolder_1890092%2Fimages%2F8f38b0c8c0579d58120d97fc344ab0e1.jpg'
+        });
+      }
+
+      return res.send({
+        errorCode: 0,
+        errorMessage: '',
+        data: {
+          works,
+          total
+        }
+      });
+    }
+  }
+
+  res.send({
+    errorCode: 1000,
+    errorMessage: '请先登录',
+    data: null
+  });
+});
+
 app.post('/api/auth/currUser', function (req, res) {
   if (req.body.token) {
     return res.send({
@@ -79,6 +125,8 @@ app.post('/api/auth/register', function (req, res) {
     });
   }
 });
+
+app.post('/')
 
 app.post('/api/scenes', function (req, res) {
   var materialId = req.body.materialId;
