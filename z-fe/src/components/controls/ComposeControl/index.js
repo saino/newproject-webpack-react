@@ -11,11 +11,9 @@ export default class ComposeControl extends Component{
         this.props.changeLayer(newArr,newIndex)
 
     }
-    select(index){
 
-    }
     render(){
-        const {addMaterial,compose,select}=this.props;
+        const {addMaterial,compose,select,removeMaterial}=this.props;
         var list=compose.materials.map((obj,index)=>{
             return {...obj,index:index,selected:index==compose.current}
         })
@@ -25,7 +23,7 @@ export default class ComposeControl extends Component{
                 <Button icon="plus"  type="primary">添加素材</Button>
             </div>
             <ul className="material-list">
-                <DragList list={list} itemKey="id" template={MList} padding={0} onMoveEnd={this.onMoveEnd} commonProps ={{select:select}}></DragList>
+                <DragList list={list} itemKey="id" template={MList} padding={0} onMoveEnd={this.onMoveEnd} commonProps ={{select,removeMaterial}}></DragList>
             </ul>
             <style>{`
           .pick {
@@ -75,7 +73,7 @@ class MList extends Component{
         })
 
         return (<div className={itemClass}>
-            {dragHandle(<div onClick={commonProps.select.bind(null,item.index)}>{item.id}---{item.name}</div>)}
+            {dragHandle(<div onClick={commonProps.select.bind(null,item.index)}>{item.id}---{item.name} <Button href="#" onClick={commonProps.removeMaterial.bind(null,item.index)}>remove</Button></div>)}
         </div>)
 
     }

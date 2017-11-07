@@ -2,7 +2,8 @@ const actionTypes = {
     ADD_MATERIAL: 'ADD_MATERIAL',
     CHANGELAYER_MATERIAL: 'CHANGELAYER_MATERIAL',
     SELECT_MATERIAL: 'SELECT_MATERIAL',
-    CHANGE_MATERIAL_POSITION: 'CHANGE_MATERIAL_POSITION'
+    CHANGE_MATERIAL_POSITION: 'CHANGE_MATERIAL_POSITION',
+    REMOVE_MATERIAL:'REMOVE_MATERIAL'
 };
 
 var id = 1
@@ -12,6 +13,12 @@ export function addMaterial(obj) {
     return {
         type: actionTypes.ADD_MATERIAL,
         obj
+    };
+}
+export function removeMaterial(index) {
+    return {
+        type: actionTypes.REMOVE_MATERIAL,
+        index
     };
 }
 
@@ -46,8 +53,15 @@ export default (state = {current: -1, materials: []}, action) => {
         case actionTypes.SELECT_MATERIAL:
             return {...state, current: action.current};
         case actionTypes.CHANGE_MATERIAL_POSITION:
-            let materials=state.materials
-            return {current: action.current,materials:[...materials.slice(0,action.index-1),action.item,...materials.slice(action.index+1)]};
+            var materials=state.materials;
+            return {current: action.current,materials:[...materials.slice(0,action.index),action.item,...materials.slice(action.index+1)]};
+        case actionTypes.REMOVE_MATERIAL:
+            var materials=state.materials;
+            var current=action.current;
+            if(current===materials.length-1){
+                current-=1
+            }
+            return {current: current,materials:[...materials.slice(0,action.index),...materials.slice(action.index+1)]};
         default:
             return state;
     }

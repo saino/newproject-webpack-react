@@ -29,23 +29,19 @@ export default class ComposeRender extends Component {
     render() {
         const {compose} = this.props
         const layers = compose.materials.map((item, index) => {
-            let style = {top: 0, left: 0, width: item.width, height: item.height}
-            return (
-                <div className='composed-material' style={style} key={item.id}>
-                    <DraggableCore handle='.move-handler' position={{x:item.left,y:item.top}} deltaPosition={{x:0,y:0}}
+            let style = {width: item.width, height: item.height}
+            return ( <DraggableCore handle='.move-handler' position={{x:item.left,y:item.top}} key={item.id} deltaPosition={{x:0,y:0}}
                                    cursor={ this.state.cursor }
                                onDrag={this.onControlledDrag.bind(this, item, index)}
                               onDragEnd={this.onDragEnd.bind(this, item, index)}
                                    onHover={ this.onHover.bind(this) }
                                    onDragStart={ this.onDragStart.bind(this) }
                     >
-                        <div>
-                            <div className='move-handler'>asdlkfs</div>
-                            <img className='thumb' src={this.props.frameDataUrl}/>
+                        <div style={style} >
+                            <img className='thumb move-handler' src={this.props.frameDataUrl}/>
                         </div>
 
-                    </DraggableCore>
-                </div>)
+                    </DraggableCore> )
         })
         return (<div className="compose-render" style={this.props.style}>
             <img className='scene' src={this.props.frameDataUrl}/>
