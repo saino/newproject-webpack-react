@@ -1,4 +1,4 @@
-define(['_', 'bC'], function (_, bC) {
+   define(['_', 'bC'], function (_, bC) {
 
   var eventParser = {
     enter: 'mouseover',
