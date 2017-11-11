@@ -53,9 +53,7 @@ export default class DragTransform extends Component {
         let offsetY = e.clientY - this.startY;
         const {onDrag} = this.props;
         const originalPos = this.originalPos;
-        var controls = this.props.Dim.controls.slice(0);
-        const dragPoint = controls[this.dragIndex]
-        controls[this.dragIndex] = {top: dragPoint.top + offsetY, left: dragPoint.left + offsetX}
+        var controls = this.props.Dim.controls;
         const targetPos = [[controls[0].left, controls[0].top], [controls[3].left, controls[3].top], [controls[1].left, controls[1].top], [controls[2].left, controls[2].top]];
         var to = (function () {
             var k, len, results;
