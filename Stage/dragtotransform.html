@@ -20,7 +20,6 @@
 </div>
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 <script>
     (function() {
@@ -29,8 +28,7 @@
         $ = jQuery;
 
         getTransform = function(from, to) {
-            var A, H, b, h, i, k, k_i, l, lhs, m, ref, rhs;
-            console.assert((from.length === (ref = to.length) && ref === 4));
+            var A, H, b, h, i, k, l;
             A = [];
             for (i = k = 0; k < 4; i = ++k) {
                 A.push([from[i].x, from[i].y, 1, 0, 0, 0, -from[i].x * to[i].x, -from[i].y * to[i].x]);
@@ -43,17 +41,8 @@
                 b.push(to[i].x);
                 b.push(to[i].y);
             }
-
-
-            h = numeric.solve(A, b);
+            h=LUsolve(LU(A), b)
             H = [[h[0], h[1], 0, h[2]], [h[3], h[4], 0, h[5]], [0, 0, 1, 0], [h[6], h[7], 0, 1]];
-            for (i = m = 0; m < 4; i = ++m) {
-                lhs = numeric.dot(H, [from[i].x, from[i].y, 0, 1]);
-                k_i = lhs[3];
-                rhs = numeric.dot(k_i, [to[i].x, to[i].y, 0, 1]);
-                console.assert(numeric.norm2(numeric.sub(lhs, rhs)) < 1e-9, "Not equal:", lhs, rhs);
-            }
-
 
             return H;
         };
@@ -217,7 +206,92 @@
             })()).append($('<tr>').html($('<td>').text(')'))));
         });
 
+
     }).call(this);
+
+    function LU(A) {
+        var abs = Math.abs;
+        var i, j, k, absAjk, Akk, Ak, Pk, Ai;
+        var max;
+        var n = A.length, n1 = n-1;
+        var P = new Array(n);
+
+
+        for (k = 0; k < n; ++k) {
+            Pk = k;
+            Ak = A[k];
+            max = abs(Ak[k]);
+            for (j = k + 1; j < n; ++j) {
+                absAjk = abs(A[j][k]);
+                if (max < absAjk) {
+                    max = absAjk;
+                    Pk = j;
+                }
+            }
+            P[k] = Pk;
+
+            if (Pk != k) {
+                A[k] = A[Pk];
+                A[Pk] = Ak;
+                Ak = A[k];
+            }
+
+            Akk = Ak[k];
+
+            for (i = k + 1; i < n; ++i) {
+                A[i][k] /= Akk;
+            }
+
+            for (i = k + 1; i < n; ++i) {
+                Ai = A[i];
+                for (j = k + 1; j < n1; ++j) {
+                    Ai[j] -= Ai[k] * Ak[j];
+                    ++j;
+                    Ai[j] -= Ai[k] * Ak[j];
+                }
+                if(j===n1) Ai[j] -= Ai[k] * Ak[j];
+            }
+        }
+
+        return {
+            LU: A,
+            P:  P
+        };
+    }
+    function LUsolve(LUP, b) {
+        var i, j;
+        var LU = LUP.LU;
+        var n   = LU.length;
+        var x = b;
+        var P   = LUP.P;
+        var Pi, LUi, LUii, tmp;
+
+        for (i=n-1;i!==-1;--i) x[i] = b[i];
+        for (i = 0; i < n; ++i) {
+            Pi = P[i];
+            if (P[i] !== i) {
+                tmp = x[i];
+                x[i] = x[Pi];
+                x[Pi] = tmp;
+            }
+
+            LUi = LU[i];
+            for (j = 0; j < i; ++j) {
+                x[i] -= x[j] * LUi[j];
+            }
+        }
+
+        for (i = n - 1; i >= 0; --i) {
+            LUi = LU[i];
+            for (j = i + 1; j < n; ++j) {
+                x[i] -= x[j] * LUi[j];
+            }
+
+            x[i] /= LUi[i];
+        }
+
+        return x;
+    }
 </script>
 </body>
 </html>
