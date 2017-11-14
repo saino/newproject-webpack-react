@@ -69,7 +69,7 @@ export default (state = {current: -1, materials: []}, action) => {
         case actionTypes.CHANGE_MATERIAL_POSITION:
             var materials = state.materials;
             return {
-                current: action.current,
+                ...state,
                 materials: [...materials.slice(0, action.index), action.item, ...materials.slice(action.index + 1)]
             };
         case actionTypes.REMOVE_MATERIAL:
@@ -87,7 +87,7 @@ export default (state = {current: -1, materials: []}, action) => {
             var controls = materials[action.itemIndex].controls;
             var newControls = [...controls.slice(0, action.controlIndex), action.controlPos, ...controls.slice(action.controlIndex + 1)]
             return {
-                current: action.current,
+                ... state,
                 materials: [...materials.slice(0, action.itemIndex), {
                     ...materials[action.itemIndex],
                     controls: newControls,

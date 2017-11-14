@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Button} from 'antd'
 import DragList from 'react-draggable-list'
 import classNames from 'classnames'
+import ToggleViewImg from '../../../statics/toggle_view.png'
 export default class ComposeControl extends Component{
     constructor(){
         super()
@@ -43,6 +44,8 @@ export default class ComposeControl extends Component{
           .compose-control> .addMaterial {
               width:90%;
               margin:0 auto;
+              margin-top:16px;
+              margin-bottom:16px;
           }
            .compose-control> .addMaterial button {
               width:100%;
@@ -51,7 +54,30 @@ export default class ComposeControl extends Component{
           .compose-control .material-item{
               background-color:#fff;
               border:2px solid transparent;
+              height:32px;
+              margin:0 16px;
+              overflow:hidden;
           }
+          .compose-control .toggle-view,.compose-control .layer-icon{
+            float:left;
+            width:33px;
+            text-align:center;
+            height:100%;
+
+          }
+          .compose-control .layer-icon{
+          margin-right:16px;
+          }
+
+          .compose-control .toggle-view{
+          margin-top:6px;
+          }
+           .compose-control .layer-icon img{
+             max-height:100%;
+             max-width:100%;
+
+            }
+
            .compose-control .material-item.even{
              background-color:#ecf6fd
           }
@@ -73,7 +99,8 @@ class MList extends Component{
         })
 
         return (<div className={itemClass}>
-            {dragHandle(<div onClick={commonProps.select.bind(null,item.index)}>{item.id}---{item.name} <Button href="#" onClick={commonProps.removeMaterial.bind(null,item.index)}>remove</Button></div>)}
+            {dragHandle(<div onClick={commonProps.select.bind(null,item.index)}><span className="toggle-view" > <img
+                src={ToggleViewImg} alt=""/></span><span className="layer-icon"><img src="http://localhost:3000/sample.jpg" alt=""/></span>{item.id}---{item.name} <Button href="#" onClick={commonProps.removeMaterial.bind(null,item.index)}>remove</Button></div>)}
         </div>)
 
     }

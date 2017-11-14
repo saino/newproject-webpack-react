@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {findDOMNode} from 'react-dom'
 
+import classnames from 'classnames'
+
 const DIFF = 5;
 
 function clearPreDev(e) {
@@ -84,12 +86,15 @@ export default class DragTransform extends Component {
     }
 
     render() {
-        const Dim = this.props.Dim;
+        const {Dim,selected }= this.props;
         const controls = Dim.controls.map((control) => {
             return {top: control.top + Dim.top - DIFF, left: control.left + Dim.left - DIFF}
         });
-
-        return (<div className='drag-transfrom'>
+        let wrapperClass=classnames({
+            'drag-transfrom':true,
+            selected:selected
+        })
+        return (<div className={wrapperClass}>
             {this.props.children}
             <div className="trans-control" style={{
                 top: controls[0].top,
@@ -111,13 +116,18 @@ export default class DragTransform extends Component {
                top:0;
                left:0;
            }
+           .drag-transfrom.selected .trans-control{
+                display:block;
+           }
           .trans-control {
+          z-index:999;
+            display:none;
             position: absolute;
             width:10px;
             height:10px;
-            border-radius:50%;
+           border:2px solid #1EBC9C;
             cursor: move;
-            background: rgba(0,0,0,.25);
+            background: #fff;
           }
         `}</style>
         </div>)

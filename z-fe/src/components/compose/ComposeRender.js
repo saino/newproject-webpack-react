@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
 import DragTransform from '../../components/interaction/transform';
-
 export default class ComposeRender extends Component {
     constructor() {
         super()
@@ -47,15 +46,14 @@ export default class ComposeRender extends Component {
     }
 
     render() {
-        const {compose} = this.props
+        const {compose,select} = this.props
         const layers = compose.materials.map((item, index) => {
             let style = {width: item.width, height: item.height}
             if(item.transformString){
                 style.transform=item.transformString;
                 style.transformOrigin='0 0'
             }
-
-            return (<DragTransform Dim={item} onDragStart={this.onTransfromStart.bind(this, item)}
+            return (<DragTransform Dim={item} selected={compose.current===index} onDragStart={this.onTransfromStart.bind(this, item)}
                                    onDragEnd={this.onTransfromEnd.bind(this, item, index)}
                                    onDrag={this.onTransfrom.bind(this, index)} key={item.id}>
                 <DraggableCore handle='.move-handler' position={{x: item.left, y: item.top}}
@@ -67,7 +65,7 @@ export default class ComposeRender extends Component {
                                onDragStart={this.onDragStart.bind(this)}
                 >
 
-                    <div style={style} className="aaaa">
+                    <div style={style} className="compose-img" onClick={select.bind(null,index)}>
                         <img className='thumb move-handler' src={this.props.frameDataUrl}/>
                     </div>
 
@@ -96,6 +94,10 @@ export default class ComposeRender extends Component {
           }
          .compose-render .composed-material{
              position:absolute;
+          }
+          .compose-render .selected .compose-img{
+          box-sizing:border-box;
+          border:1px solid #1EBC9C;
           }
          .compose-render .thumb{
            width: 100%;
