@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
 import DragTransform from '../../components/interaction/transform';
 export default class ComposeRender extends Component {
+    removeComposeLayer=this.removeComposeLayer.bind(this)
     constructor() {
         super()
         this.state = {
@@ -9,7 +10,18 @@ export default class ComposeRender extends Component {
             x: 0, y: 0
         }
     }
-
+    removeComposeLayer(e){
+        if(e.keyCode==8||e.keyCode==46){
+            const {removeSelected} = this.props;
+            removeSelected();
+        }
+    }
+    componentDidMount(){
+        document.addEventListener('keyup',this.removeComposeLayer)
+    }
+    componentWillUnmount(){
+        document.removeEventListener('keyup',this.removeComposeLayer)
+    }
     onDragEnd(item, index, x, y) {
         //如何更新位置 todo
         this.props.changePosision({...item, top: y, left: x}, index)
@@ -52,6 +64,9 @@ export default class ComposeRender extends Component {
             if(item.transformString){
                 style.transform=item.transformString;
                 style.transformOrigin='0 0'
+            }
+            if(!item.visible){
+                return null
             }
             return (<DragTransform Dim={item} selected={compose.current===index} onDragStart={this.onTransfromStart.bind(this, item)}
                                    onDragEnd={this.onTransfromEnd.bind(this, item, index)}

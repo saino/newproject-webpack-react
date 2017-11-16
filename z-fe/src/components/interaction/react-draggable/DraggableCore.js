@@ -127,8 +127,10 @@ export default class DraggableCore extends Component {
   }
 
   handlePressSpaceEnd() {
+    if(!this.mouted){
+      return
+    }
     const { ownerDocument } = findDOMNode(this);
-
     this.hasPressSpace = false;
     removeEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
@@ -165,13 +167,13 @@ export default class DraggableCore extends Component {
 
   componentDidMount() {
     const { ownerDocument } = findDOMNode(this);
-
     addEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
+    this.mouted=true
   }
 
   componentWillUnmount() {
       const { ownerDocument } = findDOMNode(this);
-
       removeEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
+      this.mouted=false
   }
 }
