@@ -42,7 +42,7 @@ export default class ParseFrameToImageData extends Component {
   parseVideoSecondsToDataUrl(nextProps) {
     const { frames } = nextProps;
 
-    frames.forEach(({ time, frameId }) =>
+    frames.forEach(({ time }) =>
       setTimeout(
         () => this.videoEl.currentTime = time,
         time * 1000

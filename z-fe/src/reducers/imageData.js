@@ -3,8 +3,8 @@ import { add } from '../utils/stateSet';
   item.materialId 素材id
   sceneId 镜头id
   dataSource: []
-  item.frameId 帧数 { Number }
-
+    item.time 时长
+    item.imageUrl 图片地址
 */
 
 const defState = [];
