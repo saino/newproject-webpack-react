@@ -5,7 +5,6 @@ import { update } from '../utils/stateSet';
   item.sceneId Number 场景id
   item.frameId 帧数
   item.time 时长
-  item.dataUrl 图片base64码
 */
 const defState = [];
 

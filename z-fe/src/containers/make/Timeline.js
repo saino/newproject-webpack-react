@@ -5,8 +5,7 @@ import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, Checkbox, message } from 'antd';
 import { setImageData } from '../../reducers/imageData';
-import { getItemByKey, add } from '../../utils/stateSet';
-
+import { getItemByKey, add, finds } from '../../utils/stateSet';
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
 
 class Timeline extends Component {
@@ -30,12 +29,24 @@ class Timeline extends Component {
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
     // 根据帧的时长转成图片完成
     if (duration == currentTime) {
-      const { materialId, sceneId, setImageData, onSelectDataUrl } = this.props;
+      const {
+         materialId, sceneId, frames,
+         setImageData, onSelectDataUrl
+      } = this.props;
 
       setImageData(materialId, sceneId, this.imageUrls);
 
       // 默认选择第一张帧
       onSelectDataUrl(this.imageUrls[0].imageUrl);
+
+      // 获取当前素材、镜头对应的帧数据
+      this.currFrames = finds(frames,
+        item => item.materialId === materialId && item.sceneId === sceneId
+      );
+
+      // 创建播放或暂停方法
+      this.execute = this.playOrPausing.bind(this)();
+
     } else {
       this.imageUrls.push({ time: currentTime, imageUrl });
     }
@@ -63,26 +74,74 @@ class Timeline extends Component {
   checkFrameId = frameId =>
     getItemByKey(this.currFrames, frameId, 'frameId');
 
+  playOrPausing = function () {
+    const { imageData, materialId, sceneId } = this.props;
+    const { dataSource } = getItemByKey(
+      imageData,
+      item =>
+        item.materialId === materialId && item.sceneId === sceneId
+    );
+    const timers = [];
+    let timerIndex = 0;
+    let index = 0;
+    let currentTimeIndex = 0;
+
+    const execute = (url, time) => {
+      // if (frameId > dataSource.length) {
+      //   frameId = 1;
+      //
+      //   if (this.state.isLoop) {
+      //     this.setState({ currFrameId: frameId });
+      //     const { imageUrl, time } = dataSource[ frameId - 1 ];
+      //     execute(imageUrl, time);
+      //   } else {
+      //     this.setState({ isPlay: false, currFrameId: frameId });
+      //   }
+      // } else {
+      //   timer = setTimeout(
+      //     () => {
+      //       this.props.onSelectDataUrl(url);
+      //       this.setState({ currFrameId: frameId++ });
+      //       const { imageUrl, time } = dataSource[ frameId - 1 ];
+      //       execute(imageUrl, time);
+      //     },
+      //     time * 1000
+      //   );
+      // }
+    };
+
+    return () => {
+      const { isPlay } = this.state;
+
+      if (isPlay) {
+        let list = dataSource.slice(index + 1);
+
+        list.forEach((item, idx) => {
+          timers[ idx ] = ((i, imageUrl) => {
+            return setTimeout(() => {
+              index = i;
+              console.log(index);
+              this.props.onSelectDataUrl(imageUrl);
+            }, i * 200);
+          })(idx, item.imageUrl);
+        });
+      } else {
+        timers.forEach(item => {
+          clearTimeout(item);
+        });
+      }
+    };
+  };
+
   handleSelectDataUrl = (url) => () =>
     this.props.onSelectDataUrl(url);
 
   // 播放或暂停
-  handlePlayOrStop = () =>
-    this.setState({ isPlay: !this.state.isPlay })
+  handlePlayOrPause = () =>
+    this.setState({ isPlay: !this.state.isPlay }, this.execute);
 
   // 前进
   handleForward = () => {
-    const currFrameId = this.state.currFrameId - 1;
-
-    if (this.checkFrameId(currFrameId)) {
-      this.setState({ currFrameId });
-    } else {
-      message.error('已经是第一帧了');
-    }
-  };
-
-  // 后退
-  handleBackward = () => {
     const currFrameId = this.state.currFrameId + 1;
 
     if (this.checkFrameId(currFrameId)) {
@@ -92,12 +151,23 @@ class Timeline extends Component {
     }
   };
 
+  // 后退
+  handleBackward = () => {
+    const currFrameId = this.state.currFrameId - 1;
+
+    if (this.checkFrameId(currFrameId)) {
+      this.setState({ currFrameId });
+    } else {
+      message.error('已经是第一帧了');
+    }
+  };
+
   render() {
     const {
       materialId, sceneId, materials,
       frames, imageData,
       setFrameDataUrl } = this.props;
-
+    const { isPlay, currFrameId, isLoop } = this.state;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
     const { dataSource = [] } = getItemByKey(imageData, item => materialId == item.materialId && sceneId == item.sceneId) || {};
     const keyImageData = this.getKeyFrames(dataSource);
@@ -112,25 +182,24 @@ class Timeline extends Component {
             frames={ frames }
             onComplete={ this.parseFrameToImageDataComplete } />
 
-
           <div className="header">
 
             <div className="player">
               <div className="backward" onClick={ this.handleBackward }><Icon type="backward" /></div>
-              <div className="playing"><Icon type="play-circle-o" /></div>
+              <div className="playing" onClick={ this.handlePlayOrPause }><Icon type={ isPlay ? 'pause-circle-o' : 'play-circle-o' } /></div>
               <div className="forward" onClick={ this.handleForward }><Icon type="forward" /></div>
             </div>
 
             <div className="currframe">
-              <label>当前第</label><label>{ this.state.curr }</label><label>帧</label>
+              <label>当前第</label><label>{ currFrameId }</label><label>帧</label>
             </div>
 
-            {/*<div className="singleframe">
-              <label>每秒</label><label>60</label><label>帧</label>
-            </div>*/}
+            <div className="singleframe">
+              <label>每秒</label><label>5</label><label>帧</label>
+            </div>
 
             <div className="isloop">
-              <Checkbox checked={ this.state.isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
+              <Checkbox checked={ isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
             </div>
 
           </div>
@@ -255,15 +324,6 @@ class Timeline extends Component {
           `}</style>
 
         </div>
-    );
-  }
-
-  componentDidMount() {
-    const { materialId, sceneId, frames } = this.props;
-
-    this.currFrames = frames.filter(
-      frame =>
-        frame.materialId == materialId && frame.sceneId == sceneId
     );
   }
 

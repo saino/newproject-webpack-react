@@ -7,19 +7,22 @@ const uniq = (arr: Array, obj: Object) =>
 const inArray = (arr: Array, item) =>
   arr.indexOf(item) >= 0;
 
-export const getItemByKey = (target: Array, idValue, idKey = 'id') => {
+export const getItemByKey = (target: Array, idValue, idKey = 'id') =>
+  [ ...finds(target, idValue, idKey) ].pop();
+
+export const finds = (target: Array, idValue, idKey = 'id') => {
   let processer = typeof idValue === 'function'
     ? item => idValue(item)
-    : item => item[ idKey ] == idValue;
+    : item => item[ idKey ] === idValue;
 
-   return target.find(processer);
+  return target.filter(processer);
 };
 
 // 添加元素，避免重复
 export const add = (target: Array, origin) => {
   if (!target || origin == null)
     return target;
-  
+
   Array.isArray(origin) || (origin = [ origin ]);
   origin = origin.filter(item => !inArray(target, item));
 
@@ -34,7 +37,7 @@ export const update = (target: Array, origin: Object, idValue, idKey = 'id') => 
 
   processer = typeof idValue === 'function' ?
     item => idValue(item) :
-    item => item[ idKey ] == idValue;
+    item => item[ idKey ] === idValue;
 
   waitUpdateIndex = target.findIndex(processer);
 
