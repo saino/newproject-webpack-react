@@ -7,6 +7,7 @@ import { Icon, Checkbox, message } from 'antd';
 import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add, finds } from '../../utils/stateSet';
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
+import Tick from '../../components/interaction/react-tick/Tick';
 
 class Timeline extends Component {
   static propTypes = {
@@ -21,10 +22,10 @@ class Timeline extends Component {
   state = {
     isLoop: false,
     isPlay: false,
-    currFrameId: 1
+    currFrameId: 1,
+    currFrames: []
   };
   imageUrls = [];
-  currFrames = null;
 
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
     // 根据帧的时长转成图片完成
@@ -40,9 +41,11 @@ class Timeline extends Component {
       onSelectDataUrl(this.imageUrls[0].imageUrl);
 
       // 获取当前素材、镜头对应的帧数据
-      this.currFrames = finds(frames,
-        item => item.materialId === materialId && item.sceneId === sceneId
-      );
+      this.setState({
+        currFrames: finds(frames,
+          item => item.materialId === materialId && item.sceneId === sceneId
+        )
+      });
 
       // 创建播放或暂停方法
       this.execute = this.playOrPausing.bind(this)();
@@ -72,7 +75,7 @@ class Timeline extends Component {
   };
 
   checkFrameId = frameId =>
-    getItemByKey(this.currFrames, frameId, 'frameId');
+    getItemByKey(this.state.currFrames, frameId, 'frameId');
 
   playOrPausing = function () {
     const { imageData, materialId, sceneId } = this.props;
@@ -82,33 +85,8 @@ class Timeline extends Component {
         item.materialId === materialId && item.sceneId === sceneId
     );
     const timers = [];
-    let timerIndex = 0;
     let index = 0;
-    let currentTimeIndex = 0;
-
-    const execute = (url, time) => {
-      // if (frameId > dataSource.length) {
-      //   frameId = 1;
-      //
-      //   if (this.state.isLoop) {
-      //     this.setState({ currFrameId: frameId });
-      //     const { imageUrl, time } = dataSource[ frameId - 1 ];
-      //     execute(imageUrl, time);
-      //   } else {
-      //     this.setState({ isPlay: false, currFrameId: frameId });
-      //   }
-      // } else {
-      //   timer = setTimeout(
-      //     () => {
-      //       this.props.onSelectDataUrl(url);
-      //       this.setState({ currFrameId: frameId++ });
-      //       const { imageUrl, time } = dataSource[ frameId - 1 ];
-      //       execute(imageUrl, time);
-      //     },
-      //     time * 1000
-      //   );
-      // }
-    };
+    let temp;
 
     return () => {
       const { isPlay } = this.state;
@@ -118,9 +96,11 @@ class Timeline extends Component {
 
         list.forEach((item, idx) => {
           timers[ idx ] = ((i, imageUrl) => {
+            temp = index;
+
             return setTimeout(() => {
-              index = i;
-              console.log(index);
+              index = i + temp;
+              this.setState({ currFrameId: index + 1 });
               this.props.onSelectDataUrl(imageUrl);
             }, i * 200);
           })(idx, item.imageUrl);
@@ -199,7 +179,11 @@ class Timeline extends Component {
             </div>
 
             <div className="isloop">
-              <Checkbox checked={ isLoop } onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>是否循环</Checkbox>
+              <Checkbox
+                checked={ isLoop }
+                onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>
+                是否循环
+              </Checkbox>
             </div>
 
           </div>
@@ -207,9 +191,8 @@ class Timeline extends Component {
           <div className="wrapper">
 
             <div className="ruler">
-
+              <Tick max={ this.state.currFrames.length } unit="f" index={ this.state.currFrameId } />
             </div>
-
 
             <div className="frames">
               <ul>
@@ -293,6 +276,11 @@ class Timeline extends Component {
             .timeline .wrapper {
               width: 100%;
               background: #264c61;
+            }
+
+            .timeline .wrapper .ruler {
+              padding: 0 16px 5px;
+              height: 50px;
             }
 
             .timeline .wrapper .frames {
