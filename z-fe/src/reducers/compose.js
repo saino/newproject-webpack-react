@@ -4,6 +4,7 @@ const actionTypes = {
     SELECT_MATERIAL: 'SELECT_MATERIAL',
     CHANGE_MATERIAL_POSITION: 'CHANGE_MATERIAL_POSITION',
     REMOVE_MATERIAL: 'REMOVE_MATERIAL',
+    TOGGLE_MATERIAL: 'TOGGLE_MATERIAL',
     CHANGE_MATERIAL_CONTRSL_POSITION: 'CHANGE_MATERIAL_CONTRSL_POSITION'
 };
 
@@ -16,14 +17,27 @@ export function addMaterial(obj) {
         obj
     };
 }
-
+export function toggleMaterial(index) {
+    return {
+        type: actionTypes.TOGGLE_MATERIAL,
+        index
+    };
+}
 export function removeMaterial(index) {
     return {
         type: actionTypes.REMOVE_MATERIAL,
         index
     };
 }
+export function removeSelected() {
+    return function (dispatch,getState) {
+        let {compose}=getState()
+        if(compose.current>=0){
+            dispatch(removeMaterial(compose.current))
+        }
 
+    }
+}
 export function changeLayer(newArr, current) {
     return {
         type: actionTypes.CHANGELAYER_MATERIAL,
@@ -55,13 +69,22 @@ export function changeContralPosision(itemIndex, controlIndex, controlPos,transf
 
 export default (state = {current: -1, materials: []}, action) => {
     switch (action.type) {
+        case actionTypes.TOGGLE_MATERIAL:
+            var materials = state.materials;
+            var opItem=materials[action.index]
+            return {
+                ...state,
+                materials: [...materials.slice(0, action.index), {...opItem,visible:!opItem.visible}, ...materials.slice(action.index + 1)]
+            };
+            break;
         case actionTypes.ADD_MATERIAL:
-            const {obj} = action
-            action.obj.controls = [{top: 0, left: 0}, {top: 0, left: obj.width}, {
+            const {obj} = action;
+            obj.visible=true
+            obj.controls = [{top: 0, left: 0}, {top: 0, left: obj.width}, {
                 top: obj.height,
                 left: obj.width
             }, {top: obj.height, left: 0}];
-            return {current: state.current, materials: state.materials.concat(action.obj)};
+            return {current: state.current, materials: state.materials.concat(obj)};
         case actionTypes.CHANGELAYER_MATERIAL:
             return {current: action.current, materials: action.newArr};
         case actionTypes.SELECT_MATERIAL:
@@ -74,7 +97,7 @@ export default (state = {current: -1, materials: []}, action) => {
             };
         case actionTypes.REMOVE_MATERIAL:
             var materials = state.materials;
-            var current = action.current;
+            var current = state.current;
             if (current === materials.length - 1) {
                 current -= 1
             }
