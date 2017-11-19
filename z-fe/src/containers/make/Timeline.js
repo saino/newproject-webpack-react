@@ -280,7 +280,7 @@ class Timeline extends Component {
 
             .timeline .wrapper .ruler {
               padding: 0 16px 5px;
-              height: 50px;
+              height: 35px;
             }
 
             .timeline .wrapper .frames {

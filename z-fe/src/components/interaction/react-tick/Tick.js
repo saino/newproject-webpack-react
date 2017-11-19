@@ -15,7 +15,7 @@ export default class Tick extends PureComponent {
     index: 0
   };
 
-  getSingleStep () {
+  getStepComponents () {
     const res = [];
 
     for (let i = 1; i <= this.props.max; i++) {
@@ -49,7 +49,7 @@ export default class Tick extends PureComponent {
         <div className="tick" ref={ el => this.el = el }>
           <div className="bottom">
             <ul className="clearfix">
-              { this.getSingleStep() }
+              { this.getStepComponents() }
             </ul>
           </div>
         </div>
