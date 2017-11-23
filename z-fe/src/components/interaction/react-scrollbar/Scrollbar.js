@@ -192,15 +192,14 @@ export default class Scrollbar extends PureComponent {
           .free-scrollbar-inner {
             display: flex;
             height: 100%;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: stretch;
           }
 
           .free-scrollbar-content {
-            flex: 1;
-            height: 100%;
+            flex-basis: 40px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
           }
 
           .free-scrollbar-track {

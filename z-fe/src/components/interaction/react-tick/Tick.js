@@ -58,8 +58,10 @@ export default class Tick extends PureComponent {
               position: absolute;
               left: 0;
               top: 0;
-              height: 100%;
+              height: -webkit-calc(100% - 10px);
               color: #6b7580;
+              border-bottom: 1px solid #909496;
+              padding: 0 4px;
             }
 
             .tick-triangle {
@@ -69,8 +71,8 @@ export default class Tick extends PureComponent {
               border-bottom: 4px solid #be624b;
               border-left: 4px solid transparent;
               border-right: 4px solid transparent;
-              left: -4px;
-              bottom: -8px;
+              left: 0;
+              bottom: -10px;
             }
 
             .tick ul {
