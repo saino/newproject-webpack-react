@@ -11,8 +11,8 @@ function changeTick (i) {
 export default class Tick extends PureComponent {
 
   static propTypes = {
-    max: PropTypes.number.isRequired,
     unit: PropTypes.string.isRequired,
+    max: PropTypes.number,
     step: PropTypes.number,
     index: PropTypes.number,
     getSize: PropTypes.func,
@@ -20,6 +20,7 @@ export default class Tick extends PureComponent {
   };
 
   static defaultProps = {
+    max: 0,
     step: 5,
     index: 0,
     onChangeTick: () => {}
@@ -51,11 +52,14 @@ export default class Tick extends PureComponent {
   }
 
   render() {
-    const { step, unit, index } = this.props;
+    const { step, unit, index, max } = this.props;
 
     return (
       <div className="tick">
-        <div className="tick-triangle" style={{ transform: `translateX(${ (index - 1) * 8 }px)` }}></div>
+        { max
+           ? (<div className="tick-triangle" style={{ transform: `translateX(${ (index - 1) * 8 }px)` }}></div>)
+           : void 0 }
+
         <ul className="clearfix">
           { this.getStepComponents() }
         </ul>
