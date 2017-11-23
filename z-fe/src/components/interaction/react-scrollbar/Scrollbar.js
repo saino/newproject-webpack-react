@@ -105,14 +105,13 @@ export default class Scrollbar extends PureComponent {
       const el = findDOMNode(context);
       const children = findDOMNode(context.refs.ci);
       const scroller = findDOMNode(context.refs.content);
-
       let scrollbarHandlerStartPos, scrollbarHandlerEndPos;
 
       if (context.props.layout === 'vertical') {
         offsetY = clientY - currY;
         scrollbarHandlerStartPos = parseFloat((offsetY / (children.clientHeight - el.clientHeight)).toFixed(6));
         scrollbarHandlerEndPos = parseFloat((context.immutableScrollbarHandlerEndPos - scrollbarHandlerStartPos).toFixed(6));
-        scroller.scrollTop = 100;
+        scroller.scrollTop = scrollbarHandlerStartPos > 0 ? scrollbarHandlerStartPos * children.clientHeight : (context.immutableScrollbarHandlerStartPos + scrollbarHandlerStartPos) * children.clientHeight;
       } else {
         offsetX = clientX - currX;
         scrollbarHandlerStartPos = parseFloat(((offsetX / (children.clientWidth - el.clientWidth))).toFixed(6));

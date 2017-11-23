@@ -2,6 +2,12 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 
+function changeTick (i) {
+  return function () {
+    this.props.onChangeTick(i);
+  }
+}
+
 export default class Tick extends PureComponent {
 
   static propTypes = {
@@ -9,12 +15,14 @@ export default class Tick extends PureComponent {
     unit: PropTypes.string.isRequired,
     step: PropTypes.number,
     index: PropTypes.number,
-    getSize: PropTypes.func
+    getSize: PropTypes.func,
+    onChangeTick: PropTypes.func
   };
 
   static defaultProps = {
     step: 5,
-    index: 0
+    index: 0,
+    onChangeTick: () => {}
   };
 
   getStepComponents () {
@@ -23,7 +31,7 @@ export default class Tick extends PureComponent {
     for (let i = 1; i <= this.props.max; i++) {
       res.push(
         i % this.props.step == 0
-          ? (<li>
+          ? (<li onClick={ changeTick(i).bind(this) }>
               <div className="inner large">
                 <label>
                   { i }{ this.props.unit }
@@ -31,7 +39,7 @@ export default class Tick extends PureComponent {
                 <span></span>
               </div>
             </li>)
-          : (<li>
+          : (<li onClick={ changeTick(i).bind(this) }>
               <div className="inner">
                 <span></span>
               </div>
@@ -60,7 +68,6 @@ export default class Tick extends PureComponent {
               top: 0;
               height: -webkit-calc(100% - 10px);
               color: #6b7580;
-              border-bottom: 1px solid #909496;
               padding: 0 4px;
             }
 
@@ -84,6 +91,11 @@ export default class Tick extends PureComponent {
               display: inline-block;
               height: 100%;
               vertical-align: top;
+              border-bottom: 1px solid #909496;
+            }
+
+            .tick ul li:last-of-type {
+              border: 0 none;
             }
 
             .tick ul .inner {

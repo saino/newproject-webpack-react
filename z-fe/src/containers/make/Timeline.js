@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
-import { Icon, Checkbox, message } from 'antd';
+import { Icon, message } from 'antd';
 import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add, finds } from '../../utils/stateSet';
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
@@ -21,12 +21,21 @@ class Timeline extends Component {
   };
 
   state = {
-    isLoop: false,
     isPlay: false,
     currFrameId: 1,
     currFrames: []
   };
   imageUrls = [];
+
+  constructor(props) {
+    super(props);
+
+    // 前进
+    this.handleForward = this.handlePlayAction(currFrameId => currFrameId + 1, '已经最后一帧了！');
+
+    // 后退
+    this.handleBackward = this.handlePlayAction(currFrameId => currFrameId - 1, '已经第一帧了！')
+  }
 
   parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
     // 根据帧的时长转成图片完成
@@ -78,30 +87,34 @@ class Timeline extends Component {
   checkFrameId = frameId =>
     getItemByKey(this.state.currFrames, frameId, 'frameId');
 
-  playOrPausing = function () {
+  getDataSource = () => {
     const { imageData, materialId, sceneId } = this.props;
-    const { dataSource } = getItemByKey(
+    const { dataSource = [] } = getItemByKey(
       imageData,
       item =>
         item.materialId === materialId && item.sceneId === sceneId
-    );
+    ) || {};
+
+    return dataSource;
+  };
+
+  playOrPausing = function () {
+    const dataSource = this.getDataSource();
     const timers = [];
-    let index = 0;
     let temp;
 
     return () => {
-      const { isPlay } = this.state;
+      const { isPlay, currFrameId } = this.state;
 
       if (isPlay) {
-        let list = dataSource.slice(index + 1);
+        let list = dataSource.slice(currFrameId - 1);
 
         list.forEach((item, idx) => {
           timers[ idx ] = ((i, imageUrl) => {
-            temp = index;
+            temp = currFrameId;
 
             return setTimeout(() => {
-              index = i + temp;
-              this.setState({ currFrameId: index + 1 });
+              this.setCurrFrameId(i + temp);
               this.props.onSelectDataUrl(imageUrl);
             }, i * 200);
           })(idx, item.imageUrl);
@@ -114,6 +127,9 @@ class Timeline extends Component {
     };
   };
 
+  setCurrFrameId = (currFrameId, cb) =>
+    this.setState({ currFrameId }, cb);
+
   handleSelectDataUrl = (url) => () =>
     this.props.onSelectDataUrl(url);
 
@@ -121,25 +137,24 @@ class Timeline extends Component {
   handlePlayOrPause = () =>
     this.setState({ isPlay: !this.state.isPlay }, this.execute);
 
-  // 前进
-  handleForward = () => {
-    const currFrameId = this.state.currFrameId + 1;
+  handlePlayAction = (getCurrFrameId: Function, warningMsg: String) => () => {
+    const { currFrameId, isPlay } = this.state;
+    let newCurrFrameId;
 
-    if (this.checkFrameId(currFrameId)) {
-      this.setState({ currFrameId });
-    } else {
-      message.error('已经是最后一帧了');
+    if (isPlay) {
+      message.warning('正在播放中，请先暂停');
+      return;
     }
-  };
 
-  // 后退
-  handleBackward = () => {
-    const currFrameId = this.state.currFrameId - 1;
+    newCurrFrameId = getCurrFrameId(currFrameId);
 
-    if (this.checkFrameId(currFrameId)) {
-      this.setState({ currFrameId });
+    if (this.checkFrameId(newCurrFrameId)) {
+      this.setCurrFrameId(newCurrFrameId, () => {
+        const dataSource = this.getDataSource();
+        this.props.onSelectDataUrl(dataSource[ this.state.currFrameId ].imageUrl);
+      });
     } else {
-      message.error('已经是第一帧了');
+      message.warning(warningMsg);
     }
   };
 
@@ -147,10 +162,10 @@ class Timeline extends Component {
     const {
       materialId, sceneId, materials,
       frames, imageData,
-      setFrameDataUrl } = this.props;
-    const { isPlay, currFrameId, isLoop } = this.state;
+      setFrameDataUrl, onSelectDataUrl } = this.props;
+    const { isPlay, currFrameId } = this.state;
     const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
-    const { dataSource = [] } = getItemByKey(imageData, item => materialId == item.materialId && sceneId == item.sceneId) || {};
+    const dataSource = this.getDataSource();
     const keyImageData = this.getKeyFrames(dataSource);
 
     return (
@@ -179,13 +194,13 @@ class Timeline extends Component {
               <label>每秒</label><label>5</label><label>帧</label>
             </div>
 
-            <div className="isloop">
+            {/*<div className="isloop">
               <Checkbox
                 checked={ isLoop }
                 onChange={ ({ target }) => this.setState({ isLoop: target.checked }) }>
                 是否循环
               </Checkbox>
-            </div>
+            </div>*/}
 
           </div>
 
@@ -193,7 +208,21 @@ class Timeline extends Component {
 
             <div className="ruler">
               <Scrollbar>
-                <Tick max={ this.state.currFrames.length } unit="f" index={ this.state.currFrameId } />
+                <Tick
+                  max={ this.state.currFrames.length }
+                  unit="f"
+                  index={ this.state.currFrameId }
+                  onChangeTick={ (tick) => {
+                    if (isPlay) {
+                      message.warning('正在播放中，请先暂停');
+                      return;
+                    }
+                    
+                    this.setCurrFrameId(tick, () => {
+                      const dataSource = this.getDataSource();
+                      onSelectDataUrl(dataSource[ this.state.currFrameId ].imageUrl);
+                    });
+                  }} />
               </Scrollbar>
             </div>
 
