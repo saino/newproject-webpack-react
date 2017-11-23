@@ -19,27 +19,27 @@ export default class VideoRender extends Component {
     return (
       <Draggable>
         <div className="video-render" style={ this.props.style }>
-        <div className="video-render-inner"></div>
-        <img src={ this.props.frameDataUrl } />
-        <style>{`
+          <div className="video-render-inner"></div>
+          <img src={ this.props.frameDataUrl } />
+          <style>{`
 
-          .video-render-inner {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            background: rgba(0,0,0,.25);
-          }
+            .video-render-inner {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              left: 0;
+              top: 0;
+              background: rgba(0,0,0,.25);
+            }
 
-          .video-render img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-          }
+            .video-render img {
+              display: block;
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
 
-        `}</style>
+          `}</style>
         </div>
       </Draggable>
     );

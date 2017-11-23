@@ -8,6 +8,7 @@ import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add, finds } from '../../utils/stateSet';
 import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
 import Tick from '../../components/interaction/react-tick/Tick';
+import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
 
 class Timeline extends Component {
   static propTypes = {
@@ -191,7 +192,9 @@ class Timeline extends Component {
           <div className="wrapper">
 
             <div className="ruler">
-              <Tick max={ this.state.currFrames.length } unit="f" index={ this.state.currFrameId } />
+              <Scrollbar>
+                <Tick max={ this.state.currFrames.length } unit="f" index={ this.state.currFrameId } />
+              </Scrollbar>
             </div>
 
             <div className="frames">
