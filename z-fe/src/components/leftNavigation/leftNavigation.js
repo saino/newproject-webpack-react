@@ -7,29 +7,12 @@ import LeftNavigationButton from './leftNavigationButton'
 import "./leftNavigation.css"
 
 class LeftNavigation extends React.Component {
-    constructor(props, context){
-        super(props, context);
-        this.state = {
-            activeName: null
-        }
-    }
-    componentWillMount() {
-        this.setState({
-            activeName: this.props.defaultActiveName
-        });
-    }
-    setActiveName = (activeName)=> {
-        this.setState({
-            activeName: activeName
-        })
-    }
     render(){
         return <div className="left-navigation">
             {
                 this.props.buttons.map((button, index)=>{
-                    return <LeftNavigationButton {...button} 
-                        activeName={this.state.activeName}
-                        setActiveName={this.setActiveName}
+                    return <LeftNavigationButton button={button} 
+                        activeName={this.props.activeName}
                         key={index}/>;
                 })
             }

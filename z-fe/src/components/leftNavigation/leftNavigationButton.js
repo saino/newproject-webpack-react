@@ -6,8 +6,11 @@ import { Icon } from 'antd'
 import "./leftNavigationButton.css";
 
 class LeftNavigationButton extends React.Component {
+    getButton() {
+        return this.props.button;
+    }
     isActive() {
-        return this.props.buttonName === this.props.activeName;
+        return this.getButton().buttonName === this.props.activeName;
     }
     render(){
         const classNames = ClassNames("left-navigation-button", 
@@ -15,13 +18,12 @@ class LeftNavigationButton extends React.Component {
             {"not-active": !this.isActive()});
         return <div className={classNames}
             onClick={this.onButtonClicked}>
-            <div className="left-navigation-button-icon"><Icon type={this.props.buttonIcon}/></div>
-            <div className="left-navigation-button-name">{this.props.buttonName}</div>
+            <div className="left-navigation-button-icon"><Icon type={this.getButton().buttonIcon}/></div>
+            <div className="left-navigation-button-name">{this.getButton().buttonName}</div>
         </div>
     }
     onButtonClicked = () => {
-        this.props.setActiveName(this.props.buttonName);
-        this.props.buttonAction();
+        this.getButton().buttonAction(this.getButton());
     }    
 }
 

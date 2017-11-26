@@ -5,47 +5,60 @@ import { bindActionCreators } from 'redux';
 
 import Header from './header/Header';
 import { LeftNavigation, LeftNavigationButton, RightArticle } from '../components';
+import UserWorksList from './userWorksList/userWorksList'
 import {getWorks} from '../reducers/userWorks'
 import './UserWorks.css'
 
 class UserWorks extends React.Component {
     componentWillMount() {
         this.props.requestWorks({ curr: 0, pageSize: 10 });
+        this.state = {
+            activeName: '我的作品'
+        }
     }
     getButtons() {
         return [{
             buttonName: "我的作品",
-            buttonAction: this.onMyWorksClicked,
+            buttonAction: this.onButtonClicked,
             buttonIcon: "picture",
         },{
             buttonName: "个人中心",
-            buttonAction: this.onUserCenterClicked,
+            buttonAction: this.onButtonClicked,
             buttonIcon: "user",
         }, {
             buttonName: "退出",
-            buttonAction: this.onExitClicked,
+            buttonAction: this.onButtonClicked,
             buttonIcon: "logout",
         }]
+    }
+    renderRightArticleContent(){
+        switch (this.state.activeName){
+            case "我的作品":
+                return <UserWorksList />;
+            case "个人中心":
+                return <div>个人中心</div>;
+            case "退出":
+                return <div>退出</div>;
+            default:
+                return <div>我的作品</div>;
+        }
     }
     render() {
         return <div className='user-works'>
             <Header />
             <div className='user-works-body'>
-                <LeftNavigation buttons={this.getButtons()} defaultActiveName="我的作品"/>
+                <LeftNavigation buttons={this.getButtons()} activeName={this.state.activeName}/>
                 <RightArticle>
-                   rightArticle
+                    {this.renderRightArticleContent()}
                 </RightArticle>
             </div>
         </div>
     }
-    onMyWorksClicked = () => {
-        console.log("我的作品");
-    }
-    onUserCenterClicked = () => {
-        console.log("个人中心");
-    }
-    onExitClicked = () => {
-        console.log("退出");
+    onButtonClicked= (button) => {
+        this.setState({
+            activeName: button.buttonName
+        });
+        console.log(button.buttonName);
     }
 }
 

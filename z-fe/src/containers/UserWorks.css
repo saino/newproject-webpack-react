@@ -4,9 +4,8 @@
     width: 100%;
  }
  .user-works-body{
-    position: absolute;
+    display: flex;
+    position: relative;
     width: 100%;
-    margin-top: 54px;
-    height: calc(100% - 54px);
-    padding: 20px 11% 0px;
+    padding: 74px 11% 0px;
 }

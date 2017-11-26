@@ -1,0 +1,16 @@
+.work-item{
+    position: relative;
+    float: left;
+    height: 0;
+    padding-top: 21.593291%;
+    width: calc(25% - 2.100840%);
+    background: grey;
+    margin-left: 2.100840%;
+    margin-bottom: 20px;
+}
+.work-item-content{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+}
