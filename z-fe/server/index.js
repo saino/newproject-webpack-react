@@ -31,7 +31,7 @@ app.post('/api/auth/login', function (req, res) {
           errorMessage: '',
           data: {
             token: '123AAA456BBB',
-            expired: Date.now() + 3600000
+            expired: Date.now() +  24 * 3600000
           }
         });
     } else {
