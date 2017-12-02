@@ -11,7 +11,7 @@ import './UserWorks.css'
 
 class UserWorks extends React.Component {
     componentWillMount() {
-        this.props.requestWorks({ curr: 0, pageSize: 10 });
+        // this.props.requestWorks({ curr: 0, pageSize: 12 });
         this.state = {
             activeName: '我的作品'
         }
@@ -58,7 +58,6 @@ class UserWorks extends React.Component {
         this.setState({
             activeName: button.buttonName
         });
-        console.log(button.buttonName);
     }
 }
 
@@ -75,4 +74,4 @@ const mapDispatchToProps = (dispatch) => {
         }
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(UserWorks);
+export default connect(mapStateToProps)(UserWorks);

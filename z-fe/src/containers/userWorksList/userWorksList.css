@@ -48,5 +48,6 @@
 }
 .user-works-list-content-pages{
     height: 25px;
-    background: green;
+    display: flex;
+    justify-content: flex-end;
 }

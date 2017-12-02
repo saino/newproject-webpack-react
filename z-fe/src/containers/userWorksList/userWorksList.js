@@ -1,15 +1,43 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { Pagination } from 'antd'
 
+import { getWorks } from '../../reducers/userWorks'
 import { WorkItem } from '../../components'
 
 import './userWorksList.css'
 
+const PAGE_SIZE = 12;
+
 class UserWorksList extends React.Component {
+    constructor(props, context){
+        super(props.context);
+        // console.log(this.props.userWorks.curr);
+        this.state = {
+            pageSize: PAGE_SIZE
+        }
+    }
+    componentWillMount(){
+        this.props.requestUserWorks({curr: 0, pageSize: PAGE_SIZE});
+        
+    }
+    renderAddNewWorks() {
+        const { curr, pageSize, total } = this.props.userWorks;
+        const bankWorkNum = pageSize - 1 - total%pageSize;
+        let bankWorkItem = [];
+        for(let i=0; i<bankWorkNum; i++){
+            bankWorkItem.push(<WorkItem key={i} bank={true}/>);
+        }
+        if(curr===Math.floor(total/pageSize)){
+            bankWorkItem.unshift(<WorkItem key="addNew" addNew={true} />);
+            return bankWorkItem;
+        }
+    }
     renderUserWorks(){
         const {curr, pageSize, total, works} = this.props.userWorks;
         return works.map((work, index)=>{
-            return <WorkItem key={`work-${work.workId}`} />
+            return <WorkItem key={`work-${work.workId}`} model={work}/>
         });
     }
     render(){
@@ -26,10 +54,19 @@ class UserWorksList extends React.Component {
             <div className='user-works-list-content'>
                 <div className='user-works-list-content-wrap'>
                     {this.renderUserWorks()}
+                    {this.renderAddNewWorks()}
                 </div>
-                <div className='user-works-list-content-pages'>分页</div>
+                <div className='user-works-list-content-pages'>
+                    <Pagination onChange={this.onPageChanged} 
+                        total={this.props.userWorks.total%PAGE_SIZE ? this.props.userWorks.total: this.props.userWorks.total+1}
+                        defaultCurrent={this.props.userWorks.curr+1}
+                        defaultPageSize={PAGE_SIZE}/>
+                </div>
             </div>
         </div>
+    }
+    onPageChanged = (current, pageSize) => {
+        this.props.requestUserWorks({curr: current-1, pageSize: pageSize});
     }
 }
 
@@ -39,5 +76,10 @@ const mapStateToProps = ({user, userWorks}) => {
         userWorks: userWorks
     };
 }
+const  mapDispatchToProps = (dispthch) => {
+    return {
+        requestUserWorks : bindActionCreators(getWorks, dispthch)
+    }
+}
 
-export default connect(mapStateToProps)(UserWorksList);
+export default connect(mapStateToProps, mapDispatchToProps)(UserWorksList);

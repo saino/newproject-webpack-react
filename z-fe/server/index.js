@@ -47,7 +47,7 @@ app.post('/api/getWorks', function (req, res) {
   if (req.body.token) {
     const curr = req.body.curr;
     const pageSize = req.body.pageSize;
-    const total = 56;
+    const total = 55;
     const pages = Math.ceil(total / pageSize);
     let works = [];
 
@@ -62,11 +62,11 @@ app.post('/api/getWorks', function (req, res) {
       });
     } else {
 
-      for (var i = 0; i < pageSize; i++) {
+      for (var i = 0; i < pageSize && (curr*pageSize+i) < total; i++) {
         works.push({
           workId: '' + curr + i,
           title: '作品作品',
-          thumb: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1509882716343&di=3cc4e245f69a07faceaec315db28fd51&imgtype=0&src=http%3A%2F%2F365jia.cn%2Fuploads%2Fnews%2Ffolder_1890092%2Fimages%2F8f38b0c8c0579d58120d97fc344ab0e1.jpg'
+          thumb: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1512217642613&di=0909a39925c095e9f289f99f33aad1f8&imgtype=0&src=http%3A%2F%2Fupload.mnw.cn%2F2017%2F0814%2F1502698443378.jpg',
         });
       }
 
