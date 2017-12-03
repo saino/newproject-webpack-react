@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dropdown, Menu, Icon } from 'antd'
+import { Dropdown, Menu, Icon, Input, Button } from 'antd'
 import addNewPNG from '../../image/addNew.png'
 import './workItem.css'
 
@@ -7,7 +7,9 @@ class WorkItem extends React.Component{
     constructor(){
         super();
         this.state = {
-            warning: false
+            warning: false,
+            addNew: false,
+            addNewValue: "",
         }
     }
     getModel() {
@@ -63,11 +65,43 @@ class WorkItem extends React.Component{
             {this.renderWarning()}
         </div>
     }
+    renderAddNewWarning(){
+        if(!this.state.addNew){
+            return null;
+        }
+        return <div className='work-item-content-warning'>
+            <div className='work-item-content-warning-content'>
+                <div className='work-item-content-warning-content-title'>
+                    <Input value={this.state.addNewValue} onChange={this.onInputWorkName} placeholder='请输入作品名称'/>
+                </div>
+                <div className='work-item-content-warning-content-button'>
+                    <div className='work-item-content-warning-content-button-item' 
+                        onClick={this.onAddNewConfrimClicked}>确定</div>
+                    <div className='work-item-content-warning-content-button-item' 
+                        onClick={this.onAddNewCancelClicked}>取消</div>
+                </div>
+            </div>
+        </div>
+    }
+    onInputWorkName = (e) => {
+        this.setState({
+            addNewValue: e.target.value
+        });
+    }
+    onAddNewCancelClicked = () => {
+        this.setState({
+            addNew: false
+        });
+    }
+    onAddNewConfrimClicked = () => {
+        console.log("addNeww", this.state.addNewValue);
+    }
     render(){
         if(this.props.addNew){
             return <div className='work-item'>
-                <div className='work-item-content' onClick={this.onAddNewClicked}>
-                    <img className='work-item-content-add-new' src={addNewPNG}/>
+                <div className='work-item-content'>
+                    <img className='work-item-content-add-new' onClick={this.onAddNewClicked} src={addNewPNG}/>
+                    {this.renderAddNewWarning()}
                 </div>
             </div>
         }
@@ -79,7 +113,9 @@ class WorkItem extends React.Component{
         </div>
     }
     onAddNewClicked = () => {
-        console.log("添加新作品");
+        this.setState({
+            addNew: true
+        });
     }
     onEditClicked = () => {
         console.log("edit");

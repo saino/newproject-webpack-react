@@ -19,6 +19,23 @@
     height: 100%;
     width: 100%;
 }
+.work-item-content-add-new-input{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    background: #fff;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+}
+.work-item-content-input{
+    width: 90%;
+}
+.work-item-content-confirm{
+
+}
 .work-item-content-image{
     height: 59.223301%;
     width: 100%;
