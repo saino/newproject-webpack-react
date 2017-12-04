@@ -10,6 +10,7 @@ import { getItemByKey } from '../../utils/stateSet';
 import TransformToolBar from './TransformToolbar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
+import Matting from '../../components/matting/Matting';
 import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
 import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
@@ -70,11 +71,13 @@ class SceneDisplay extends Component {
            <div className="canvas">
 
              {/* 处理视频得到每帧对应的视频秒数 */}
-             <ParseFrameToSecond
+             {/*<ParseFrameToSecond
                videoSrc={ src }
                materialId={ this.props.materialId }
                totalFrame={ totalFrame }
-               onComplete={ this.parseFrameComplete } />
+               onComplete={ this.parseFrameComplete } />*/}
+
+               <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
 
                {renderSomething}
 

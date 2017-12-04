@@ -194,7 +194,7 @@ var init = function(){
 	gPoints.addClass('points');
 }
 
-init();
+	init();
 
 var drawPoint = function(p, prevPoint, isFloating){
 	var className;
@@ -242,6 +242,7 @@ var computePath = function(){
 		drawPoint(p, pathData.prevPoint(i));
 	}
 	if( pathData.points.length > 0 && pathData.floatingPoint ){	// 只有有固定点的情况浮动点 path 才有效
+		console.log(pathData.floatingPoint, 'nm');
 		path += pathData.floatingPoint.generatePath();
 	}
 	if( pathData.closed ){
@@ -249,6 +250,7 @@ var computePath = function(){
 		path += 'Z';
 	}
 	gPath.clear();
+	console.log(path, 'nm');
 	gPath.add(paper.path(path).attr('fill-rule', 'evenodd'));	// 多条的情况固定交叉相减，不走顺时针逆时针
 	gPathFocus.clear();
 	if( pointSelected && pathData.points.length > 1 ){
@@ -272,38 +274,17 @@ $('body').on('mousedown', function(e){
 	computePath();
 });
 
-$('body').on('mousedown', 'circle:not(.floating)', function(e){
-	var x = e.offsetX;
-	var y = e.offsetY;
-
-	dragging = true;
-	if( drawStatus == 1 ){
-		drawStatus = 2;
-		pathData.closed = true;
-		pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
-		pathData.floatingPoint = false;
-	} else {
-		lastX = x;
-		lastY = y;
-		if( e.target.point ){
-			pointSelected = e.target.point;
-		} else if (e.target.targetPoint){
-			pointSelected = e.target.targetPoint;
-			movingControl = e.target.controlType;
-		}
-	}
-	e.stopPropagation();
-	computePath();
-});
-
 $('body').on('mousemove', function(e){
 	var x = e.offsetX;
 	var y = e.offsetY;
 	var redraw = false;
 	if( !dragging ){
+		console.log('x');
 		if( pathData.floatingPoint || drawStatus == 1 ){
 			pathData.floatingPoint = new Point(x, y);
+
 			pathData.floatingPoint.setControl(Point.CONTROL1, pathData.lastPoint().getOppositeControl(Point.CONTROL2));
+
 			// hover 到起点的时候使用起点的控制点2
 			var p1 = pathData.firstPoint();
 			if( pathData.points.length > 1 && p1.isInside(x, y) ){
@@ -333,6 +314,30 @@ $('body').on('mousemove', function(e){
 	}
 });
 
+$('body').on('mousedown', 'circle:not(.floating)', function(e){
+	var x = e.offsetX;
+	var y = e.offsetY;
+	console.log('s');
+	dragging = true;
+	if( drawStatus == 1 ){
+		drawStatus = 2;
+		pathData.closed = true;
+		pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
+		pathData.floatingPoint = false;
+	} else {
+		lastX = x;
+		lastY = y;
+		if( e.target.point ){
+			pointSelected = e.target.point;
+		} else if (e.target.targetPoint){
+			pointSelected = e.target.targetPoint;
+			movingControl = e.target.controlType;
+		}
+	}
+	e.stopPropagation();
+	computePath();
+});
+
 $('body').on('mouseup', function(e){
 	if( dragging ){
 		if( pathData.floatingPoint ){
@@ -343,6 +348,7 @@ $('body').on('mouseup', function(e){
 		}
 		movingControl = false;
 		dragging = false;
+		console.log(1);
 		computePath();
 	}
 	if( drawStatus == 2 ){

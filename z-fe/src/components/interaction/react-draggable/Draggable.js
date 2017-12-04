@@ -82,7 +82,7 @@ export default class Draggable extends Component {
     const maxX = getInnerWidth(ownerDocument.documentElement) - getOuterWidth(el);
     const maxY = getInnerHeight(ownerDocument.documentElement) - getOuterHeight(el);
     let newX, newY;
-    console.log(maxX, maxY, 'ggg');
+
     onDrag(newDeltaX, newDeltaY);
 
     newX = this.state.x + newDeltaX;
