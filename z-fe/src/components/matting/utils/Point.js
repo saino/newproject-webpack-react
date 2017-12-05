@@ -2,10 +2,12 @@ export default class Point {
   static get CONTROL1() { return 1; }
   static get CONTROL2() { return 2; }
 
-  constructor(x, y, cx1, cy1, cx2, cy2) {
+  constructor(className, x, y, cx1, cy1, cx2, cy2) {
+    this.className = className;
     this.x = x;
 		this.y = y;
     this.radius = 3;
+
 		if( cx1 ){
 			this.cx1 = cx1;
 			this.cy1 = cy1;

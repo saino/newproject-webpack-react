@@ -1,6 +1,7 @@
 export default class Path {
 	constructor() {
 	  this.points = [];
+		this.controls = [];
 		this.floatingPoint = false;
 		this.closed = false;
 	}
@@ -27,11 +28,19 @@ export default class Path {
 		}
 	}
 
-	indexOf(p){
+	insertPoint(index, p) {
+		this.points.splice(index, 0, p);
+	}
+
+	addPoint(index, p) {
+	  this.points[index] = p;
+	}
+
+	indexOf(p) {
 		return this.points.indexOf(p);
 	}
-	
-	confirmFloating(){
+
+	confirmFloating() {
 		this.points.push(this.floatingPoint);
 		this.floatingPoint = false;
 	}

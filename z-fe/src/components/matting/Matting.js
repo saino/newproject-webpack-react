@@ -13,6 +13,8 @@ export default class Matting extends Component {
     style: {}
   };
 
+  actualCount = 0;
+
   state = {
     // x坐标
     x: 0,
@@ -35,18 +37,51 @@ export default class Matting extends Component {
     let pathData = this.state.pathData;
 
     if (!this.state.drawStatus) {
-      pathData.floatingPoint = new Point(offsetX, offsetY);
+      pathData.floatingPoint = new Point('floating', offsetX, offsetY);
       downState = { ...downState, drawStatus: 1, pathData };
     }
 
     this.setState(downState);
   };
 
-  handleMouseMove = () => {
+  handleMouseMove = (e) => {
+    const { offsetX, offsetY } = e.nativeEvent;
+    const { dragging, drawStatus, pathData } = this.state;
+    let redraw = false;
 
+    if (!dragging) {
+      if (pathData.floatingPoint || drawStatus == 1) {
+        pathData.floatingPoint = new Point('floating', offsetX, offsetY);
+        pathData.floatingPoint.setControl(Point.CONTROL1, pathData.lastPoint().getOppositeControl(Point.CONTROL2));
+        let p1 = pathData.firstPoint();
+
+        if (pathData.points.length > 1 && p1.isInside(offsetX, offsetY)) {
+          pathData.floatingPoint.setControl(Point.CONTROL2, p1.getControl(Point.CONTROL2));
+        }
+
+        redraw = true;
+      }
+    } else {
+      redraw = true;
+
+      switch (drawStatus) {
+        case 1:
+          pathData.floatingPoint.setControl(Point.CONTROL2, pathData.floatingPoint.getOppositeControl([ offsetX, offsetY ]));
+          //pathData.addPoint(this.actualCount, pathData.floatingPoint);
+          break;
+        case 2:
+          pathData.firstPoint().setControl(Point.CONTROL2, pathData.firstPoint().getOppositeControl([ offsetX, offsetY ]));
+          break;
+      }
+    }
+
+    if (redraw) {
+      this.setState({ pathData });
+    }
   };
 
-  handleMouseUp = () => {
+  handleMouseUp = (e) => {
+    const { offsetX, offsetY } = e.nativeEvent;
     let { dragging, pathData, drawStatus, movingControl } = this.state;
 
     if (dragging) {
@@ -59,7 +94,6 @@ export default class Matting extends Component {
       }
 
       movingControl = dragging = false;
-
       this.setState({ movingControl, dragging, drawStatus });
     }
 
@@ -67,13 +101,6 @@ export default class Matting extends Component {
       this.setState({ drawStatus: 0 });
     }
   };
-
-  addPoint(point) {
-    const pathData = this.state.pathData;
-    pathData.points = [ point ];
-
-    this.setState({ pathData });
-  }
 
   render() {
     return (
@@ -88,9 +115,7 @@ export default class Matting extends Component {
           y={ this.state.y }
           dragging={ this.state.dragging }
           drawStatus={ this.state.drawStatus }
-          pathData={ this.state.pathData }
-          onAddPoint={ this.addPoint.bind(this) }
-          onComplete={ this.props.onComplete }>
+          pathData={ this.state.pathData }>
         </Core>
       </div>
     );
