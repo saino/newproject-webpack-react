@@ -15,23 +15,24 @@ export default class Core extends Component {
     points: [],
     focus: [],
     path: '',
-    control1: null,
-    control2: null
+    controls: []
   };
 
-  drawPoint(prevPoints, currPoint, otherPoint, isFloating) {
-    let state = { control1: this.state.control1, control2: this.state.control2 }, exec;
+  drawPoint(prevPoints, prevControls, currPoint, otherPoint, isFloating) {
+    let state = {}, exec;
+    state.points = [ ...prevPoints, <circle cx={ currPoint.x } cy={ currPoint.y } r={ currPoint.radius } className={ isFloating ? 'floating' : '' }></circle> ];
+    state.controls = [];
 
     if (currPoint.cx1) {
       exec = `${ otherPoint.generatePath(true) } L${ currPoint.cx1 } ${ currPoint.cy1 }`;
-      state.points = [ ...prevPoints, <circle cx={ currPoint.cx1 } cy={ currPoint.cy1 } r={ currPoint.radius } className="control"></circle> ];
-      state.control1 = (<path d={ exec }></path>);
+      console.log(prevPoints, 'gm');
+      state.points = [ ...state.points, <circle cx={ currPoint.cx1 } cy={ currPoint.cy1 } r={ currPoint.radius } className="control"></circle> ];
+      state.controls = [ ...prevControls, (<path d={ exec }></path>) ];
+
     } else if (currPoint.cx2) {
       exec = `${ currPoint.generatePath(true) } L${ currPoint.cx2 } ${ currPoint.cy2 }`;
-      state.points = [ ...prevPoints, <circle cx={ currPoint.cx2 } cy={ currPoint.cy2 } r={ currPoint.radius } className="control"></circle> ];
-      state.control2 = (<path d={ exec }></path>);
-    } else {
-      state.points = [ ...prevPoints, <circle cx={ currPoint.x } cy={ currPoint.y } r={ currPoint.radius } className={ isFloating ? 'floating' : '' }></circle> ];
+      state.points = [ ...state.points, <circle cx={ currPoint.cx2 } cy={ currPoint.cy2 } r={ currPoint.radius } className="control"></circle> ];
+      state.controls = [ ...prevControls, (<path d={ exec }></path>) ];
     }
 
     return state;
@@ -41,22 +42,25 @@ export default class Core extends Component {
     let path = '';
 
     this.setState({
+      points: [],
       controls: [],
-      points: []
     }, () => {
       const { pathData } = props;
-      let state = {}, prevPoints;
+      let state = {}, prevPoints, prevControls;
 
-      prevPoints = state.points || pathData.points.map(point => (<circle cx={ point.x } cy={ point.y } r={ point.radius } className={ point.className }></circle>));
+      prevPoints = pathData.points.map(point => (<circle cx={ point.x } cy={ point.y } r={ point.radius } className={ point.className }></circle>));
+      prevControls = state.points || pathData.controls;
 
       if (pathData.floatingPoint) {
-        prevPoints = [...prevPoints, <circle cx={ pathData.floatingPoint.x } cy={ pathData.floatingPoint.y } r={ pathData.floatingPoint.radius } className={ pathData.floatingPoint.className }></circle>];
-        state = this.drawPoint(prevPoints, pathData.floatingPoint, pathData.lastPoint(), true);
+        let className = pathData.floatingPoint.cx1 ? 'control': pathData.floatingPoint.className;
+        prevPoints = [...prevPoints, <circle cx={ pathData.floatingPoint.x } cy={ pathData.floatingPoint.y } r={ pathData.floatingPoint.radius } className={ className }></circle>];
+        state = this.drawPoint(prevPoints, pathData.controls, pathData.floatingPoint, pathData.lastPoint(), true);
+        pathData.controls[0] = state.controls.pop();
       }
 
       pathData.points.forEach((point, i) => {
         path += point.generatePath(i == 0);
-        state = this.drawPoint(prevPoints, point, pathData.prevPoint(i));
+        state = this.drawPoint(prevPoints, pathData.controls, point, pathData.prevPoint(i));
       });
 
       if (pathData.points.length > 0 && pathData.floatingPoint) {
@@ -67,7 +71,7 @@ export default class Core extends Component {
         path += pathData.firstPoint().generatePath();
 		    path += 'Z';
       }
-      console.log(state, 'nm');
+
       this.setState({ ...state, path });
     });
   }
@@ -84,8 +88,7 @@ export default class Core extends Component {
         </g>
         <g className="focus"></g>
         <g className="control">
-          { this.state.control2 }
-          { this.state.control1 }
+          { this.state.controls }
         </g>
         <g className="points">
           { this.state.points }

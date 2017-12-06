@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { deepCompare } from 'pure-render-immutable-decorator';
-import VideoFrame from '../../utils/VideoFrame';
+import VideoFrame from '../../utils/video-frame';
 import { setDuration } from '../../reducers/material';
 
 class ParseFrameToSecond extends Component {
