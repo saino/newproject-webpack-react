@@ -1,13 +1,14 @@
-import {connect} from 'react-redux'
-import React from 'react'
-import ClassNames from 'classnames'
+import {connect} from 'react-redux';
+import React from 'react';
+import ClassNames from 'classnames';
 import { bindActionCreators } from 'redux';
 
 import Header from './header/Header';
 import { LeftNavigation, LeftNavigationButton, RightArticle } from '../components';
-import UserWorksList from './userWorksList/userWorksList'
-import {getWorks} from '../reducers/userWorks'
-import './UserWorks.css'
+import UserWorksList from './userWorksList/userWorksList';
+import Uwl from './userWorksList/Uwl';
+import {getWorks} from '../reducers/userWorks';
+import './UserWorks.css';
 
 class UserWorks extends React.Component {
     componentWillMount() {
@@ -30,7 +31,7 @@ class UserWorks extends React.Component {
     renderRightArticleContent(){
         switch (this.state.activeName){
             case "我的作品":
-                return <UserWorksList />;
+                return <Uwl />;
             case "个人中心":
                 return <div>个人中心</div>;
             default:
@@ -66,6 +67,6 @@ const mapDispatchToProps = (dispatch) => {
         requestWorks : function(body){
             dispatch(getWorks(body));
         }
-    }
+    };
 }
 export default connect(mapStateToProps)(UserWorks);

@@ -12,18 +12,22 @@ export default class CardList extends Component {
       current: PropTypes.number,
       total: PropTypes.number
     }),
-    elements: PropTypes.array
+    elements: PropTypes.array,
+    column: PropTypes.number,
+    onPageChange: PropTypes.func
   };
 
-  handlePageChange = () => {
-
-  };
+  handlePageChange = (current, pageSize) =>
+    this.props.onPageChange(current, pageSize);
 
   getLists() {
-    const { elements } = this.props;
-    return elements.map(() => {
-        
-    });
+    const { elements, column } = this.props;
+    const gap = 20;
+
+    return elements.map((el, index) => (
+        <div key={ `el${ index }` } style={{ width: `calc(${ 100 / column }% - ${ (column - 1) * gap }px)` }}>{ el }</div>
+      )
+    );
   }
 
   render() {
@@ -41,6 +45,18 @@ export default class CardList extends Component {
             total={ total }
             onChange={ this.handlePageChange } />
         </div>
+
+        <style>{`
+          .card-list-inner {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            align-items: flex-start;
+          }
+          .card-list-inner > * {
+            margin-bottom:
+          }
+        `}</style>
       </div>
     );
   }

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 export default class Card extends ( PureComponent || Component ) {
   static propTypes = {
     style: PropTypes.object.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired,
     cover: PropTypes.element.isRequired,
     actions: PropTypes.array.isRequired,
     actionTAlign: PropTypes.oneOf([ 'left', 'center', 'right' ])
@@ -26,7 +26,7 @@ export default class Card extends ( PureComponent || Component ) {
   }
 
   render() {
-    const { style, title, cover, actions } = this.props;
+    const { style, title, cover, actions, actionTAlign } = this.props;
     const coverDom = (<div></div>);
     const suffixClassName = `card-actions-${ actionTAlign }`;
 
