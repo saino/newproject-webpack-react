@@ -54,7 +54,7 @@ export default class Matting extends Component {
         pathData.floatingPoint = new Point('floating', offsetX, offsetY);
         pathData.floatingPoint.setControl(Point.CONTROL1, pathData.lastPoint().getOppositeControl(Point.CONTROL2));
         let p1 = pathData.firstPoint();
-        console.log(pathData.points.length, 'd');
+
         if (pathData.points.length > 1 && p1.isInside(offsetX, offsetY)) {
           pathData.floatingPoint.setControl(Point.CONTROL2, p1.getControl(Point.CONTROL2));
         }

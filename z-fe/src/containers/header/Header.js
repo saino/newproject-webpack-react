@@ -140,6 +140,11 @@ class Header extends Component {
           }
 
         </div>
+        <style>{`
+          a:link {
+            text-decoration: none;
+          }
+        `}</style>
       </div>
     );
   }

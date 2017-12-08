@@ -41,28 +41,29 @@ class SceneDisplay extends Component {
 
   render() {
     const { materialId, sceneId, materials, frameDataUrl ,selectStep} = this.props;
-      const { scale } = this.state;
-      const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
-      let renderSomething;
-      switch (selectStep.key){
-          case 'effect':
-          {/* 画出在video中每帧对应的秒数的图片 */}
-              renderSomething= <VideoRender
-                  ref="video_render"
-                  style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-                  frameDataUrl={ frameDataUrl } />
-              break
-          case 'combine':
-             renderSomething=<ComposeRender
-                 style={{ width: '100%', height: '100%' }}
-                 frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
-              break;
-          default:
-              renderSomething= <VideoRender
-                  ref="video_render"
-                  style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-                  frameDataUrl={ frameDataUrl } />
-      }
+    const { scale } = this.state;
+    const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
+    let renderSomething;
+
+    switch (selectStep.key){
+        case 'effect':
+        {/* 画出在video中每帧对应的秒数的图片 */}
+            renderSomething= <VideoRender
+                ref="video_render"
+                style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+                frameDataUrl={ frameDataUrl } />
+            break
+        case 'combine':
+           renderSomething=<ComposeRender
+               style={{ width: '100%', height: '100%' }}
+               frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
+            break;
+        default:
+            renderSomething= <VideoRender
+                ref="video_render"
+                style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+                frameDataUrl={ frameDataUrl } />
+    }
 
     return (
       <div className="scene-center">
@@ -71,15 +72,16 @@ class SceneDisplay extends Component {
            <div className="canvas">
 
              {/* 处理视频得到每帧对应的视频秒数 */}
-             {/*<ParseFrameToSecond
+             <ParseFrameToSecond
                videoSrc={ src }
                materialId={ this.props.materialId }
                totalFrame={ totalFrame }
-               onComplete={ this.parseFrameComplete } />*/}
+               onComplete={ this.parseFrameComplete } />
 
-               <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
+             {/* 抠像 */}
+             <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
 
-               {renderSomething}
+             {renderSomething}
 
            </div>
         </div>

@@ -15,21 +15,23 @@ export default class Core extends Component {
     points: [],
     focus: [],
     path: '',
-    controls: []
+    controls1: []
   };
+
+  controlLength = 0;
+  recordIndex = 0;
 
   drawPoint(prevPoints, prevControls, currPoint, otherPoint, isFloating) {
     let state = {}, exec;
     state.points = [ ...prevPoints, <circle cx={ currPoint.x } cy={ currPoint.y } r={ currPoint.radius } className={ isFloating ? 'floating' : '' }></circle> ];
-    state.controls = [];
+    state.controls = prevControls;
 
     if (currPoint.cx1) {
       exec = `${ otherPoint.generatePath(true) } L${ currPoint.cx1 } ${ currPoint.cy1 }`;
-      console.log(prevPoints, 'gm');
       state.points = [ ...state.points, <circle cx={ currPoint.cx1 } cy={ currPoint.cy1 } r={ currPoint.radius } className="control"></circle> ];
       state.controls = [ ...prevControls, (<path d={ exec }></path>) ];
-
-    } else if (currPoint.cx2) {
+    }
+    if (currPoint.cx2) {
       exec = `${ currPoint.generatePath(true) } L${ currPoint.cx2 } ${ currPoint.cy2 }`;
       state.points = [ ...state.points, <circle cx={ currPoint.cx2 } cy={ currPoint.cy2 } r={ currPoint.radius } className="control"></circle> ];
       state.controls = [ ...prevControls, (<path d={ exec }></path>) ];
@@ -46,21 +48,33 @@ export default class Core extends Component {
       controls: [],
     }, () => {
       const { pathData } = props;
-      let state = {}, prevPoints, prevControls;
+      let state = {}, prevPoints;
 
       prevPoints = pathData.points.map(point => (<circle cx={ point.x } cy={ point.y } r={ point.radius } className={ point.className }></circle>));
-      prevControls = state.points || pathData.controls;
 
       if (pathData.floatingPoint) {
-        let className = pathData.floatingPoint.cx1 ? 'control': pathData.floatingPoint.className;
+        let className = pathData.floatingPoint.cx1 ? 'control' : pathData.floatingPoint.className;
         prevPoints = [...prevPoints, <circle cx={ pathData.floatingPoint.x } cy={ pathData.floatingPoint.y } r={ pathData.floatingPoint.radius } className={ className }></circle>];
         state = this.drawPoint(prevPoints, pathData.controls, pathData.floatingPoint, pathData.lastPoint(), true);
-        pathData.controls[0] = state.controls.pop();
+        prevPoints = state.points;
+        var d = state.controls.pop();
+        d != undefined && (pathData.controls[this.controlLength] = d);
       }
+
+      const temp = this.controlLength;
 
       pathData.points.forEach((point, i) => {
         path += point.generatePath(i == 0);
         state = this.drawPoint(prevPoints, pathData.controls, point, pathData.prevPoint(i));
+
+        if (pathData.floatingPoint) {
+          pathData.controls[ temp + 1 ] = state.controls.slice(-1)[0];
+          this.controlLength = this.recordIndex + 2;
+        } else {
+          this.recordIndex = state.controls.length;
+        }
+
+        prevPoints = state.points;
       });
 
       if (pathData.points.length > 0 && pathData.floatingPoint) {
@@ -71,7 +85,7 @@ export default class Core extends Component {
         path += pathData.firstPoint().generatePath();
 		    path += 'Z';
       }
-
+      console.log(state, 'gg');
       this.setState({ ...state, path });
     });
   }
