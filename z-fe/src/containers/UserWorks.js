@@ -25,10 +25,6 @@ class UserWorks extends React.Component {
             buttonName: "个人中心",
             buttonAction: this.onButtonClicked,
             buttonIcon: "user",
-        }, {
-            buttonName: "退出",
-            buttonAction: this.onButtonClicked,
-            buttonIcon: "logout",
         }]
     }
     renderRightArticleContent(){
@@ -37,8 +33,6 @@ class UserWorks extends React.Component {
                 return <UserWorksList />;
             case "个人中心":
                 return <div>个人中心</div>;
-            case "退出":
-                return <div>退出</div>;
             default:
                 return <div>我的作品</div>;
         }

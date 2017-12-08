@@ -32,7 +32,7 @@ const Routers = ({store}) => (
             <Switch>
                 <Route exact path="/" component={ Home } />
                 <Route exact path="/make" render={ requireAuth(Make) } />
-                <Route exact path="/user_works" render={ requireAuth(UserWorks) } />
+                <Route exact path="/works/:user_id" render={ requireAuth(UserWorks) } />
                 <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>

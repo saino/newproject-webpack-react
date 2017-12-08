@@ -20,7 +20,7 @@ class UserWorksList extends React.Component {
     }
     componentWillMount(){
         this.props.requestUserWorks({curr: 0, pageSize: PAGE_SIZE});
-        
+
     }
     renderAddNewWorks() {
         const { curr, pageSize, total } = this.props.userWorks;
@@ -57,7 +57,7 @@ class UserWorksList extends React.Component {
                     {this.renderAddNewWorks()}
                 </div>
                 <div className='user-works-list-content-pages'>
-                    <Pagination onChange={this.onPageChanged} 
+                    <Pagination onChange={this.onPageChanged}
                         total={this.props.userWorks.total%PAGE_SIZE ? this.props.userWorks.total: this.props.userWorks.total+1}
                         defaultCurrent={this.props.userWorks.curr+1}
                         defaultPageSize={PAGE_SIZE}/>
@@ -76,9 +76,9 @@ const mapStateToProps = ({user, userWorks}) => {
         userWorks: userWorks
     };
 }
-const  mapDispatchToProps = (dispthch) => {
+const  mapDispatchToProps = (dispatch) => {
     return {
-        requestUserWorks : bindActionCreators(getWorks, dispthch)
+        requestUserWorks : bindActionCreators(getWorks, dispatch)
     }
 }
 
