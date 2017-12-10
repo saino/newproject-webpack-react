@@ -1,12 +1,14 @@
-import { add, update } from '../utils/stateSet';
+import { add, update, remove } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
 
 const defaulState = {
-    curr: 0,
-    pageSize: 0,
-    total: 0, 
+    page: {
+      current: 1,
+      pageSize: 0,
+      total: 0
+    },
     works: []
 };
 
@@ -15,34 +17,42 @@ const actionTypes = {
     DELETE_WORK: "DELETE_WORK",
 }
 
-export const getWorks = packageToken((dispatch, { token, curr, pageSize }) => {
-  post('/getWorks', { token, curr, pageSize }, resp => {
-    const { total, works } = resp;
+export const getWorks = packageToken((dispatch, { token, current, pageSize }) => {
+  post('/getWorks', { token, current, pageSize }, resp => {
+    const { page, works } = resp;
 
     dispatch({
       type: actionTypes.GET_WORKS,
-      curr,
-      pageSize,
-      total,
-      works
-    })      
+      works,
+      page
+    })
   });
 }, logout);
 
+export const deleteWork = packageToken((dispatch, { token, workId }) => {
+  post('/deleteWork', { token, workId }, resp => {
+    const { workId } = resp;
+
+    dispatch({
+      type: actionTypes.DELETE_WORK,
+      workId
+    });
+  });
+}, logout);
 
 export default (state = defaulState, action) => {
-    switch (action.type) {
+  switch (action.type) {
+    case actionTypes.GET_WORKS:
+      const { works, page } = action;
 
-        case actionTypes.GET_WORKS:
-            const { curr, pageSize, total, works } = action;
-            
-            return { ...state, ...{ curr, pageSize, total, works } };
+      return { ...state, works, page };
 
-        case actionTypes.DELETE_PROJECT:
-            return state;
+    case actionTypes.DELETE_WORK:
+      const { workId } = action;
 
-        default: 
-            return state;
+      return { ...state, works: remove(state.works, workId, 'workId') };
 
-    }
+    default:
+      return state;
+  }
 }

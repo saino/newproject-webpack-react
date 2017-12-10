@@ -43,29 +43,64 @@ app.post('/api/auth/login', function (req, res) {
     }
 });
 
+app.post('/api/deleteWork', function (req, res) {
+  if (req.body.token) {
+    const workId = req.body.workId;
+
+    if (workId === 'she') {
+      res.send({
+        errorCode: 2000,
+        errorMessage: '不存在的作品id',
+        data: null
+      });
+    } else {
+      res.send({
+        errorCode: 0,
+        errorMessage: '',
+        data: {
+          workId
+        }
+      });
+    }
+
+  } else {
+    res.send({
+      errorCode: 1000,
+      errorMessage: '请先登录',
+      data: null
+    });
+  }
+});
+
 app.post('/api/getWorks', function (req, res) {
   if (req.body.token) {
-    const curr = req.body.curr;
+    const current = req.body.current;
     const pageSize = req.body.pageSize;
     const total = 55;
     const pages = Math.ceil(total / pageSize);
     let works = [];
 
-    if (curr > pages) {
+    if (current > pages) {
+      console.log(current, pages, 'jj')
       return res.send({
         errorCode: 0,
         errorMessage: '',
         data: {
           works: [],
-          totalPages: 10
+          page: {
+            current,
+            pageSize,
+            total
+          }
         }
       });
     } else {
 
-      for (var i = 0; i < pageSize && (curr*pageSize+i) < total; i++) {
+      for (var i = 0; i < pageSize; i++) {
+        let workId = `${ current }${ i }`;
         works.push({
-          workId: '' + curr + i,
-          title: '作品作品',
+          workId,
+          title: `作品作品${ workId }`,
           thumb: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1512217642613&di=0909a39925c095e9f289f99f33aad1f8&imgtype=0&src=http%3A%2F%2Fupload.mnw.cn%2F2017%2F0814%2F1502698443378.jpg',
         });
       }
@@ -75,7 +110,11 @@ app.post('/api/getWorks', function (req, res) {
         errorMessage: '',
         data: {
           works,
-          total
+          page: {
+            current,
+            pageSize,
+            total
+          }
         }
       });
     }

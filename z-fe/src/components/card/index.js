@@ -1,2 +1,7 @@
-export * from './Card';
-export * from './CardList';
+import Card from './Card';
+import CardList from './CardList';
+
+export {
+  Card,
+  CardList
+};

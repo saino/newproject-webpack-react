@@ -7,7 +7,7 @@ import LoginBefore from './LoginBefore';
 import LoginAfter from './LoginAfter';
 import logoPNG from '../../statics/logo.png';
 
-const style = () => ({
+const styles = () => ({
 
   root: {
     position: 'absolute',
@@ -15,9 +15,9 @@ const style = () => ({
     top: 0,
     width: '100%',
     color: '#fff',
+    height: 54,
     fontSize: 14,
     fontFamily: 'microsoft Yahei',
-    background: 'rgba(30,30,30,.5)',
     zIndex: 1
   },
 
@@ -103,15 +103,15 @@ class Header extends Component {
   });
 
   render() {
-    const { user, onOpenLoginForm, onOpenRegisterForm } = this.props;
+    const { user, onOpenLoginForm, onOpenRegisterForm, style } = this.props;
     const {
       root, rootInner,
       logo, logoImg, logoText,
       nav, navItem, navItemText, navBottomLine
-    } = style();
+    } = styles();
 
     return (
-      <div style={ root }>
+      <div style={{ ...root, ...style }}>
         <div style={ rootInner }>
 
           <Link to="/" style={ logo } >

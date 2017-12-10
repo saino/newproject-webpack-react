@@ -5,7 +5,7 @@
  }
  .user-works-body{
     display: flex;
-    position: relative;
-    width: 100%;
-    padding: 74px 11% 0px;
+    width: 1236px;
+    margin: 0 auto;
+    padding-top: 74px;
 }

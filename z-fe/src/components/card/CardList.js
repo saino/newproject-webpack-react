@@ -6,14 +6,17 @@ import PropTypes from 'prop-types';
 import { Pagination } from 'antd';
 
 export default class CardList extends Component {
+  static gap = 20;
+
   static propTypes = {
+    style: PropTypes.object,
     paginate: PropTypes.shape({
-      size: PropTypes.number,
+      pageSize: PropTypes.number,
       current: PropTypes.number,
       total: PropTypes.number
     }),
     elements: PropTypes.array,
-    column: PropTypes.number,
+    columns: PropTypes.number,
     onPageChange: PropTypes.func
   };
 
@@ -21,27 +24,31 @@ export default class CardList extends Component {
     this.props.onPageChange(current, pageSize);
 
   getLists() {
-    const { elements, column } = this.props;
-    const gap = 20;
+    const { elements, columns } = this.props;
+    let isLast;
 
-    return elements.map((el, index) => (
-        <div key={ `el${ index }` } style={{ width: `calc(${ 100 / column }% - ${ (column - 1) * gap }px)` }}>{ el }</div>
-      )
+    return elements.map((el, index) => {
+      return (
+          <div key={ `el${ index }` } style={{ width: `calc(${ 100 / columns }% - ${ CardList.gap }px)`, margin: `0 ${ CardList.gap }px ${ CardList.gap }px 0` }}>{ el }</div>
+        )
+    }
     );
   }
 
   render() {
-    const { size, current, total, elements } = this.props;
+    const { style, paginate, elements } = this.props;
+    const { current, pageSize, total } = paginate;
 
     return (
-      <div className="card-list">
+      <div className="card-list" style={ style }>
         <div className="card-list-inner">
           { this.getLists() }
         </div>
         <div className="card-list-pagination">
           <Pagination
             current={ current }
-            size={ size }
+            defaultCurrent={ current }
+            pageSize={ pageSize }
             total={ total }
             onChange={ this.handlePageChange } />
         </div>
@@ -49,12 +56,14 @@ export default class CardList extends Component {
         <style>{`
           .card-list-inner {
             display: flex;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-            align-items: flex-start;
+            flex-flow: row wrap;
+            justify-content: flex-start;
           }
-          .card-list-inner > * {
-            margin-bottom:
+          .card-list-inner > div:nth-child(4n) {
+            margin-right: 0!important;
+          }
+          .card-list-pagination {
+            text-align: right;
           }
         `}</style>
       </div>

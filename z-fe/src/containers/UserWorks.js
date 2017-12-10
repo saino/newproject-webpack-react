@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 
 import Header from './header/Header';
 import { LeftNavigation, LeftNavigationButton, RightArticle } from '../components';
-import UserWorksList from './userWorksList/userWorksList';
+//import UserWorksList from './userWorksList/userWorksList';
 import Uwl from './userWorksList/Uwl';
 import {getWorks} from '../reducers/userWorks';
 import './UserWorks.css';
@@ -40,7 +40,7 @@ class UserWorks extends React.Component {
     }
     render() {
         return <div className='user-works'>
-            <Header />
+            <Header style={{ background: '#124968' }} />
             <div className='user-works-body'>
                 <LeftNavigation buttons={this.getButtons()} activeName={this.state.activeName}/>
                 <RightArticle>

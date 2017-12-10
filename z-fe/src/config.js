@@ -51,7 +51,7 @@ export default ({
 
   // 分页
   page: {
-    pageSize: 10              // 每页10条
+    pageSize: 11             // 每页11条
   },
 
   // 进入其他页面的校验接口
@@ -61,7 +61,7 @@ export default ({
 
   // 形变
   transform: {
-    stepScale: 0.1  
+    stepScale: 0.1
   },
 
   // 对请求host、path路径处理

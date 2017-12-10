@@ -157,7 +157,7 @@ class Home extends Component {
     return (
       <div className="wrapper" style={ root }>
 
-        <Header onOpenLoginForm={ this.handleOpenLoginForm } onOpenRegisterForm={ this.handleOpenRegisterForm } />
+        <Header style={{ background: 'rgba(30,30,30,.5)' }} onOpenLoginForm={ this.handleOpenLoginForm } onOpenRegisterForm={ this.handleOpenRegisterForm } />
 
         <div className="main">
 

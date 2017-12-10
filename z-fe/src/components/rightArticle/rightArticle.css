@@ -1,4 +1,5 @@
 .right-article{
-    display: block;
-    width: 83.682634%;
+  padding-left: 20px;
+  flex: 1;
+  box-sizing: border-box;
 }

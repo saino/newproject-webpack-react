@@ -13,6 +13,9 @@ export default class Card extends ( PureComponent || Component ) {
     actions: PropTypes.array.isRequired,
     actionTAlign: PropTypes.oneOf([ 'left', 'center', 'right' ])
   };
+  static defaultProps = {
+    actionTAlign: 'center'
+  };
 
   getActions(actions) {
     if (!actions || !actions.length) {
@@ -27,14 +30,14 @@ export default class Card extends ( PureComponent || Component ) {
 
   render() {
     const { style, title, cover, actions, actionTAlign } = this.props;
-    const coverDom = (<div></div>);
+    const coverDom = (<div>{ cover }</div>);
     const suffixClassName = `card-actions-${ actionTAlign }`;
 
     return (
       <div className="card" style={ style }>
         <div className="card-cover">{ coverDom }</div>
         <div className="card-body" title={ title }>{ title }</div>
-        <ul className="card-actions">{ this.getActions(actions) }</ul>
+        <ul className={ `card-actions ${ suffixClassName }` }>{ this.getActions(actions) }</ul>
 
         <style>{`
           .card-cover {
@@ -53,9 +56,6 @@ export default class Card extends ( PureComponent || Component ) {
           }
           .card-body {
             padding: 6%;
-          }
-          .card-meta-title {
-            font-size: 16px;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
@@ -65,14 +65,15 @@ export default class Card extends ( PureComponent || Component ) {
             display: flex;
             flex-flow: row nowrap;
             align-items: center;
+            padding-bottom: 6%;
           }
-          .card-action-left {
+          .card-actions-left {
             justify-content: flex-start;
           }
-          .card-action-center {
+          .card-actions-center {
             justify-content: center;
           }
-          .card-action-right {
+          .card-actions-right {
             justify-content: flex-end;
           }
         `}</style>
