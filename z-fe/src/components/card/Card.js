@@ -4,6 +4,7 @@
 
 import React, { PureComponent, Component } from 'react';
 import PropTypes from 'prop-types';
+import Lazyload from '../interaction/react-lazyload/Lazyload';
 
 export default class Card extends ( PureComponent || Component ) {
   static propTypes = {
@@ -30,7 +31,7 @@ export default class Card extends ( PureComponent || Component ) {
 
   render() {
     const { style, title, cover, actions, actionTAlign } = this.props;
-    const coverDom = (<div>{ cover }</div>);
+    const coverDom = (<Lazyload>{ cover }</Lazyload>);
     const suffixClassName = `card-actions-${ actionTAlign }`;
 
     return (
@@ -38,7 +39,6 @@ export default class Card extends ( PureComponent || Component ) {
         <div className="card-cover">{ coverDom }</div>
         <div className="card-body" title={ title }>{ title }</div>
         <ul className={ `card-actions ${ suffixClassName }` }>{ this.getActions(actions) }</ul>
-
         <style>{`
           .card-cover {
             position: relative;

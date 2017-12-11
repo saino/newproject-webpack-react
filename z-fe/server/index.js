@@ -81,7 +81,6 @@ app.post('/api/getWorks', function (req, res) {
     let works = [];
 
     if (current > pages) {
-      console.log(current, pages, 'jj')
       return res.send({
         errorCode: 0,
         errorMessage: '',
