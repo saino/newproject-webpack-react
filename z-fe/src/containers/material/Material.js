@@ -33,9 +33,9 @@ export default class Material extends Component {
         <div className="material-middle">
           <div className="material-middle-inner">
             <ul className="material-middle-left-nav">
-              <li><NavLink className="item-inner" to="/materials/project" activeClassName="active"><Icon type="picture" />项目素材</NavLink></li>
-              <li><NavLink className="item-inner" to="/materials/public" activeClassName="active"><Icon type="picture" />公共素材</NavLink></li>
-              <li><NavLink className="item-inner" to="/materials/user" activeClassName="active"><Icon type="picture" />我的素材</NavLink></li>
+              <li><NavLink className="item-inner" to="/materials/project" ><Icon type="picture" />项目素材</NavLink></li>
+              <li><NavLink className="item-inner" to="/materials/public" ><Icon type="picture" />公共素材</NavLink></li>
+              <li><NavLink className="item-inner" to="/materials/user" ><Icon type="picture" />我的素材</NavLink></li>
             </ul>
             <div className="material-middle-right-main">
               { this.renderChildMaterial(this.props.flag) }
@@ -68,22 +68,18 @@ export default class Material extends Component {
           }
           .material-middle-left-nav li {
             display: block;
-            color: #fff;
             line-height: 60px;
             font-size: 14px;
+          }
+          .material-middle-left-nav li .item-inner.active {
+            background: #124967;
+
           }
           .material-middle-left-nav li .item-inner {
             display: block;
             height: 60px;
             color: #030303;
             padding: 0 20px;
-          }
-          .material-middle-left-nav li .item-inner:hover {
-            background:#c6d1d7;  
-          }
-          .material-middle-left-nav li .item-inner.active {
-            background: #124967;
-            color: #fff;
           }
           .material-middle-left-nav li .item-inner i {
             margin-right: 15px;

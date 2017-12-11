@@ -42,6 +42,34 @@ app.post('/api/auth/login', function (req, res) {
       });
     }
 });
+app.post('/api/deleteMaterial', function (req, res) {
+  if (req.body.token) {
+    const materialId = req.body.materialId;
+
+    if (materialId === 'she') {
+      res.send({
+        errorCode: 2000,
+        errorMessage: '不存在的作品id',
+        data: null
+      });
+    } else {
+      res.send({
+        errorCode: 0,
+        errorMessage: '',
+        data: {
+          materialId
+        }
+      });
+    }
+
+  } else {
+    res.send({
+      errorCode: 1000,
+      errorMessage: '请先登录',
+      data: null
+    });
+  }
+});
 
 app.post('/api/deleteWork', function (req, res) {
   if (req.body.token) {

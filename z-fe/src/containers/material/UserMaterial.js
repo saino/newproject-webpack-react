@@ -8,14 +8,15 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm } from 'antd';
 import { CardList, Card } from '../../components/card';
-import { list } from '../../reducers/material';
+import { list, deleteMaterial } from '../../reducers/material';
 import config from '../../config';
 import addWorkJPG from '../../statics/add_work_material.jpg';
 
 class UserMaterial extends Component {
   handlePageChange = (current, pageSize) =>
     this.props.list({ current, pageSize });
-  handleDeleteMaterial = materialId => () => {};
+  handleDeleteMaterial = materialId => () =>
+    this.props.deleteMaterial({ materialId });
   handleOpenAddMaterialModal = () => {
 
   };
@@ -113,7 +114,8 @@ const mapStateToProps = ({ material }) => ({
   material: material
 });
 const mapDispatchToProps = (dispatch) => ({
-  list: bindActionCreators(list, dispatch)
+  list: bindActionCreators(list, dispatch),
+  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserMaterial);

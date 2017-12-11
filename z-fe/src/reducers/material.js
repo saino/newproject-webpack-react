@@ -1,4 +1,4 @@
-import { add, update } from '../utils/stateSet';
+import { add, update, remove } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -25,7 +25,7 @@ const defState = {
 const actionTypes = {
   LIST_MATERIAL: 'LIST_MATERIAL',
   NEW_MATERIAL: 'NEW_MATERIAL',
-  REMOVE_MATERIAL: 'REMOVE_MATERIAL',
+  DELETE_MATERIAL: 'DELETE_MATERIAL',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION'
 };
@@ -42,6 +42,17 @@ export const list = packageToken((dispatch, { token, current, pageSize }) => {
   });
 }, logout);
 
+export const deleteMaterial = packageToken((dispatch, { token, materialId }) => {
+  post('/deleteMaterial', { token, materialId }, resp => {
+    const { materialId } = resp;
+
+    dispatch({
+      type: actionTypes.DELETE_MATERIAL,
+      materialId
+    });
+  });
+}, logout);
+
 export const setDuration = (materialId, duration) => ({
   type: actionTypes.SET_DURATION,
   materialId,
@@ -54,6 +65,11 @@ export default (state = defState, action) => {
       const { materials, page } = action;
 
       return { ...state, materials, page };
+
+    case actionTypes.DELETE_MATERIAL:
+      const { materialId } = action;
+
+      return { ...state, works: remove(state.materials, materialId, 'materialId') };
 
     case actionTypes.SET_DURATION:
       return update(state, { duration: action.duration }, action.materialId, 'materialId')
