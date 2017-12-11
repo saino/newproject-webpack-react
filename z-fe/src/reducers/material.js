@@ -13,34 +13,33 @@ import { logout } from './user';
   item.duration Number 总时长
   item.frameRate Number 帧率 前端自己设置，无需服务端返回
 */
-const defState = [{
-  materialId: 1,
-  src: 'http://localhost:3000/test.mp4',
-  thumb: '',
-  title: '素材是视频，素材是视频',
-  type: 0,
-  totalFrame: 336
-}];
-
-const actionTypes = {
-
-  LIST_MATERIAL: 'LIST_MATERIAL',
-
-  NEW_MATERIAL: 'NEW_MATERIAL',
-
-  REMOVE_MATERIAL: 'REMOVE_MATERIAL',
-
-  SET_FRAME_RATE: 'SET_FRAME_RATE',
-
-  SET_DURATION: 'SET_DURATION'
-
+const defState = {
+  page: {
+    current: 1,
+    pageSize: 0,
+    total: 0
+  },
+  materials: []
 };
 
-export const list = packageToken((dispatch, { token }) => {
-  post('/materials', { token }, resp => dispatch({
-    type: actionTypes.LIST_MATERIAL,
-    materials: resp
-  }));
+const actionTypes = {
+  LIST_MATERIAL: 'LIST_MATERIAL',
+  NEW_MATERIAL: 'NEW_MATERIAL',
+  REMOVE_MATERIAL: 'REMOVE_MATERIAL',
+  SET_FRAME_RATE: 'SET_FRAME_RATE',
+  SET_DURATION: 'SET_DURATION'
+};
+
+export const list = packageToken((dispatch, { token, current, pageSize }) => {
+  post('/materials', { token, current, pageSize }, resp => {
+    const { page, materials } = resp;
+
+    dispatch({
+      type: actionTypes.LIST_MATERIAL,
+      materials,
+      page
+    })
+  });
 }, logout);
 
 export const setDuration = (materialId, duration) => ({
@@ -51,9 +50,10 @@ export const setDuration = (materialId, duration) => ({
 
 export default (state = defState, action) => {
   switch (action.type) {
-
     case actionTypes.LIST_MATERIAL:
-      return [ ...state, ...action.materials ];
+      const { materials, page } = action;
+
+      return { ...state, materials, page };
 
     case actionTypes.SET_DURATION:
       return update(state, { duration: action.duration }, action.materialId, 'materialId')

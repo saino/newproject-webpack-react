@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm, Modal, Input } from 'antd';
 import { CardList, Card } from '../../components/card';
-import { getWorks, deleteWork } from '../../reducers/userWorks'
+import { getWorks, deleteWork } from '../../reducers/userWorks';
+import { getUserInfo } from '../../reducers/user';
 import config from '../../config';
 import addWorkJPG from '../../statics/add_work_material.jpg';
 
 class Uwl extends Component {
-  static columns = 4;
-
   constructor(props) {
     super(props);
 
@@ -36,7 +36,7 @@ class Uwl extends Component {
         cover={ <img src={ item.thumb } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
-            <a className="edit-btn" href="/make"><Icon type="edit" /></a>
+            <Link className="edit-btn" to="/materials/project"><Icon type="edit" /></Link>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
             <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteWork(item.workId) }>
@@ -50,13 +50,14 @@ class Uwl extends Component {
       )
     );
 
-    arr.unshift(<div className="add-work" onClick={ this.handleOpenAddWorkModal }><img src={ addWorkJPG } /></div>);
+    arr.unshift(<div className="add-action" onClick={ this.handleOpenAddWorkModal }><img src={ addWorkJPG } /></div>);
 
     return arr;
   }
 
   componentWillMount() {
     this.handlePageChange(this.props.userWorks.page.current, config.page.pageSize);
+    this.props.getUserInfo();
   }
 
   render() {
@@ -82,7 +83,7 @@ class Uwl extends Component {
             total: userWorks.page.total
           }}
           elements={ this.getWorkDoms(userWorks.works) }
-          columns={ Uwl.columns }
+          columns={ 4 }
           onPageChange={ this.handlePageChange } />
 
         {/* 添加作品输入对话框 */}
@@ -116,17 +117,17 @@ class Uwl extends Component {
           color: #999999;
           margin-left: 15px;
         }
-        .add-work {
+        .add-action {
           border: 1px solid #dbdbdb;
           background: #ececec;
           height: 100%;
           text-align: center;
           cursor: pointer;
         }
-        .add-work img {
+        .add-action img {
           vertical-align: middle;
         }
-        .add-work:after {
+        .add-action:after {
           content: "";
           display: inline-block;
           height: 100%;
@@ -156,13 +157,14 @@ class Uwl extends Component {
   }
 }
 
-const mapStateToProps = ({user, userWorks}) => ({
+const mapStateToProps = ({ user, userWorks }) => ({
   userInfo: user.user,
   userWorks: userWorks
 });
 const mapDispatchToProps = (dispatch) => ({
   getWorks : bindActionCreators(getWorks, dispatch),
-  deleteWork: bindActionCreators(deleteWork, dispatch)
+  deleteWork: bindActionCreators(deleteWork, dispatch),
+  getUserInfo: bindActionCreators(getUserInfo, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Uwl);

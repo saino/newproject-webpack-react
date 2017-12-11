@@ -72,6 +72,63 @@ app.post('/api/deleteWork', function (req, res) {
   }
 });
 
+app.post('/api/materials', function (req, res) {
+  if (req.body.token) {
+    const current = req.body.current;
+    const pageSize = req.body.pageSize;
+    const total = 55;
+    const pages = Math.ceil(total / pageSize);
+    let materials = [];
+
+    if (current > pages) {
+      return res.send({
+        errorCode: 0,
+        errorMessage: '',
+        data: {
+          materials: [],
+          page: {
+            current,
+            pageSize,
+            total
+          }
+        }
+      });
+    } else {
+
+      for (var i = 0; i < pageSize; i++) {
+        let materialId = `${ current }${ i }`;
+        materials.push({
+          materialId,
+          src: 'http://localhost:3000/test.mp4',
+          title: `素材${ materialId }`,
+          thumb: 'http://img1.imgtn.bdimg.com/it/u=3135851863,3009323944&fm=27&gp=0.jpg',
+          type: 0,
+          totalFrame: 336
+        });
+      }
+
+      return res.send({
+        errorCode: 0,
+        errorMessage: '',
+        data: {
+          materials,
+          page: {
+            current,
+            pageSize,
+            total
+          }
+        }
+      });
+    }
+  }
+
+  res.send({
+    errorCode: 1000,
+    errorMessage: '请先登录',
+    data: null
+  });
+});
+
 app.post('/api/getWorks', function (req, res) {
   if (req.body.token) {
     const current = req.body.current;
@@ -163,8 +220,6 @@ app.post('/api/auth/register', function (req, res) {
     });
   }
 });
-
-app.post('/')
 
 app.post('/api/scenes', function (req, res) {
   var materialId = req.body.materialId;

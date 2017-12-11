@@ -27,15 +27,14 @@ class Step extends Component {
         return (
             <div className="step">
                 <div className="step-inner">
-
-                    <div className="logo">
-                        <Link className="logo-inner" to="/">
-                            <img className="logo-img" src={logoPNG}/>
-                            <label className="logo-text">LIANGZIVFX</label>
-                        </Link>
-                    </div>
-
-                    <ul className="step-to">
+                    <div className="step-to">
+                      <div className="logo">
+                          <Link className="logo-inner" to="/">
+                              <img className="logo-img" src={logoPNG}/>
+                              <label className="logo-text">LIANGZIVFX</label>
+                          </Link>
+                      </div>
+                      <ul className="nav">
                         {step.steps.map((item, index) => {
                             let className = classnames({
                                 [item.key]: true,
@@ -48,7 +47,8 @@ class Step extends Component {
                                     <a className="item middle">{item.name}</a>
                                 </li>)
                         })}
-                    </ul>
+                      </ul>
+                    </div>
                 </div>
 
                 <style>{`
@@ -71,6 +71,8 @@ class Step extends Component {
             color: #fff;
             font-size: 14px;
             font-family: 'microsoft yahei';
+            width: 1236px;
+            margin: 0 auto;
           }
 
 
@@ -85,18 +87,14 @@ class Step extends Component {
             height: 100%;
           }
 
-          .step-to .complete {
-            background: #006699;
-          }
-
           .step-to .doing {
             background: #2d8bbd;
           }
 
-          .step-to .wait {
+          .step-to .wait a {
             background: #114967;
           }
-          .step-to .selected {
+          .step-to .selected a {
             background: #2d8bbd;
           }
           .step-to .materials {
@@ -107,11 +105,9 @@ class Step extends Component {
             padding-left: 20px;
           }
 
-          .step-inner .logo {
-            position: absolute;
-            left: 20px;
-            top: 0;
-            bottom: 0;
+          .step-inner .nav {
+            flex: 1;
+            display: flex;
           }
 
           .step-inner .logo-inner {
@@ -132,6 +128,7 @@ class Step extends Component {
             font-size: 20px;
             vertical-align: middle;
             color: #fff;
+            cursor: pointer;
           }
 
           .step-to a {

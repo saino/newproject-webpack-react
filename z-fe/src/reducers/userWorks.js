@@ -3,7 +3,7 @@ import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
 
-const defaulState = {
+const defState = {
     page: {
       current: 1,
       pageSize: 0,
@@ -40,7 +40,7 @@ export const deleteWork = packageToken((dispatch, { token, workId }) => {
   });
 }, logout);
 
-export default (state = defaulState, action) => {
+export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_WORKS:
       const { works, page } = action;

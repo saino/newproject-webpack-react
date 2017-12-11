@@ -3,7 +3,7 @@ import React from 'react';
 import ClassNames from 'classnames';
 import { bindActionCreators } from 'redux';
 
-import Header from './header/Header';
+import Step from './make/Step';
 import { LeftNavigation, LeftNavigationButton, RightArticle } from '../components';
 //import UserWorksList from './userWorksList/userWorksList';
 import Uwl from './userWorksList/Uwl';
@@ -40,7 +40,7 @@ class UserWorks extends React.Component {
     }
     render() {
         return <div className='user-works'>
-            <Header style={{ background: '#124968' }} />
+            <Step />
             <div className='user-works-body'>
                 <LeftNavigation buttons={this.getButtons()} activeName={this.state.activeName}/>
                 <RightArticle>

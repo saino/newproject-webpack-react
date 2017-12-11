@@ -4,7 +4,7 @@ const defState = {
   steps:[{
   key: 'materials',
   name: '素材上传',
-  status: 'complete'
+  status: 'wait'
 }, {
   key: 'effect',
   name: '镜头特效',
@@ -17,7 +17,7 @@ const defState = {
   key: 'publish',
   name: '视频发布',
   status: 'wait'
-}],current:1};
+}],current: 0};
 
 const actionTypes = { UPDATE_STEP: 'UPDATE_STEP' ,SELECT_STEP:'SELECT_STEP'};
 

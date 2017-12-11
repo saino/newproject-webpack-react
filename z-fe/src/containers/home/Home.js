@@ -164,7 +164,7 @@ class Home extends Component {
           {/* 广告 */}
           <div style={ hd }>
             <img src={ hdJPG } style={ hdImg } />
-            <Link to="/works/12334" style={ makeBtn }>开始制作</Link>
+            <Link to="/works" style={ makeBtn }>开始制作</Link>
           </div>
 
           {/* 产品介绍 */}
