@@ -20,6 +20,7 @@ import useTwoPNG from '../../statics/use_two.png';
 import useThreePNG from '../../statics/use_three.png';
 
 import config from '../../config';
+import { scrollToAnchor } from '../../utils/link';
 
 const style = () => ({
 
@@ -222,6 +223,14 @@ class Home extends Component {
         <style>{ config.dialog.centerStyle }</style>
       </div>
     );
+  }
+
+  componentDidUpdate() {
+    scrollToAnchor();
+  }
+
+  componentDidMount() {
+    scrollToAnchor();
   }
 }
 
