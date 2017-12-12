@@ -4,18 +4,16 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
 import { Icon } from 'antd';
 import Step from '../make/Step';
 import UserMaterial from './UserMaterial';
 
 export default class Material extends Component {
-  static propTypes = {
-    flag: PropTypes.number
-  };
-  static defaultProps = {
+  state = {
     flag: 0
   };
+  handleNavItemChange = (flag) => () =>
+    this.setState({ flag });
 
   renderChildMaterial(flag) {
     switch (flag) {
@@ -33,12 +31,12 @@ export default class Material extends Component {
         <div className="material-middle">
           <div className="material-middle-inner">
             <ul className="material-middle-left-nav">
-              <li><NavLink className="item-inner" to="/materials/project" ><Icon type="picture" />项目素材</NavLink></li>
-              <li><NavLink className="item-inner" to="/materials/public" ><Icon type="picture" />公共素材</NavLink></li>
-              <li><NavLink className="item-inner" to="/materials/user" ><Icon type="picture" />我的素材</NavLink></li>
+              <li><a href="javascript:;" className={`item-inner ${ this.state.flag == 0 ? 'active' : '' }`} onClick={ this.handleNavItemChange(0) }><Icon type="picture" />项目素材</a></li>
+              <li><a href="javascript:;" className={`item-inner ${ this.state.flag == 1 ? 'active' : '' }`} onClick={ this.handleNavItemChange(1) }><Icon type="picture" />公共素材</a></li>
+              <li><a href="javascript:;" className={`item-inner ${ this.state.flag == 2 ? 'active' : '' }`} onClick={ this.handleNavItemChange(2) }><Icon type="picture" />我的素材</a></li>
             </ul>
             <div className="material-middle-right-main">
-              { this.renderChildMaterial(this.props.flag) }
+              { this.renderChildMaterial(this.state.flag) }
             </div>
           </div>
         </div>
@@ -71,9 +69,13 @@ export default class Material extends Component {
             line-height: 60px;
             font-size: 14px;
           }
+          .material-middle-left-nav li .item-inner:hover {
+            background: #c6d1d7;
+            color: #32373a;
+          }
           .material-middle-left-nav li .item-inner.active {
             background: #124967;
-
+            color: #fff;
           }
           .material-middle-left-nav li .item-inner {
             display: block;

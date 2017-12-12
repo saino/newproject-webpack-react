@@ -36,7 +36,7 @@ class Uwl extends Component {
         cover={ <img src={ item.thumb } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
-            <Link className="edit-btn" to="/materials/project"><Icon type="edit" /></Link>
+            <Link className="edit-btn" to="/materials"><Icon type="edit" /></Link>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
             <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteWork(item.workId) }>
