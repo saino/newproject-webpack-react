@@ -190,6 +190,7 @@ renderUploadProgress() {
           }
           .add-action img {
             vertical-align: middle;
+            width: 100%;
           }
           .add-action:after {
             content: "";
