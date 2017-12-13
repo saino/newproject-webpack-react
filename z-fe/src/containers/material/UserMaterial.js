@@ -176,7 +176,7 @@ renderUploadProgress() {
 
         {/* 素材列表 */}
         <CardList elements={ this.getMaterialDoms(work ? work.config.materials : []) } columns={ 5 } isPaginate={ false } />
-
+        {this.renderUploadProgress()}
         <style>{`
           .add-action {
             height: 100%;
