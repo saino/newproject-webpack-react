@@ -51,12 +51,15 @@ class Work extends React.Component {
                   position: relative;
                   height: 100%;
                   width: 100%;
+                  display: flex;
+                  flex-flow: column nowrap;
                }
                .user-works-body{
                   display: flex;
                   width: 1236px;
                   margin: 0 auto;
                   padding-top: 74px;
+                  flex: 1;
               }
             `}</style>
         </div>

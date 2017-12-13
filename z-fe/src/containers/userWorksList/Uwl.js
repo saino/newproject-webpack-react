@@ -77,7 +77,7 @@ class Uwl extends Component {
 
         {/* 作品列表 */}
         <CardList
-          style={{ paddingTop: 20 }}
+          style={{ padding: '20px 0' }}
           paginate={{
             pageSize: userWorks.page.pageSize,
             current: userWorks.page.current,
