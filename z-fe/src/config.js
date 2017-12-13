@@ -11,8 +11,8 @@ export default ({
 
   // 数据请求
   api: {
-    host: window.api,
-    path: '/api',
+    host: 'http://192.168.3.116:8888',
+    path: '',
     timeout: 15000
   },
 
