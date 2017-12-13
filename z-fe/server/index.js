@@ -42,34 +42,6 @@ app.post('/api/auth/login', function (req, res) {
       });
     }
 });
-app.post('/api/deleteMaterial', function (req, res) {
-  if (req.body.token) {
-    const materialId = req.body.materialId;
-
-    if (materialId === 'she') {
-      res.send({
-        errorCode: 2000,
-        errorMessage: '不存在的作品id',
-        data: null
-      });
-    } else {
-      res.send({
-        errorCode: 0,
-        errorMessage: '',
-        data: {
-          materialId
-        }
-      });
-    }
-
-  } else {
-    res.send({
-      errorCode: 1000,
-      errorMessage: '请先登录',
-      data: null
-    });
-  }
-});
 
 app.post('/api/deleteWork', function (req, res) {
   if (req.body.token) {
@@ -100,63 +72,6 @@ app.post('/api/deleteWork', function (req, res) {
   }
 });
 
-app.post('/api/materials', function (req, res) {
-  if (req.body.token) {
-    const current = req.body.current;
-    const pageSize = req.body.pageSize;
-    const total = 55;
-    const pages = Math.ceil(total / pageSize);
-    let materials = [];
-
-    if (current > pages) {
-      return res.send({
-        errorCode: 0,
-        errorMessage: '',
-        data: {
-          materials: [],
-          page: {
-            current,
-            pageSize,
-            total
-          }
-        }
-      });
-    } else {
-
-      for (var i = 0; i < pageSize; i++) {
-        let materialId = `${ current }${ i }`;
-        materials.push({
-          materialId,
-          src: 'http://localhost:3000/test.mp4',
-          title: `素材${ materialId }`,
-          thumb: 'http://img1.imgtn.bdimg.com/it/u=3135851863,3009323944&fm=27&gp=0.jpg',
-          type: 0,
-          totalFrame: 336
-        });
-      }
-
-      return res.send({
-        errorCode: 0,
-        errorMessage: '',
-        data: {
-          materials,
-          page: {
-            current,
-            pageSize,
-            total
-          }
-        }
-      });
-    }
-  }
-
-  res.send({
-    errorCode: 1000,
-    errorMessage: '请先登录',
-    data: null
-  });
-});
-
 app.post('/api/getWorks', function (req, res) {
   if (req.body.token) {
     const current = req.body.current;
@@ -164,44 +79,57 @@ app.post('/api/getWorks', function (req, res) {
     const total = 55;
     const pages = Math.ceil(total / pageSize);
     let works = [];
+    //
+    // if (current > pages) {
+    //   return res.send({
+    //     errorCode: 0,
+    //     errorMessage: '',
+    //     data: {
+    //       works: []
+    //     }
+    //   });
+    // } else {
+      let work = null;
 
-    if (current > pages) {
-      return res.send({
-        errorCode: 0,
-        errorMessage: '',
-        data: {
-          works: [],
-          page: {
-            current,
-            pageSize,
-            total
+      for (var i = 0; i < total; i++) {
+        let workId = i;
+        work = {
+          id: workId,
+          name: `作品${ workId }`,
+          status: 1,
+          config: {
+            materials: []
           }
+        };
+        console.log(i);
+        for (var j = 0; j < 55; j++) {
+          work.config.materials.push({
+            id: j,
+            type: j % 2 == 0 ? 'video' : 'image',
+            status: 'uploaded',
+            local_path: '',
+            path: '',
+            properties: {
+              length: 1500,
+              time: 50,
+              encoding: 'mp4',
+              thumbnail: 'thumb.jpg',
+              frames: ['1.jpg', '2.jpg']
+            }
+          });
         }
-      });
-    } else {
 
-      for (var i = 0; i < pageSize; i++) {
-        let workId = `${ current }${ i }`;
-        works.push({
-          workId,
-          title: `作品作品${ workId }`,
-          thumb: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1512217642613&di=0909a39925c095e9f289f99f33aad1f8&imgtype=0&src=http%3A%2F%2Fupload.mnw.cn%2F2017%2F0814%2F1502698443378.jpg',
-        });
+        works.push(work);
       }
 
       return res.send({
         errorCode: 0,
         errorMessage: '',
         data: {
-          works,
-          page: {
-            current,
-            pageSize,
-            total
-          }
+          works
         }
       });
-    }
+    //}
   }
 
   res.send({

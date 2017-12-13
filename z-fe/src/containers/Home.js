@@ -5,22 +5,22 @@ import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 
 /* 自定义组件 */
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
-import Login from '../../components/auth/Login';
-import Register from '../../components/auth/Register';
+import Header from './header/Header';
+import Footer from './footer/Footer';
+import Login from '../components/auth/Login';
+import Register from '../components/auth/Register';
 
 /* 资源（后续将写入css文件中） */
-import hdJPG from '../../statics/zr_bg.jpg';
-import introJPG from '../../statics/intro_sumary.jpg';
-import introCategoryJPG from '../../statics/intro_category.jpg';
-import useOneJPG from '../../statics/use_one.jpg';
-import useTwoSSPNG from '../../statics/ss.png';
-import useTwoPNG from '../../statics/use_two.png';
-import useThreePNG from '../../statics/use_three.png';
+import hdJPG from '../statics/zr_bg.jpg';
+import introJPG from '../statics/intro_sumary.jpg';
+import introCategoryJPG from '../statics/intro_category.jpg';
+import useOneJPG from '../statics/use_one.jpg';
+import useTwoSSPNG from '../statics/ss.png';
+import useTwoPNG from '../statics/use_two.png';
+import useThreePNG from '../statics/use_three.png';
 
-import config from '../../config';
-import { scrollToAnchor } from '../../utils/link';
+import config from '../config';
+import { scrollToAnchor } from '../utils/link';
 
 const style = () => ({
 

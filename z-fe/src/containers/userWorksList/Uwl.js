@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm, Modal, Input } from 'antd';
 import { CardList, Card } from '../../components/card';
-import { getWorks, deleteWork } from '../../reducers/userWorks';
+import { getWorks, getNeedWorks, deleteWork } from '../../reducers/userWorks';
 import { getUserInfo } from '../../reducers/user';
 import config from '../../config';
 import addWorkJPG from '../../statics/add_work_material.jpg';
+import defWorkJPG from '../../statics/def-work.jpg';
 
 class Uwl extends Component {
   constructor(props) {
@@ -15,10 +16,10 @@ class Uwl extends Component {
 
     this.state = { addWorkModalVisible: false };
     this.handlePageChange = (current, pageSize) => {
-      this.props.getWorks({ current, pageSize });
+      this.props.getNeedWorks(current);
     };
     this.handleDeleteWork = workId => () =>
-      this.props.deleteWork({ workId });
+      this.props.deleteWork(workId);
     this.handleAddWork = () => {
       console.log('添加作品');
     };
@@ -32,14 +33,14 @@ class Uwl extends Component {
     arr = arr.map((item, key) => (
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
-        title={ item.title }
-        cover={ <img src={ item.thumb } style={{ objectFit: 'cover' }} /> }
+        title={ item.name }
+        cover={ <img src={ defWorkJPG } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
-            <Link className="edit-btn" to="/materials"><Icon type="edit" /></Link>
+            <Link className="edit-btn" to={ `/works/${ item.id }/materials` }><Icon type="edit" /></Link>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
-            <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteWork(item.workId) }>
+            <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteWork(item.id) }>
               <a className="delete-btn" href="javascript:;">
                 <Icon type="delete" />
               </a>
@@ -56,7 +57,9 @@ class Uwl extends Component {
   }
 
   componentWillMount() {
-    this.handlePageChange(this.props.userWorks.page.current, config.page.pageSize);
+    const { userWorks } = this.props;
+
+    this.props.getWorks();
     this.props.getUserInfo();
   }
 
@@ -82,7 +85,7 @@ class Uwl extends Component {
             current: userWorks.page.current,
             total: userWorks.page.total
           }}
-          elements={ this.getWorkDoms(userWorks.works) }
+          elements={ this.getWorkDoms(userWorks.needWorks) }
           columns={ 4 }
           onPageChange={ this.handlePageChange } />
 
@@ -162,7 +165,8 @@ const mapStateToProps = ({ user, userWorks }) => ({
   userWorks: userWorks
 });
 const mapDispatchToProps = (dispatch) => ({
-  getWorks : bindActionCreators(getWorks, dispatch),
+  getWorks: bindActionCreators(getWorks, dispatch),
+  getNeedWorks: bindActionCreators(getNeedWorks, dispatch),
   deleteWork: bindActionCreators(deleteWork, dispatch),
   getUserInfo: bindActionCreators(getUserInfo, dispatch)
 });

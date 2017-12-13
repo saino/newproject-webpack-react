@@ -40,7 +40,7 @@ class SceneDisplay extends Component {
     this.setState({ scale: this.state.scale - config.transform.stepScale });
 
   render() {
-    const { materialId, sceneId, materials, frameDataUrl ,selectStep} = this.props;
+    const { materialId, sceneId, materials, frameDataUrl, selectStep } = this.props;
     const { scale } = this.state;
     const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
     let renderSomething;

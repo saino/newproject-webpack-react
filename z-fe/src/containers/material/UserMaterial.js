@@ -8,8 +8,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm } from 'antd';
 import { CardList, Card } from '../../components/card';
-import { list, deleteMaterial } from '../../reducers/material';
-import config from '../../config';
+//import { list, deleteMaterial } from '../../reducers/material';
 import addWorkJPG from '../../statics/add_work_material.jpg';
 
 class UserMaterial extends Component {
@@ -49,7 +48,9 @@ class UserMaterial extends Component {
   }
 
   componentWillMount() {
-    this.handlePageChange(this.props.material.page.current, config.page.pageSize);
+    const { material } = this.props;
+
+    this.handlePageChange(material.page.current, material.page.pageSize);
   }
 
   render() {
@@ -66,7 +67,7 @@ class UserMaterial extends Component {
             total: material.page.total
           }}
           elements={ this.getMaterialDoms(material.materials) }
-          columns={ 4 }
+          columns={ 5 }
           onPageChange={ this.handlePageChange } />
 
         <style>{`
@@ -114,8 +115,8 @@ const mapStateToProps = ({ material }) => ({
   material: material
 });
 const mapDispatchToProps = (dispatch) => ({
-  list: bindActionCreators(list, dispatch),
-  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
+  list: () => {},//bindActionCreators(list, dispatch),
+  deleteMaterial: () => {} //bindActionCreators(deleteMaterial, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserMaterial);

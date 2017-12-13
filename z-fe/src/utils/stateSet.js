@@ -51,12 +51,16 @@ export const update = (target: Array, origin: Object, idValue, idKey = 'id') => 
 };
 
 export const remove = (target: Array, idValue, idKey = 'id') => {
-  let waitUpdateIndex;
+  let waitUpdateIndex, processer;
 
   if (!target)
     return target;
 
-  waitUpdateIndex = target.findIndex(item => item[ idKey ] == idValue);
+  processer = typeof idValue === 'function' ?
+    item => idValue(item) :
+    item => item[ idKey ] === idValue;
+
+  waitUpdateIndex = target.findIndex(processer);
 
   if (waitUpdateIndex < 0)
     return target;

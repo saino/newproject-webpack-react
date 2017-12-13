@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { list as listScene } from '../../reducers/scene';
-import { getItemByKey } from '../../utils/stateSet';
+//import { list as listScene } from '../reducers/scene';
+import { getItemByKey } from '../utils/stateSet';
 
 /* 第三方组件 */
-import Step from './Step';
-import SceneList from './SceneList';
-import SceneDisplay from './SceneDisplay';
-import ControllerPanel from './ControllerPanel';
-import Timeline from './Timeline';
+import Step from './make/Step';
+import SceneList from './make/SceneList';
+import SceneDisplay from './make/SceneDisplay';
+import ControllerPanel from './make/ControllerPanel';
+import Timeline from './make/Timeline';
 
 class Make extends Component {
   state = {
@@ -43,7 +43,7 @@ class Make extends Component {
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
             materials={ this.props.material }
-            selectStep={this.props.selectStep}
+            selectStep={ this.props.selectStep }
             frameDataUrl={ this.state.frameDataUrl } />
 
           {/* 控制面板 */}
@@ -52,9 +52,7 @@ class Make extends Component {
         </div>
 
         <div className="bottom">
-
           {/* 时间轴 */}
-
           <Timeline
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
@@ -62,7 +60,6 @@ class Make extends Component {
             frames={ this.props.frame }
             imageData={ this.props.imageData }
             onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />
-
         </div>
 
 
@@ -101,7 +98,7 @@ function mapStateToProps ({ material, frame, imageData, step }) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    listScene: bindActionCreators(listScene, dispatch)
+    listScene: function () {}//bindActionCreators(listScene, dispatch)
   };
 }
 

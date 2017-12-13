@@ -8,9 +8,8 @@ import { LeftNavigation, LeftNavigationButton, RightArticle } from '../component
 //import UserWorksList from './userWorksList/userWorksList';
 import Uwl from './userWorksList/Uwl';
 import {getWorks} from '../reducers/userWorks';
-import './UserWorks.css';
 
-class UserWorks extends React.Component {
+class Work extends React.Component {
     componentWillMount() {
         // this.props.requestWorks({ curr: 0, pageSize: 12 });
         this.state = {
@@ -47,6 +46,19 @@ class UserWorks extends React.Component {
                     {this.renderRightArticleContent()}
                 </RightArticle>
             </div>
+            <style>{`
+              .user-works{
+                  position: relative;
+                  height: 100%;
+                  width: 100%;
+               }
+               .user-works-body{
+                  display: flex;
+                  width: 1236px;
+                  margin: 0 auto;
+                  padding-top: 74px;
+              }
+            `}</style>
         </div>
     }
     onButtonClicked= (button) => {
@@ -69,4 +81,4 @@ const mapDispatchToProps = (dispatch) => {
         }
     };
 }
-export default connect(mapStateToProps)(UserWorks);
+export default connect(mapStateToProps)(Work);

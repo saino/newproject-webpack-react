@@ -5,8 +5,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from 'antd';
-import Step from '../make/Step';
-import UserMaterial from './UserMaterial';
+import Step from './make/Step';
+import UserMaterial from './material/UserMaterial';
 
 export default class Material extends Component {
   state = {

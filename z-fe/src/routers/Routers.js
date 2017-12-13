@@ -5,12 +5,11 @@ import Loadable from 'react-loadable';
 import {Provider} from 'react-redux';
 import { requireAuth } from '../utils/preRouter';
 import PageLoading from '../components/pageLoading';
-import Home from '../containers/home/Home';
-import Make from '../containers/make/Make';
-import UserWorks from '../containers/UserWorks';
-import Material from '../containers/material/Material';
+import Home from '../containers/Home';
+import Make from '../containers/Make';
+import Work from '../containers/Work';
+import Material from '../containers/Material';
 import NotMatch from '../containers/NotMatch';
-
 
 
 //动态路由 异步加载 但是不能实时热替换 开发时调试样式不方便
@@ -33,8 +32,8 @@ const Routers = ({store}) => (
             <Switch>
                 <Route exact path="/" component={ Home } />
                 <Route exact path="/make" render={ requireAuth(Make) } />
-                <Route exact path="/works" render={ requireAuth(UserWorks) } />
-                <Route exact path="/materials" render={ requireAuth(Material) }></Route>
+                <Route exact path="/works" render={ requireAuth(Work) } />
+                <Route exact path="/works/:id/materials" render={ requireAuth(Material) }></Route>
                 <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>

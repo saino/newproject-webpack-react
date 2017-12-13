@@ -36,8 +36,8 @@ export default class CardList extends Component {
   }
 
   render() {
-    const { style, paginate, elements } = this.props;
-    const { current, pageSize, total } = paginate;
+    const { style, paginate, elements, columns } = this.props;
+    const { total, pageSize, current } = paginate;
 
     return (
       <div className="card-list" style={ style }>
@@ -46,10 +46,9 @@ export default class CardList extends Component {
         </div>
         <div className="card-list-pagination">
           <Pagination
-            current={ current }
-            defaultCurrent={ current }
-            pageSize={ pageSize }
             total={ total }
+            pageSize={ pageSize }
+            current={ current }
             onChange={ this.handlePageChange } />
         </div>
 
@@ -59,7 +58,7 @@ export default class CardList extends Component {
             flex-flow: row wrap;
             justify-content: flex-start;
           }
-          .card-list-inner > div:nth-child(4n) {
+          .card-list-inner > div:nth-child(${ columns }n) {
             margin-right: 0!important;
           }
           .card-list-pagination {
