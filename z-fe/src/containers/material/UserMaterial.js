@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Avatar, Icon, Tooltip, Popconfirm, Modal, Button, Progress, message } from 'antd';
+import { Avatar, Icon, Tooltip, Popconfirm, Modal, Button, Progress, message, Popover } from 'antd';
 import FileUpload from 'react-fileupload';
 import { CardList, Card } from '../../components/card'
 import { getWorks, deleteMaterial } from '../../reducers/userWorks';
@@ -110,7 +110,12 @@ class UserMaterial extends Component {
         cover={ <img src={ item.thumbnail } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
-            <Link className="edit-btn" to="/make"><Icon type="edit" /></Link>
+            {/* <Icon type='edit' /> */}
+            <Popover title="请选择镜头类型"
+              trigger='focus'
+              content={<a href='javascript:;'>固定镜头广告植入</a>}>
+              <a className="edit-btn" href="javascript:;"><Icon type="edit" /></a>
+            </Popover>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
             <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteMaterial(item.id) }>
@@ -159,14 +164,14 @@ class UserMaterial extends Component {
       this.props.getWorks();
     }
   }
-renderUploadProgress() {
-  if(this.state.uploading){
-    return <div className='upload-progress'>
-      <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
-    </div>
+  renderUploadProgress() {
+    if(this.state.uploading){
+      return <div className='upload-progress'>
+        <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
+      </div>
+    }
+    return null;
   }
-  return null;
-}
   render() {
     const { userWorks, workId } = this.props;
     const work = getItemByKey(userWorks.works, +workId, 'id');
