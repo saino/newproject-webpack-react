@@ -18,7 +18,7 @@ export default class Material extends Component {
   renderChildMaterial(flag) {
     switch (flag) {
       case 0:
-        return (<UserMaterial />);
+        return (<UserMaterial workId={ this.props.match.params.id } />);
     }
   }
 

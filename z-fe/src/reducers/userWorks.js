@@ -1,4 +1,4 @@
-import { add, update, remove } from '../utils/stateSet';
+import { add, update, remove, getItemByKey } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -14,9 +14,10 @@ const defState = {
 };
 
 const actionTypes = {
-    GET_WORKS: "GET_WORKS",
+    GET_WORKS: 'GET_WORKS',
     GET_NEED_WORKS: 'GET_NEED_WORKS',
-    DELETE_WORK: "DELETE_WORK",
+    DELETE_WORK: 'DELETE_WORK',
+    DELETE_MATERIAL: 'DELETE_MATERIAL'
 }
 
 export const getWorks = packageToken((dispatch, { token }) => {
@@ -48,6 +49,12 @@ export const deleteWork = (workId) => ({
   workId
 });
 
+export const deleteMaterial = (workId, materialId) => ({
+  type: actionTypes.DELETE_MATERIAL,
+  workId,
+  materialId
+});
+
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_WORKS:
@@ -69,6 +76,14 @@ export default (state = defState, action) => {
       const deletedWorks = remove(state.works, workId, 'id');
 
       return { ...state, works: deletedWorks, needWorks: [ ...deletedWorks.slice(startPos1, endPos1) ], page: { ...state.page, total: deletedWorks.length } };
+
+    case actionTypes.DELETE_MATERIAL:
+      const { materialId } = action;
+      const work = getItemByKey(state.works, action.workId, 'id');
+      const deleteMaterials = remove(work.config.materials, materialId, 'id');
+      work.config.materials = deleteMaterials;
+
+      return { ...state, works: update(state.works, work, action.workId, 'id') };
 
     default:
       return state;

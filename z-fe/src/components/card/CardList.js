@@ -17,7 +17,13 @@ export default class CardList extends Component {
     }),
     elements: PropTypes.array,
     columns: PropTypes.number,
+    isPaginate: PropTypes.bool,
     onPageChange: PropTypes.func
+  };
+  static defaultProps = {
+    paginate: {},
+    isPaginate: true,
+    onPageChange: () => {}
   };
 
   handlePageChange = (current, pageSize) =>
@@ -36,7 +42,7 @@ export default class CardList extends Component {
   }
 
   render() {
-    const { style, paginate, elements, columns } = this.props;
+    const { style, paginate, elements, columns, isPaginate } = this.props;
     const { total, pageSize, current } = paginate;
 
     return (
@@ -44,13 +50,15 @@ export default class CardList extends Component {
         <div className="card-list-inner">
           { this.getLists() }
         </div>
-        <div className="card-list-pagination">
-          <Pagination
-            total={ total }
-            pageSize={ pageSize }
-            current={ current }
-            onChange={ this.handlePageChange } />
-        </div>
+        { isPaginate ? (
+          <div className="card-list-pagination">
+            <Pagination
+              total={ total }
+              pageSize={ pageSize }
+              current={ current }
+              onChange={ this.handlePageChange } />
+          </div>
+        ) : null }
 
         <style>{`
           .card-list-inner {

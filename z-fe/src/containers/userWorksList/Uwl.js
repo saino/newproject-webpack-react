@@ -57,8 +57,6 @@ class Uwl extends Component {
   }
 
   componentWillMount() {
-    const { userWorks } = this.props;
-
     this.props.getWorks();
     this.props.getUserInfo();
   }

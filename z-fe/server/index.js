@@ -101,14 +101,16 @@ app.post('/api/getWorks', function (req, res) {
             materials: []
           }
         };
-        console.log(i);
-        for (var j = 0; j < 55; j++) {
+
+        for (var j = 0; j < 14; j++) {
           work.config.materials.push({
             id: j,
             type: j % 2 == 0 ? 'video' : 'image',
             status: 'uploaded',
             local_path: '',
             path: '',
+            name: `素材${ j }`,
+            thumbnail: 'http://pic36.photophoto.cn/20150704/0035035577200162_b.jpg',
             properties: {
               length: 1500,
               time: 50,

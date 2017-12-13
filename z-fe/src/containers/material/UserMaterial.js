@@ -3,19 +3,25 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm } from 'antd';
 import { CardList, Card } from '../../components/card';
-//import { list, deleteMaterial } from '../../reducers/material';
+import { getWorks, deleteMaterial } from '../../reducers/userWorks';
+import { getItemByKey } from '../../utils/stateSet';
 import addWorkJPG from '../../statics/add_work_material.jpg';
 
 class UserMaterial extends Component {
+  static propTypes = {
+    workId: PropTypes.string.isRequired
+  }
+
   handlePageChange = (current, pageSize) =>
     this.props.list({ current, pageSize });
   handleDeleteMaterial = materialId => () =>
-    this.props.deleteMaterial({ materialId });
+    this.props.deleteMaterial(+this.props.workId, +materialId);
   handleOpenAddMaterialModal = () => {
 
   };
@@ -24,14 +30,14 @@ class UserMaterial extends Component {
     arr = arr.map((item, key) => (
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
-        title={ item.title }
-        cover={ <img src={ item.thumb } style={{ objectFit: 'cover' }} /> }
+        title={ item.name }
+        cover={ <img src={ item.thumbnail } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
             <Link className="edit-btn" to="/make"><Icon type="edit" /></Link>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
-            <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteMaterial(item.materialId) }>
+            <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteMaterial(item.id) }>
               <a className="delete-btn" href="javascript:;">
                 <Icon type="delete" />
               </a>
@@ -48,27 +54,20 @@ class UserMaterial extends Component {
   }
 
   componentWillMount() {
-    const { material } = this.props;
-
-    this.handlePageChange(material.page.current, material.page.pageSize);
+    if (!this.props.userWorks.works.length) {
+      this.props.getWorks();
+    }
   }
 
   render() {
-    const { material } = this.props;
+    const { userWorks, workId } = this.props;
+    const work = getItemByKey(userWorks.works, +workId, 'id');
 
     return (
       <div className="user-material-wrap">
 
         {/* 素材列表 */}
-        <CardList
-          paginate={{
-            pageSize: material.page.pageSize,
-            current: material.page.current,
-            total: material.page.total
-          }}
-          elements={ this.getMaterialDoms(material.materials) }
-          columns={ 5 }
-          onPageChange={ this.handlePageChange } />
+        <CardList elements={ this.getMaterialDoms(work ? work.config.materials : []) } columns={ 5 } isPaginate={ false } />
 
         <style>{`
           .add-action {
@@ -111,12 +110,12 @@ class UserMaterial extends Component {
   }
 }
 
-const mapStateToProps = ({ material }) => ({
-  material: material
+const mapStateToProps = ({ userWorks }) => ({
+  userWorks
 });
 const mapDispatchToProps = (dispatch) => ({
-  list: () => {},//bindActionCreators(list, dispatch),
-  deleteMaterial: () => {} //bindActionCreators(deleteMaterial, dispatch)
+  getWorks: bindActionCreators(getWorks, dispatch),
+  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserMaterial);
