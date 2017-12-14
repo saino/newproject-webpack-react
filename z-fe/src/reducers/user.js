@@ -1,6 +1,10 @@
+// var jwt = require('jwt-simple');
+import jwt from 'jwt-simple';
+
 import { post } from '../fetch/fetch';
 import { getAuth, setAuth, removeAuth }  from '../utils/auth';
 import packageToken from '../utils/packageToken';
+import config from '../config'
 
 const { token = '', expired = 0 } = getAuth() || {};
 const actionTypes = {
@@ -34,6 +38,10 @@ function empty () {
 
 export const login = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/login', { phone, password }, resp => {
+    // const { data, errorCode, errorMessage }  = resp;
+    // if(errorCode == 0){
+    //   jwt.decode(data, config.secretKey)
+    // }
     const { token, expired } = resp;
 
     // 持续化存储token
@@ -50,18 +58,39 @@ export const login = (phone, password, success: Function, fail: Function) => dis
 };
 export const register = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/register', { phone, password }, resp => {
-    const { token, expired } = resp;
-
-    // 持续化存储token
-    setAuth(token, expired);
-
+    let userInfo = jwt.decode(resp, config.secretKey);
+    setAuth(resp, userInfo.exp);
     dispatch({
       type: actionTypes.REGISTER,
-      token,
-      expired
+      token: resp,
+      expired: userInfo.exp
     });
+    // const token = resp;
+    // console.log(resp);
+  // const { data, errorCode, errorMessage }  = resp;
+  // if(errorCode == 0){
+  //   let userInfo = jwt.decode(data, config.secretKey);
+  //   console.log(userInfo);
+  //   setAuth(data, userInfo.exp);
+  //   dispatch({
+  //     type: actionTypes.REGISTER,
+  //     token: data,
+  //     expired: userInfo.exp
+  //   });
+  //   success();
+  // }
+    // const { token, expired } = resp;
+    // // jwt.decode()
+    // // 持续化存储token
+    // setAuth(token, expired);
 
-    success();
+    // dispatch({
+    //   type: actionTypes.REGISTER,
+    //   token,
+    //   expired
+    // });
+
+    // success();
   }, fail);
 };
 export const getUserInfo = packageToken((dispatch, { token }) => {

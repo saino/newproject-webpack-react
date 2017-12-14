@@ -226,7 +226,7 @@ module.exports = {
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             inject: true,
-            origin: "'http://localhost:3002/'",
+            origin: "'http://192.168.3.116:8888'",
             template: paths.appHtml
         }),
         // Add module names to factory functions so they appear in browser profiler.
