@@ -34,14 +34,19 @@ function parseQs (qs) {
 }
 
 const fetchConfig = {
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 
+    'Content-Type': 'application/json'
+  }
 };
 const request = (path: String, method: String, body: Object) => {
   const isPost = method.toLowerCase() === 'post';
+  const token = body.token;
+  fetchConfig.headers.Token = token;
+  delete body.token;
 
   return fetch(
-    `${ config.getApiPath() }${ path }${ isPost ? '' : parseQs(body) }`,
-    { ...fetchConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
+    `${ path }${ isPost ? '' : parseQs(body) }`,
+    {...fetchConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
   )
   .then(checkHTTPStatus)
   .then(parseResp)
