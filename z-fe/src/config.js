@@ -5,7 +5,7 @@
 export default ({
 
   name: '量子特效',
-
+  avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
   // 是否开启数据调试，不会请求后端接口，使用mock数据
   debug: true,
   

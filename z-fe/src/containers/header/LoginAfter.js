@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Menu, Dropdown, Avatar } from 'antd';
 import { getUserInfo, logout } from '../../reducers/user';
+import config from '../../config'
 const MenuItem = Menu.Item;
 
 class LoginAfter extends Component {
@@ -19,19 +20,15 @@ class LoginAfter extends Component {
     );
   }
 
-  componentWillMount() {
-    this.props.getUserInfo();
-  }
-
   render() {
     const { user } = this.props;
-
+    console.log(user);
     return (
       <div>
-        <span className="lf-usernick">{ user.user.usernick }</span>
+        <span className="lf-usernick">{ user.user.nick }</span>
         <span className="lf-dropdown">
         <Dropdown overlay={ this.getMenu() }>
-          <Avatar src={ user.user.avatar }></Avatar>
+          <Avatar src={user.user.avatar || config.avatar }></Avatar>
         </Dropdown>
         </span>
         <style>{`
@@ -58,8 +55,7 @@ function mapStateToProps ({ user }) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    logout: bindActionCreators(logout, dispatch),
-    getUserInfo: bindActionCreators(getUserInfo, dispatch)
+    logout: bindActionCreators(logout, dispatch)
   };
 }
 
