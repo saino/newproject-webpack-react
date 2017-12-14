@@ -1,28 +1,15 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
-import {deepCompare} from 'pure-render-immutable-decorator';
-import {updateStep, selectStep} from '../../reducers/step';
-import logoPNG from '../../statics/logo.png';
-import classnames from 'classnames'
+import { Link, NavLink } from 'react-router-dom';
+import { deepCompare } from 'pure-render-immutable-decorator';
+import logoPNG from '../statics/logo.png';
 
-class Step extends Component {
-    constructor(props) {
-        super(props)
-        this.selectStep = this.selectStep.bind(this)
-    }
-
-    selectStep(index) {
-        const {step, selectStep} = this.props;
-        if (step.current != index) {
-            selectStep(index)
-        }
-    }
+export default class Step extends Component {
+    // handleStepChange = step => () =>
+    //   this.props.onStepChange(step);
 
     render() {
-        const {step} = this.props;
+        const { step } = this.props;
 
         return (
             <div className="step">
@@ -30,23 +17,23 @@ class Step extends Component {
                     <div className="step-to">
                       <div className="logo">
                           <Link className="logo-inner" to="/">
-                              <img className="logo-img" src={logoPNG}/>
+                              <img className="logo-img" src={ logoPNG }/>
                               <label className="logo-text">LIANGZIVFX</label>
                           </Link>
                       </div>
                       <ul className="nav">
-                        {step.steps.map((item, index) => {
-                            let className = classnames({
-                                [item.key]: true,
-                                [item.status]: true,
-                                'selected': index == step.current
-                            })
-                            return (
-                                <li key={item.key} className={className}
-                                    onClick={this.selectStep.bind(this, index)}>
-                                    <a className="item middle">{item.name}</a>
-                                </li>)
-                        })}
+                        <li>
+                           <span className={`item middle ${ step == 0 ? 'selected' : '' }`}>1.素材上传</span>
+                        </li>
+                        <li>
+                           <span className={`item middle ${ step == 1 ? 'selected' : '' }`}>2.镜头特效</span>
+                        </li>
+                        <li>
+                           <span className={`item middle ${ step == 2 ? 'selected' : '' }`}>3.镜头组合</span>
+                        </li>
+                        <li>
+                           <span className={`item middle ${ step == 3 ? 'selected' : '' }`}>4.视频发布</span>
+                        </li>
                       </ul>
                     </div>
                 </div>
@@ -91,10 +78,10 @@ class Step extends Component {
             background: #2d8bbd;
           }
 
-          .step-to .wait a {
+          .step-to .wait {
             background: #114967;
           }
-          .step-to .selected a {
+          .step-to .selected {
             background: #2d8bbd;
           }
           .step-to .materials {
@@ -108,6 +95,7 @@ class Step extends Component {
           .step-inner .nav {
             flex: 1;
             display: flex;
+            margin-left: 282px;
           }
 
           .step-inner .logo-inner {
@@ -131,26 +119,8 @@ class Step extends Component {
             cursor: pointer;
           }
 
-          .step-to a {
-            color: #fff;
-          }
-
         `}</style>
             </div>
         );
     }
 }
-
-function mapStateToProps({step}) {
-
-    return {step};
-}
-
-
-export default connect(
-    mapStateToProps,
-    {
-        updateStep,
-        selectStep
-    }
-)(Step);

@@ -13,7 +13,7 @@ export const getItemByKey = (target: Array, idValue, idKey = 'id') =>
 export const finds = (target: Array, idValue, idKey = 'id') => {
   let processer = typeof idValue === 'function'
     ? item => idValue(item)
-    : item => item[ idKey ] === idValue;
+    : item => item[ idKey ] == idValue;
 
   return target.filter(processer);
 };
@@ -37,7 +37,7 @@ export const update = (target: Array, origin: Object, idValue, idKey = 'id') => 
 
   processer = typeof idValue === 'function' ?
     item => idValue(item) :
-    item => item[ idKey ] === idValue;
+    item => item[ idKey ] == idValue;
 
   waitUpdateIndex = target.findIndex(processer);
 
@@ -58,7 +58,7 @@ export const remove = (target: Array, idValue, idKey = 'id') => {
 
   processer = typeof idValue === 'function' ?
     item => idValue(item) :
-    item => item[ idKey ] === idValue;
+    item => item[ idKey ] == idValue;
 
   waitUpdateIndex = target.findIndex(processer);
 

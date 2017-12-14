@@ -8,7 +8,7 @@ import PageLoading from '../components/pageLoading';
 import Home from '../containers/Home';
 import Make from '../containers/Make';
 import Work from '../containers/Work';
-import Material from '../containers/Material';
+//import Material from '../containers/Material';
 import NotMatch from '../containers/NotMatch';
 
 
@@ -31,9 +31,10 @@ const Routers = ({store}) => (
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={ Home } />
-                <Route exact path="/make" render={ requireAuth(Make) } />
                 <Route exact path="/works" render={ requireAuth(Work) } />
-                <Route exact path="/works/:id/materials" render={ requireAuth(Material) }></Route>
+                <Route exact path="/make/:workId" render={ requireAuth(Make) } />
+                {/*<Route exact path="/works/:id/materials" render={ requireAuth(Material) }></Route>
+                <Route exact path="/works/:id/materials/:materialId/make" render={ requireAuth(Make) }></Route> */}
                 <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>

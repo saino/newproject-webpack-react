@@ -5,29 +5,38 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from 'antd';
-import Step from './make/Step';
-import UserMaterial from './material/UserMaterial';
+import UserMaterial from './UserMaterial';
+import { getItemByKey } from '../../utils/stateSet';
 
 export default class Material extends Component {
+  static propTypes = {
+     works: PropTypes.array.isRequired,
+     workId: PropTypes.string.isRequired,
+     onDelete: PropTypes.func.isRequired,
+     onEdit: PropTypes.func.isRequired
+  };
+
   state = {
     flag: 0
   };
+
   handleNavItemChange = (flag) => () =>
     this.setState({ flag });
 
   renderChildMaterial(flag) {
+    const { works, workId, onDelete, onEdit } = this.props;
+    const work = getItemByKey(works, workId, 'id');
+
     switch (flag) {
       case 0:
-        return (<UserMaterial workId={ this.props.match.params.id } />);
+        return (<UserMaterial work={ work } onDelete={ onDelete } onEdit={ onEdit } />);
     }
   }
 
   render() {
+
     return (
       <div className="material-wrap">
-        <div className="material-header">
-          <Step />
-        </div>
         <div className="material-middle">
           <div className="material-middle-inner">
             <ul className="material-middle-left-nav">

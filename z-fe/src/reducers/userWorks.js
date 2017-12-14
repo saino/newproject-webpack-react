@@ -22,7 +22,7 @@ const actionTypes = {
 
 export const getWorks = packageToken((dispatch, { token }) => {
   post('/getWorks', { token }, resp => {
-    const { works } = resp;
+    const works = resp;
     const current = 1;
     const pageSize = 11;
 

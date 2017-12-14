@@ -7,7 +7,7 @@ import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 /* 业务组件 */
-import TransformToolBar from './TransformToolbar';
+import TransformToolBar from '../make/TransformToolbar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import Matting from '../../components/matting/Matting';
@@ -15,7 +15,7 @@ import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
 import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
-class SceneDisplay extends Component {
+export default class SceneDisplay extends Component {
   static propTypes = {
     materialId: PropTypes.number.isRequired,
     sceneId: PropTypes.number.isRequired,
@@ -81,7 +81,7 @@ class SceneDisplay extends Component {
              {/* 抠像 */}
              <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
 
-             {renderSomething}
+             { renderSomething }
 
            </div>
         </div>
@@ -101,12 +101,6 @@ class SceneDisplay extends Component {
         </div>
 
         <style>{`
-
-          .scene-center {
-            display: flex;
-            align-items: stretch;
-            flex: 1;
-          }
 
           .scene-center-inner {
             flex: 1;
@@ -141,13 +135,13 @@ class SceneDisplay extends Component {
   }
 }
 
-function mapDispatchToProps (dispatch) {
-  return {
-    solutionFrame: bindActionCreators(solutionFrame, dispatch)
-  };
-}
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(SceneDisplay);
+// function mapDispatchToProps (dispatch) {
+//   return {
+//     solutionFrame: bindActionCreators(solutionFrame, dispatch)
+//   };
+// }
+//
+// export default connect(
+//   null,
+//   mapDispatchToProps
+// )(SceneDisplay);

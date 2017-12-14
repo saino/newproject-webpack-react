@@ -2,107 +2,100 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-//import { list as listScene } from '../reducers/scene';
-import { getItemByKey } from '../utils/stateSet';
-
-/* 第三方组件 */
-import Step from './make/Step';
-import SceneList from './make/SceneList';
-import SceneDisplay from './make/SceneDisplay';
-import ControllerPanel from './make/ControllerPanel';
-import Timeline from './make/Timeline';
+import Step from './Step';
+import Material from './material/Material';
+//import Roto from './roto/Roto';
+import { getWorks, deleteMaterial } from '../reducers/userWorks';
 
 class Make extends Component {
   state = {
-    currMaterialId: 1, // 等素材做完后，在换初始默认值
-    currSceneId: 1,
-    frameDataUrl: ''
+    materialId: '',
+    selectedIndex: 0
   };
 
+  handleDeleteMaterial = materialId => {
+    this.props.deleteMaterial(this.props.match.params.workId, materialId);
+  };
+
+  handleEditMaterial = materialId => {
+    this.setState({
+      materialId,
+      selectedIndex: 1
+    });
+  };
+
+  renderChild(index) {
+    switch (index) {
+      case 0:
+        return (<Material
+          works={ this.props.userWorks.works }
+          workId={ this.props.match.params.workId }
+          onDelete={ this.handleDeleteMaterial }
+          onEdit={ this.handleEditMaterial }></Material>);
+      // case 1:
+      //   return (<Roto
+      //     works={ this.props.userWorks.works }
+      //     workId={ this.props.match.params.workId }
+      //     materialId={ this.state.materialId } />);
+    }
+  }
+
   componentWillMount() {
-    // 根据当前选中的素材查找镜头
-    this.props.listScene({ materialId: this.state.currMaterialId });
+    const { userWorks, getWorks } = this.props;
+
+    if (!userWorks.works.length) {
+      getWorks();
+    }
   }
 
   render() {
+    const { selectedIndex } = this.state;
+
     return (
-      <div className="make">
+      <div className="make-wrap">
 
-        <div className="top">
-          {/* 选择步骤 */}
-          <Step />
+        <div className="make-header">
+          <Step step={ selectedIndex } />
         </div>
 
-        <div className="main">
-
-          {/* 镜头列表 */}
-          <SceneList onSelect={ ({ sceneId }) => this.setState({ currSceneId: sceneId }) } />
-
-          {/* 镜头展示 */}
-          <SceneDisplay
-            materialId={ this.state.currMaterialId }
-            sceneId={ this.state.currSceneId }
-            materials={ this.props.material }
-            selectStep={ this.props.selectStep }
-            frameDataUrl={ this.state.frameDataUrl } />
-
-          {/* 控制面板 */}
-          <ControllerPanel materialId={ this.state.currMaterialId } />
-
+        <div className="make-main">
+          <div className="make-main-inner">
+            { this.renderChild(selectedIndex) }
+          </div>
         </div>
-
-        <div className="bottom">
-          {/* 时间轴 */}
-          <Timeline
-            materialId={ this.state.currMaterialId }
-            sceneId={ this.state.currSceneId }
-            materials={ this.props.material }
-            frames={ this.props.frame }
-            imageData={ this.props.imageData }
-            onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />
-        </div>
-
 
         <style>{`
-          .make {
+          .make-wrap {
             display: flex;
             flex-flow: column nowrap;
-            align-items: stretch;
             height: 100%;
           }
-
-          .make .main {
-            display: flex;
-            align-items: stretch;
+          .make-header {
+            flex-basis: 0 0 54px;
+          }
+          .make-main {
             flex: 1;
+            padding-top: 20px;
           }
-
-          .make .top {
-            flex: 0 0 54px;
+          .make-main-inner {
+            display: flex;
+            height: 100%;
+            flex-flow: row nowrap;
+            align-items: stretch;
+            width: 1236px;
+            margin: 0 auto;
           }
-
         `}</style>
+
       </div>
     );
   }
 }
 
-function mapStateToProps ({ material, frame, imageData, step }) {
-  return {
-    material,
-    frame,
-    imageData,
-    selectStep: step.steps[step.current]
-  };
-}
+const mapStateToProps = ({ userWorks }) => ({ userWorks });
+const mapDispatchToProps = (dispatch) => ({
+  getWorks: bindActionCreators(getWorks, dispatch),
+  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
+});
 
-function mapDispatchToProps (dispatch) {
-  return {
-    listScene: function () {}//bindActionCreators(listScene, dispatch)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Make);
+export default connect(mapStateToProps, mapDispatchToProps)(Make);

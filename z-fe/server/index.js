@@ -15,11 +15,11 @@ var worklist = Array.apply(null, Array(100)).map(function (item, i) {
 });
 // console.log(list);
 app.all('*', function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,logintoken,userid");
-    res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE");
-    res.header("X-Powered-By", ' 3.2.1')
-    res.header("Content-Type", "application/json;charset=utf-8");
+    // res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,logintoken,userid");
+    // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE");
+    // res.header("X-Powered-By", ' 3.2.1')
+    // res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
 
@@ -98,11 +98,18 @@ app.post('/api/getWorks', function (req, res) {
           name: `作品${ workId }`,
           status: 1,
           config: {
-            materials: []
+            materials: [],
+            scenes: []
           }
         };
 
         for (var j = 0; j < 14; j++) {
+          work.config.scenes.push({
+            id: j,
+            type: 'roto',
+            material_id: j,
+            thumbnail: 'xxx.jpg'
+          });
           work.config.materials.push({
             id: j,
             type: j % 2 == 0 ? 'video' : 'image',

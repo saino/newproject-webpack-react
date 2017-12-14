@@ -6,25 +6,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm, Modal, Button, Progress, message } from 'antd';
 import FileUpload from 'react-fileupload';
-import { CardList, Card } from '../../components/card'
-import { getWorks, deleteMaterial } from '../../reducers/userWorks';
-import { getItemByKey } from '../../utils/stateSet';
+import { CardList, Card } from '../../components/card';
 import config from '../../config';
 import addWorkJPG from '../../statics/add-material.jpg';
 
-class UserMaterial extends Component {
+export default class UserMaterial extends Component {
   static propTypes = {
-    workId: PropTypes.string.isRequired
-  }
+    work: PropTypes.object,
+    onDelete: PropTypes.func,
+    onEdit: PropTypes.func
+  };
 
   state = {
     addMaterialVisible: false,
     uploading: false,
     uploadProgress: 0
-  }
+  };
+
   //选择文件之前
   _handleBeforeChoose = () => {
     return true;
@@ -65,7 +65,6 @@ class UserMaterial extends Component {
   }
   //上传成功
   _handleUploadSuccess = () => {
-    console.log("上传成功");
     this.setState({
       uploadProgress: 100,
       progressState: null,
@@ -92,17 +91,26 @@ class UserMaterial extends Component {
     }, 800);
     return true;
   }
+
   handlePageChange = (current, pageSize) =>
     this.props.list({ current, pageSize });
-  handleDeleteMaterial = materialId => () =>
-    this.props.deleteMaterial(+this.props.workId, +materialId);
-  handleOpenAddMaterialModal = () => {
-    console.log("添加素材");
-    this.setState({
-      addMaterialVisible: true
-    });
+
+  handleEditMaterial = (materialId) => () => {
+    this.props.onEdit(materialId);
   };
+  handleDeleteMaterial = (materialId) => () => {
+    this.props.onDelete(materialId);
+  };
+
+  // handleDeleteMaterial = materialId => () =>
+  //   this.props.deleteMaterial(+this.props.workId, +materialId);
+
+  handleOpenAddMaterialModal = () =>
+    this.setState({ addMaterialVisible: true });
+
   getMaterialDoms(arr) {
+    const { onEdit, onDelete } = this.props;
+
     arr = arr.map((item, key) => (
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
@@ -110,7 +118,9 @@ class UserMaterial extends Component {
         cover={ <img src={ item.thumbnail } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
-            <Link className="edit-btn" to="/make"><Icon type="edit" /></Link>
+            <a className="edit-btn" onClick={ this.handleEditMaterial(item.id) }>
+              <Icon type="edit" />
+            </a>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
             <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteMaterial(item.id) }>
@@ -154,11 +164,6 @@ class UserMaterial extends Component {
     return arr;
   }
 
-  componentWillMount() {
-    if (!this.props.userWorks.works.length) {
-      this.props.getWorks();
-    }
-  }
 renderUploadProgress() {
   if(this.state.uploading){
     return <div className='upload-progress'>
@@ -168,15 +173,16 @@ renderUploadProgress() {
   return null;
 }
   render() {
-    const { userWorks, workId } = this.props;
-    const work = getItemByKey(userWorks.works, +workId, 'id');
+    const { work } = this.props;
 
     return (
       <div className="user-material-wrap">
 
         {/* 素材列表 */}
         <CardList elements={ this.getMaterialDoms(work ? work.config.materials : []) } columns={ 5 } isPaginate={ false } />
+
         {this.renderUploadProgress()}
+
         <style>{`
           .add-action {
             height: 100%;
@@ -232,13 +238,3 @@ renderUploadProgress() {
     );
   }
 }
-
-const mapStateToProps = ({ userWorks }) => ({
-  userWorks
-});
-const mapDispatchToProps = (dispatch) => ({
-  getWorks: bindActionCreators(getWorks, dispatch),
-  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserMaterial);

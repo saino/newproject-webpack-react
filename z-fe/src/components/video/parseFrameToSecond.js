@@ -9,15 +9,8 @@ import { setDuration } from '../../reducers/material';
 class ParseFrameToSecond extends Component {
   static propTypes = {
     videoSrc: PropTypes.string,
-    materialId: PropTypes.string,
-    totalFrame: PropTypes.number,
-    onComplete: PropTypes.func
-  };
-  static defaultProps = {
-    videoSrc: '',
-    materialId: '',
-    totalFrame: 0,
-    onComplete: function () {}
+    onGetMaterialVideoTime: PropTypes.func,
+    frameLength: PropTypes.number
   };
 
   constructor(props) {
@@ -33,7 +26,7 @@ class ParseFrameToSecond extends Component {
   mapSecondAndFrame() {
     const res = [];
 
-    for (let i = 1; i <= this.props.totalFrame; i++) {
+    for (let i = 1; i <= this.props.frameLength; i++) {
       res.push({ frameId: i, time: this.videoFrame.toTime(i) });
     }
 
@@ -46,7 +39,7 @@ class ParseFrameToSecond extends Component {
 
   render() {
     return (
-      <video style={{ display: 'none' }} ref={ el => this.playerEl = el } src={ this.props.videoSrc } controls></video>
+      <video style={{ display: 'none' }} ref={ el => this.playerEl = el } src={ this.props.videoSrc }></video>
     );
   }
 
@@ -54,14 +47,17 @@ class ParseFrameToSecond extends Component {
     this.playerEl.addEventListener('loadedmetadata', () => {
       this.videoFrame = new VideoFrame({
         duration: this.playerEl.duration,
-        frames: this.props.totalFrame
+        frames: this.props.frameLength
       });
 
-      const { materialId, setDuration, onComplete } = this.props;
+      // 设置素材的总时长
+      this.props.onGetMaterialVideoTime();
 
-      // 得到素材的总时长
-      setDuration(materialId, this.playerEl.duration);
-      onComplete(this.mapSecondAndFrame());
+      // const { materialId, setDuration, onComplete } = this.props;
+      //
+      // // 得到素材的总时长
+      // setDuration(materialId, this.playerEl.duration);
+      // onComplete(this.mapSecondAndFrame());
     }, false);
   }
 }
