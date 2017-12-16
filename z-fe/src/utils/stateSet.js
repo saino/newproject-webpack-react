@@ -26,7 +26,7 @@ export const add = (target: Array, origin) => {
   Array.isArray(origin) || (origin = [ origin ]);
   origin = origin.filter(item => !inArray(target, item));
 
-  return [ ...target, ...origin ];
+  return [ ...origin, ...target ];
 };
 
 export const update = (target: Array, origin: Object, idValue, idKey = 'id') => {

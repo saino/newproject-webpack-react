@@ -18,26 +18,29 @@ import { logout } from './user';
   item.frameRate Number 帧率 前端自己设置，无需服务端返回
 */
 const defState = {
-  page: {
-    current: 1,
-    pageSize: 14,
-    total: 0
-  },
-  materials: []
+  materials: [],
+  scenes: []
 };
 
 const actionTypes = {
   GET_MATERIALS: 'GET_MATERIALS',
-  NEW_MATERIAL: 'NEW_MATERIAL',
+  CREATE_MATERIAL: 'CREATE_MATERIAL',
   DELETE_MATERIAL: 'DELETE_MATERIAL',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION'
 };
 
-export const getMaterials = (workId, page, material) => ({
-  type: actionTypes.GET_MATERIALS,
-  page,
-  materials: material.materials.map(item => ({ ...item, workId }))
+/**
+ * 获取素材列表
+ */
+export const getMaterials = packageToken((dispatch, { token, workId }) => {
+  post('/user/loadWork',  { token, work_id: workId }, resp => {
+    dispatch({
+      type: actionTypes.GET_MATERIALS,
+      materials: resp.materials,
+      scenes: resp.scenes
+    });
+  });
 });
 
 /**
@@ -48,6 +51,8 @@ export const deleteMaterial = (workId, id) => ({
   workId,
   id
 });
+
+
 
 // export const list = packageToken((dispatch, { token, current, pageSize }) => {
 //   post('/materials', { token, current, pageSize }, resp => {

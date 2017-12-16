@@ -39,8 +39,8 @@ function empty () {
 
 export const login = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/login', { phone, password }, resp => {
-
     let userInfo = jwt.decode(resp, config.secretKey, true, "RS256");
+    
     setAuth(resp, userInfo.exp * 1000);
     dispatch({
       type: actionTypes.REGISTER,
