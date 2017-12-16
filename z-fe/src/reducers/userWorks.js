@@ -43,9 +43,9 @@ export const createWork = packageToken((dispatch, { token, name }, successFun) =
   post('/user/saveWork', { token, name }, resp => {
     dispatch({
       type: actionTypes.CREATE_WORK,
-      work: resp
+      work: {workId: resp}
     });
-    successFun&&successFun(token);
+    successFun&&successFun(resp);
   });
 });
 

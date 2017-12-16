@@ -30,11 +30,11 @@ class Uwl extends Component {
     this.handleDeleteWork = workId => () =>
       this.props.deleteWork(workId);
     this.handleAddWork = () => {
-      this.props.createWork({name: this.state.workName}, (token)=>{
-        post('/user/getWorks', {token: token}, (resp) => {
-          const workId = resp[resp.length-1].id;
+      this.props.createWork({name: this.state.workName}, (workId)=>{
+        // post('/user/getWorks', {token: token}, (resp) => {
+        //   const workId = resp[resp.length-1].id;
           this.context.router.history.push(`make/${ workId }`);
-        });
+        // });
       });
       this.setState({
         workName: ""
