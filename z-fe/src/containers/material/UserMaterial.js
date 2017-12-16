@@ -6,24 +6,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Avatar, Icon, Tooltip, Popconfirm, Modal, Button, Progress, message } from 'antd';
+import { Link } from 'react-router-dom';
+import { Avatar, Icon, Tooltip, Popconfirm, Modal, Button, Progress, message, Popover } from 'antd';
 import FileUpload from 'react-fileupload';
-import { CardList, Card } from '../../components/card';
+import { CardList, Card } from '../../components/card'
+import { getWorks, deleteMaterial } from '../../reducers/userWorks';
+import { getItemByKey } from '../../utils/stateSet';
 import config from '../../config';
 import addWorkJPG from '../../statics/add-material.jpg';
 
-export default class UserMaterial extends Component {
+class UserMaterial extends Component {
   static propTypes = {
-    work: PropTypes.object,
-    onDelete: PropTypes.func,
-    onEdit: PropTypes.func
-  };
+    workId: PropTypes.string.isRequired
+  }
 
   state = {
     addMaterialVisible: false,
     uploading: false,
     uploadProgress: 0
-  };
+  }
 
   //选择文件之前
   _handleBeforeChoose = () => {
@@ -95,22 +96,16 @@ export default class UserMaterial extends Component {
   handlePageChange = (current, pageSize) =>
     this.props.list({ current, pageSize });
 
-  handleEditMaterial = (materialId) => () => {
-    this.props.onEdit(materialId);
+  handleDeleteMaterial = materialId => () =>
+    this.props.deleteMaterial(+this.props.workId, +materialId);
+
+  handleOpenAddMaterialModal = () => {
+    console.log("添加素材");
+    this.setState({
+      addMaterialVisible: true
+    });
   };
-  handleDeleteMaterial = (materialId) => () => {
-    this.props.onDelete(materialId);
-  };
-
-  // handleDeleteMaterial = materialId => () =>
-  //   this.props.deleteMaterial(+this.props.workId, +materialId);
-
-  handleOpenAddMaterialModal = () =>
-    this.setState({ addMaterialVisible: true });
-
   getMaterialDoms(arr) {
-    const { onEdit, onDelete } = this.props;
-
     arr = arr.map((item, key) => (
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
@@ -118,9 +113,12 @@ export default class UserMaterial extends Component {
         cover={ <img src={ item.thumbnail } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
-            <a className="edit-btn" onClick={ this.handleEditMaterial(item.id) }>
-              <Icon type="edit" />
-            </a>
+            {/* <Icon type='edit' /> */}
+            <Popover title="请选择镜头类型"
+              trigger='focus'
+              content={<a href='javascript:;'>固定镜头广告植入</a>}>
+              <a className="edit-btn" href="javascript:;"><Icon type="edit" /></a>
+            </Popover>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">
             <Popconfirm title="确定要删除吗" okText="确定" cancelText="取消" onConfirm={ this.handleDeleteMaterial(item.id) }>
@@ -134,11 +132,12 @@ export default class UserMaterial extends Component {
       )
     );
     const upLoadOptions = {
-      baseUrl: '/node/api',
-      param: {
-        _c: 'file',
-        _a: 'UploadFile'
+      baseUrl: '/user/uploadMaterial',
+      paramAddToField: {
+        work_id: 10,
+        token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJwaG9uZSI6IjEzNTI0MjIwNjgyIiwibmljayI6IjEzNTI0MjIwNjgyIiwiYXZhdGFyIjoiIiwiY3JlYXRlX3RpbWUiOjE1MTMxNzY2NTAsInVwZGF0ZV90aW1lIjoxNTEzMTc2NjUwLCJ1c2VyX2lkIjoiNSIsImlzcyI6InRlc3QiLCJpYXQiOjE1MTMxNzY2NTEsIm5iZiI6MTUxMzE3NjY1MSwiZXhwIjoxNTE1NzY4NjUxfQ.c9A_xJeTtchI8_bscC14iIoKXNA26rR1lnCTlO2ChzEvEEc3tv8R08_Gh4lJBE_fp3x5cqstrfPF7HvJUnzMVU1wuj72L0K63KvmJtMLvuHINFVV7qGjd-vhMfMNkjLfQgfbw33iMPLKUrQpvKCWDE0Klbu7YRnwGcH7Qg68SSle0LxFvQzbwY1Yf21KpFUo7jwX349IUiUn9mzHp6wgVL-fpMU7v9J7QJ5o0kEwk9LG9wi2zJ8kQMZsOIdIJHsWR_NKq2RuC3dV2sU0AZHIWGgDHsJsht4KxkED00dgu4k6iE5qUntcnteRzKQzQqVgwtoKsZ3HGvis3eUkPLPnXFe9yBJ6ix9027lnPIeD2HNv5Br0nTXuOQemsFVrZW7IKPSetAkCktmCBZFiUDj2cOx4Bct3UoirZFBMqW1l4IfSq9lJn0RdmEy423bNIuTy4GoUv-ngVqpftUz5CAcjYIz8yihsnL5ooTHi_2wRWPWKeRfRvWsMmZDqFzV2LorPHptD1RwnOYSCbwMOqm8vHmYfXKp_GllPEpRhK2CVTsfXMDe7xrloocHL1V4Rfh7H1LxzScLJh0QijOTTZSk6aI7yQB04EIjOJVqwnDh0gzIui-RSHXKWuxD_20R0TgI8pxBpBETGM8oWzlp9JEMtjoxSrqChKPl5CtKVlyNMHIo'
       },
+      fileFieldName: "file",
       multiple: false,
       accept: 'video/*, image/*',
       chooseAndUpload: true,
@@ -164,16 +163,23 @@ export default class UserMaterial extends Component {
     return arr;
   }
 
-renderUploadProgress() {
-  if(this.state.uploading){
-    return <div className='upload-progress'>
-      <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
-    </div>
+  componentWillMount() {
+    if (!this.props.userWorks.works.length) {
+      this.props.getWorks();
+    }
   }
-  return null;
-}
+
+  renderUploadProgress() {
+    if(this.state.uploading){
+      return <div className='upload-progress'>
+        <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
+      </div>
+    }
+    return null;
+  }
   render() {
-    const { work } = this.props;
+    const { userWorks, workId } = this.props;
+    const work = getItemByKey(userWorks.works, +workId, 'id');
 
     return (
       <div className="user-material-wrap">
@@ -238,3 +244,13 @@ renderUploadProgress() {
     );
   }
 }
+
+const mapStateToProps = ({ userWorks }) => ({
+  userWorks
+});
+const mapDispatchToProps = (dispatch) => ({
+  getWorks: bindActionCreators(getWorks, dispatch),
+  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserMaterial);

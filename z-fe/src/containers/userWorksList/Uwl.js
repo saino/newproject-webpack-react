@@ -14,14 +14,19 @@ class Uwl extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { addWorkModalVisible: false };
+    this.state = { 
+      addWorkModalVisible: false,
+      workName: "",
+     };
     this.handlePageChange = (current, pageSize) => {
       this.props.getNeedWorks(current);
     };
     this.handleDeleteWork = workId => () =>
       this.props.deleteWork(workId);
     this.handleAddWork = () => {
-      console.log('添加作品');
+      this.setState({
+        workName: ""
+      });
     };
     this.handleOpenAddWorkModal = () =>
       this.setState({ addWorkModalVisible: true });
@@ -58,20 +63,22 @@ class Uwl extends Component {
 
   componentWillMount() {
     this.props.getWorks();
-    this.props.getUserInfo();
   }
-
+  onWorkNameChange = (e) => {
+    this.setState({
+      workName: e.target.value
+    });
+  }
   render() {
     const { userInfo, userWorks } = this.props;
-
     return (
       <div className="work-wrapper">
 
         {/* 用户信息 */}
         <div className="user-works-list-title">
           <div className='user-works-list-title-image'>
-            <Avatar src={ userInfo.avatar } size="large" style={{ verticalAlign: 'middle' }}></Avatar>
-            <span className="user-works-username">{ userInfo.usernick }</span>
+            <Avatar src={ userInfo.avatar || config.avatar } size="large" style={{ verticalAlign: 'middle' }}></Avatar>
+            <span className="user-works-username">{ userInfo.nick }</span>
           </div>
         </div>
 
@@ -95,7 +102,7 @@ class Uwl extends Component {
           visible={ this.state.addWorkModalVisible }
           onOk={ this.handleAddWork }
           onCancel={ this.handleCloseAddWorkModal }>
-          <Input.TextArea placeholder="请输入作品名称" autosize={{ minRows: 1, maxRows: 3 }} />
+          <Input.TextArea value={this.state.workName} onChange={this.onWorkNameChange} placeholder="请输入作品名称" autosize={{ minRows: 1, maxRows: 3 }} />
         </Modal>
 
       <style>{`
@@ -165,8 +172,7 @@ const mapStateToProps = ({ user, userWorks }) => ({
 const mapDispatchToProps = (dispatch) => ({
   getWorks: bindActionCreators(getWorks, dispatch),
   getNeedWorks: bindActionCreators(getNeedWorks, dispatch),
-  deleteWork: bindActionCreators(deleteWork, dispatch),
-  getUserInfo: bindActionCreators(getUserInfo, dispatch)
+  deleteWork: bindActionCreators(deleteWork, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Uwl);

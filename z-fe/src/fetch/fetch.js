@@ -1,17 +1,6 @@
 import { message } from 'antd';
 import config from '../config';
 
-function checkHTTPStatus (resp: Object) {
-  if (
-    resp.status >= 200
-    && resp.status < 300)
-  {
-    return resp;
-  }
-
-  throw new Error(resp.statusText);
-}
-
 function checkErrorCodeStatus (resp: Object) {
   if (resp.errorCode == 0)
     return resp;
@@ -34,7 +23,7 @@ function parseQs (qs) {
 }
 
 const fetchConfig = {
-  headers: { 
+  headers: {
     'Content-Type': 'application/json'
   }
 };
@@ -48,7 +37,6 @@ const request = (path: String, method: String, body: Object) => {
     `${ path }${ isPost ? '' : parseQs(body) }`,
     {...fetchConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
   )
-  .then(checkHTTPStatus)
   .then(parseResp)
   .then(checkErrorCodeStatus);
 };
@@ -66,6 +54,7 @@ export function post (path: String, body = {}, success: Function, fail: Function
   return request(path, 'POST', body)
    .then(resp => success(resp.data))
    .catch(error => {
+     console.log(error, 'ggggg');
      message.error(error.message);
      fail && fail(error.message);
    });

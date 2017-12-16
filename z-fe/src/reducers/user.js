@@ -1,10 +1,11 @@
-// var jwt = require('jwt-simple');
-import jwt from 'jwt-simple';
+
+//import jwt from 'jwt-simple';
 
 import { post } from '../fetch/fetch';
 import { getAuth, setAuth, removeAuth }  from '../utils/auth';
 import packageToken from '../utils/packageToken';
-import config from '../config'
+import config from '../config';
+var jwt = require('jwt-simple');
 
 const { token = '', expired = 0 } = getAuth() || {};
 const actionTypes = {
@@ -38,77 +39,42 @@ function empty () {
 
 export const login = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/login', { phone, password }, resp => {
-    // const { data, errorCode, errorMessage }  = resp;
-    // if(errorCode == 0){
-    //   jwt.decode(data, config.secretKey)
-    // }
-    const { token, expired } = resp;
 
-    // 持续化存储token
-    setAuth(token, expired);
-
+    let userInfo = jwt.decode(resp, config.secretKey, true, "RS256");
+    setAuth(resp, userInfo.exp * 1000);
     dispatch({
-     type: actionTypes.LOGIN,
-     token,
-     expired
+      type: actionTypes.REGISTER,
+      token: resp,
+      expired: userInfo.exp * 1000,
+      user: userInfo
     });
-
     success();
   }, fail);
 };
 export const register = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/register', { phone, password }, resp => {
-    let userInfo = jwt.decode(resp, config.secretKey);
-    setAuth(resp, userInfo.exp);
+    let userInfo = jwt.decode(resp, config.secretKey, true, "RS256");
+    setAuth(resp, userInfo.exp * 1000);
     dispatch({
       type: actionTypes.REGISTER,
       token: resp,
-      expired: userInfo.exp
+      expired: userInfo.exp * 1000,
+      user: userInfo
     });
-    // const token = resp;
-    // console.log(resp);
-  // const { data, errorCode, errorMessage }  = resp;
-  // if(errorCode == 0){
-  //   let userInfo = jwt.decode(data, config.secretKey);
-  //   console.log(userInfo);
-  //   setAuth(data, userInfo.exp);
-  //   dispatch({
-  //     type: actionTypes.REGISTER,
-  //     token: data,
-  //     expired: userInfo.exp
-  //   });
-  //   success();
-  // }
-    // const { token, expired } = resp;
-    // // jwt.decode()
-    // // 持续化存储token
-    // setAuth(token, expired);
-
-    // dispatch({
-    //   type: actionTypes.REGISTER,
-    //   token,
-    //   expired
-    // });
-
-    // success();
+    success();
   }, fail);
 };
-export const getUserInfo = packageToken((dispatch, { token }) => {
-  post('/auth/currUser', { token }, resp => dispatch({
-    type: actionTypes.GET_USERINFO,
-    user: resp
-  }));
-}, empty);
+
 export const logout = empty;
 
 export default (state = defState, action) => {
   switch (action.type) {
 
     case actionTypes.LOGIN:
-      return { ...state, auth: { token: action.token, expired: action.expired } };
+      return { ...state, auth: { token: action.token, expired: action.expired }, user: action.user };
 
     case actionTypes.REGISTER:
-      return { ...state, auth: { token: action.token, expired: action.expired } };
+      return { ...state, auth: { token: action.token, expired: action.expired }, user: action.user };
 
     case actionTypes.GET_USERINFO:
       return { ...state, user: action.user };
