@@ -70,7 +70,13 @@
     "build": "node scripts/build.js"
   },
   "proxy": {
-    ".*": {
+    "/user/.*": {
+      "target": "http://192.168.3.116:8888",
+      "rewrite": true,
+      "secure": false,
+      "changeOrigin": true
+    },
+    "/auth/.*": {
       "target": "http://192.168.3.116:8888",
       "rewrite": true,
       "secure": false,

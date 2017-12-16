@@ -55,36 +55,10 @@ export const deleteMaterial = (materialId) => ({
 /**
  * 上传素材
  */
-export const uploadMaterial = ({
+export const uploadMaterial = (material) => ({
   type: actionTypes.UPLOAD_MATERIAL,
-  
+  material
 });
-
-
-
-
-// export const list = packageToken((dispatch, { token, current, pageSize }) => {
-//   post('/materials', { token, current, pageSize }, resp => {
-//     const { page, materials } = resp;
-//
-//     dispatch({
-//       type: actionTypes.LIST_MATERIAL,
-//       materials,
-//       page
-//     })
-//   });
-// }, logout);
-
-// export const deleteMaterial = packageToken((dispatch, { token, materialId }) => {
-//   post('/deleteMaterial', { token, materialId }, resp => {
-//     const { materialId } = resp;
-//
-//     dispatch({
-//       type: actionTypes.DELETE_MATERIAL,
-//       materialId
-//     });
-//   });
-// }, logout);
 
 export const setDuration = (materialId, duration) => ({
   type: actionTypes.SET_DURATION,
@@ -103,6 +77,11 @@ export default (state = defState, action) => {
       const { workId, id } = action;
 
       return { ...state, materials: remove(state.materials, (item) => item.work_id === workId && item.id === id ) };
+
+    case actionTypes.UPLOAD_MATERIAL:
+      const { material } = action;
+
+      return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.SET_DURATION:
       return update(state, { duration: action.duration }, action.materialId, 'materialId')

@@ -33,8 +33,6 @@ const Routers = ({store}) => (
                 <Route exact path="/" component={ Home } />
                 <Route exact path="/works" render={ requireAuth(Work) } />
                 <Route exact path="/make/:workId" render={ requireAuth(Make) } />
-                {/*<Route exact path="/works/:id/materials" render={ requireAuth(Material) }></Route>
-                <Route exact path="/works/:id/materials/:materialId/make" render={ requireAuth(Make) }></Route> */}
                 <Route component={ NotMatch } />
             </Switch>
         </BrowserRouter>
