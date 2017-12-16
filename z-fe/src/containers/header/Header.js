@@ -89,8 +89,8 @@ function getEl (fn) {
 
 class Header extends Component {
   static propTypes = {
-    onOpenLoginForm: PropTypes.func.isRequired,
-    onOpenRegisterForm: PropTypes.func.isRequired
+    onOpenLoginForm: PropTypes.func,
+    onOpenRegisterForm: PropTypes.func
   };
 
   handleShowBottomLine = getEl((lineEl, textEl) => {
