@@ -8,8 +8,12 @@ import config from '../../config'
 const MenuItem = Menu.Item;
 
 class LoginAfter extends Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
   handleLogout = () => {
     this.props.logout();
+    this.context.router.history.push("/");
   };
 
   getMenu() {

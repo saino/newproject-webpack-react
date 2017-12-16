@@ -14,7 +14,7 @@ import {post} from '../../fetch/fetch';
 
 class Uwl extends Component {
   static contextTypes = {
-    router: PropTypes.func.isRequired
+    router: PropTypes.object.isRequired
   };
 
   constructor(props) {
@@ -45,9 +45,6 @@ class Uwl extends Component {
     this.handleCloseAddWorkModal = () =>
       this.setState({ addWorkModalVisible: false });
   }
-  // contextTypes: {
-  //   router: React.PropTypes.object
-  // },
   getWorkDoms(arr) {
     arr = arr.map((item, key) => (
       <Card
