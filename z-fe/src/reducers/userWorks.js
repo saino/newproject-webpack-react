@@ -39,12 +39,13 @@ export const getWorks = packageToken((dispatch, { token }) => {
   });
 }, logout);
 
-export const createWork = packageToken((dispatch, { token, name }) => {
+export const createWork = packageToken((dispatch, { token, name }, successFun) => {
   post('/user/saveWork', { token, name }, resp => {
     dispatch({
       type: actionTypes.CREATE_WORK,
       work: resp
     });
+    successFun&&successFun();
   });
 });
 

@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm, Modal, Input } from 'antd';
 import { CardList, Card } from '../../components/card';
-import { getWorks, getNeedWorks, deleteWork } from '../../reducers/userWorks';
+import { getWorks, getNeedWorks, deleteWork, createWork } from '../../reducers/userWorks';
 import { getUserInfo } from '../../reducers/user';
 import config from '../../config';
 import addWorkJPG from '../../statics/add_work_material.jpg';
 import defWorkJPG from '../../statics/def-work.jpg';
+import {post} from '../../fetch/fetch';
 
 class Uwl extends Component {
   constructor(props) {
@@ -24,6 +25,12 @@ class Uwl extends Component {
     this.handleDeleteWork = workId => () =>
       this.props.deleteWork(workId);
     this.handleAddWork = () => {
+      this.props.createWork({name: this.state.workName}, ()=>{
+        console.log("ggggkkkkkk");
+        post('/user/getWors', {}, (resp) => {
+          console.log(resp);
+        });
+      });
       this.setState({
         workName: ""
       });
@@ -172,7 +179,8 @@ const mapStateToProps = ({ user, userWorks }) => ({
 const mapDispatchToProps = (dispatch) => ({
   getWorks: bindActionCreators(getWorks, dispatch),
   getNeedWorks: bindActionCreators(getNeedWorks, dispatch),
-  deleteWork: bindActionCreators(deleteWork, dispatch)
+  deleteWork: bindActionCreators(deleteWork, dispatch),
+  createWork: bindActionCreators(createWork, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Uwl);
