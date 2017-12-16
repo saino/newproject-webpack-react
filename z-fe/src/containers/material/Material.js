@@ -59,7 +59,6 @@ export default class Material extends Component {
             flex: 0 0 54px;
           }
           .material-middle {
-            padding-top: 20px;
             flex: 1;
           }
           .material-middle-inner {
@@ -97,7 +96,7 @@ export default class Material extends Component {
           }
           .material-middle-right-main {
             flex: 1;
-            padding: 20px;
+            padding: 0 20px 20px;
           }
 
         `}</style>
