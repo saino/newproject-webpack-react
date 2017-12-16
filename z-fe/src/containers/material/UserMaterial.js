@@ -165,7 +165,7 @@ export default class UserMaterial extends Component {
       <div className="user-material-wrap">
 
         {/* 素材列表 */}
-        <CardList elements={ this.props.materials } columns={ 5 } isPaginate={ false } />
+        <CardList elements={ this.getMaterialDoms(this.props.materials) } columns={ 5 } isPaginate={ false } />
 
         {this.renderUploadProgress()}
 
