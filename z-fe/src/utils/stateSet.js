@@ -18,6 +18,9 @@ export const finds = (target: Array, idValue, idKey = 'id') => {
   return target.filter(processer);
 };
 
+export const desc = (arr, idKey = 'id') =>
+  arr.sort((prev, next) => next[ idKey ] - prev[ idKey ]);
+
 // 添加元素，避免重复
 export const add = (target: Array, origin) => {
   if (!target || origin == null)

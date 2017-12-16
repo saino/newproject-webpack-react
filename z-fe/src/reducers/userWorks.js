@@ -1,4 +1,4 @@
-import { add, update, remove, getItemByKey } from '../utils/stateSet';
+import { add, update, remove, getItemByKey, desc } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -22,7 +22,7 @@ const actionTypes = {
 
 export const getWorks = packageToken((dispatch, { token }) => {
   post('/user/getWorks', { token }, resp => {
-    const works = resp;
+    const works = desc(resp);
     const current = 1;
     const pageSize = 11;
 
