@@ -46,10 +46,9 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
 /**
  * @param id { String } 素材id
  */
-export const deleteMaterial = (workId, id) => ({
+export const deleteMaterial = (materialId) => ({
   type: actionTypes.DELETE_MATERIAL,
-  workId,
-  id
+  materialId
 });
 
 
