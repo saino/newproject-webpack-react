@@ -4,22 +4,15 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Avatar, Icon, Tooltip, Popconfirm, Modal, Button, Progress, message, Popover } from 'antd';
 import FileUpload from 'react-fileupload';
-import { CardList, Card } from '../../components/card'
-import { getWorks, deleteMaterial } from '../../reducers/userWorks';
+import { CardList, Card } from '../../components/card';
 import { getItemByKey } from '../../utils/stateSet';
 import config from '../../config';
 import addWorkJPG from '../../statics/add-material.jpg';
 
-class UserMaterial extends Component {
-  static propTypes = {
-    workId: PropTypes.string.isRequired
-  }
-
+export default class UserMaterial extends Component {
   state = {
     addMaterialVisible: false,
     uploading: false,
@@ -75,7 +68,6 @@ class UserMaterial extends Component {
       this.setState({
         uploading: false
       });
-      this.handlePageChange(1, config.page.pageSize);
     }, 800);
     return true;
   }
@@ -93,14 +85,10 @@ class UserMaterial extends Component {
     return true;
   }
 
-  handlePageChange = (current, pageSize) =>
-    this.props.list({ current, pageSize });
-
   handleDeleteMaterial = materialId => () =>
-    this.props.deleteMaterial(+this.props.workId, +materialId);
+    this.props.onDelete(materialId);
 
   handleOpenAddMaterialModal = () => {
-    console.log("添加素材");
     this.setState({
       addMaterialVisible: true
     });
@@ -163,12 +151,6 @@ class UserMaterial extends Component {
     return arr;
   }
 
-  componentWillMount() {
-    if (!this.props.userWorks.works.length) {
-      this.props.getWorks();
-    }
-  }
-
   renderUploadProgress() {
     if(this.state.uploading){
       return <div className='upload-progress'>
@@ -177,15 +159,13 @@ class UserMaterial extends Component {
     }
     return null;
   }
-  render() {
-    const { userWorks, workId } = this.props;
-    const work = getItemByKey(userWorks.works, +workId, 'id');
 
+  render() {
     return (
       <div className="user-material-wrap">
 
         {/* 素材列表 */}
-        <CardList elements={ this.getMaterialDoms(work ? work.config.materials : []) } columns={ 5 } isPaginate={ false } />
+        <CardList elements={ this.props.materials } columns={ 5 } isPaginate={ false } />
 
         {this.renderUploadProgress()}
 
@@ -244,13 +224,3 @@ class UserMaterial extends Component {
     );
   }
 }
-
-const mapStateToProps = ({ userWorks }) => ({
-  userWorks
-});
-const mapDispatchToProps = (dispatch) => ({
-  getWorks: bindActionCreators(getWorks, dispatch),
-  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserMaterial);

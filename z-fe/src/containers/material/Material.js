@@ -7,15 +7,9 @@ import PropTypes from 'prop-types';
 import { Icon } from 'antd';
 import UserMaterial from './UserMaterial';
 import { getItemByKey } from '../../utils/stateSet';
+import { deleteMaterial } from '../../reducers/material';
 
 export default class Material extends Component {
-  static propTypes = {
-     works: PropTypes.array.isRequired,
-     workId: PropTypes.string.isRequired,
-     onDelete: PropTypes.func.isRequired,
-     onEdit: PropTypes.func.isRequired
-  };
-
   state = {
     flag: 0
   };
@@ -24,12 +18,11 @@ export default class Material extends Component {
     this.setState({ flag });
 
   renderChildMaterial(flag) {
-    const { works, workId, onDelete, onEdit } = this.props;
-    const work = getItemByKey(works, workId, 'id');
+    const { materials, onDelete } = this.props;
 
     switch (flag) {
       case 0:
-        return (<UserMaterial work={ work } onDelete={ onDelete } onEdit={ onEdit } />);
+        return (<UserMaterial materials={ materials } onDelete={ onDelete } />);
     }
   }
 

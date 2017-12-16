@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Step from './Step';
 import Material from './material/Material';
 //import Roto from './roto/Roto';
-import { getWorks, deleteMaterial } from '../reducers/userWorks';
+import { getMaterials, deleteMaterial } from '../reducers/material';
 
 class Make extends Component {
   state = {
@@ -13,9 +13,8 @@ class Make extends Component {
     selectedIndex: 0
   };
 
-  handleDeleteMaterial = materialId => {
-    this.props.deleteMaterial(this.props.match.params.workId, materialId);
-  };
+  handleDeleteProjectMaterial = materialId =>
+    this.props.deleteMaterial(materialId);
 
   handleEditMaterial = materialId => {
     this.setState({
@@ -25,13 +24,11 @@ class Make extends Component {
   };
 
   renderChild(index) {
+    const { material, match } = this.props;
+
     switch (index) {
       case 0:
-        return (<Material
-          works={ this.props.userWorks.works }
-          workId={ this.props.match.params.workId }
-          onDelete={ this.handleDeleteMaterial }
-          onEdit={ this.handleEditMaterial }></Material>);
+        return (<Material materials={ material.materials } onDelete={ this.handleDeleteProjectMaterial }></Material>);
       // case 1:
       //   return (<Roto
       //     works={ this.props.userWorks.works }
@@ -41,11 +38,7 @@ class Make extends Component {
   }
 
   componentWillMount() {
-    const { userWorks, getWorks } = this.props;
-
-    if (!userWorks.works.length) {
-      getWorks();
-    }
+    this.props.getMaterials({ workId: this.props.match.params.workId });
   }
 
   render() {
@@ -92,9 +85,9 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ userWorks }) => ({ userWorks });
+const mapStateToProps = ({ material }) => ({ material });
 const mapDispatchToProps = (dispatch) => ({
-  getWorks: bindActionCreators(getWorks, dispatch),
+  getMaterials: bindActionCreators(getMaterials, dispatch),
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
 });
 

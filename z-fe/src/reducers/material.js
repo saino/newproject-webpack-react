@@ -37,8 +37,8 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
   post('/user/loadWork', { token, work_id: workId }, resp => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
-      materials: resp.materials,
-      scenes: resp.scenes
+      materials: resp.materials || [],
+      scenes: resp.scenes || []
     });
   });
 });
