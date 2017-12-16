@@ -14,7 +14,7 @@ class Uwl extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { 
+    this.state = {
       addWorkModalVisible: false,
       workName: "",
      };

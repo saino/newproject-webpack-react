@@ -23,11 +23,9 @@ import config from '../config';
 import { scrollToAnchor } from '../utils/link';
 
 const style = () => ({
-
   root: {
     position: 'relative'
   },
-
   hd: {
     height: 750,
     position: 'relative'
@@ -53,7 +51,6 @@ const style = () => ({
     fontSize: 14,
     textAlign: 'center'
   },
-
   intro: {
     background: '#fff',
     height: 265,

@@ -24,7 +24,7 @@ const defState = {
 
 const actionTypes = {
   GET_MATERIALS: 'GET_MATERIALS',
-  CREATE_MATERIAL: 'CREATE_MATERIAL',
+  UPLOAD_MATERIAL: 'UPLOAD_MATERIAL',
   DELETE_MATERIAL: 'DELETE_MATERIAL',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION'
@@ -34,7 +34,7 @@ const actionTypes = {
  * 获取素材列表
  */
 export const getMaterials = packageToken((dispatch, { token, workId }) => {
-  post('/user/loadWork',  { token, work_id: workId }, resp => {
+  post('/user/loadWork', { token, work_id: workId }, resp => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
       materials: resp.materials,
@@ -44,12 +44,22 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
 });
 
 /**
+ * 删除素材
  * @param id { String } 素材id
  */
 export const deleteMaterial = (materialId) => ({
   type: actionTypes.DELETE_MATERIAL,
   materialId
 });
+
+/**
+ * 上传素材
+ */
+export const uploadMaterial = ({
+  type: actionTypes.UPLOAD_MATERIAL,
+  
+});
+
 
 
 
