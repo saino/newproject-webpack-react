@@ -9,25 +9,17 @@ var jwt = require('jwt-simple');
 
 const { token = '', expired = 0 } = getAuth() || {};
 const actionTypes = {
-
   LOGIN: 'LOGIN',
-
   REGISTER: 'REGISTER',
-
   GET_USERINFO: 'GET_USERINFO',
-
   LOGOUT: 'LOGOUT'
-
 };
+
+const auth = getAuth() || {};
+
 const defState = {
-
-  user: {},
-
-  auth: {
-    token,
-    expired
-  }
-
+  token: auth.token,
+  user: auth.user || {}
 };
 
 function empty () {
@@ -39,27 +31,28 @@ function empty () {
 
 export const login = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/login', { phone, password }, resp => {
-    let userInfo = jwt.decode(resp, config.secretKey, true, "RS256");
-    
-    setAuth(resp, userInfo.exp * 1000);
+    let user = jwt.decode(resp, config.secretKey, true, "RS256");
+    user.exp = user.exp * 1000;
+
+    setAuth(resp, user);
     dispatch({
       type: actionTypes.REGISTER,
       token: resp,
-      expired: userInfo.exp * 1000,
-      user: userInfo
+      user
     });
     success();
   }, fail);
 };
 export const register = (phone, password, success: Function, fail: Function) => dispatch => {
   post('/auth/register', { phone, password }, resp => {
-    let userInfo = jwt.decode(resp, config.secretKey, true, "RS256");
-    setAuth(resp, userInfo.exp * 1000);
+    let user = jwt.decode(resp, config.secretKey, true, "RS256");
+    user.exp = user.exp * 1000;
+
+    setAuth(resp, user);
     dispatch({
       type: actionTypes.REGISTER,
       token: resp,
-      expired: userInfo.exp * 1000,
-      user: userInfo
+      user
     });
     success();
   }, fail);
@@ -71,16 +64,13 @@ export default (state = defState, action) => {
   switch (action.type) {
 
     case actionTypes.LOGIN:
-      return { ...state, auth: { token: action.token, expired: action.expired }, user: action.user };
+      return { ...state, token: action.token, user: action.user };
 
     case actionTypes.REGISTER:
-      return { ...state, auth: { token: action.token, expired: action.expired }, user: action.user };
-
-    case actionTypes.GET_USERINFO:
-      return { ...state, user: action.user };
+      return { ...state, token: action.token, user: action.user };
 
     case actionTypes.LOGOUT:
-      return { user: {}, auth: {} };
+      return { token: '', user: null };
 
     default:
       return state;

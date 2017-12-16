@@ -22,7 +22,7 @@ class LoginAfter extends Component {
 
   render() {
     const { user } = this.props;
-    console.log(user);
+
     return (
       <div>
         <span className="lf-usernick">{ user.user.nick }</span>
