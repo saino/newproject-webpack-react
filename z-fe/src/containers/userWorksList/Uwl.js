@@ -25,7 +25,6 @@ class Uwl extends Component {
     this.handleDeleteWork = workId => () =>
       this.props.deleteWork(workId);
     this.handleAddWork = () => {
-      // console.log(this);
       this.props.createWork({name: this.state.workName}, (token)=>{
         post('/user/getWorks', {token: token}, (resp) => {
           const workId = resp[resp.length-1].id;
@@ -40,7 +39,9 @@ class Uwl extends Component {
     this.handleCloseAddWorkModal = () =>
       this.setState({ addWorkModalVisible: false });
   }
-
+  // contextTypes: {
+  //   router: React.PropTypes.object
+  // },
   getWorkDoms(arr) {
     arr = arr.map((item, key) => (
       <Card
