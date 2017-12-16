@@ -45,7 +45,7 @@ export const createWork = packageToken((dispatch, { token, name }, successFun) =
       type: actionTypes.CREATE_WORK,
       work: resp
     });
-    successFun&&successFun();
+    successFun&&successFun(token);
   });
 });
 
