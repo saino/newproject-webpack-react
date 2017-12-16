@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -12,6 +13,10 @@ import defWorkJPG from '../../statics/def-work.jpg';
 import {post} from '../../fetch/fetch';
 
 class Uwl extends Component {
+  static contextTypes = {
+    router: PropTypes.func.isRequired
+  };
+
   constructor(props) {
     super(props);
 
@@ -28,6 +33,7 @@ class Uwl extends Component {
       this.props.createWork({name: this.state.workName}, (token)=>{
         post('/user/getWorks', {token: token}, (resp) => {
           const workId = resp[resp.length-1].id;
+          this.context.router.history.push(`make/${ workId }`);
         });
       });
       this.setState({
