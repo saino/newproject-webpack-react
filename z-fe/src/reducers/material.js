@@ -85,9 +85,9 @@ export default (state = defState, action) => {
       return { ...state, materials, page };
 
     case actionTypes.DELETE_MATERIAL:
-      const { workId, id } = action;
+      const { materialId } = action;
 
-      return { ...state, materials: remove(state.materials, (item) => item.work_id == workId && item.id == id ) };
+      return { ...state, materials: remove(state.materials, materialId, 'id') };
 
     case actionTypes.UPLOAD_MATERIAL:
       const { material } = action;

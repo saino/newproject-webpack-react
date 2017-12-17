@@ -18,11 +18,17 @@ export default class Material extends Component {
     this.setState({ flag });
 
   renderChildMaterial(flag) {
-    const { materials, onDelete } = this.props;
+    const { materials, onDelete, onEdit } = this.props;
 
     switch (flag) {
       case 0:
-        return (<UserMaterial user={this.props.user} workId={this.props.workId} materials={ materials } onDelete={ onDelete } />);
+        return (
+          <UserMaterial
+            user={this.props.user}
+            workId={this.props.workId}
+            materials={ materials }
+            onEdit={ onEdit }
+            onDelete={ onDelete } />);
     }
   }
 
