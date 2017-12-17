@@ -85,8 +85,11 @@ export default class UserMaterial extends Component {
     return true;
   }
 
-  handleDeleteMaterial = materialId => () =>
+  handleDeleteMaterial = (materialId) => () =>
     this.props.onDelete(materialId);
+
+  handleEditMaterial = (materialId) => () =>
+    this.props.onEdit(materialId);
 
   handleOpenAddMaterialModal = () => {
     this.setState({
@@ -105,7 +108,7 @@ export default class UserMaterial extends Component {
             <Popover title="请选择镜头类型"
               trigger='focus'
               content={<a href='javascript:;'>固定镜头广告植入</a>}>
-              <a className="edit-btn" href="javascript:;"><Icon type="edit" /></a>
+              <a className="edit-btn" href="javascript:;" onClick={ this.handleEditMaterial(item.id) }><Icon type="edit" /></a>
             </Popover>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">

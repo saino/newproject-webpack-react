@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Step from './Step';
 import Material from './material/Material';
-//import Roto from './roto/Roto';
+import Roto from './roto/Roto';
 import { getMaterials, deleteMaterial } from '../reducers/material';
 
 class Make extends Component {
@@ -17,10 +17,11 @@ class Make extends Component {
     this.props.deleteMaterial(materialId);
 
   handleEditMaterial = materialId => {
-    this.setState({
-      materialId,
-      selectedIndex: 1
-    });
+    alert(materialId);
+    // this.setState({
+    //   materialId,
+    //   selectedIndex: 1
+    // });
   };
 
   renderChild(index) {
@@ -28,12 +29,20 @@ class Make extends Component {
 
     switch (index) {
       case 0:
-        return (<Material materials={ material.materials } onDelete={ this.handleDeleteProjectMaterial }></Material>);
-      // case 1:
-      //   return (<Roto
-      //     works={ this.props.userWorks.works }
-      //     workId={ this.props.match.params.workId }
-      //     materialId={ this.state.materialId } />);
+        return (
+          <Material
+            materials={ material.materials }
+            onEdit={ this.handleEditMaterial }
+            onDelete={ this.handleDeleteProjectMaterial } />
+        );
+
+      case 1:
+        return (
+          <Roto
+            works={ this.props.userWorks.works }
+            workId={ this.props.match.params.workId }
+            materialId={ this.state.materialId } />
+        );
     }
   }
 

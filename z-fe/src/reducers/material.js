@@ -60,6 +60,17 @@ export const uploadMaterial = (material) => ({
   material
 });
 
+/**
+ * 创建镜头
+ */
+export const createScene = ({ id, mtype, materialId, roto }) => ({
+  type: actionTypes.CREATE_SCENE,
+  id,
+  mtype,
+  materialId,
+  roto
+});
+
 export const setDuration = (materialId, duration) => ({
   type: actionTypes.SET_DURATION,
   materialId,
@@ -76,12 +87,17 @@ export default (state = defState, action) => {
     case actionTypes.DELETE_MATERIAL:
       const { workId, id } = action;
 
-      return { ...state, materials: remove(state.materials, (item) => item.work_id === workId && item.id === id ) };
+      return { ...state, materials: remove(state.materials, (item) => item.work_id == workId && item.id == id ) };
 
     case actionTypes.UPLOAD_MATERIAL:
       const { material } = action;
 
       return { ...state, materials: add(state.materials, material) };
+
+    case actionTypes.CREATE_SCENE:
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, roto: action.roto };
+
+      return { ...state, scenes: add(state.scenes, scene) };
 
     case actionTypes.SET_DURATION:
       return update(state, { duration: action.duration }, action.materialId, 'materialId')
