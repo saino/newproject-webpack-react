@@ -169,7 +169,8 @@ export default class UserMaterial extends Component {
 
         <style>{`
           .add-action {
-            height: 100%;
+            padding-top: calc(64% + 58px);
+            position: relative;
             width: 100%;
             display: flex;
             align-items: center;
@@ -179,6 +180,9 @@ export default class UserMaterial extends Component {
             cursor: pointer;
           }
           .add-action img {
+            position: absolute;
+            top: calc(50% - 52px);
+            left: 0;
             vertical-align: middle;
             width: 100%;
           }
