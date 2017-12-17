@@ -22,7 +22,12 @@ export default class Material extends Component {
 
     switch (flag) {
       case 0:
-        return (<UserMaterial user={this.props.user} workId={this.props.workId} materials={ materials } onDelete={ onDelete } />);
+        return (<UserMaterial 
+          uploadMaterial={this.props.uploadMaterial}
+          user={this.props.user} 
+          workId={this.props.workId} 
+          materials={ materials } 
+          onDelete={ onDelete } />);
     }
   }
 

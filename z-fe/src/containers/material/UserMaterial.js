@@ -52,17 +52,17 @@ export default class UserMaterial extends Component {
     });
   }
   //上传成功
-  _handleUploadSuccess = () => {
+  _handleUploadSuccess = (resp) => {
     this.setState({
       uploadProgress: 100,
       progressState: "success",
     });
+    this.props.uploadMaterial(resp.data);
     setTimeout(()=>{
       this.setState({
         uploading: false
       });
     }, 200);
-    return true;
   }
   //上传失败
   _handleUploadFailed = () => {
