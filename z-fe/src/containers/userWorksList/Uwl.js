@@ -142,9 +142,14 @@ class Uwl extends Component {
           height: 100%;
           text-align: center;
           cursor: pointer;
+          padding-top: calc(59% + 58px);
+          position: relative;
         }
         .add-action img {
           vertical-align: middle;
+          position: absolute;
+          top: calc(50% - 32px);
+          left: calc(50% - 32px);
         }
         .add-action:after {
           content: "";

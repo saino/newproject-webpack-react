@@ -28,7 +28,7 @@ class Make extends Component {
 
     switch (index) {
       case 0:
-        return (<Material materials={ material.materials } onDelete={ this.handleDeleteProjectMaterial }></Material>);
+        return (<Material user={this.props.user} workId={match.params.workId} materials={ material.materials } onDelete={ this.handleDeleteProjectMaterial }></Material>);
       // case 1:
       //   return (<Roto
       //     works={ this.props.userWorks.works }
@@ -85,10 +85,10 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material }) => ({ material });
+const mapStateToProps = ({ material, user }) => ({ material, user });
 const mapDispatchToProps = (dispatch) => ({
   getMaterials: bindActionCreators(getMaterials, dispatch),
-  deleteMaterial: bindActionCreators(deleteMaterial, dispatch)
+  deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

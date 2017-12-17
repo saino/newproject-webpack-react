@@ -14,7 +14,6 @@ import addWorkJPG from '../../statics/add-material.jpg';
 
 export default class UserMaterial extends Component {
   state = {
-    addMaterialVisible: false,
     uploading: false,
     uploadProgress: 0
   }
@@ -41,34 +40,28 @@ export default class UserMaterial extends Component {
     }
     this.setState({
       uploading: true,
-      progressState: null,
+      progressState: "active",
       uploadProgress: 0
     });
-    return true;
   }
   //上传中
   _handleUploading = (progress) => {
     const progressNum = parseInt(100 * progress.loaded / progress.total);
-    if(progressNum == 100){
-      return true;
-    }
     this.setState({
       uploadProgress: progressNum
     });
-    return true;
   }
   //上传成功
   _handleUploadSuccess = () => {
     this.setState({
       uploadProgress: 100,
-      progressState: null,
-      uploading: false
+      progressState: "success",
     });
     setTimeout(()=>{
       this.setState({
         uploading: false
       });
-    }, 800);
+    }, 200);
     return true;
   }
   //上传失败
@@ -81,18 +74,12 @@ export default class UserMaterial extends Component {
       this.setState({
         uploading: false
       });
-    }, 800);
-    return true;
+    }, 200);
   }
 
   handleDeleteMaterial = materialId => () =>
     this.props.onDelete(materialId);
 
-  handleOpenAddMaterialModal = () => {
-    this.setState({
-      addMaterialVisible: true
-    });
-  };
   getMaterialDoms(arr) {
     arr = arr.map((item, key) => (
       <Card
@@ -122,12 +109,14 @@ export default class UserMaterial extends Component {
     const upLoadOptions = {
       baseUrl: '/user/uploadMaterial',
       paramAddToField: {
-        work_id: 10,
-        token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJwaG9uZSI6IjEzNTI0MjIwNjgyIiwibmljayI6IjEzNTI0MjIwNjgyIiwiYXZhdGFyIjoiIiwiY3JlYXRlX3RpbWUiOjE1MTMxNzY2NTAsInVwZGF0ZV90aW1lIjoxNTEzMTc2NjUwLCJ1c2VyX2lkIjoiNSIsImlzcyI6InRlc3QiLCJpYXQiOjE1MTMxNzY2NTEsIm5iZiI6MTUxMzE3NjY1MSwiZXhwIjoxNTE1NzY4NjUxfQ.c9A_xJeTtchI8_bscC14iIoKXNA26rR1lnCTlO2ChzEvEEc3tv8R08_Gh4lJBE_fp3x5cqstrfPF7HvJUnzMVU1wuj72L0K63KvmJtMLvuHINFVV7qGjd-vhMfMNkjLfQgfbw33iMPLKUrQpvKCWDE0Klbu7YRnwGcH7Qg68SSle0LxFvQzbwY1Yf21KpFUo7jwX349IUiUn9mzHp6wgVL-fpMU7v9J7QJ5o0kEwk9LG9wi2zJ8kQMZsOIdIJHsWR_NKq2RuC3dV2sU0AZHIWGgDHsJsht4KxkED00dgu4k6iE5qUntcnteRzKQzQqVgwtoKsZ3HGvis3eUkPLPnXFe9yBJ6ix9027lnPIeD2HNv5Br0nTXuOQemsFVrZW7IKPSetAkCktmCBZFiUDj2cOx4Bct3UoirZFBMqW1l4IfSq9lJn0RdmEy423bNIuTy4GoUv-ngVqpftUz5CAcjYIz8yihsnL5ooTHi_2wRWPWKeRfRvWsMmZDqFzV2LorPHptD1RwnOYSCbwMOqm8vHmYfXKp_GllPEpRhK2CVTsfXMDe7xrloocHL1V4Rfh7H1LxzScLJh0QijOTTZSk6aI7yQB04EIjOJVqwnDh0gzIui-RSHXKWuxD_20R0TgI8pxBpBETGM8oWzlp9JEMtjoxSrqChKPl5CtKVlyNMHIo'
+        work_id: this.props.workId
       },
       fileFieldName: "file",
       multiple: false,
       accept: 'video/*, image/*',
+      requestHeaders: {
+        Token: this.props.user.token,
+      },
       chooseAndUpload: true,
       wrapperDisplay: 'block',
       beforeChoose: this._handleBeforeChoose,
