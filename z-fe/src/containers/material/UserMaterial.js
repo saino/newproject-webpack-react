@@ -88,13 +88,13 @@ export default class UserMaterial extends Component {
       addMaterialVisible: true
     });
   };
-  
+
   getMaterialDoms(arr) {
     arr = arr.map((item, key) => (
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
-        title={ item.name }
-        cover={ <img src={ item.thumbnail } style={{ objectFit: 'cover' }} /> }
+        title={ /[^/]+(?=\.)/.exec(item.path)[0] }
+        cover={ <img src={ config.api.host + item.properties.thumbnail } style={{ objectFit: 'cover' }} /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
             {/* <Icon type='edit' /> */}
