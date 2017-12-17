@@ -33,7 +33,7 @@ export const add = (target: Array, origin) => {
 };
 
 export const update = (target: Array, origin: Object, idValue, idKey = 'id') => {
-  let waitUpdate, waitUpdateIndex, processer;
+  let waitUpdate, waitUpdateIndex, processer, newOrigin, keys, prevKey, key, value, slices;
 
   if (!target || origin == null)
     return target;
@@ -47,8 +47,33 @@ export const update = (target: Array, origin: Object, idValue, idKey = 'id') => 
   if (waitUpdateIndex < 0)
     return target;
 
-  waitUpdate = target[waitUpdateIndex];
-  target.splice(waitUpdateIndex, 1, { ...waitUpdate, ...origin });
+  waitUpdate = target[ waitUpdateIndex ];
+  newOrigin = {};
+  keys = Object.keys(origin)[0].split('.');
+  value = origin[ keys.join('.') ];
+  slices = keys.slice(0, -1);
+
+  for (let i = 0, len = slices.length; i < len; i++) {
+    key = keys[ i ];
+
+    if (prevKey) {
+      newOrigin[ prevKey ][ key ] = waitUpdate[ prevKey ][ key ];
+    } else {
+      newOrigin[ key ] = waitUpdate[ key ];
+    }
+
+    prevKey = key;
+  }
+
+  key = keys[ keys.length - 1 ];
+
+  if (prevKey) {
+    newOrigin[ prevKey ][ key ] = value;
+  } else {
+    newOrigin[ key ] = value;
+  }
+
+  target.splice(waitUpdateIndex, 1, { ...waitUpdate, ...newOrigin });
 
   return [ ...target ];
 };

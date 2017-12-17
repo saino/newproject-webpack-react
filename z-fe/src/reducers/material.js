@@ -101,8 +101,7 @@ export default (state = defState, action) => {
       return { ...state, scenes: add(state.scenes, scene) };
 
     case actionTypes.SET_DURATION:
-
-      return update(state, { duration: action.duration }, action.materialId, 'materialId')
+      return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
 
     default:
       return state;

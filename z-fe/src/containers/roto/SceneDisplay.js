@@ -45,6 +45,7 @@ export default class SceneDisplay extends Component {
   render() {
     const { material, scene } = this.props;
     const { scale } = this.state;
+    console.log(material, 'nm');
     // const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
     // let renderSomething = (
     //   <VideoRender
