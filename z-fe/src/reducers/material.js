@@ -26,6 +26,7 @@ const actionTypes = {
   GET_MATERIALS: 'GET_MATERIALS',
   UPLOAD_MATERIAL: 'UPLOAD_MATERIAL',
   DELETE_MATERIAL: 'DELETE_MATERIAL',
+  CREATE_SCENE: 'CREATE_SCENE',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION'
 };
@@ -80,9 +81,9 @@ export const setDuration = (materialId, duration) => ({
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
-      const { materials, page } = action;
+      const { materials, scenes } = action;
 
-      return { ...state, materials, page };
+      return { ...state, materials, scenes };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;
@@ -100,6 +101,7 @@ export default (state = defState, action) => {
       return { ...state, scenes: add(state.scenes, scene) };
 
     case actionTypes.SET_DURATION:
+
       return update(state, { duration: action.duration }, action.materialId, 'materialId')
 
     default:

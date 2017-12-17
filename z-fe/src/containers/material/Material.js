@@ -29,7 +29,7 @@ export default class Material extends Component {
           <UserMaterial
             user={ user }
             workId={ workId }
-            onUploadMaterial={ uploadMaterial }
+            onUploadMaterial={ onUploadMaterial }
             materials={ materials }
             onEdit={ onEdit }
             onDelete={ onDelete } />);

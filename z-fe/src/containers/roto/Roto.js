@@ -7,17 +7,12 @@ import { getItemByKey } from '../../utils/stateSet';
 
 /* 第三方组件 */
 import Scenes from './Scenes';
-//import SceneDisplay from './SceneDisplay';
-import XX from './xx.js';
+import SceneDisplay from './SceneDisplay';
+//import XX from './xx.js';
 import ControllerPanel from '../make/ControllerPanel';
 import Timeline from '../make/Timeline';
 
-class Roto extends Component {
-  static propTypes = {
-    workId: PropTypes.string,
-    materialId: PropTypes.string
-  };
-
+export default class Roto extends Component {
   state = {
     sceneIndex: 0
   };
@@ -25,19 +20,9 @@ class Roto extends Component {
   handleChangeScene = (sceneIndex) =>
     this.setState({ sceneIndex });
 
-  componentWillMount() {
-    // 根据当前选中的素材查找镜头
-    //this.props.listScene({ materialId: this.state.currMaterialId });
-
-  }
-
   render() {
-    const { works, workId, materialId } = this.props;
-    const work = getItemByKey(works, workId, 'id');
-    const materials = work ? work.config.materials : [];
-    const material = getItemByKey(materials, materialId, 'id');
-    const scenes = work ? work.config.scenes : [];
-    const roto = scenes[ this.state.sceneIndex ] ? scenes[ this.state.sceneIndex ].roto : [];
+    const { scenes, material, materialId, onSetMaterialTime } = this.props;
+    const scene = scenes[ this.state.sceneIndex ];
 
     return (
       <div className="roto">
@@ -48,8 +33,13 @@ class Roto extends Component {
 
         {/* 镜头展示 */}
         <div className="scene-display">
-          {/*<SceneDisplay material={ material } scene={ scenes[ this.state.sceneIndex ] } />*/}
+          <SceneDisplay
+            material={ material }
+            scene={ scene }
+            materialId={ materialId }
+            onSetMaterialTime={ onSetMaterialTime }/>
         </div>
+
         {/*<SceneDisplay
           materialId={ this.state.currMaterialId }
           sceneId={ this.state.currSceneId }
@@ -87,22 +77,22 @@ class Roto extends Component {
   }
 }
 
-function mapStateToProps ({ material, frame, imageData, step }) {
-  return {
-    material,
-    frame,
-    imageData,
-    selectStep: step.steps[step.current]
-  };
-}
-
-function mapDispatchToProps (dispatch) {
-  return {
-    listScene: function () {}//bindActionCreators(listScene, dispatch)
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Roto);
+// function mapStateToProps ({ material, frame, imageData, step }) {
+//   return {
+//     material,
+//     frame,
+//     imageData,
+//     selectStep: step.steps[step.current]
+//   };
+// }
+//
+// function mapDispatchToProps (dispatch) {
+//   return {
+//     listScene: function () {}//bindActionCreators(listScene, dispatch)
+//   };
+// }
+//
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(Roto);

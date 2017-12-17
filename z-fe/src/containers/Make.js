@@ -5,7 +5,11 @@ import { connect } from 'react-redux';
 import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
-import { getMaterials, deleteMaterial, uploadMaterial } from '../reducers/material';
+import {
+  getMaterials, deleteMaterial, uploadMaterial,
+  createScene, setDuration
+} from '../reducers/material';
+import { finds, getItemByKey } from '../utils/stateSet';
 
 class Make extends Component {
   state = {
@@ -16,13 +20,25 @@ class Make extends Component {
   handleDeleteProjectMaterial = materialId =>
     this.props.deleteMaterial(materialId);
 
-  handleEditMaterial = materialId => {
-    alert(materialId);
-    // this.setState({
-    //   materialId,
-    //   selectedIndex: 1
-    // });
-  };
+  handleEditMaterial = materialId =>
+    this.setState({
+      materialId,
+      selectedIndex: 1
+    }, () => {
+      const { material, createScene } = this.props;
+      const { materialId } = this.state;
+
+      // 进入到抠像页
+      createScene({
+        id: material.scenes.length + 1,
+        mtype: 'roto',
+        materialId,
+        roto: []
+      });
+    });
+
+  handleSetMaterialTime = (materialId, duration) =>
+    this.props.setDuration(materialId, duration);
 
   renderChild(index) {
     const { material, match, user, uploadMaterial } = this.props;
@@ -42,9 +58,10 @@ class Make extends Component {
       case 1:
         return (
           <Roto
-            works={ this.props.userWorks.works }
-            workId={ this.props.match.params.workId }
-            materialId={ this.state.materialId } />
+            scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
+            material={ getItemByKey(material.materials, this.state.materialId, 'id') }
+            materialId={ this.state.materialId }
+            onSetMaterialTime={ this.handleSetMaterialTime } />
         );
     }
   }
@@ -102,6 +119,8 @@ const mapDispatchToProps = (dispatch) => ({
   getMaterials: bindActionCreators(getMaterials, dispatch),
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
+  createScene: bindActionCreators(createScene, dispatch),
+  setDuration: bindActionCreators(setDuration, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

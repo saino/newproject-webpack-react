@@ -99,9 +99,9 @@ export default class UserMaterial extends Component {
           (<Tooltip title="编辑" placement="bottom">
             {/* <Icon type='edit' /> */}
             <Popover title="请选择镜头类型"
-              trigger='focus'
-              content={<a href='javascript:;'>固定镜头广告植入</a>}>
-              <a className="edit-btn" href="javascript:;" onClick={ this.handleEditMaterial(item.id) }><Icon type="edit" /></a>
+              trigger='click'
+              content={<a href='javascript:;' onClick={ this.handleEditMaterial(item.id) }>固定镜头广告植入</a>}>
+              <a className="edit-btn" href="javascript:;"><Icon type="edit" /></a>
             </Popover>
            </Tooltip>),
           (<Tooltip title="删除" placement="bottom">

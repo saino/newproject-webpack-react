@@ -1,18 +1,16 @@
 import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import config from '../../config';
 import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 /* 业务组件 */
-import TransformToolBar from '../make/TransformToolbar';
-import PenTool from './PenTool';
-import VideoRender from '../../components/video/VideoRender';
-import Matting from '../../components/matting/Matting';
-import ParseFrameToSecond from '../../components/video/parseFrameToSecond';
-import ComposeRender from './ComposeRender';
+// import TransformToolBar from '../make/TransformToolbar';
+// import PenTool from './PenTool';
+// import VideoRender from '../../components/video/VideoRender';
+// import Matting from '../../components/matting/Matting';
+import ParseFrameToSecond from '../../components/video/ParseFrameToSecond';
+// import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 export default class SceneDisplay extends Component {
@@ -39,31 +37,41 @@ export default class SceneDisplay extends Component {
   handleZoomIn = () =>
     this.setState({ scale: this.state.scale - config.transform.stepScale });
 
-  render() {
-    const { materialId, sceneId, materials, frameDataUrl, selectStep } = this.props;
-    const { scale } = this.state;
-    const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
-    let renderSomething;
+  handleSetMaterialTime = (duration) => {
+    const { onSetMaterialTime, materialId } = this.props;
+    onSetMaterialTime(materialId, duration);
+  };
 
-    switch (selectStep.key){
-        case 'effect':
-        {/* 画出在video中每帧对应的秒数的图片 */}
-            renderSomething= <VideoRender
-                ref="video_render"
-                style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-                frameDataUrl={ frameDataUrl } />
-            break
-        case 'combine':
-           renderSomething=<ComposeRender
-               style={{ width: '100%', height: '100%' }}
-               frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
-            break;
-        default:
-            renderSomething= <VideoRender
-                ref="video_render"
-                style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-                frameDataUrl={ frameDataUrl } />
-    }
+  render() {
+    const { material, scene } = this.props;
+    const { scale } = this.state;
+    // const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
+    // let renderSomething = (
+    //   <VideoRender
+    //     ref="video_render"
+    //     style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+    //     frameDataUrl={ frameDataUrl } />
+    // );
+
+    // switch (selectStep.key){
+    //     case 'effect':
+    //     {/* 画出在video中每帧对应的秒数的图片 */}
+    //         renderSomething= <VideoRender
+    //             ref="video_render"
+    //             style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+    //             frameDataUrl={ frameDataUrl } />
+    //         break
+    //     case 'combine':
+    //        renderSomething=<ComposeRender
+    //            style={{ width: '100%', height: '100%' }}
+    //            frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
+    //         break;
+    //     default:
+    //         renderSomething= <VideoRender
+    //             ref="video_render"
+    //             style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+    //             frameDataUrl={ frameDataUrl } />
+    //}
 
     return (
       <div className="scene-center">
@@ -71,17 +79,16 @@ export default class SceneDisplay extends Component {
         <div className="scene-center-inner">
            <div className="canvas">
 
-             {/* 处理视频得到每帧对应的视频秒数 */}
+             {/* 得到视频的时长 */}
              <ParseFrameToSecond
-               videoSrc={ src }
-               materialId={ this.props.materialId }
-               totalFrame={ totalFrame }
-               onComplete={ this.parseFrameComplete } />
+               videoSrc={ config.api.host + material.path }
+               frameLength={ material.properties.length }
+               onSetMaterialTime={ this.handleSetMaterialTime } />
 
              {/* 抠像 */}
-             <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
+             {/*<Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>*/}
 
-             { renderSomething }
+             {/* renderSomething */}
 
            </div>
         </div>
@@ -89,13 +96,13 @@ export default class SceneDisplay extends Component {
         <div className="tooltip">
 
           <div className="node">
-            <PenTool />
+            {/*<PenTool />*/}
           </div>
 
           <div className="transform">
-            <TransformToolBar
+            {/*<TransformToolBar
               onZoomOut={ this.handleZoomOut }
-              onZoomIn={ this.handleZoomIn } />
+              onZoomIn={ this.handleZoomIn } />*/}
           </div>
 
         </div>
