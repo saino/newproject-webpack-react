@@ -30,11 +30,11 @@ class Uwl extends Component {
     this.handleDeleteWork = workId => () =>
       this.props.deleteWork(workId);
     this.handleAddWork = () => {
-      this.props.createWork({name: this.state.workName}, (token)=>{
-        post('/user/getWorks', {token: token}, (resp) => {
-          const workId = resp[resp.length-1].id;
+      this.props.createWork({name: this.state.workName}, (workId)=>{
+        // post('/user/getWorks', {token: token}, (resp) => {
+        //   const workId = resp[resp.length-1].id;
           this.context.router.history.push(`make/${ workId }`);
-        });
+        // });
       });
       this.setState({
         workName: ""
@@ -142,9 +142,14 @@ class Uwl extends Component {
           height: 100%;
           text-align: center;
           cursor: pointer;
+          padding-top: calc(59% + 58px);
+          position: relative;
         }
         .add-action img {
           vertical-align: middle;
+          position: absolute;
+          top: calc(50% - 32px);
+          left: calc(50% - 32px);
         }
         .add-action:after {
           content: "";
