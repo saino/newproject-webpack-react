@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
-import { getMaterials, deleteMaterial } from '../reducers/material';
+import { getMaterials, deleteMaterial, uploadMaterial } from '../reducers/material';
 
 class Make extends Component {
   state = {
@@ -25,7 +25,7 @@ class Make extends Component {
   };
 
   renderChild(index) {
-    const { material, match, user } = this.props;
+    const { material, match, user, uploadMaterial } = this.props;
 
     switch (index) {
       case 0:
@@ -34,6 +34,7 @@ class Make extends Component {
             user={ user }
             workId={ match.params.workId }
             materials={ material.materials }
+            onUploadMaterial={ uploadMaterial }
             onEdit={ this.handleEditMaterial }
             onDelete={ this.handleDeleteProjectMaterial } />
         );
@@ -100,6 +101,7 @@ const mapStateToProps = ({ material, user }) => ({ material, user });
 const mapDispatchToProps = (dispatch) => ({
   getMaterials: bindActionCreators(getMaterials, dispatch),
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
+  uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);
