@@ -28,7 +28,8 @@ const actionTypes = {
   DELETE_MATERIAL: 'DELETE_MATERIAL',
   CREATE_SCENE: 'CREATE_SCENE',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
-  SET_DURATION: 'SET_DURATION'
+  SET_DURATION: 'SET_DURATION',
+  SET_FRAMES: 'SET_FRAMES'
 };
 
 /**
@@ -72,10 +73,22 @@ export const createScene = ({ id, mtype, materialId, roto }) => ({
   roto
 });
 
+/**
+ * 设置素材时长
+ */
 export const setDuration = (materialId, duration) => ({
   type: actionTypes.SET_DURATION,
   materialId,
   duration
+});
+
+/**
+ * 设置素材帧图片集合
+ */
+export const setFrames = (materialId, frames) => ({
+  type: actionTypes.SET_FRAMES,
+  materialId,
+  frames
 });
 
 export default (state = defState, action) => {
@@ -99,6 +112,9 @@ export default (state = defState, action) => {
       const scene = { id: action.id, type: action.mtype, material_id: action.materialId, roto: action.roto };
 
       return { ...state, scenes: add(state.scenes, scene) };
+
+    case actionTypes.SET_FRAMES:
+      return { ...state, materials: update(state.materials, { 'properties.frames': action.frames }, action.materialId, 'id') };
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };

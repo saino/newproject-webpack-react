@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import VideoFrame from '../../utils/video-frame';
 
-export default class ParseFrameToSecond extends Component {
+export default class ParseMaterialToTime extends Component {
   static propTypes = {
     videoSrc: PropTypes.string,
     onSetMaterialTime: PropTypes.func,

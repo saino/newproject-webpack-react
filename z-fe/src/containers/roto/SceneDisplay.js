@@ -6,10 +6,10 @@ import { getItemByKey } from '../../utils/stateSet';
 
 /* 业务组件 */
 // import TransformToolBar from '../make/TransformToolbar';
-// import PenTool from './PenTool';
+import PenTool from './PenTool';
 // import VideoRender from '../../components/video/VideoRender';
 // import Matting from '../../components/matting/Matting';
-import ParseFrameToSecond from '../../components/video/ParseFrameToSecond';
+import ParseMaterialToTime from '../../components/video/ParseMaterialToTime';
 // import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
@@ -37,10 +37,8 @@ export default class SceneDisplay extends Component {
   handleZoomIn = () =>
     this.setState({ scale: this.state.scale - config.transform.stepScale });
 
-  handleSetMaterialTime = (duration) => {
-    const { onSetMaterialTime, materialId } = this.props;
-    onSetMaterialTime(materialId, duration);
-  };
+  handleSetMaterialTime = (duration) =>
+    this.props.onSetMaterialTime(duration);
 
   render() {
     const { material, scene } = this.props;
@@ -81,7 +79,7 @@ export default class SceneDisplay extends Component {
            <div className="canvas">
 
              {/* 得到视频的时长 */}
-             <ParseFrameToSecond
+             <ParseMaterialToTime
                videoSrc={ config.api.host + material.path }
                frameLength={ material.properties.length }
                onSetMaterialTime={ this.handleSetMaterialTime } />
@@ -97,7 +95,7 @@ export default class SceneDisplay extends Component {
         <div className="tooltip">
 
           <div className="node">
-            {/*<PenTool />*/}
+            <PenTool />
           </div>
 
           <div className="transform">
@@ -109,7 +107,11 @@ export default class SceneDisplay extends Component {
         </div>
 
         <style>{`
-
+          .scene-center {
+            width: 100%;
+            display: flex;
+            flex-flow: row wrap;
+          }
           .scene-center-inner {
             flex: 1;
             padding: 20px;
@@ -117,17 +119,14 @@ export default class SceneDisplay extends Component {
             align-items: stretch;
             background: #fff;
           }
-
           .scene-center-inner,
           .scene-center-inner .canvas {
             height: 100%;
           }
-
           .scene-center-inner .canvas {
             flex: 1;
             position:relative;
           }
-
           .tooltip {
             width: 40px;
             background: #f2f2f2;
@@ -136,7 +135,6 @@ export default class SceneDisplay extends Component {
             justify-content: space-between;
             align-items: stretch;
           }
-
         `}</style>
       </div>
     );

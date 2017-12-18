@@ -5,10 +5,16 @@ import { connect } from 'react-redux';
 import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
+import Compose from './compose/ComposeRender';
 import {
   getMaterials, deleteMaterial, uploadMaterial,
-  createScene, setDuration
+  createScene, setDuration, setFrames
 } from '../reducers/material';
+import {
+  addMaterial, changeLayer, select,
+  removeMaterial, toggleMaterial, changePosision,
+  changeContralPosision, removeSelected
+} from '../reducers/compose';
 import { finds, getItemByKey } from '../utils/stateSet';
 
 class Make extends Component {
@@ -37,11 +43,19 @@ class Make extends Component {
       });
     });
 
-  handleSetMaterialTime = (materialId, duration) =>
-    this.props.setDuration(materialId, duration);
+  handleSetMaterialTime = (duration) =>
+    this.props.setDuration(this.state.materialId, duration);
+
+  handleSetMaterialFrames = (frames) =>
+    this.props.setFrames(this.state.materialId, frames);
 
   renderChild(index) {
-    const { material, match, user, uploadMaterial } = this.props;
+    const {
+      material, match, user, compose,
+      uploadMaterial, addMaterial, changeLayer,
+      select, removeMaterial, toggleMaterial,
+      changePosision, changeContralPosision, removeSelected
+    } = this.props;
 
     switch (index) {
       case 0:
@@ -55,14 +69,30 @@ class Make extends Component {
             onDelete={ this.handleDeleteProjectMaterial } />
         );
 
-      case 1:
+      case 2:
         return (
           <Roto
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') }
-            materialId={ this.state.materialId }
+            onSetMaterialFrames={ this.handleSetMaterialFrames }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
+
+      case 1:
+        return (
+          <Compose
+            compose={ compose }
+            addMaterial={ addMaterial }
+            changeLayer={ changeLayer }
+            select={ select }
+            removeMaterial={ removeMaterial }
+            toggleMaterial={ toggleMaterial }
+            changePosision={ changePosision }
+            removeSelected={ removeSelected }
+            changeContralPosision={ changeContralPosision }
+            style={{ width: '100%', height: '100%' }}
+            frameDataUrl='http://localhost:3000/sample.jpg' />
+          );
     }
   }
 
@@ -114,13 +144,26 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material, user }) => ({ material, user });
+const mapStateToProps = ({ material, user, compose }) => ({
+  material,
+  user,
+  compose
+});
 const mapDispatchToProps = (dispatch) => ({
   getMaterials: bindActionCreators(getMaterials, dispatch),
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
   createScene: bindActionCreators(createScene, dispatch),
-  setDuration: bindActionCreators(setDuration, dispatch)
+  setDuration: bindActionCreators(setDuration, dispatch),
+  setFrames: bindActionCreators(setFrames, dispatch),
+  addMaterial: bindActionCreators(addMaterial, dispatch),
+  changeLayer: bindActionCreators(changeLayer, dispatch),
+  select: bindActionCreators(select, dispatch),
+  removeMaterial: bindActionCreators(removeMaterial, dispatch),
+  toggleMaterial: bindActionCreators(toggleMaterial, dispatch),
+  changePosision: bindActionCreators(changePosision, dispatch),
+  removeSelected: bindActionCreators(removeSelected, dispatch),
+  changeContralPosision: bindActionCreators(changeContralPosision, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

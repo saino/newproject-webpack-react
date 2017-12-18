@@ -4,18 +4,18 @@ import { deepCompare } from 'pure-render-immutable-decorator';
 import { is, Map } from 'immutable';
 import { getItemByKey } from '../../utils/stateSet';
 
-export default class ParseFrameToImageData extends Component {
+export default class ParseMaterialToFrameImage extends Component {
   static propTypes = {
     videoSrc: PropTypes.string,
     duration: PropTypes.number,
     frames: PropTypes.array,
-    onComplete: PropTypes.func
+    onSetMaterialFrames: PropTypes.func
   };
   static defaultProps = {
     videoSrc: '',
     duration: 0,
     frames: [],
-    onComplete: function () {}
+    onSetMaterialFrames: function () {}
   };
 
   computeFrame(currentTime) {
@@ -36,7 +36,7 @@ export default class ParseFrameToImageData extends Component {
     }
 
     this.tmpCanvasContext.putImageData(frame, 0, 0);
-    this.props.onComplete(this.props.duration, currentTime, this.tmpCanvasEl.toDataURL());
+    this.props.onGetFrameImage(this.props.duration, currentTime, this.tmpCanvasEl.toDataURL());
   }
 
   parseVideoSecondsToDataUrl(nextProps) {
@@ -68,7 +68,6 @@ export default class ParseFrameToImageData extends Component {
   }
 
   render() {
-
     return (
       <div className="parse-frame-to-image-data">
         <canvas ref={ el => this.oriCanvasEl = el } style={{ display: 'none' }}></canvas>

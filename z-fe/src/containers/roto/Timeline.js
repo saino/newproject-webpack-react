@@ -6,9 +6,10 @@ import { deepCompare } from 'pure-render-immutable-decorator';
 import { Icon, message } from 'antd';
 import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add, finds } from '../../utils/stateSet';
-import ParseFrameToImageData from '../../components/video/ParseFrameToImageData';
+import ParseMaterialToFrameImage from '../../components/video/ParseMaterialToFrameImage';
 import Tick from '../../components/interaction/react-tick/Tick';
 import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
+import config from '../../config';
 
 class Timeline extends Component {
   static propTypes = {
@@ -25,7 +26,7 @@ class Timeline extends Component {
     currFrameId: 1,
     currFrames: []
   };
-  imageUrls = [];
+  frames = [];
 
   constructor(props) {
     super(props);
@@ -37,7 +38,7 @@ class Timeline extends Component {
     this.handleBackward = this.handlePlayAction(currFrameId => currFrameId - 1, '已经第一帧了！')
   }
 
-  parseFrameToImageDataComplete = (duration, currentTime, imageUrl) => {
+  handleGetFrameImage = (duration, currentTime, frameImage) => {
     // 根据帧的时长转成图片完成
     if (duration == currentTime) {
       const {
@@ -45,23 +46,24 @@ class Timeline extends Component {
          setImageData, onSelectDataUrl
       } = this.props;
 
-      setImageData(materialId, sceneId, this.imageUrls);
+      //setImageData(materialId, sceneId, this.imageUrls);
 
       // 默认选择第一张帧
-      onSelectDataUrl(this.imageUrls[0].imageUrl);
+      //onSelectDataUrl(this.imageUrls[0].imageUrl);
 
       // 获取当前素材、镜头对应的帧数据
-      this.setState({
-        currFrames: finds(frames,
-          item => item.materialId === materialId && item.sceneId === sceneId
-        )
-      });
+      // this.setState({
+      //   currFrames: finds(frames,
+      //     item => item.materialId === materialId && item.sceneId === sceneId
+      //   )
+      // });
 
       // 创建播放或暂停方法
       this.execute = this.playOrPausing.bind(this)();
 
     } else {
-      this.imageUrls.push({ time: currentTime, imageUrl });
+      this.frames.push(frameImage);
+      //this.imageUrls.push({ time: currentTime, imageUrl });
     }
   };
 
@@ -159,27 +161,29 @@ class Timeline extends Component {
   };
 
   render() {
-    const {
-      materialId, sceneId, materials,
-      frames, imageData,
-      setFrameDataUrl, onSelectDataUrl } = this.props;
+    // const {
+    //   materialId, sceneId, materials,
+    //   frames, imageData,
+    //   setFrameDataUrl, onSelectDataUrl } = this.props;
+    // const { isPlay, currFrameId } = this.state;
+    // const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
+    // const dataSource = this.getDataSource();
+    // const keyImageData = this.getKeyFrames(dataSource);
+    const { path, properties, frames } = this.props.material;
     const { isPlay, currFrameId } = this.state;
-    const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
-    const dataSource = this.getDataSource();
-    const keyImageData = this.getKeyFrames(dataSource);
 
     return (
         <div className="timeline">
 
-          {/* 列出每一帧对应的图片 */}
-          <ParseFrameToImageData
-            videoSrc={ src }
-            duration={ duration }
+          {/* 转换素材的帧图片 */}
+          <ParseMaterialToFrameImage
+            videoSrc={ config.api.host + path }
+            duration={ properties.time }
             frames={ frames }
-            onComplete={ this.parseFrameToImageDataComplete } />
+            onGetFrameImage={ this.handleGetFrameImage }
+            onSetMaterialFrames={ this.props.onSetMaterialFrames } />
 
           <div className="header">
-
             <div className="player">
               <div className="backward" onClick={ this.handleBackward }><Icon type="backward" /></div>
               <div className="playing" onClick={ this.handlePlayOrPause }><Icon type={ isPlay ? 'pause-circle-o' : 'play-circle-o' } /></div>
@@ -207,7 +211,7 @@ class Timeline extends Component {
           <div className="wrapper">
 
             <div className="ruler">
-              <Scrollbar>
+              {/*<Scrollbar>
                 <Tick
                   max={ this.state.currFrames.length }
                   unit="f"
@@ -217,23 +221,23 @@ class Timeline extends Component {
                       message.warning('正在播放中，请先暂停');
                       return;
                     }
-                    
+
                     this.setCurrFrameId(tick, () => {
                       const dataSource = this.getDataSource();
                       onSelectDataUrl(dataSource[ this.state.currFrameId ].imageUrl);
                     });
                   }} />
-              </Scrollbar>
+              </Scrollbar>*/}
             </div>
 
             <div className="frames">
-              <ul>
+            {/*  <ul>
                 {keyImageData.map(({ time, imageUrl }) => (
                   <li className="frame" data-time={ time } onClick={ this.handleSelectDataUrl(imageUrl) }>
                     <img src={ imageUrl } />
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
 
           </div>

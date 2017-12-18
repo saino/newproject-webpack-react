@@ -9,8 +9,8 @@ import { getItemByKey } from '../../utils/stateSet';
 import Scenes from './Scenes';
 import SceneDisplay from './SceneDisplay';
 //import XX from './xx.js';
-import ControllerPanel from '../make/ControllerPanel';
-import Timeline from '../make/Timeline';
+import ControllerPanel from './ControllerPanel';
+import Timeline from './Timeline';
 
 export default class Roto extends Component {
   state = {
@@ -20,56 +20,80 @@ export default class Roto extends Component {
   handleChangeScene = (sceneIndex) =>
     this.setState({ sceneIndex });
 
+  handleSetMaterialTime = (duration) =>
+    this.props.onSetMaterialTime(duration);
+
+  handleSetMaterialFrames = (frames) =>
+    this.props.onSetMaterialTime(frames);
+
   render() {
-    const { scenes, material, materialId, onSetMaterialTime } = this.props;
+    const {
+      scenes, material,
+      onSetMaterialTime, onSetMaterialFrames
+    } = this.props;
     const scene = scenes[ this.state.sceneIndex ];
 
     return (
       <div className="roto">
-        {/* 镜头列表 */}
-        <div className="scenes">
-          <Scenes scenes={ scenes } onChangeScene={ this.handleChangeScene } />
-        </div>
+        <div className="roto-inner">
+          {/* 镜头列表 */}
+          <div className="scenes">
+            <Scenes scenes={ scenes } onChangeScene={ this.handleChangeScene } />
+          </div>
 
-        {/* 镜头展示 */}
-        <div className="scene-display">
-          <SceneDisplay
-            material={ material }
-            scene={ scene }
-            materialId={ materialId }
-            onSetMaterialTime={ onSetMaterialTime }/>
-        </div>
+          {/* 镜头展示 */}
+          <div className="scene-display">
+            <SceneDisplay
+              material={ material }
+              scene={ scene }
+              onSetMaterialTime={ this.handleSetMaterialTime } />
+          </div>
 
-        {/*<SceneDisplay
-          materialId={ this.state.currMaterialId }
-          sceneId={ this.state.currSceneId }
-          materials={ this.props.material }
-          selectStep={ this.props.selectStep }
-          frameDataUrl={ this.state.frameDataUrl } /> */}
-
-        {/* 控制面板 */}
-        {/*<ControllerPanel materialId={ this.state.currMaterialId } />*/}
-
-
-        {/*<div className="bottom">
-          {/* 时间轴 */}
-        {/*  <Timeline
+          {/*<SceneDisplay
             materialId={ this.state.currMaterialId }
             sceneId={ this.state.currSceneId }
             materials={ this.props.material }
+            selectStep={ this.props.selectStep }
+            frameDataUrl={ this.state.frameDataUrl } /> */}
+
+          {/* 控制面板 */}
+          <ControllerPanel material={ material } />
+        </div>
+        <div className="roto-bottom">
+          {/* 时间轴 */}
+          <Timeline
+            onSetMaterialFrames={ this.handleSetMaterialFrames }
+            material={ material } />
+          {/*<Timeline
+            onSetMaterialFrames={ this.handleSetMaterialFrames }
+            material={ material }
             frames={ this.props.frame }
             imageData={ this.props.imageData }
-            onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />
-        {/*</div>*/}
+            onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />*/}
+        </div>
         <style>{`
+          .roto {
+            display: flex;
+            flex-flow: column nowrap;
+            width: 100%;
+            height: 100%;
+          }
+          .roto-inner {
+            display: flex;
+            flex: 1;
+            flex-flow: row nowrap;
+            height: 100%;
+          }
           .scenes {
             flex: 0 0 218px;
             height: 100%;
           }
           .scene-display {
             display: flex;
-            align-items: stretch;
             flex: 1;
+          }
+          .roto-bottom {
+            height: 120px;
           }
         `}</style>
       </div>
