@@ -7,7 +7,7 @@ import Material from './material/Material';
 import Roto from './roto/Roto';
 import {
   getMaterials, deleteMaterial, uploadMaterial,
-  createScene, setDuration
+  createScene, setDuration, clearMaterials
 } from '../reducers/material';
 import { finds, getItemByKey } from '../utils/stateSet';
 
@@ -41,7 +41,7 @@ class Make extends Component {
     this.props.setDuration(materialId, duration);
 
   renderChild(index) {
-    const { material, match, user, uploadMaterial } = this.props;
+    const { material, match, user, uploadMaterial, clearMaterials } = this.props;
 
     switch (index) {
       case 0:
@@ -50,6 +50,7 @@ class Make extends Component {
             user={ user }
             workId={ match.params.workId }
             materials={ material.materials }
+            clearMaterials={ clearMaterials }
             onUploadMaterial={ uploadMaterial }
             onEdit={ this.handleEditMaterial }
             onDelete={ this.handleDeleteProjectMaterial } />
@@ -120,7 +121,8 @@ const mapDispatchToProps = (dispatch) => ({
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
   createScene: bindActionCreators(createScene, dispatch),
-  setDuration: bindActionCreators(setDuration, dispatch)
+  setDuration: bindActionCreators(setDuration, dispatch),
+  clearMaterials: bindActionCreators(clearMaterials, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

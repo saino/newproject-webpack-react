@@ -18,6 +18,10 @@ export default class UserMaterial extends Component {
     uploadProgress: 0
   }
 
+  componentWillUnmount(){
+    this.props.clearMaterials();
+  }
+
   //选择文件之前
   _handleBeforeChoose = () => {
     return true;
