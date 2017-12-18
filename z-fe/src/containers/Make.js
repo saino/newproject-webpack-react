@@ -8,7 +8,7 @@ import Roto from './roto/Roto';
 import Compose from './compose/ComposeRender';
 import {
   getMaterials, deleteMaterial, uploadMaterial,
-  createScene, setDuration, setFrames
+  createScene, setDuration, setFrames, clearMaterials
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
@@ -54,7 +54,7 @@ class Make extends Component {
       material, match, user, compose,
       uploadMaterial, addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
-      changePosision, changeContralPosision, removeSelected
+      changePosision, changeContralPosision, removeSelected, clearMaterials
     } = this.props;
 
     switch (index) {
@@ -64,6 +64,7 @@ class Make extends Component {
             user={ user }
             workId={ match.params.workId }
             materials={ material.materials }
+            clearMaterials={ clearMaterials }
             onUploadMaterial={ uploadMaterial }
             onEdit={ this.handleEditMaterial }
             onDelete={ this.handleDeleteProjectMaterial } />
@@ -163,7 +164,8 @@ const mapDispatchToProps = (dispatch) => ({
   toggleMaterial: bindActionCreators(toggleMaterial, dispatch),
   changePosision: bindActionCreators(changePosision, dispatch),
   removeSelected: bindActionCreators(removeSelected, dispatch),
-  changeContralPosision: bindActionCreators(changeContralPosision, dispatch)
+  changeContralPosision: bindActionCreators(changeContralPosision, dispatch),
+  clearMaterials: bindActionCreators(clearMaterials, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

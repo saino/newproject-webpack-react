@@ -19,7 +19,7 @@ export default class Material extends Component {
 
   renderChildMaterial(flag) {
     const {
-      materials, user, workId,
+      materials, user, workId, clearMaterials,
       onUploadMaterial, onDelete, onEdit
     } = this.props;
 
@@ -29,6 +29,7 @@ export default class Material extends Component {
           <UserMaterial
             user={ user }
             workId={ workId }
+            clearMaterials={ clearMaterials }
             onUploadMaterial={ onUploadMaterial }
             materials={ materials }
             onEdit={ onEdit }

@@ -29,7 +29,8 @@ const actionTypes = {
   CREATE_SCENE: 'CREATE_SCENE',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION',
-  SET_FRAMES: 'SET_FRAMES'
+  SET_FRAMES: 'SET_FRAMES',
+  CLEAR_MATERIALS: 'CLEAE_MATERIALS'
 };
 
 /**
@@ -44,6 +45,15 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
     });
   });
 });
+
+/**
+ * 清空素材列表
+ */
+export const clearMaterials = () => {
+  return {
+    type: actionTypes.CLEAR_MATERIALS
+  };
+};
 
 /**
  * 删除素材
@@ -118,6 +128,9 @@ export default (state = defState, action) => {
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
+
+    case actionTypes.CLEAR_MATERIALS:
+      return { ...state, materials: []}
 
     default:
       return state;
