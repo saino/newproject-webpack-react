@@ -7,7 +7,7 @@ import Draggable from '../../components/interaction/react-draggable/Draggable';
 
 export default class VideoRender extends Component {
   static propTypes = {
-    frameDataUrl: PropTypes.string.isRequired,
+    frameImageUrl: PropTypes.string.isRequired,
     style: PropTypes.object.isRequired
   };
 
@@ -20,7 +20,7 @@ export default class VideoRender extends Component {
       <Draggable>
         <div className="video-render" style={ this.props.style }>
           <div className="video-render-inner"></div>
-          <img src={ this.props.frameDataUrl } />
+          <img src={ this.props.frameImageUrl } />
           <style>{`
 
             .video-render-inner {

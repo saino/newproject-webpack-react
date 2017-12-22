@@ -18,9 +18,9 @@ export default class Pick extends Component {
   };
 
   getDontSuffixFilename() {
-    const { src } = this.props.material;
+    const { path } = this.props.material;
 
-    return /([^/]*\.\w*)$/.test(src) && RegExp.$1;
+    return /[^/]+(?=\.)/.exec(path)[0];
   }
 
   render() {

@@ -3,185 +3,181 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
+import Scrollbar from 'react-custom-scrollbars';
 import { Icon, message } from 'antd';
 import { setImageData } from '../../reducers/imageData';
 import { getItemByKey, add, finds } from '../../utils/stateSet';
 import ParseMaterialToFrameImage from '../../components/video/ParseMaterialToFrameImage';
 import Tick from '../../components/interaction/react-tick/Tick';
-import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
+//import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
 import config from '../../config';
 
 class Timeline extends Component {
-  static propTypes = {
-    materialId: PropTypes.number.isRequired,
-    sceneId: PropTypes.number.isRequired,
-    materials: PropTypes.array.isRequired,
-    imageData: PropTypes.array,
-    frames: PropTypes.array.isRequired,
-    onSelectDataUrl: PropTypes.func.isRequired
-  };
-
   state = {
-    isPlay: false,
-    currFrameId: 1,
-    currFrames: []
+    isPlay: false
   };
-  frames = [];
 
   constructor(props) {
     super(props);
 
     // 前进
-    this.handleForward = this.handlePlayAction(currFrameId => currFrameId + 1, '已经最后一帧了！');
-
+    this.handleForward = this.handlePlayAction(currFrame => currFrame + 1, '已经最后一帧了！');
     // 后退
-    this.handleBackward = this.handlePlayAction(currFrameId => currFrameId - 1, '已经第一帧了！')
+    this.handleBackward = this.handlePlayAction(currFrame => currFrame - 1, '已经第一帧了！');
+    // 开始播放
+    this.execute = this.playOrPausing.bind(this)();
   }
 
-  handleGetFrameImage = (duration, currentTime, frameImage) => {
-    // 根据帧的时长转成图片完成
-    if (duration == currentTime) {
-      const {
-         materialId, sceneId, frames,
-         setImageData, onSelectDataUrl
-      } = this.props;
+  // handleGetFrameImage = (duration, currentTime, frameImage) => {
+  //   this.frames.push(frameImage);
+  //
+  //   // 根据帧的时长转成图片完成
+  //   if (duration == currentTime) {
+  //
+  //     // 创建播放或暂停方法
+  //     //
+  //     //console.log(this.frames, 'ddd');
+  //     // 设置视频的帧图片集合
+  //     //this.props.onSetMaterialFrames(this.frames);
+  //     //this.props.onSetMaterialTime(50.2332);
+  //     // const { material, onSetMaterialFrames } = this.props;
+  //     // onSetMaterialFrames(this.frames);
+  //     //console.log(this.frames, 'frames');
+  //     //setImageData(materialId, sceneId, this.imageUrls);
+  //
+  //     // 默认选择第一张帧
+  //     //onSelectDataUrl(this.imageUrls[0].imageUrl);
+  //
+  //     // 获取当前素材、镜头对应的帧数据
+  //     // this.setState({
+  //     //   currFrames: finds(frames,
+  //     //     item => item.materialId === materialId && item.sceneId === sceneId
+  //     //   )
+  //     // });
+  //
+  //
+  //   }
+  //   //console.log(currentTime);
+  // };
 
-      //setImageData(materialId, sceneId, this.imageUrls);
+  // getKeyFrames = (imageData) => {
+  //   const keyFrame = {},
+  //         res = [],
+  //         matchTimeRE = /^(.*)?(?=\.)/;
+  //   let time;
+  //
+  //   imageData.forEach(item => {
+  //     time = matchTimeRE.test(item.time) && RegExp.$1;
+  //
+  //     if (!(time in keyFrame)) {
+  //       keyFrame[time] = item;
+  //       res.push(item);
+  //     }
+  //
+  //   });
+  //
+  //   return res;
+  // };
+  //
+  // checkFrameId = frameId =>
+  //   getItemByKey(this.state.currFrames, frameId, 'frameId');
 
-      // 默认选择第一张帧
-      //onSelectDataUrl(this.imageUrls[0].imageUrl);
-
-      // 获取当前素材、镜头对应的帧数据
-      // this.setState({
-      //   currFrames: finds(frames,
-      //     item => item.materialId === materialId && item.sceneId === sceneId
-      //   )
-      // });
-
-      // 创建播放或暂停方法
-      this.execute = this.playOrPausing.bind(this)();
-
-    } else {
-      this.frames.push(frameImage);
-      //this.imageUrls.push({ time: currentTime, imageUrl });
-    }
-  };
-
-  getKeyFrames = (imageData) => {
-    const keyFrame = {},
-          res = [],
-          matchTimeRE = /^(.*)?(?=\.)/;
-    let time;
-
-    imageData.forEach(item => {
-      time = matchTimeRE.test(item.time) && RegExp.$1;
-
-      if (!(time in keyFrame)) {
-        keyFrame[time] = item;
-        res.push(item);
-      }
-
-    });
-
-    return res;
-  };
-
-  checkFrameId = frameId =>
-    getItemByKey(this.state.currFrames, frameId, 'frameId');
-
-  getDataSource = () => {
-    const { imageData, materialId, sceneId } = this.props;
-    const { dataSource = [] } = getItemByKey(
-      imageData,
-      item =>
-        item.materialId === materialId && item.sceneId === sceneId
-    ) || {};
-
-    return dataSource;
-  };
+  // getDataSource = () => {
+  //   const { imageData, materialId, sceneId } = this.props;
+  //   const { dataSource = [] } = getItemByKey(
+  //     imageData,
+  //     item =>
+  //       item.materialId === materialId && item.sceneId === sceneId
+  //   ) || {};
+  //
+  //   return dataSource;
+  // };
 
   playOrPausing = function () {
-    const dataSource = this.getDataSource();
-    const timers = [];
+    const timers = {};
     let temp;
 
     return () => {
-      const { isPlay, currFrameId } = this.state;
+      const { isPlay } = this.state;
+      const { frame, frameLength, onChangeFrame } = this.props;
+      let number = 0;
+      let i = frame + 1;
 
       if (isPlay) {
-        let list = dataSource.slice(currFrameId - 1);
-
-        list.forEach((item, idx) => {
-          timers[ idx ] = ((i, imageUrl) => {
-            temp = currFrameId;
-
-            return setTimeout(() => {
-              this.setCurrFrameId(i + temp);
-              this.props.onSelectDataUrl(imageUrl);
-            }, i * 200);
-          })(idx, item.imageUrl);
-        });
+        for (; i <= frameLength; i++, number++) {
+          timers[ i ] = ((idx, number) =>
+            setTimeout(() => {
+              onChangeFrame(idx);
+            }, number * 200)
+          )(i, number);
+        }
       } else {
-        timers.forEach(item => {
-          clearTimeout(item);
-        });
+        Object.keys(timers).forEach(key => clearTimeout(timers[ key ]));
       }
+
+      // if (isPlay) {
+      //   let list = dataSource.slice(currFrame - 1);
+      //
+      //   list.forEach((item, idx) => {
+      //     timers[ idx ] = ((i, imageUrl) => {
+      //       temp = currFrame;
+      //
+      //       return setTimeout(() => {
+      //         this.setCurrFrame(i + temp);
+      //         this.props.onSelectDataUrl(imageUrl);
+      //       }, i * 200);
+      //     })(idx, item.imageUrl);
+      //   });
+      // } else {
+      //   Object.keys(timers).forEach(key => {
+      //     clearTimeout(item);
+      //   });
+      // }
     };
   };
-
-  setCurrFrameId = (currFrameId, cb) =>
-    this.setState({ currFrameId }, cb);
-
-  handleSelectDataUrl = (url) => () =>
-    this.props.onSelectDataUrl(url);
 
   // 播放或暂停
   handlePlayOrPause = () =>
     this.setState({ isPlay: !this.state.isPlay }, this.execute);
 
-  handlePlayAction = (getCurrFrameId: Function, warningMsg: String) => () => {
-    const { currFrameId, isPlay } = this.state;
-    let newCurrFrameId;
+  handlePlayAction = (getCurrFrame: Function, warningMsg: String) => () => {
+    const { isPlay } = this.state;
+    const { frame, frameLength, onChangeFrame } = this.props;
+    let newFrame;
 
     if (isPlay) {
       message.warning('正在播放中，请先暂停');
       return;
     }
 
-    newCurrFrameId = getCurrFrameId(currFrameId);
+    newFrame = getCurrFrame(frame);
 
-    if (this.checkFrameId(newCurrFrameId)) {
-      this.setCurrFrameId(newCurrFrameId, () => {
-        const dataSource = this.getDataSource();
-        this.props.onSelectDataUrl(dataSource[ this.state.currFrameId ].imageUrl);
-      });
-    } else {
+    if (newFrame <= 0 || newFrame > frameLength) {
       message.warning(warningMsg);
+      return;
     }
+
+    onChangeFrame(newFrame);
   };
 
+  // shouldComponentUpdate(nextProps) {
+  //   return nextProps.path !== this.props.path || nextProps.time !== this.props.time;
+  // }
+
   render() {
-    // const {
-    //   materialId, sceneId, materials,
-    //   frames, imageData,
-    //   setFrameDataUrl, onSelectDataUrl } = this.props;
-    // const { isPlay, currFrameId } = this.state;
-    // const { src, duration } = getItemByKey(materials, materialId, 'materialId') || {};
-    // const dataSource = this.getDataSource();
-    // const keyImageData = this.getKeyFrames(dataSource);
-    const { path, properties, frames } = this.props.material;
-    const { isPlay, currFrameId } = this.state;
+    const { path, frames, frame, time, frameLength, onChangeFrame } = this.props;
+    const { isPlay } = this.state;
 
     return (
         <div className="timeline">
 
           {/* 转换素材的帧图片 */}
-          <ParseMaterialToFrameImage
-            videoSrc={ config.api.host + path }
-            duration={ properties.time }
+          {/*<ParseMaterialToFrameImage
+            videoSrc={ path }
+            duration={ time }
             frames={ frames }
-            onGetFrameImage={ this.handleGetFrameImage }
-            onSetMaterialFrames={ this.props.onSetMaterialFrames } />
+            frameLength={ frameLength }
+            onGetFrameImage={ this.handleGetFrameImage } />*/}
 
           <div className="header">
             <div className="player">
@@ -191,7 +187,7 @@ class Timeline extends Component {
             </div>
 
             <div className="currframe">
-              <label>当前第</label><label>{ currFrameId }</label><label>帧</label>
+              <label>当前第</label><label>{ frame }</label><label>帧</label>
             </div>
 
             <div className="singleframe">
@@ -211,23 +207,20 @@ class Timeline extends Component {
           <div className="wrapper">
 
             <div className="ruler">
-              {/*<Scrollbar>
+              <Scrollbar style={{ width: '100%', height: '100%' }}>
                 <Tick
-                  max={ this.state.currFrames.length }
+                  max={ frameLength }
                   unit="f"
-                  index={ this.state.currFrameId }
-                  onChangeTick={ (tick) => {
+                  index={ frame }
+                  onChangeTick={ (frame) => {
                     if (isPlay) {
                       message.warning('正在播放中，请先暂停');
                       return;
                     }
 
-                    this.setCurrFrameId(tick, () => {
-                      const dataSource = this.getDataSource();
-                      onSelectDataUrl(dataSource[ this.state.currFrameId ].imageUrl);
-                    });
+                    onChangeFrame(frame);
                   }} />
-              </Scrollbar>*/}
+              </Scrollbar>
             </div>
 
             <div className="frames">
@@ -243,7 +236,6 @@ class Timeline extends Component {
           </div>
 
           <style>{`
-
             .timeline {
               display: flex;
               flex-flow: column nowrap;
@@ -320,7 +312,6 @@ class Timeline extends Component {
             }
 
             .timeline .wrapper .frames {
-              padding: 10px 12px;
               overflow: auto;
             }
 

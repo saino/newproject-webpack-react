@@ -4,12 +4,6 @@ import { deepCompare } from 'pure-render-immutable-decorator';
 import VideoFrame from '../../utils/video-frame';
 
 export default class ParseMaterialToTime extends Component {
-  static propTypes = {
-    videoSrc: PropTypes.string,
-    onSetMaterialTime: PropTypes.func,
-    frameLength: PropTypes.number
-  };
-
   constructor(props) {
     super(props);
 
@@ -20,27 +14,57 @@ export default class ParseMaterialToTime extends Component {
     this.playerEl = this.videoFrame = null;
   }
 
-  mapSecondAndFrame() {
-    const res = [];
+  getFrameTime = (frame) => {
+    const { time, frameLength } = this.props;
+    const frameRate = frameLength / time;
+    console.log(time, frameLength, 'haha')
+    return (frame * (1000 / frameRate)) / 1000;
+  };
 
-    for (let i = 1; i <= this.props.frameLength; i++) {
-      res.push({ frameId: i, time: this.videoFrame.toTime(i) });
+  computeFrame = () => {
+    const canvasWidth = this.frameCanvasEl.width;
+    const canvasHeight = this.frameCanvasEl.height;
+    let frameImageData, l, i, r, g, b;
+
+    this.frameCanvasContext.drawImage(this.playerEl, 0, 0, canvasWidth, canvasHeight);
+    frameImageData = this.frameCanvasContext.getImageData(0, 0, canvasWidth, canvasHeight);
+
+    for (i = 0, l = frameImageData.data.length / 4; i < l; i++) {
+      r = frameImageData.data[ i * 4 + 0 ];
+      g = frameImageData.data[ i * 4 + 1 ];
+      b = frameImageData.data[ i * 4 + 2 ];
+
+      // if (g > 100 && r > 100 && b < 43) {
+      //   frameImageData.data[ i * 4 + 3 ] = 0;
+      // }
     }
 
-    return res;
+    this.frameCanvasContext.putImageData(frameImageData, 0, 0);
+    this.props.onSetFrameImageUrl(this.frameCanvasEl.toDataURL('image/jpeg'));
+  };
+
+  setTime = (frame) => {
+    this.playerEl.currentTime = this.getFrameTime(frame);
   }
 
-  shouldComponentUpdate(nextProps) {
-    return deepCompare(this, nextProps);
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.frame == 1 && this.props.time !== nextProps.time) || (nextProps.frame !== this.props.frame)) {
+      this.setTime(nextProps.frame);
+    }
   }
 
   render() {
+    console.log('gp');
     return (
-      <video style={{ display: 'none' }} ref={ el => this.playerEl = el } src={ this.props.videoSrc }></video>
+      <div>
+        <canvas ref={ el => this.frameCanvasEl = el } style={{ display: 'none' }}></canvas>
+        <video style={{ display: 'none' }} crossOrigin="Anonymous" ref={ el => this.playerEl = el } src={ this.props.videoSrc }></video>
+      </div>
     );
   }
 
   componentDidMount() {
+    this.playerEl.addEventListener('seeked', () => this.computeFrame(), false);
     this.playerEl.addEventListener('loadedmetadata', () => {
       this.videoFrame = new VideoFrame({
         duration: this.playerEl.duration,
@@ -49,12 +73,7 @@ export default class ParseMaterialToTime extends Component {
 
       // 设置素材的总时长
       this.props.onSetMaterialTime(this.playerEl.duration);
-
-      // const { materialId, setDuration, onComplete } = this.props;
-      //
-      // // 得到素材的总时长
-      // setDuration(materialId, this.playerEl.duration);
-      // onComplete(this.mapSecondAndFrame());
     }, false);
+    this.frameCanvasContext = this.frameCanvasEl.getContext('2d');
   }
 }

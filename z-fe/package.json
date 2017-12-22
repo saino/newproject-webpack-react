@@ -45,6 +45,7 @@
     "pure-render-immutable-decorator": "^1.0.3",
     "rc-pagination": "^1.12.9",
     "react": "^15.5.0",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dev-utils": "^4.0.1",
     "react-dom": "^15.5.0",
     "react-draggable-list": "^3.4.1",
@@ -70,6 +71,13 @@
     "build": "node scripts/build.js"
   },
   "proxy": {
+    "/data/materials/.*": {
+      "target": "http://192.168.3.116:8888",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,OPTIONS,HEAD,PUT,POST,DELETE,PATCH",
+      "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, X-Request-With",
+      "Access-Control-Allow-Credentials": "true"
+    },
     "/user/.*": {
       "target": "http://192.168.3.116:8888",
       "rewrite": true,

@@ -70,7 +70,7 @@ class Make extends Component {
             onDelete={ this.handleDeleteProjectMaterial } />
         );
 
-      case 2:
+      case 1:
         return (
           <Roto
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
@@ -79,7 +79,7 @@ class Make extends Component {
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
 
-      case 1:
+      case 2:
         return (
           <Compose
             compose={ compose }

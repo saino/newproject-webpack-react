@@ -85,7 +85,7 @@ export default class Core extends Component {
         path += pathData.firstPoint().generatePath();
 		    path += 'Z';
       }
-      console.log(state, 'gg');
+      
       this.setState({ ...state, path });
     });
   }

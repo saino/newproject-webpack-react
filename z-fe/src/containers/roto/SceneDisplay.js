@@ -5,10 +5,10 @@ import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 /* 业务组件 */
-// import TransformToolBar from '../make/TransformToolbar';
+import TransformToolBar from '../make/TransformToolbar';
 import PenTool from './PenTool';
-// import VideoRender from '../../components/video/VideoRender';
-// import Matting from '../../components/matting/Matting';
+import VideoRender from '../../components/video/VideoRender';
+import Matting from '../../components/matting/Matting';
 import ParseMaterialToTime from '../../components/video/ParseMaterialToTime';
 // import ComposeRender from './ComposeRender';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
@@ -24,7 +24,8 @@ export default class SceneDisplay extends Component {
     frameDataUrl: ''
   };
   state = {
-    scale: 1
+    scale: 1,
+    imageUrl: ''
   };
 
   parseFrameComplete = (frames) => {
@@ -32,18 +33,20 @@ export default class SceneDisplay extends Component {
 
     solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
   };
+
   handleZoomOut = () =>
     this.setState({ scale: this.state.scale + config.transform.stepScale });
+
   handleZoomIn = () =>
     this.setState({ scale: this.state.scale - config.transform.stepScale });
 
-  handleSetMaterialTime = (duration) =>
-    this.props.onSetMaterialTime(duration);
+  handleSetFrameImageUrl = (imageUrl) =>
+    this.setState({ imageUrl });
 
   render() {
-    const { material, scene } = this.props;
-    const { scale } = this.state;
-    console.log(material, 'nm');
+    const { path, frameLength, time, frame, scene } = this.props;
+    const { scale, imageUrl } = this.state;
+
     // const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
     // let renderSomething = (
     //   <VideoRender
@@ -80,14 +83,20 @@ export default class SceneDisplay extends Component {
 
              {/* 得到视频的时长 */}
              <ParseMaterialToTime
-               videoSrc={ config.api.host + material.path }
-               frameLength={ material.properties.length }
-               onSetMaterialTime={ this.handleSetMaterialTime } />
+               videoSrc={ path }
+               frameLength={ frameLength }
+               time={ time }
+               frame={ frame }
+               onSetFrameImageUrl={ this.handleSetFrameImageUrl  }
+               onSetMaterialTime={ this.props.onSetMaterialTime } />
 
              {/* 抠像 */}
-             {/*<Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>*/}
+             <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
 
-             {/* renderSomething */}
+             {/* 播放视频每张帧图片 */}
+             <VideoRender
+               style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
+               frameImageUrl={ imageUrl } />
 
            </div>
         </div>
@@ -99,9 +108,9 @@ export default class SceneDisplay extends Component {
           </div>
 
           <div className="transform">
-            {/*<TransformToolBar
+            <TransformToolBar
               onZoomOut={ this.handleZoomOut }
-              onZoomIn={ this.handleZoomIn } />*/}
+              onZoomIn={ this.handleZoomIn } />
           </div>
 
         </div>
@@ -121,6 +130,7 @@ export default class SceneDisplay extends Component {
           }
           .scene-center-inner,
           .scene-center-inner .canvas {
+            position: relative;
             height: 100%;
           }
           .scene-center-inner .canvas {

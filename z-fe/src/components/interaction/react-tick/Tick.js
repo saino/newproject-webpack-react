@@ -9,16 +9,6 @@ function changeTick (i) {
 }
 
 export default class Tick extends PureComponent {
-
-  static propTypes = {
-    unit: PropTypes.string.isRequired,
-    max: PropTypes.number,
-    step: PropTypes.number,
-    index: PropTypes.number,
-    getSize: PropTypes.func,
-    onChangeTick: PropTypes.func
-  };
-
   static defaultProps = {
     max: 0,
     step: 5,
@@ -67,10 +57,10 @@ export default class Tick extends PureComponent {
         <style>{
           `
             .tick {
-              position: absolute;
+              position: relative;
               left: 0;
               top: 0;
-              height: -webkit-calc(100% - 10px);
+              height: -webkit-calc(100% - 27px);
               color: #6b7580;
               padding: 0 4px;
             }
@@ -139,7 +129,7 @@ export default class Tick extends PureComponent {
   componentDidUpdate() {
     const el = findDOMNode(this);
 
-    this.props.getSize({ width: el.clientWidth, height: el.clientHeight });
+    //this.props.getSize({ width: el.clientWidth, height: el.clientHeight });
   }
 
 }
