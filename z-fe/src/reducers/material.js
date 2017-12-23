@@ -2,6 +2,7 @@ import { add, update, remove } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
+import scene from './scene';
 
 /*
   item.work_id Number 作品id
@@ -19,7 +20,53 @@ import { logout } from './user';
 */
 const defState = {
   materials: [],
-  scenes: []
+  scenes: [],
+  layers: [{
+    id: 1,
+    scene_id: 3,
+    start_frame: 0,
+    end_freme: 100,
+    tranfrom: "matrix",
+    thumb: "xx.jpg",
+    path: "xx.mp4",
+    height: "900px",
+    width: "700px",
+    position: {
+      letf: 0,
+      top: 0,
+    },
+    order: 0,
+  }, {
+    id: 2,
+    scene_id: 1,
+    start_frame: 0,
+    end_freme: 100,
+    tranfrom: "matrix",
+    thumb: "ggg.jpg",
+    path: "ggg.mp4",
+      height: "900px",
+      width: "700px",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    order: 2
+  }, {
+    id: 3,
+    scene_id: 3,
+    start_frame: 0,
+    end_freme: 100,
+    tranfrom: "matrix",
+    thumb: "hhh.jpg",
+    path: "hhh.mp4",
+    height: "100px",
+    width: "60px",
+    position: {
+      left: 0,
+      top: 0
+    },
+    order: 1
+  }],
 };
 
 const actionTypes = {
@@ -30,9 +77,17 @@ const actionTypes = {
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION',
   SET_FRAMES: 'SET_FRAMES',
-  CLEAR_MATERIALS: 'CLEAE_MATERIALS'
+  CLEAR_MATERIALS: 'CLEAE_MATERIALS',
+  ADD_LAYERS: 'ADD_LAYERS',
 };
 
+/**
+ * 添加镜头图层
+ */
+export const addLayers = (layer) => ({
+  type: actionTypes.ADD_LAYERS,
+  layer
+});
 /**
  * 获取素材列表
  */
@@ -41,7 +96,15 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
       materials: resp.materials || [],
-      scenes: resp.scenes || []
+      scenes: resp.scenes || [{
+        id: 1,
+        type: "roto",
+        material_id: "33"
+      }, {
+          id: 2,
+          type: "roto",
+          material_id: "34",
+        }]
     });
   });
 });
@@ -130,7 +193,10 @@ export default (state = defState, action) => {
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
 
     case actionTypes.CLEAR_MATERIALS:
-      return { ...state, materials: []}
+      return { ...state, materials: []};
+
+    case actionTypes.ADD_LAYERS: 
+      return { ...state, layers: add(state.layers, action.layer)};
 
     default:
       return state;

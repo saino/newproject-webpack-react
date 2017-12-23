@@ -12,8 +12,11 @@ import React, {Component} from 'react'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
 import DragTransform from '../../components/interaction/transform';
 import ComposeControl from './ComposeControl';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-export default class ComposeRender extends Component {
+class ComposeRender extends Component {
     removeComposeLayer=this.removeComposeLayer.bind(this)
     constructor() {
         super()
@@ -70,7 +73,9 @@ export default class ComposeRender extends Component {
     }
 
     render() {
+        console.log(this.props);
         const {compose,select,addMaterial,changeLayer,removeMaterial,toggleMaterial} = this.props
+        const { material } = this.props;
         const layers = compose.materials.map((item, index) => {
             let style = {width: item.width, height: item.height}
             if(item.transformString){
@@ -147,3 +152,9 @@ export default class ComposeRender extends Component {
         </div>);
     }
 }
+
+const mapStatToProps = ( { material} ) => ({
+    material
+});
+
+export default connect(mapStatToProps)(ComposeRender);

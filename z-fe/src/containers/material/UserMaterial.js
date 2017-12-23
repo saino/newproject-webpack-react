@@ -18,7 +18,7 @@ export default class UserMaterial extends Component {
     uploadProgress: 0
   }
 
-  componentWillUnmount(){
+  componentWillMount(){
     this.props.clearMaterials();
   }
 
