@@ -9,14 +9,16 @@ import completePNG from '../../statics/pick_complete_icon.png';
 
 export default class PenTool extends Component {
   render() {
+    const { onOpenPen, onMoveNode, onAddNode, onRemoveNode, onAddLayer, onComplete } = this.props;
+
     return (
       <div className="transform-toolbar">
-        <span><Tooltip title="打开钢笔工具"><img src={ penPNG } /></Tooltip></span>
-        <span><Tooltip title="移动节点"><img src={ movePNG } /></Tooltip></span>
-        <span><Tooltip title="添加节点"><img src={ addNodePNG } /></Tooltip></span>
-        <span><Tooltip title="删除节点"><img src={ removeNodePNG } /></Tooltip></span>
-        <span><Tooltip title="添加蒙层"><img src={ maskPNG } /></Tooltip></span>
-        <span><Tooltip title="完成"><img src={ completePNG } /></Tooltip></span>
+        <span onClick={ onOpenPen }><Tooltip title="打开钢笔工具" placement="right"><img src={ penPNG } /></Tooltip></span>
+        <span onClick={ onMoveNode }><Tooltip title="移动节点" placement="right"><img src={ movePNG } /></Tooltip></span>
+        <span onClick={ onAddNode }><Tooltip title="添加节点" placement="right"><img src={ addNodePNG } /></Tooltip></span>
+        <span onClick={ onRemoveNode }><Tooltip title="删除节点" placement="right"><img src={ removeNodePNG } /></Tooltip></span>
+        <span onClick={ onAddLayer }><Tooltip title="添加蒙层" placement="right"><img src={ maskPNG } /></Tooltip></span>
+        <span onClick={ onComplete }><Tooltip title="完成" placement="right"><img src={ completePNG } /></Tooltip></span>
         <style>{`
           .transform-toolbar {
             padding: 12px;

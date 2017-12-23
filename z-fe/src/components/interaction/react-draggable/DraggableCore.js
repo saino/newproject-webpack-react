@@ -68,7 +68,6 @@ export default class DraggableCore extends Component {
     if (!this.hasPressSpace)
       return;
 
-
     const el = findDOMNode(this);
     const { ownerDocument } = el;
     const { onDragStart, handle } = this.props;

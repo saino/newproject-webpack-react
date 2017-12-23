@@ -17,7 +17,7 @@ export default class ParseMaterialToTime extends Component {
   getFrameTime = (frame) => {
     const { time, frameLength } = this.props;
     const frameRate = frameLength / time;
-    console.log(time, frameLength, 'haha')
+
     return (frame * (1000 / frameRate)) / 1000;
   };
 
@@ -54,7 +54,6 @@ export default class ParseMaterialToTime extends Component {
   }
 
   render() {
-    console.log('gp');
     return (
       <div>
         <canvas ref={ el => this.frameCanvasEl = el } style={{ display: 'none' }}></canvas>

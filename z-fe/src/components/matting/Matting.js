@@ -5,14 +5,6 @@ import Path from './utils/Path';
 import Core from './MattingCore';
 
 export default class Matting extends Component {
-  static propTypes = {
-    style: PropTypes.object,
-    onComplete: PropTypes.func.isRequired
-  };
-  static defaultProps = {
-    style: {}
-  };
-
   actualCount = 0;
 
   state = {
@@ -30,9 +22,10 @@ export default class Matting extends Component {
     pathData: new Path
   };
 
+  emptyFn = () => {};
+
   handleMouseDown = (e) => {
     const { offsetX, offsetY } = e.nativeEvent;
-
     let downState = { x: offsetX, y: offsetY, dragging: true };
     let pathData = this.state.pathData;
 
@@ -103,21 +96,36 @@ export default class Matting extends Component {
   };
 
   render() {
-    return (
-      <div
-        className="matting"
-        style={ this.props.style }
-        onMouseDown={ this.handleMouseDown }
-        onMouseMove={ this.handleMouseMove }
-        onMouseUp={ this.handleMouseUp }>
-        <Core
-          x={ this.state.x }
-          y={ this.state.y }
-          dragging={ this.state.dragging }
-          drawStatus={ this.state.drawStatus }
-          pathData={ this.state.pathData }>
-        </Core>
-      </div>
-    );
+    const { isMetting } = this.props;
+    const { x, y, dragging, drawStatus, pathData } = this.state;
+
+    return cloneElement(this.props.children, {
+      onMouseDown: isMetting ? this.handleMouseDown : this.emptyFn,
+      onMouseMove: isMetting ? this.handleMouseMove : this.emptyFn,
+      onMouseUp: isMetting ? this.handleMouseUp : this.emptyFn
+    }, (
+      <Core
+        x={ x }
+        y={ y }
+        dragging={ dragging }
+        drawStatus={ drawStatus }
+        pathData={ pathData } />
+    ));
+    // return (
+    //   <div
+    //     className="matting"
+    //     style={ this.props.style }
+    //     onMouseDown={ this.handleMouseDown }
+    //     onMouseMove={ this.handleMouseMove }
+    //     onMouseUp={ this.handleMouseUp }>
+    //     <Core
+    //       x={ this.state.x }
+    //       y={ this.state.y }
+    //       dragging={ this.state.dragging }
+    //       drawStatus={ this.state.drawStatus }
+    //       pathData={ this.state.pathData }>
+    //     </Core>
+    //   </div>
+    // );
   }
 }
