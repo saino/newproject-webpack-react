@@ -14,23 +14,25 @@ import Timeline from './Timeline';
 
 export default class Roto extends Component {
   state = {
-    sceneIndex: 0
+    sceneIndex: 0,
+    currFrame: 1
   };
 
   handleChangeScene = (sceneIndex) =>
     this.setState({ sceneIndex });
 
+  handleChangeFrame = (currFrame) =>
+    this.setState({ currFrame });
+
   handleSetMaterialTime = (duration) =>
     this.props.onSetMaterialTime(duration);
 
   handleSetMaterialFrames = (frames) =>
-    this.props.onSetMaterialTime(frames);
+    this.props.onSetMaterialFrames(frames);
 
   render() {
-    const {
-      scenes, material,
-      onSetMaterialTime, onSetMaterialFrames
-    } = this.props;
+    const { scenes, material, onSetMaterialTime, onSetMaterialFrames } = this.props;
+    const { currFrame } = this.state;
     const scene = scenes[ this.state.sceneIndex ];
 
     return (
@@ -44,32 +46,29 @@ export default class Roto extends Component {
           {/* 镜头展示 */}
           <div className="scene-display">
             <SceneDisplay
-              material={ material }
+              path={ material.path }
+              frameLength={ material.properties.length }
+              time={ material.properties.time }
+              frame={ currFrame }
               scene={ scene }
               onSetMaterialTime={ this.handleSetMaterialTime } />
           </div>
 
-          {/*<SceneDisplay
-            materialId={ this.state.currMaterialId }
-            sceneId={ this.state.currSceneId }
-            materials={ this.props.material }
-            selectStep={ this.props.selectStep }
-            frameDataUrl={ this.state.frameDataUrl } /> */}
-
           {/* 控制面板 */}
           <ControllerPanel material={ material } />
+
         </div>
         <div className="roto-bottom">
+
           {/* 时间轴 */}
           <Timeline
-            onSetMaterialFrames={ this.handleSetMaterialFrames }
-            material={ material } />
-          {/*<Timeline
-            onSetMaterialFrames={ this.handleSetMaterialFrames }
-            material={ material }
-            frames={ this.props.frame }
-            imageData={ this.props.imageData }
-            onSelectDataUrl={ frameDataUrl => this.setState({ frameDataUrl }) } />*/}
+            path={ material.path }
+            frameLength={ material.properties.length }
+            frame={ currFrame }
+            time={ material.properties.time }
+            frameLength={ material.properties.length }
+            onChangeFrame={ this.handleChangeFrame } />
+
         </div>
         <style>{`
           .roto {
@@ -92,31 +91,8 @@ export default class Roto extends Component {
             display: flex;
             flex: 1;
           }
-          .roto-bottom {
-            height: 120px;
-          }
         `}</style>
       </div>
     );
   }
 }
-
-// function mapStateToProps ({ material, frame, imageData, step }) {
-//   return {
-//     material,
-//     frame,
-//     imageData,
-//     selectStep: step.steps[step.current]
-//   };
-// }
-//
-// function mapDispatchToProps (dispatch) {
-//   return {
-//     listScene: function () {}//bindActionCreators(listScene, dispatch)
-//   };
-// }
-//
-// export default connect(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(Roto);

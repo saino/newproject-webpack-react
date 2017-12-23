@@ -5,25 +5,10 @@ import { is, Map } from 'immutable';
 import { getItemByKey } from '../../utils/stateSet';
 
 export default class ParseMaterialToFrameImage extends Component {
-  static propTypes = {
-    videoSrc: PropTypes.string,
-    duration: PropTypes.number,
-    frames: PropTypes.array,
-    onSetMaterialFrames: PropTypes.func
-  };
-  static defaultProps = {
-    videoSrc: '',
-    duration: 0,
-    frames: [],
-    onSetMaterialFrames: function () {}
-  };
-
   computeFrame(currentTime) {
     const width = this.oriCanvasEl.width;
     const height = this.oriCanvasEl.height;
-
     this.oriCanvasContext.drawImage(this.videoEl, 0, 0, width, height);
-
     let frame = this.oriCanvasContext.getImageData(0, 0, width, height);
     let l = frame.data.length / 4;
 
@@ -36,18 +21,40 @@ export default class ParseMaterialToFrameImage extends Component {
     }
 
     this.tmpCanvasContext.putImageData(frame, 0, 0);
-    this.props.onGetFrameImage(this.props.duration, currentTime, this.tmpCanvasEl.toDataURL());
+    this.props.onGetFrameImage(this.props.duration, currentTime, this.tmpCanvasEl.toDataURL('image/jpeg'));
   }
 
   parseVideoSecondsToDataUrl(nextProps) {
-    const { frames } = nextProps;
+    const { duration, frameLength } = nextProps;
+    const frameRate = Math.floor(frameLength / duration);
+    const msByFrame = 1000 / frameRate;
+    let isEnd = false;
+    let isContinue = true;
+    let i = 1;
+    let timer = null;
+    let time;
 
-    frames.forEach(({ time }) =>
-      setTimeout(
-        () => this.videoEl.currentTime = time,
-        time * 1000
-      )
-    );
+    for (i; i <= Math.floor(frameLength / 100); i++) {
+      ((idx) => {
+        let time = idx * msByFrame;
+
+        timer = setTimeout(() => {
+          clearTimeout(timer);
+          // isEnd = (time / 1000) >= duration;
+          //
+          // if (isContinue) {
+          //   this.videoEl.currentTime = time / 1000;
+          // }
+          //
+          // if (isEnd && isContinue) {
+          //   isContinue = false;
+          // }
+          this.videoEl.currentTime = time / 1000;
+
+        }, time);
+
+      })(i);
+    }
   }
 
   constructor(props) {
@@ -56,15 +63,21 @@ export default class ParseMaterialToFrameImage extends Component {
     this.oriCanvasEl = this.oriCanvasContext = this.tmpCanvasEl = this.tmpCanvasContext = this.frameId = null;
   }
 
-  shouldComponentUpdate(nextProps) {
-    const isUpdate = !(is(Map(this.props.frames), Map(nextProps.frames)))
-      || !(is(this.props.videoSrc, nextProps.videoSrc))
-      || !(is(this.props.onComplete, nextProps.onComplete));
+  // shouldComponentUpdate(nextProps) {
+  //
+  //   return true;
+  //   // const isUpdate = nextProps.videoSrc !== this.props.videoSrc
+  //   //   || nextProps.duration !== this.props.duration
+  //   //   || !(is(Map(this.props.frames), Map(nextProps.frames)));
+  //   //
+  //   // if (isUpdate)
+  //   //   this.parseVideoSecondsToDataUrl(nextProps);
+  //   //
+  //   // return isUpdate;
+  // }
 
-    if (isUpdate)
-      this.parseVideoSecondsToDataUrl(nextProps);
-
-    return isUpdate;
+  componentWillReceiveProps(nextProps) {
+    this.parseVideoSecondsToDataUrl(nextProps);
   }
 
   render() {
@@ -72,7 +85,7 @@ export default class ParseMaterialToFrameImage extends Component {
       <div className="parse-frame-to-image-data">
         <canvas ref={ el => this.oriCanvasEl = el } style={{ display: 'none' }}></canvas>
         <canvas ref={ el => this.tmpCanvasEl = el } style={{ display: 'none' }}></canvas>
-        <video ref={ el => this.videoEl = el } style={{ display: 'none' }} src={ this.props.videoSrc }></video>
+        <video ref={ el => this.videoEl = el } crossOrigin="Anonymous" style={{ display: 'none' }} src={ this.props.videoSrc }></video>
       </div>
     );
   }
@@ -80,8 +93,7 @@ export default class ParseMaterialToFrameImage extends Component {
   componentDidMount() {
     this.oriCanvasContext = this.oriCanvasEl.getContext('2d');
     this.tmpCanvasContext = this.tmpCanvasEl.getContext('2d');
-
-    this.videoEl.addEventListener('seeked', () => this.computeFrame(this.videoEl.currentTime), false);
+    this.videoEl.addEventListener('seeked', () => { this.computeFrame(this.videoEl.currentTime) }, false);
   }
 
 }

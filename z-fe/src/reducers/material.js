@@ -158,11 +158,13 @@ export const setDuration = (materialId, duration) => ({
 /**
  * 设置素材帧图片集合
  */
-export const setFrames = (materialId, frames) => ({
-  type: actionTypes.SET_FRAMES,
-  materialId,
-  frames
-});
+export const setFrames = (materialId, frames) => {
+  return {
+    type: actionTypes.SET_FRAMES,
+    materialId,
+    frames
+  };
+};
 
 export default (state = defState, action) => {
   switch (action.type) {
@@ -187,6 +189,7 @@ export default (state = defState, action) => {
       return { ...state, scenes: add(state.scenes, scene) };
 
     case actionTypes.SET_FRAMES:
+      console.log(action.frames, action.materialId, 'xxxoo');
       return { ...state, materials: update(state.materials, { 'properties.frames': action.frames }, action.materialId, 'id') };
 
     case actionTypes.SET_DURATION:
