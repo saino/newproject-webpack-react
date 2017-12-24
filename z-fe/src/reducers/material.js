@@ -19,7 +19,8 @@ import { logout } from './user';
 */
 const defState = {
   materials: [],
-  scenes: []
+  scenes: [],
+  rotos: []
 };
 
 const actionTypes = {
@@ -30,7 +31,8 @@ const actionTypes = {
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION',
   SET_FRAMES: 'SET_FRAMES',
-  CLEAR_MATERIALS: 'CLEAE_MATERIALS'
+  CLEAR_MATERIALS: 'CLEAE_MATERIALS',
+  CREATE_ROTO: 'CREATE_ROTO'
 };
 
 /**
@@ -57,9 +59,8 @@ export const clearMaterials = () => {
 
 /**
  * 删除素材
- * @param id { String } 素材id
  */
-export const deleteMaterial = (materialId) => ({
+export const deleteMaterial = ({ materialId }) => ({
   type: actionTypes.DELETE_MATERIAL,
   materialId
 });
@@ -67,7 +68,7 @@ export const deleteMaterial = (materialId) => ({
 /**
  * 上传素材
  */
-export const uploadMaterial = (material) => ({
+export const uploadMaterial = ({ material }) => ({
   type: actionTypes.UPLOAD_MATERIAL,
   material
 });
@@ -86,22 +87,29 @@ export const createScene = ({ id, mtype, materialId, roto }) => ({
 /**
  * 设置素材时长
  */
-export const setDuration = (materialId, duration) => ({
+export const setDuration = ({ materialId, duration }) => ({
   type: actionTypes.SET_DURATION,
   materialId,
   duration
 });
 
 /**
- * 设置素材帧图片集合
+ * 创建抠像svg path
+ * @param option { Object }
+ *  option.materialId 素材id
+ *  option.sceneId 镜头id
+ *  option.frame 帧
+ *  option.type 抠像类别
+ *  option.svg svg集合
  */
-export const setFrames = (materialId, frames) => {
-  return {
-    type: actionTypes.SET_FRAMES,
-    materialId,
-    frames
-  };
-};
+export const createRoto = ({ materialId, sceneId, frame, mtype, svg }) => ({
+  type: actionTypes.CREATE_ROTO,
+  materialId,
+  sceneId,
+  frame,
+  mtype,
+  svg
+});
 
 export default (state = defState, action) => {
   switch (action.type) {
@@ -125,9 +133,10 @@ export default (state = defState, action) => {
 
       return { ...state, scenes: add(state.scenes, scene) };
 
-    case actionTypes.SET_FRAMES:
-      console.log(action.frames, action.materialId, 'xxxoo');
-      return { ...state, materials: update(state.materials, { 'properties.frames': action.frames }, action.materialId, 'id') };
+    case actionTypes.CREATE_ROTO:
+      const roto = { materialId: action.materialId, sceneId: action.sceneId, frame: action.frame, mtype: action.mtype, svg: action.svg };
+
+      return { ...state, rotos: add(state.rotos, roto) };
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };

@@ -8,7 +8,7 @@ import Roto from './roto/Roto';
 import Compose from './compose/ComposeRender';
 import {
   getMaterials, deleteMaterial, uploadMaterial,
-  createScene, setDuration, setFrames, clearMaterials
+  createScene, setDuration, clearMaterials, createRoto
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
@@ -24,7 +24,7 @@ class Make extends Component {
   };
 
   handleDeleteProjectMaterial = materialId =>
-    this.props.deleteMaterial(materialId);
+    this.props.deleteMaterial({ materialId });
 
   handleEditMaterial = materialId =>
     this.setState({
@@ -43,16 +43,19 @@ class Make extends Component {
       });
     });
 
-  handleSetMaterialTime = (duration) =>
-    this.props.setDuration(this.state.materialId, duration);
+  handleUploadMaterial = (material) =>
+    this.props.uploadMaterial({ material });
 
-  handleSetMaterialFrames = (frames) =>
-    this.props.setFrames(this.state.materialId, frames);
+  handleSetMaterialTime = (duration) =>
+    this.props.setDuration({ materialId: this.state.materialId, duration });
+
+  handleCreateRoto = (sceneId, frame, svg) =>
+    this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
 
   renderChild(index) {
     const {
       material, match, user, compose,
-      uploadMaterial, addMaterial, changeLayer,
+      addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
     } = this.props;
@@ -65,7 +68,7 @@ class Make extends Component {
             workId={ match.params.workId }
             materials={ material.materials }
             clearMaterials={ clearMaterials }
-            onUploadMaterial={ uploadMaterial }
+            onUploadMaterial={ this.handleUploadMaterial }
             onEdit={ this.handleEditMaterial }
             onDelete={ this.handleDeleteProjectMaterial } />
         );
@@ -75,7 +78,7 @@ class Make extends Component {
           <Roto
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') }
-            onSetMaterialFrames={ this.handleSetMaterialFrames }
+            onCreateRoto={ this.handleCreateRoto }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
 
@@ -156,8 +159,8 @@ const mapDispatchToProps = (dispatch) => ({
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
   createScene: bindActionCreators(createScene, dispatch),
   setDuration: bindActionCreators(setDuration, dispatch),
-  setFrames: bindActionCreators(setFrames, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
+  createRoto: bindActionCreators(createRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),
   select: bindActionCreators(select, dispatch),
   removeMaterial: bindActionCreators(removeMaterial, dispatch),

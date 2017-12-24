@@ -27,11 +27,8 @@ export default class Roto extends Component {
   handleSetMaterialTime = (duration) =>
     this.props.onSetMaterialTime(duration);
 
-  handleSetMaterialFrames = (frames) =>
-    this.props.onSetMaterialFrames(frames);
-
   render() {
-    const { scenes, material, onSetMaterialTime, onSetMaterialFrames } = this.props;
+    const { scenes, material, onSetMaterialTime } = this.props;
     const { currFrame } = this.state;
     const scene = scenes[ this.state.sceneIndex ];
 

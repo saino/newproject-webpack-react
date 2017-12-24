@@ -16,10 +16,10 @@ export default class VideoRender extends Component {
   }
 
   render() {
-    const { style, frameImageUrl, onMouseDown, onMouseMove, onMouseUp, children } = this.props;
+    const { style, frameImageUrl, onMouseDown, onMouseMove, onMouseUp, children, cursor } = this.props;
 
     return (
-      <Draggable>
+      <Draggable cursor={ cursor }>
         <div
           className="video-render"
           style={ this.props.style }>

@@ -60,7 +60,7 @@ export default class SceneDisplay extends Component {
 
   render() {
     const { path, frameLength, time, frame, scene } = this.props;
-    const { scale, imageUrl, plyIndex } = this.state;
+    const { scale, imageUrl, isOpenPen } = this.state;
 
     return (
       <div className="scene-center">
@@ -81,6 +81,7 @@ export default class SceneDisplay extends Component {
                {/* 显示帧图片 */}
                <VideoRender
                  style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, zIndex: 1 }}
+                 cursor={ isOpenPen ? 'default' : 'move' }
                  frameImageUrl={ imageUrl } />
              </Matting>
 
