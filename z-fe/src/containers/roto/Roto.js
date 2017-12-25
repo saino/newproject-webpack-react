@@ -27,10 +27,18 @@ export default class Roto extends Component {
   handleSetMaterialTime = (duration) =>
     this.props.onSetMaterialTime(duration);
 
+  handleCreateRoto = (svg) => {
+    const { scenes, onCreateRoto } = this.props;
+    const { currFrame } = this.state;
+
+    onCreateRoto(scenes[ this.state.sceneIndex ].id, currFrame, svg);
+  };
+
   render() {
-    const { scenes, material, onSetMaterialTime } = this.props;
+    const { scenes, material, rotos } = this.props;
     const { currFrame } = this.state;
     const scene = scenes[ this.state.sceneIndex ];
+    const roto = getItemByKey(rotos, (item) => item.materialId == material.id && item.sceneId == scene.id && item.frame == currFrame);
 
     return (
       <div className="roto">
@@ -48,6 +56,8 @@ export default class Roto extends Component {
               time={ material.properties.time }
               frame={ currFrame }
               scene={ scene }
+              roto={ roto }
+              onCreateRoto={ this.handleCreateRoto }
               onSetMaterialTime={ this.handleSetMaterialTime } />
           </div>
 

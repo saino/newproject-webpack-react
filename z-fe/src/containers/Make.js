@@ -49,8 +49,10 @@ class Make extends Component {
   handleSetMaterialTime = (duration) =>
     this.props.setDuration({ materialId: this.state.materialId, duration });
 
-  handleCreateRoto = (sceneId, frame, svg) =>
+  handleCreateRoto = (sceneId, frame, svg) => {
+    console.log(this.state.materialId, sceneId, frame, 'manual', svg, 'j8j8j8');
     this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
+  }
 
   renderChild(index) {
     const {
@@ -78,6 +80,7 @@ class Make extends Component {
           <Roto
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') }
+            rotos={ material.rotos }
             onCreateRoto={ this.handleCreateRoto }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );

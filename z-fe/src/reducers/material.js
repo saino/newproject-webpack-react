@@ -1,4 +1,4 @@
-import { add, update, remove } from '../utils/stateSet';
+import { add, update, remove, getItemByKey } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -134,9 +134,15 @@ export default (state = defState, action) => {
       return { ...state, scenes: add(state.scenes, scene) };
 
     case actionTypes.CREATE_ROTO:
-      const roto = { materialId: action.materialId, sceneId: action.sceneId, frame: action.frame, mtype: action.mtype, svg: action.svg };
+      const diffFn = (item) => item.materialId == action.materialId && item.sceneId == action.sceneId && item.frame == action.frame;
+      const hasRoto = !!getItemByKey(state.rotos, diffFn);
+      const roto = { materialId: action.materialId, sceneId: action.sceneId, frame: action.frame, type: action.mtype, svg: action.svg };
 
-      return { ...state, rotos: add(state.rotos, roto) };
+      if (!hasRoto) {
+        return { ...state, rotos: add(state.rotos, roto) };
+      } else {
+        return { ...state, rotos: update(state.rotos, roto, diffFn) };
+      }
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };

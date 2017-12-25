@@ -5,29 +5,54 @@ import Path from './utils/Path';
 import Core from './MattingCore';
 
 export default class Matting extends Component {
-  actualCount = 0;
+  constructor(props) {
+    super(props);
 
-  state = {
-    // x坐标
-    x: 0,
-    // y坐标
-    y: 0,
-    // 拖拽的是否是控制点
-    movingControl: false,
-    // 是否拖拽
-    dragging: false,
-    // 绘制状态(0 => 未开始；1 => 未闭合；2 => 已闭合)
-    drawStatus: 0,
-    // path信息
-    pathData: new Path
-  };
+    this.state = {
+      // x坐标
+      x: 0,
+      // y坐标
+      y: 0,
+      // 拖拽的是否是控制点
+      movingControl: false,
+      // 是否拖拽
+      dragging: false,
+      // 绘制状态(0 => 未开始；1 => 未闭合；2 => 已闭合)
+      drawStatus: 0,
+      // path信息
+      pathData: new Path(props.points)
+    };
+  }
+  //actualCount = 0;
 
   emptyFn = () => {};
 
+  componentWillReceiveProps(nextProps) {
+    let pathData = this.state.pathData;
+    let newStatus = null;
+    
+    if (!nextProps.isMetting && this.state.drawStatus == 1) {
+        pathData.closed = true;
+        pathData.floatingPoint = new Point('', pathData.lastPoint().x, pathData.lastPoint().y);
+        pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
+        pathData.floatingPoint = false;
+        newStatus = { drawStatus: 2, pathData };
+
+    } else {
+      newStatus = { x: 0, y: 0, movingControl: false, dragging: false, drawStatus: 1 };
+      pathData.closed = false;
+      pathData.controls = [];
+      pathData.points = nextProps.points;
+      newStatus = { pathData: pathData };
+    }
+
+    this.setState(newStatus);
+  }
+
   handleMouseDown = (e) => {
     const { offsetX, offsetY } = e.nativeEvent;
-    let downState = { x: offsetX, y: offsetY, dragging: true };
     let pathData = this.state.pathData;
+    let downState = { x: offsetX, y: offsetY, dragging: true };
 
     if (!this.state.drawStatus) {
       pathData.floatingPoint = new Point('floating', offsetX, offsetY);

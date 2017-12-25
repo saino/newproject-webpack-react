@@ -88,15 +88,15 @@ export default class Draggable extends Component {
     newX = this.state.x + newDeltaX;
     newY = this.state.y + newDeltaY;
 
-    if (newX < this.minX)
-      newX = this.minX;
-    else if (newX > maxX + this.minX)
-      newX = maxX + this.minX;
-
-    if (newY < this.minY)
-      newY = this.minY;
-    else if (newY > maxY + this.minY)
-      newY = maxY + this.minY;
+    // if (newX < this.minX)
+    //   newX = this.minX;
+    // else if (newX > maxX + this.minX)
+    //   newX = maxX + this.minX;
+    //
+    // if (newY < this.minY)
+    //   newY = this.minY;
+    // else if (newY > maxY + this.minY)
+    //   newY = maxY + this.minY;
 
     this.setState({ deltaX: newX, deltaY: newY });
   }

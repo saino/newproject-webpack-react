@@ -14,8 +14,7 @@ export default class Core extends Component {
   state = {
     points: [],
     focus: [],
-    path: '',
-    controls1: []
+    path: ''
   };
 
   controlLength = 0;
@@ -85,7 +84,7 @@ export default class Core extends Component {
         path += pathData.firstPoint().generatePath();
 		    path += 'Z';
       }
-      
+
       this.setState({ ...state, path });
     });
   }

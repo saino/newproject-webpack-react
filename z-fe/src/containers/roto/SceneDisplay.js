@@ -14,25 +14,10 @@ import ParseMaterialToTime from '../../components/video/ParseMaterialToTime';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 export default class SceneDisplay extends Component {
-  static propTypes = {
-    materialId: PropTypes.number.isRequired,
-    sceneId: PropTypes.number.isRequired,
-    materials: PropTypes.array.isRequired,
-    frameDataUrl: PropTypes.string
-  };
-  static defaultProps = {
-    frameDataUrl: ''
-  };
   state = {
     scale: 1,
     imageUrl: '',
     isOpenPen: false
-  };
-
-  parseFrameComplete = (frames) => {
-    const { materialId, sceneId, solutionFrame } = this.props;
-
-    solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
   };
 
   handleSetZoomOut = () =>
@@ -56,10 +41,18 @@ export default class SceneDisplay extends Component {
   handleAddLayer = () => {};
 
   handleComplete = () =>
-    this.setState({ isOpenPen: false });
+    this.setState({ isOpenPen: false }, () => {
+      const svg = this.refs.matting.state.pathData;
+
+      this.props.onCreateRoto([{
+        path_type: 'bezier',
+        closed: svg.closed,
+        points: svg.points
+      }]);
+    });
 
   render() {
-    const { path, frameLength, time, frame, scene } = this.props;
+    const { path, frameLength, time, frame, scene, roto } = this.props;
     const { scale, imageUrl, isOpenPen } = this.state;
 
     return (
@@ -73,11 +66,11 @@ export default class SceneDisplay extends Component {
                frameLength={ frameLength }
                time={ time }
                frame={ frame }
-               onSetFrameImageUrl={ this.handleSetFrameImageUrl  }
+               onSetFrameImageUrl={ this.handleSetFrameImageUrl }
                onSetMaterialTime={ this.props.onSetMaterialTime } />
 
              {/* 抠像 */}
-             <Matting isMetting={ this.state.isOpenPen }>
+             <Matting ref="matting" isMetting={ this.state.isOpenPen } points={ roto ? roto.svg[0].points : [] }>
                {/* 显示帧图片 */}
                <VideoRender
                  style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, zIndex: 1 }}

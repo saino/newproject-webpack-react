@@ -1,6 +1,6 @@
 export default class Path {
-	constructor() {
-	  this.points = [];
+	constructor(points) {
+	  this.points = points;
 		this.controls = [];
 		this.floatingPoint = false;
 		this.closed = false;
