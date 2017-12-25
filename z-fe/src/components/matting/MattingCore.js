@@ -48,12 +48,11 @@ export default class Core extends Component {
     }, () => {
       const { pathData } = props;
       let state = {}, prevPoints;
-
-      prevPoints = pathData.points.map(point => (<circle cx={ point.x } cy={ point.y } r={ point.radius } className={ point.className }></circle>));
+      prevPoints = pathData.points.map(point => (<circle cx={ point.x } cy={ point.y } r={ point.radius }></circle>));
 
       if (pathData.floatingPoint) {
         let className = pathData.floatingPoint.cx1 ? 'control' : pathData.floatingPoint.className;
-        prevPoints = [...prevPoints, <circle cx={ pathData.floatingPoint.x } cy={ pathData.floatingPoint.y } r={ pathData.floatingPoint.radius } className={ className }></circle>];
+        prevPoints = [...prevPoints, <circle cx={ pathData.floatingPoint.x } cy={ pathData.floatingPoint.y } r={ pathData.floatingPoint.radius }></circle>];
         state = this.drawPoint(prevPoints, pathData.controls, pathData.floatingPoint, pathData.lastPoint(), true);
         prevPoints = state.points;
         var d = state.controls.pop();

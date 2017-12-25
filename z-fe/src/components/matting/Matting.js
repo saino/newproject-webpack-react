@@ -30,36 +30,45 @@ export default class Matting extends Component {
   componentWillReceiveProps(nextProps) {
     let pathData = this.state.pathData;
     let newStatus = null;
-    
+    console.log(nextProps.isMetting, 'metting');
     if (!nextProps.isMetting && this.state.drawStatus == 1) {
         pathData.closed = true;
         pathData.floatingPoint = new Point('', pathData.lastPoint().x, pathData.lastPoint().y);
         pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
         pathData.floatingPoint = false;
         newStatus = { drawStatus: 2, pathData };
-
-    } else {
+        this.setState(newStatus);
+    } else if (this.state.drawStatus == 0) {
+      console.log(11);
       newStatus = { x: 0, y: 0, movingControl: false, dragging: false, drawStatus: 1 };
       pathData.closed = false;
       pathData.controls = [];
       pathData.points = nextProps.points;
-      newStatus = { pathData: pathData };
+      newStatus = { pathData };
+      this.setState(newStatus);
+    } else {
+      this.setState({ drawStatus: 0 });
     }
-
-    this.setState(newStatus);
   }
 
   handleMouseDown = (e) => {
     const { offsetX, offsetY } = e.nativeEvent;
-    let pathData = this.state.pathData;
+    const { onComplete } = this.props;
+    const { pathData, drawStatus } = this.state;
     let downState = { x: offsetX, y: offsetY, dragging: true };
 
-    if (!this.state.drawStatus) {
+    if (e.target.tagName.toLowerCase() === 'circle' && e.target.getAttribute('class') !== 'floating' && drawStatus == 1) {
+      pathData.closed = true;
+      pathData.floatingPoint = new Point('', pathData.lastPoint().x, pathData.lastPoint().y);
+      pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
+      onComplete(pathData);
+    } else if (!drawStatus) {
       pathData.floatingPoint = new Point('floating', offsetX, offsetY);
       downState = { ...downState, drawStatus: 1, pathData };
+      this.setState(downState);
+    } else {
+      this.setState(downState);
     }
-
-    this.setState(downState);
   };
 
   handleMouseMove = (e) => {

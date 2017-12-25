@@ -29,6 +29,15 @@ export default class SceneDisplay extends Component {
   handleSetFrameImageUrl = (imageUrl) =>
     this.setState({ imageUrl });
 
+  handleMettingComplete = (svg) =>
+    this.setState({ isOpenPen: false }, () => {
+      this.props.onCreateRoto([{
+        path_type: 'bezier',
+        closed: svg.closed,
+        points: svg.points
+      }]);
+    });
+
   handleOpenPen = () =>
     this.setState({ isOpenPen: true });
 
@@ -40,16 +49,16 @@ export default class SceneDisplay extends Component {
 
   handleAddLayer = () => {};
 
-  handleComplete = () =>
-    this.setState({ isOpenPen: false }, () => {
-      const svg = this.refs.matting.state.pathData;
-
-      this.props.onCreateRoto([{
-        path_type: 'bezier',
-        closed: svg.closed,
-        points: svg.points
-      }]);
-    });
+  handleComplete = () => {};
+    // this.setState({ isOpenPen: false }, () => {
+    //   const svg = this.refs.matting.state.pathData;
+    //
+    //   this.props.onCreateRoto([{
+    //     path_type: 'bezier',
+    //     closed: svg.closed,
+    //     points: svg.points
+    //   }]);
+    // });
 
   render() {
     const { path, frameLength, time, frame, scene, roto } = this.props;
@@ -70,10 +79,10 @@ export default class SceneDisplay extends Component {
                onSetMaterialTime={ this.props.onSetMaterialTime } />
 
              {/* 抠像 */}
-             <Matting ref="matting" isMetting={ this.state.isOpenPen } points={ roto ? roto.svg[0].points : [] }>
+             <Matting ref="matting" onComplete={ this.handleMettingComplete } isMetting={ this.state.isOpenPen } points={ roto ? roto.svg[0].points : [] }>
                {/* 显示帧图片 */}
                <VideoRender
-                 style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, zIndex: 1 }}
+                 style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}
                  cursor={ isOpenPen ? 'default' : 'move' }
                  frameImageUrl={ imageUrl } />
              </Matting>
