@@ -6,6 +6,7 @@ import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
 import Compose from './compose/ComposeRender';
+import { fetchStart, fetchEnd } from '../reducers/app';
 import {
   getMaterials, deleteMaterial, uploadMaterial,
   createScene, setDuration, clearMaterials, createRoto
@@ -49,13 +50,18 @@ class Make extends Component {
   handleSetMaterialTime = (duration) =>
     this.props.setDuration({ materialId: this.state.materialId, duration });
 
-  handleCreateRoto = (sceneId, frame, svg) => {
+  handleCreateRoto = (sceneId, frame, svg) =>
     this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
-  }
+
+  handleFetchStart = () =>
+    this.props.fetchStart();
+
+  handleFetchEnd = () =>
+    this.props.fetchEnd();
 
   renderChild(index) {
     const {
-      material, match, user, compose,
+      material, match, user, compose, app,
       addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
@@ -80,6 +86,10 @@ class Make extends Component {
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') }
             rotos={ material.rotos }
+            app={ app }
+            workId={ match.params.workId }
+            onFetchStart={ this.handleFetchStart }
+            onFetchEnd={ this.handleFetchEnd }
             onCreateRoto={ this.handleCreateRoto }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
@@ -150,12 +160,15 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material, user, compose }) => ({
+const mapStateToProps = ({ material, user, compose, app }) => ({
   material,
   user,
-  compose
+  compose,
+  app
 });
 const mapDispatchToProps = (dispatch) => ({
+  fetchStart: bindActionCreators(fetchStart, dispatch),
+  fetchEnd: bindActionCreators(fetchEnd, dispatch),
   getMaterials: bindActionCreators(getMaterials, dispatch),
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
@@ -170,7 +183,7 @@ const mapDispatchToProps = (dispatch) => ({
   changePosision: bindActionCreators(changePosision, dispatch),
   removeSelected: bindActionCreators(removeSelected, dispatch),
   changeContralPosision: bindActionCreators(changeContralPosision, dispatch),
-  clearMaterials: bindActionCreators(clearMaterials, dispatch),
+  clearMaterials: bindActionCreators(clearMaterials, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

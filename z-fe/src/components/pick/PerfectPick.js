@@ -10,19 +10,11 @@ function mapStateToProps ({ api }) {
 }
 
 class PerfectPick extends Component {
-  static propTypes = {
-    onPrev: PropTypes.func.isRequired
-  };
-
   columns = [{
     title: '帧',
-    dataIndex: 'frameId',
-    key: 'frameId'
-  }, {
-    title: '准确率',
-    dataIndex: 'rate',
-    key: 'rate'
-  }, {
+    dataIndex: 'frame',
+    key: 'frame'
+  },{
     title: '类别',
     dataIndex: 'category',
     key: 'category'
@@ -33,6 +25,9 @@ class PerfectPick extends Component {
   }];
 
   render() {
+    let { rotoFrames, onSelectFrame, frame } = this.props;
+    rotoFrames = rotoFrames.map(({ frame }) => ({ frame, category: 'ROTO', status: '已修改' }));
+
     return (
       <div className="perfect-pick">
 
@@ -41,27 +36,14 @@ class PerfectPick extends Component {
         </div>
 
         <div className="pick-grid">
-          <Table columns={ this.columns } dataSource={[{
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }, {
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }, {
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }, {
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }]}></Table>
+          <Table
+            rowKey="frame"
+            columns={ this.columns }
+            dataSource={ rotoFrames }
+            rowSelection={{
+              type: 'radio',
+              selectedRowKeys: [ frame ],
+              onChange: (_, rows) => this.props.onSelectFrame(rows[0].frame) }} />
         </div>
 
         <div className="build">
@@ -105,13 +87,13 @@ class PerfectPick extends Component {
             color: #fff;
           }
 
-          .perfect-pick .ant-table-tbody > tr:nth-child(even) {
+          /*.perfect-pick .ant-table-tbody > tr:nth-child(even) {
             background: #ecf6fd;
-          }
+          } */
 
-          .perfect-pick .ant-table-tbody > tr:hover > td {
+          /*.perfect-pick .ant-table-tbody > tr:hover > td {
             background: transparent;
-          }
+          }*/
 
           .perfect-pick .ant-table-tbody > tr > td {
             border: 0 none;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { getItemByKey } from '../../utils/stateSet';
+import { getItemByKey, finds } from '../../utils/stateSet';
 //import { list as listScene } from '../reducers/scene';
 
 /* 第三方组件 */
@@ -34,11 +34,17 @@ export default class Roto extends Component {
     onCreateRoto(scenes[ this.state.sceneIndex ].id, currFrame, svg);
   };
 
+  handleSelectFrame = (frame) =>
+    this.setState({ currFrame: frame })
+
   render() {
-    const { scenes, material, rotos } = this.props;
+    const {
+      scenes, material, rotos, app, workId,
+      onFetchStart, onFetchEnd } = this.props;
     const { currFrame } = this.state;
     const scene = scenes[ this.state.sceneIndex ];
     const roto = getItemByKey(rotos, (item) => item.materialId == material.id && item.sceneId == scene.id && item.frame == currFrame);
+    const rotoFrames = finds(rotos, (item) => item.materialId == material.id && item.sceneId == scene.id);
 
     return (
       <div className="roto">
@@ -62,7 +68,16 @@ export default class Roto extends Component {
           </div>
 
           {/* 控制面板 */}
-          <ControllerPanel material={ material } />
+          <ControllerPanel
+            app={ app }
+            filename={ material.path }
+            workId={ workId }
+            rotoFrames={ rotoFrames }
+            frame={ currFrame }
+            sceneId={ scene ? scene.id : void 0 }
+            onSelectFrame={ this.handleSelectFrame }
+            onFetchStart={ onFetchStart }
+            onFetchEnd={ onFetchEnd } />
 
         </div>
         <div className="roto-bottom">

@@ -2,28 +2,42 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { fetchStart, fetchEnd } from '../../reducers/app';
+import { Button } from 'antd';
+import { post } from '../../fetch/fetch.js';
+import { getAuth } from '../../utils/auth';
 
 class PrePick extends Component {
-  static propTypes = {
-    filename: PropTypes.string,
-    onNext: PropTypes.func.isRequired
+  handleAutoRoto = () => {
+    const { onFetchStart, onFetchEnd, workId, sceneId } = this.props;
+    const token = getAuth().token;
+
+    onFetchStart();
+    console.log(onFetchEnd, 'dd');
+    post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, resp => {
+      console.log(resp, '提交抠像');
+    }, () => onFetchEnd());
+    //this.autoRoto({ workId, sceneId });
   };
-  static defaultProps = {
-    filename: ''
-  };
+  // autoRoto = packageToken((dispatch, { token, workId, sceneId }) => {
+  //   console.log(token, workId, 'hhha');
+  //   post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, resp => {
+  //     console.log(resp, '提交抠像');
+  //   });
+  // });
 
   render() {
+    const { filename, app } = this.props;
+    const rotoText = app.isFetching ? '提交抠像中...' : '开始云端AI自动抠像';
+
     return (
       <div className="pre-pick">
-
         <div className="video-info">
           <label>素材名称</label>
-          <label>{ this.props.filename }</label>
+          <label>{ filename }</label>
         </div>
 
         <div className="auto-start">
-          <button onClick={ this.props.onNext }>开始云端AI自动抠像</button>
+          <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ this.handleAutoRoto }>{ rotoText }</Button>
         </div>
 
         <style>{`
@@ -47,13 +61,12 @@ class PrePick extends Component {
             padding: 40px 15px 0;
           }
 
-          .pre-pick .auto-start button {
+          .pre-pick .auto-start .autoroto {
             display: block;
             width: 100%;
             line-height: 30px;
-            color: #fff;
+            font-size: 14px;
             text-align: center;
-            background: #2d8bbd;
             border: 0 none;
             outline: none;
             letter-spacing: 1px;
