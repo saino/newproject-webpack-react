@@ -27,26 +27,32 @@ export default class VideoRender extends Component {
             onMouseDown={ onMouseDown }
             onMouseMove={ onMouseMove }
             onMouseUp={ onMouseUp }>
-          { children }
+            <img src={ this.props.frameImageUrl } />
+            <div className="svg-wrap">
+              { children }
+            </div>
           </div>
-          <img src={ this.props.frameImageUrl } />
           <style>{`
-
             .video-render-inner {
               position: absolute;
-              width: 100%;
-              height: 100%;
               left: 0;
-              top: 0;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 100%;
             }
-
             .video-render img {
               display: block;
               width: 100%;
               height: 100%;
               object-fit: contain;
             }
-
+            .svg-wrap {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+            }
           `}</style>
         </div>
       </Draggable>

@@ -30,7 +30,7 @@ export default class Matting extends Component {
   componentWillReceiveProps(nextProps) {
     let pathData = this.state.pathData;
     let newStatus = null;
-    console.log(nextProps.isMetting, 'metting');
+
     if (!nextProps.isMetting && this.state.drawStatus == 1) {
         pathData.closed = true;
         pathData.floatingPoint = new Point('', pathData.lastPoint().x, pathData.lastPoint().y);
@@ -39,7 +39,6 @@ export default class Matting extends Component {
         newStatus = { drawStatus: 2, pathData };
         this.setState(newStatus);
     } else if (this.state.drawStatus == 0) {
-      console.log(11);
       newStatus = { x: 0, y: 0, movingControl: false, dragging: false, drawStatus: 1 };
       pathData.closed = false;
       pathData.controls = [];
