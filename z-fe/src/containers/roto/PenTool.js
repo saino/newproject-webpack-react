@@ -9,7 +9,7 @@ import completePNG from '../../statics/pick_complete_icon.png';
 
 export default class PenTool extends Component {
   render() {
-    const { onOpenPen, onMoveNode, onAddNode, onRemoveNode, onAddLayer, onComplete } = this.props;
+    const { onOpenPen, onMoveNode, onAddNode, onRemoveNode, onVisibleShadow, onComplete } = this.props;
 
     return (
       <div className="transform-toolbar">
@@ -17,7 +17,7 @@ export default class PenTool extends Component {
         <span onClick={ onMoveNode }><Tooltip title="移动节点" placement="right"><img src={ movePNG } /></Tooltip></span>
         <span onClick={ onAddNode }><Tooltip title="添加节点" placement="right"><img src={ addNodePNG } /></Tooltip></span>
         <span onClick={ onRemoveNode }><Tooltip title="删除节点" placement="right"><img src={ removeNodePNG } /></Tooltip></span>
-        <span onClick={ onAddLayer }><Tooltip title="添加蒙层" placement="right"><img src={ maskPNG } /></Tooltip></span>
+        <span onClick={ onVisibleShadow }><Tooltip title="添加蒙层" placement="right"><img src={ maskPNG } /></Tooltip></span>
         <span onClick={ onComplete }><Tooltip title="完成" placement="right"><img src={ completePNG } /></Tooltip></span>
         <style>{`
           .transform-toolbar {

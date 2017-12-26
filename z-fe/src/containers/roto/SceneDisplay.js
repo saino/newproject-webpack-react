@@ -17,7 +17,8 @@ export default class SceneDisplay extends Component {
   state = {
     scale: 1,
     imageUrl: '',
-    isOpenPen: false
+    isOpenPen: false,
+    visibleRoto: true
   };
 
   handleSetZoomOut = () =>
@@ -45,11 +46,16 @@ export default class SceneDisplay extends Component {
 
   handleAddNode = () => {};
 
-  handleRemoveNode = () => {};
+  handleRemoveNode = () => {
 
-  handleAddLayer = () => {};
+  };
 
-  handleComplete = () => {};
+  handleVisibleShadow = () =>
+    this.setState({ visibleRoto: !this.state.visibleRoto });
+
+  handleComplete = () => {
+
+  };
     // this.setState({ isOpenPen: false }, () => {
     //   const svg = this.refs.matting.state.pathData;
     //
@@ -62,7 +68,8 @@ export default class SceneDisplay extends Component {
 
   render() {
     const { path, frameLength, time, frame, scene, roto } = this.props;
-    const { scale, imageUrl, isOpenPen } = this.state;
+    const { scale, imageUrl, isOpenPen, visibleRoto } = this.state;
+    const points = roto && visibleRoto ? roto.svg[0].points : [];
 
     return (
       <div className="scene-center">
@@ -79,7 +86,7 @@ export default class SceneDisplay extends Component {
                onSetMaterialTime={ this.props.onSetMaterialTime } />
 
              {/* 抠像 */}
-             <Matting ref="matting" onComplete={ this.handleMettingComplete } isMetting={ this.state.isOpenPen } points={ roto ? roto.svg[0].points : [] }>
+             <Matting ref="matting" onComplete={ this.handleMettingComplete } isMetting={ this.state.isOpenPen } points={ points }>
                {/* 显示帧图片 */}
                <VideoRender
                  style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}
@@ -99,7 +106,7 @@ export default class SceneDisplay extends Component {
               onMoveNode={ this.handleMoveNode }
               onAddNode={ this.handleAddNode }
               onRemoveNode={ this.handleRemoveNode }
-              onAddLayer={ this.handleAddLayer }
+              onVisibleShadow={ this.handleVisibleShadow }
               onComplete={ this.handleComplete } />
           </div>
 

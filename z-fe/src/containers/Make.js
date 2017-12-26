@@ -50,7 +50,6 @@ class Make extends Component {
     this.props.setDuration({ materialId: this.state.materialId, duration });
 
   handleCreateRoto = (sceneId, frame, svg) => {
-    console.log(this.state.materialId, sceneId, frame, 'manual', svg, 'j8j8j8');
     this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
   }
 
