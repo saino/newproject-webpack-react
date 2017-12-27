@@ -4,7 +4,7 @@ import PerfectPick from './PerfectPick';
 import PrePick from './PrePick';
 
 export default class Pick extends Component {
-  state = { index: 1 };
+  state = { index: 0 };
 
   getDontSuffixFilename(filename) {
     return /[^/]+(?=\.)/.exec(filename)[0];
@@ -13,7 +13,7 @@ export default class Pick extends Component {
   render() {
     const {
       filename, app, workId, sceneId, rotoFrames, frame,
-      onSelectFrame, onFetchStart, onFetchEnd
+      onSelectFrame, onAutoRoto
     } = this.props;
 
     return (
@@ -22,8 +22,8 @@ export default class Pick extends Component {
 
         <div className="main">
           { !this.state.index ?
-            (<PrePick filename={ this.getDontSuffixFilename(filename) } app={ app } workId={ workId } sceneId={ sceneId } onFetchStart={ onFetchStart } onFetchEnd={ onFetchEnd } />) :
-            (<PerfectPick app={ app } rotoFrames={ rotoFrames } frame={ frame } onFetchStart={ onFetchStart } onFetchEnd={ onFetchEnd } onSelectFrame={ onSelectFrame } />)
+            (<PrePick filename={ this.getDontSuffixFilename(filename) } app={ app } onAutoRoto={ onAutoRoto } />) :
+            (<PerfectPick app={ app } rotoFrames={ rotoFrames } frame={ frame } onSelectFrame={ onSelectFrame } />)
           }
         </div>
 

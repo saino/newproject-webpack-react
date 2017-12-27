@@ -76,12 +76,11 @@ export const uploadMaterial = ({ material }) => ({
 /**
  * 创建镜头
  */
-export const createScene = ({ id, mtype, materialId, roto }) => ({
+export const createScene = ({ id, mtype, materialId }) => ({
   type: actionTypes.CREATE_SCENE,
   id,
   mtype,
-  materialId,
-  roto
+  materialId
 });
 
 /**
@@ -129,14 +128,14 @@ export default (state = defState, action) => {
       return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.CREATE_SCENE:
-      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, roto: action.roto };
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId };
 
       return { ...state, scenes: add(state.scenes, scene) };
 
     case actionTypes.CREATE_ROTO:
       const diffFn = (item) => item.materialId == action.materialId && item.sceneId == action.sceneId && item.frame == action.frame;
       const hasRoto = !!getItemByKey(state.rotos, diffFn);
-      const roto = { materialId: action.materialId, sceneId: action.sceneId, frame: action.frame, type: action.mtype, svg: action.svg };
+      const roto = { material_id: action.materialId, scene_id: action.sceneId, frame: action.frame, type: action.mtype, svg: action.svg };
 
       if (!hasRoto) {
         return { ...state, rotos: add(state.rotos, roto) };

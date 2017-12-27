@@ -43,7 +43,10 @@ export const createWork = packageToken((dispatch, { token, name }, successFun) =
   post('/user/saveWork', { token, name }, resp => {
     dispatch({
       type: actionTypes.CREATE_WORK,
-      work: {workId: resp}
+      work: {
+        name,
+        id: resp
+      }
     });
     successFun&&successFun(resp);
   });
@@ -57,12 +60,6 @@ export const getNeedWorks = (current) => ({
 export const deleteWork = (workId) => ({
   type: actionTypes.DELETE_WORK,
   workId
-});
-
-export const deleteMaterial = (workId, materialId) => ({
-  type: actionTypes.DELETE_MATERIAL,
-  workId,
-  materialId
 });
 
 export default (state = defState, action) => {

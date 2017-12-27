@@ -67,7 +67,7 @@ export default class SceneDisplay extends Component {
     // });
 
   render() {
-    const { path, frameLength, time, frame, scene, roto } = this.props;
+    const { path, frameLength, time, frame, scene, roto, onSetMaterialTime } = this.props;
     const { scale, imageUrl, isOpenPen, visibleRoto } = this.state;
     const points = roto && visibleRoto ? roto.svg[0].points : [];
 
@@ -83,7 +83,7 @@ export default class SceneDisplay extends Component {
                time={ time }
                frame={ frame }
                onSetFrameImageUrl={ this.handleSetFrameImageUrl }
-               onSetMaterialTime={ this.props.onSetMaterialTime } />
+               onSetMaterialTime={ onSetMaterialTime } />
 
              {/* 抠像 */}
              <Matting ref="matting" onComplete={ this.handleMettingComplete } isMetting={ this.state.isOpenPen } points={ points }>

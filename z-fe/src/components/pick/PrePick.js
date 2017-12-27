@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Button } from 'antd';
-import { post } from '../../fetch/fetch.js';
-import { getAuth } from '../../utils/auth';
 
 class PrePick extends Component {
   handleAutoRoto = () => {
-    const { onFetchStart, onFetchEnd, workId, sceneId } = this.props;
-    const token = getAuth().token;
+    // const { onFetchStart, onFetchEnd, workId, sceneId } = this.props;
+    // const token = getAuth().token;
+    //
+    // onFetchStart();
+    //
+    // post('/user/saveWork', { token, work_id: workId, status: 1, config: {} })
 
-    onFetchStart();
-    console.log(onFetchEnd, 'dd');
-    post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, resp => {
-      console.log(resp, '提交抠像');
-    }, () => onFetchEnd());
+    // post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, resp => {
+    //   console.log(resp, '提交抠像');
+    // }, () => onFetchEnd());
     //this.autoRoto({ workId, sceneId });
   };
   // autoRoto = packageToken((dispatch, { token, workId, sceneId }) => {
@@ -26,8 +26,8 @@ class PrePick extends Component {
   // });
 
   render() {
-    const { filename, app } = this.props;
-    const rotoText = app.isFetching ? '提交抠像中...' : '开始云端AI自动抠像';
+    const { filename, app, onAutoRoto } = this.props;
+    const rotoText = app.isFetching ? '作品保存中...' : '开始云端AI自动抠像';
 
     return (
       <div className="pre-pick">
@@ -37,7 +37,7 @@ class PrePick extends Component {
         </div>
 
         <div className="auto-start">
-          <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ this.handleAutoRoto }>{ rotoText }</Button>
+          <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ onAutoRoto }>{ rotoText }</Button>
         </div>
 
         <style>{`

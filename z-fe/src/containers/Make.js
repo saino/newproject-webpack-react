@@ -39,8 +39,7 @@ class Make extends Component {
       createScene({
         id: material.scenes.length + 1,
         mtype: 'roto',
-        materialId,
-        roto: []
+        materialId
       });
     });
 
@@ -61,12 +60,13 @@ class Make extends Component {
 
   renderChild(index) {
     const {
-      material, match, user, compose, app,
+      material, match, user, compose, app, userWorks,
       addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
     } = this.props;
-
+    const work = getItemByKey(userWorks.works, match.params.workId, 'id');
+    
     switch (index) {
       case 0:
         return (
@@ -84,10 +84,12 @@ class Make extends Component {
         return (
           <Roto
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
+            materials={ material.materials }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') }
             rotos={ material.rotos }
             app={ app }
-            workId={ match.params.workId }
+            workId={ work.id }
+            workName={ work.name }
             onFetchStart={ this.handleFetchStart }
             onFetchEnd={ this.handleFetchEnd }
             onCreateRoto={ this.handleCreateRoto }
@@ -160,10 +162,11 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material, user, compose, app }) => ({
+const mapStateToProps = ({ material, user, compose, userWorks, app }) => ({
   material,
   user,
   compose,
+  userWorks,
   app
 });
 const mapDispatchToProps = (dispatch) => ({

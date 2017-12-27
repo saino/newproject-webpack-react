@@ -14,13 +14,6 @@ export default class ParseMaterialToTime extends Component {
     this.playerEl = this.videoFrame = null;
   }
 
-  getFrameTime = (frame) => {
-    const { time, frameLength } = this.props;
-    const frameRate = frameLength / time;
-
-    return (frame * (1000 / frameRate)) / 1000;
-  };
-
   computeFrame = () => {
     const canvasWidth = this.frameCanvasEl.width;
     const canvasHeight = this.frameCanvasEl.height;
@@ -43,13 +36,20 @@ export default class ParseMaterialToTime extends Component {
     this.props.onSetFrameImageUrl(this.frameCanvasEl.toDataURL('image/jpeg'));
   };
 
-  setTime = (frame) => {
-    this.playerEl.currentTime = this.getFrameTime(frame);
+  getFrameTime(props) {
+    const { time, frame, frameLength } = props;
+    const frameRate = frameLength / time;
+
+    return (frame * (1000 / frameRate)) / 1000;
+  }
+
+  setTime = (props) => {
+    this.playerEl.currentTime = this.getFrameTime(props);
   }
 
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.frame == 1 && this.props.time !== nextProps.time) || (nextProps.frame !== this.props.frame)) {
-      this.setTime(nextProps.frame);
+    if (nextProps.time != null && (nextProps.frame == 1 && this.props.time !== nextProps.time) || (nextProps.frame !== this.props.frame)) {
+      this.setTime(nextProps);
     }
   }
 
