@@ -15,6 +15,8 @@ import TransControl from "./transControl";
 import SceneDisplay from '../roto/SceneDisplay';
 import index from 'pure-render-immutable-decorator';
 import { bindActionCreators } from 'redux';
+import { post } from "../../fetch/fetch";
+import { getAuth } from "../../utils/auth";
 
 class MaterialItem extends Component {
     constructor() {
@@ -566,7 +568,16 @@ class ComposeWrap extends Component {
      * 点击完成植入
      */
     onCompleteWorkClick = () => {
-        console.log("dddddd");
+        const options = {
+            token: getAuth().token,
+            work_id: this.props.workId,
+            status: 1,
+            name: this.props.workName,
+            config: this.props.material
+        }
+        post('/user/saveWork', options, resp => {
+            console.log(resp);
+        });
     }
 }
 
