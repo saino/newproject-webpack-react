@@ -31,7 +31,7 @@ export default class Roto extends Component {
     const { scenes, onCreateRoto } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id');
-
+    
     onCreateRoto(this.state.sceneId, scene.currFrame, svg);
   };
 
@@ -65,7 +65,7 @@ export default class Roto extends Component {
   };
 
   handleGenerateRotoMaterial = () => {
-    this.props.onJoinCompose(2);  
+    this.props.onJoinCompose(999, this.state.sceneId);
   };
 
   handleSelectFrame = (frame) =>

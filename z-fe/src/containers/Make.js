@@ -7,9 +7,10 @@ import Material from './material/Material';
 import Roto from './roto/Roto';
 import Compose from './compose/ComposeRender';
 import { fetchStart, fetchEnd } from '../reducers/app';
+import ComposeWrap from './compose/index';
 import {
   getMaterials, deleteMaterial, uploadMaterial, setCurrFrameByScene,
-  createScene, setDuration, clearMaterials, createRoto
+  createScene, setDuration, clearMaterials, createRoto, addLayers
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
@@ -68,6 +69,14 @@ class Make extends Component {
   handleSetCurrFrameByScene = (sceneId, currFrame) =>
     this.props.setCurrFrameByScene({ sceneId, currFrame });
 
+  handleJoinComposePage = (index, sceneId) => {
+    const { material, addLayers } = this.props;
+    const materialObj = { ...getItemByKey(material.materials, this.state.materialId, 'id'), baseLayer: true, order: 0, scene_id: sceneId };
+    console.log(sceneId);
+    this.handleChangeStep(index);
+    addLayers(materialObj);
+  };
+
   renderChild(index) {
     const {
       material, match, user, compose, app, userWorks,
@@ -103,7 +112,7 @@ class Make extends Component {
             workName={ work.name }
             onFetchStart={ this.handleFetchStart }
             onFetchEnd={ this.handleFetchEnd }
-            onJoinCompose={ this.handleChangeStep }
+            onJoinCompose={ this.handleJoinComposePage }
             onCreateRoto={ this.handleCreateRoto }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
@@ -121,9 +130,15 @@ class Make extends Component {
             changePosision={ changePosision }
             removeSelected={ removeSelected }
             changeContralPosision={ changeContralPosision }
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '900px', height: '700px', left: "20%", top: "100px" }}
             frameDataUrl='http://localhost:3000/sample.jpg' />
           );
+      case 999:
+        return (
+          <ComposeWrap materialId={ this.state.materialId } />
+        );
+      default :
+          return null;
     }
   }
 
@@ -190,6 +205,7 @@ const mapDispatchToProps = (dispatch) => ({
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
   createScene: bindActionCreators(createScene, dispatch),
+  addLayers: bindActionCreators(addLayers, dispatch),
   setDuration: bindActionCreators(setDuration, dispatch),
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),

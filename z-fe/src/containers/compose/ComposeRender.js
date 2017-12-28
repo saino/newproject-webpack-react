@@ -12,8 +12,11 @@ import React, {Component} from 'react'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
 import DragTransform from '../../components/interaction/transform';
 import ComposeControl from './ComposeControl';
+import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-export default class ComposeRender extends Component {
+class ComposeRender extends Component {
     removeComposeLayer=this.removeComposeLayer.bind(this)
     constructor() {
         super()
@@ -70,7 +73,9 @@ export default class ComposeRender extends Component {
     }
 
     render() {
+        console.log(this.props);
         const {compose,select,addMaterial,changeLayer,removeMaterial,toggleMaterial} = this.props
+        const { material } = this.props;
         const layers = compose.materials.map((item, index) => {
             let style = {width: item.width, height: item.height}
             if(item.transformString){
@@ -81,22 +86,20 @@ export default class ComposeRender extends Component {
                 return null
             }
             return (<DragTransform Dim={item} selected={compose.current===index} onDragStart={this.onTransfromStart.bind(this, item)}
-                                   onDragEnd={this.onTransfromEnd.bind(this, item, index)}
-                                   onDrag={this.onTransfrom.bind(this, index)} key={item.id}>
-                <DraggableCore handle='.move-handler' position={{x: item.left, y: item.top}}
-                               deltaPosition={{x: 0, y: 0}}
-                               cursor={this.state.cursor}
-                               onDrag={this.onControlledDrag.bind(this, item, index)}
-                               onDragEnd={this.onDragEnd.bind(this, item, index)}
-                               onHover={this.onHover.bind(this)}
-                               onDragStart={this.onDragStart.bind(this)}
-                >
-
-                    <div style={style} className="compose-img" onClick={select.bind(null,index)}>
-                        <img className='thumb move-handler' src={this.props.frameDataUrl}/>
-                    </div>
-
-                </DraggableCore></DragTransform> )
+                        onDragEnd={this.onTransfromEnd.bind(this, item, index)}
+                        onDrag={this.onTransfrom.bind(this, index)} key={item.id}>
+                        <DraggableCore handle='.move-handler' position={{x: item.left, y: item.top}}
+                            deltaPosition={{x: 0, y: 0}}
+                            cursor={this.state.cursor}
+                            onDrag={this.onControlledDrag.bind(this, item, index)}
+                            onDragEnd={this.onDragEnd.bind(this, item, index)}
+                            onHover={this.onHover.bind(this)}
+                            onDragStart={this.onDragStart.bind(this)}>
+                            <div style={style} className="compose-img" onClick={select.bind(null,index)}>
+                                <img className='thumb move-handler' src={this.props.frameDataUrl}/>
+                            </div>
+                        </DraggableCore>
+                </DragTransform> )
         })
         return (
           <div className="compose-wrap">
@@ -147,3 +150,9 @@ export default class ComposeRender extends Component {
         </div>);
     }
 }
+
+const mapStatToProps = ( { material} ) => ({
+    material
+});
+
+export default connect(mapStatToProps)(ComposeRender);

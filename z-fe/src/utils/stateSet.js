@@ -35,6 +35,18 @@ export const add = (target: Array, origin) => {
   return [ ...origin, ...target ];
 };
 
+export const updateArray = (target: Array, origin, idKey = "id") => {
+  if(!target || origin == null){
+    return target;
+  }
+
+  Array.isArray(origin) || (origin = [ origin ]);
+  const notUpdateList = target.filter(targetItem => {
+    return origin.every(originItem => originItem[idKey]!==targetItem[idKey]);
+  });
+  return [...notUpdateList, ...origin];
+}
+
 export const update = (target: Array, origin: Object, idValue, idKey = 'id') => {
   let waitUpdate, waitUpdateIndex, processer, newOrigin, keys, prevKey, key, value, slices;
 

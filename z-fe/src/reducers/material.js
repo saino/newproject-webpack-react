@@ -1,7 +1,8 @@
-import { add, update, remove, getItemByKey, asc } from '../utils/stateSet';
+import { add, update, remove, updateArray, getItemByKey, asc } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
+import scene from './scene';
 
 /*
   item.work_id Number 作品id
@@ -20,7 +21,8 @@ import { logout } from './user';
 const defState = {
   materials: [],
   scenes: [],
-  rotos: []
+  rotos: [],
+  layers: []
 };
 
 const actionTypes = {
@@ -33,8 +35,37 @@ const actionTypes = {
   SET_DURATION: 'SET_DURATION',
   SET_FRAMES: 'SET_FRAMES',
   CLEAR_MATERIALS: 'CLEAE_MATERIALS',
-  CREATE_ROTO: 'CREATE_ROTO'
+  CREATE_ROTO: 'CREATE_ROTO',
+  ADD_LAYERS: 'ADD_LAYERS',
+  DELETE_LAYER: 'DELETE_LAYER',
+  UPDATE_LAYERS: 'UPDATE_LAYERS'
 };
+
+/**
+ * 更新镜头图层
+ * param(Array)
+ */
+export const updateLayers = (layers) => ({
+  type: actionTypes.UPDATE_LAYERS,
+  layers
+});
+
+/**
+ * 添加镜头图层
+ */
+export const addLayers = (layer) => ({
+  type: actionTypes.ADD_LAYERS,
+  layer
+});
+
+/**
+ * 删除镜头图层
+ */
+
+export const deleteLayer = (layer) => ({
+  type: actionTypes.DELETE_LAYER,
+  layer
+});
 
 /**
  * 获取素材列表
@@ -44,7 +75,7 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
       materials: resp.materials || [],
-      scenes: resp.scenes || resp.config.scenes || []
+      scenes: resp.config.scenes || []
     });
   });
 });
@@ -173,7 +204,16 @@ export default (state = defState, action) => {
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
 
     case actionTypes.CLEAR_MATERIALS:
-      return { ...state, materials: []}
+      return { ...state, materials: [] };
+
+    case actionTypes.ADD_LAYERS:
+      return { ...state, layers: add(state.layers, action.layer) };
+
+    case actionTypes.DELETE_LAYER:
+      return { ...state, layers: remove(state.layers, action.layer.id, "id") };
+
+    case actionTypes.UPDATE_LAYERS:
+      return { ...state, layers: updateArray(state.layers, action.layers, "id") }
 
     default:
       return state;

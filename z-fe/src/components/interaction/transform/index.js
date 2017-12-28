@@ -96,16 +96,12 @@ export default class DragTransform extends Component {
         })
         return (<div className={wrapperClass}>
             {this.props.children}
-            <div className="trans-control" style={{
-                top: controls[0].top,
-                left: controls[0].left
-            }} onMouseDown={this.handleDragStart.bind(null, 0)}></div>
+            <div className="trans-control" style={{top: controls[0].top, left: controls[0].left}} 
+                onMouseDown={this.handleDragStart.bind(null, 0)}></div>
             <div className="trans-control" style={{top: controls[1].top, left: controls[1].left}}
                  onMouseDown={this.handleDragStart.bind(null, 1)}></div>
-            <div className="trans-control" style={{
-                top: controls[2].top,
-                left: controls[2].left
-            }} onMouseDown={this.handleDragStart.bind(null, 2)}></div>
+            <div className="trans-control" style={{top: controls[2].top, left: controls[2].left}} 
+                onMouseDown={this.handleDragStart.bind(null, 2)}></div>
             <div className="trans-control" style={{top: controls[3].top, left: controls[3].left}}
                  onMouseDown={this.handleDragStart.bind(null, 3)}></div>
 
