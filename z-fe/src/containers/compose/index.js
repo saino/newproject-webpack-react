@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
 import DragTransform from '../../components/interaction/transform';
 import { addMaterial, changeLayer, select, removeMaterial, toggleMaterial } from '../../reducers/compose'
-import { addLayers, deleteLayer, updateLayers } from '../../reducers/material'
+import { addLayers, deleteLayer, updateLayers, updateScenes } from '../../reducers/material'
 import ToggleViewImg from '../../statics/toggle_view.png'
 import { connect } from 'react-redux';
 import ComposeControl from './ComposeControl1'
@@ -151,10 +151,22 @@ class ComposeWrap extends Component {
     }
 
     /**
+     * 获取当前素材下的所有镜头
+     */
+    getMaterialScenes(){
+        const { scenes } = this.props.material;
+        const materialId = this.props.materialId;
+        const materialScenes = scenes.filter(scene => scene.material_id === materialId);
+        return materialScenes.sort((scene1, scene2) => {
+            return scene1.order > scene2.order;
+        });
+    }
+
+    /**
      * 左侧镜头列表
      */
     renderComposeSceneItem() {
-        const materialScenes = this.state.materialScenes;
+        const materialScenes = this.getMaterialScenes();
         return <DragList list={materialScenes}
             itemKey="id"
             template={ComposeSceneItem}
@@ -163,16 +175,14 @@ class ComposeWrap extends Component {
                 currentSceneId: this.state.currentSceneId,
                 onChangeCurrentSceneId: this.onChangeCurrentSceneId
             }} />
-        // return materialScenes.map((sceneItem, index) => {
-            // return (<ComposeSceneItem key={sceneItem.id}
-                // scene={sceneItem}
-                // sceneIndex={index}
-                // currentSceneId={this.state.currentSceneId}
-                // onChangeCurrentSceneId={this.onChangeCurrentSceneId}/>)
-        // });
     }
-    onScenesMoveEnd = () =>{
-        console.log(arguments);
+    onScenesMoveEnd = (newList) =>{
+        // console.log(arguments);
+        const scenes = newList.map((scene, index) => {
+            return { ...scene, order: index + 1 }
+        });
+        console.log(scenes);
+        this.props.updateScenes(scenes);
     }
     /**
      * 中间镜头图层编辑
@@ -563,6 +573,7 @@ const mapStatToProps = ({ material }) => ({
 const mapDispatchToProps = (dispatch) => ({
     addLayers: bindActionCreators(addLayers, dispatch),
     deleteLayer: bindActionCreators(deleteLayer, dispatch),
-    updateLayers: bindActionCreators(updateLayers, dispatch)
+    updateLayers: bindActionCreators(updateLayers, dispatch),
+    updateScenes: bindActionCreators(updateScenes, dispatch),
 });
 export default connect(mapStatToProps, mapDispatchToProps)(ComposeWrap);

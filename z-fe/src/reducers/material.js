@@ -56,8 +56,16 @@ const actionTypes = {
   CLEAR_MATERIALS: 'CLEAE_MATERIALS',
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
-  UPDATE_LAYERS: 'UPDATE_LAYERS'
+  UPDATE_LAYERS: 'UPDATE_LAYERS',
+  UPDATE_SCEBES: 'UPDATe_SCENES'
 };
+/**
+ * 更新镜头
+ */
+export const updateScenes = (scenes) => ({
+  type: actionTypes.UPDATE_SCEBES,
+  scenes
+});
 
 /**
  * 更新镜头图层
@@ -202,7 +210,12 @@ export default (state = defState, action) => {
       return { ...state, layers: remove(state.layers, action.layer.id, "id") };
 
     case actionTypes.UPDATE_LAYERS:
-      return { ...state, layers: updateArray(state.layers, action.layers, "id") }
+      return { ...state, layers: updateArray(state.layers, action.layers, "id") };
+    
+    case actionTypes.UPDATE_SCEBES:
+      console.log(state.scenes, action.scenes, "Kkkkkkkkkkk", updateArray(state.scenes, action.scenes, "id"));
+      
+      return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
 
     default:
       return state;
