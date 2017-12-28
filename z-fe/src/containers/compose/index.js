@@ -139,10 +139,8 @@ class ComposeWrap extends Component {
     }
     componentWillMount(){
         setTimeout(() => {
-            const { scenes, layers } = this.props.material;//.scenes;
-            const materialId = this.props.materialId;
-            const materialScenes = scenes.filter(scene => scene.material_id === materialId);
-            const currentSceneId = materialScenes[0].id;
+            const materialScenes = this.getMaterialScenes();
+            const currentSceneId = this.props.currentSceneId || materialScenes[0].id;
             this.setState({
                 currentSceneId,
                 materialScenes,
@@ -177,11 +175,9 @@ class ComposeWrap extends Component {
             }} />
     }
     onScenesMoveEnd = (newList) =>{
-        // console.log(arguments);
         const scenes = newList.map((scene, index) => {
             return { ...scene, order: index + 1 }
         });
-        console.log(scenes);
         this.props.updateScenes(scenes);
     }
     /**
@@ -350,7 +346,7 @@ class ComposeWrap extends Component {
                     </div> : null}
                     {this.renderLayersList()}
                 </ul>
-                <div className="compose-complete">完成植入</div>
+                <div className="compose-complete" onClick={this.onCompleteWorkClick}>完成植入</div>
             </div>
 
             {/* 素材选择列表弹出框 */}
@@ -564,6 +560,13 @@ class ComposeWrap extends Component {
         this.setState({
             currentLayer: {...this.state.currentLayer, id: layer.id}
         });
+    }
+
+    /**
+     * 点击完成植入
+     */
+    onCompleteWorkClick = () => {
+        console.log("dddddd");
     }
 }
 

@@ -224,8 +224,6 @@ export default (state = defState, action) => {
       return { ...state, layers: updateArray(state.layers, action.layers, "id") };
     
     case actionTypes.UPDATE_SCEBES:
-      console.log(state.scenes, action.scenes, "Kkkkkkkkkkk", updateArray(state.scenes, action.scenes, "id"));
-      
       return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
 
     default:
