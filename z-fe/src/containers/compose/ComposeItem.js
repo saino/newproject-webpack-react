@@ -8,8 +8,21 @@ import { connect } from 'react-redux';
 
 class ComposeItem extends Component {
     render(){
-        return (<div>
-            ComposeItem
+        return (<div className="compose-item">
+            <img className="compose-item-thumb" src={this.props.layer.properties.thumbnail} />
+            <style>{`
+                .compose-item{
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    height: 70px;
+                    width: 100px;
+                }
+                .compose-item-thumb{
+                    height: 100%;
+                    width: 100%;
+                }
+            `}</style>
         </div>);
     }
 }

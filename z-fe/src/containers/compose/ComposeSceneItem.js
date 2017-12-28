@@ -4,7 +4,9 @@ import classNames from 'classnames'
 class ComposeSceneItem extends Component {
 
     render() {
-        const { scene, currentSceneId, sceneIndex } = this.props;
+        const { currentSceneId } = this.props.commonProps;
+        const { dragHandle } = this.props;
+        const scene = this.props.item;
         let sceneType = "";
         switch (scene.type) {
             case "roto":
@@ -19,11 +21,11 @@ class ComposeSceneItem extends Component {
             "scene-item": true,
             "active": scene.id===currentSceneId
         });
-        return (<div className={sceneClass} 
+        return (dragHandle(<div className={sceneClass} 
             key={scene.id}
             onClick={this.onSceneClick}>
         
-            镜头{sceneIndex + 1}:{sceneType}
+            镜头:{sceneType}
 
             <style>{`
                 .scene-item{
@@ -39,10 +41,10 @@ class ComposeSceneItem extends Component {
                     background: #114967;
                 }
             `}</style>
-        </div>);
+        </div>));
     }
     onSceneClick = () => {
-        this.props.onChangeCurrentSceneId(this.props.scene.id);
+        this.props.commonProps.onChangeCurrentSceneId(this.props.item.id);
     }
 }
 

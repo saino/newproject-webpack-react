@@ -86,22 +86,20 @@ class ComposeRender extends Component {
                 return null
             }
             return (<DragTransform Dim={item} selected={compose.current===index} onDragStart={this.onTransfromStart.bind(this, item)}
-                                   onDragEnd={this.onTransfromEnd.bind(this, item, index)}
-                                   onDrag={this.onTransfrom.bind(this, index)} key={item.id}>
-                <DraggableCore handle='.move-handler' position={{x: item.left, y: item.top}}
-                               deltaPosition={{x: 0, y: 0}}
-                               cursor={this.state.cursor}
-                               onDrag={this.onControlledDrag.bind(this, item, index)}
-                               onDragEnd={this.onDragEnd.bind(this, item, index)}
-                               onHover={this.onHover.bind(this)}
-                               onDragStart={this.onDragStart.bind(this)}
-                >
-
-                    <div style={style} className="compose-img" onClick={select.bind(null,index)}>
-                        <img className='thumb move-handler' src={this.props.frameDataUrl}/>
-                    </div>
-
-                </DraggableCore></DragTransform> )
+                        onDragEnd={this.onTransfromEnd.bind(this, item, index)}
+                        onDrag={this.onTransfrom.bind(this, index)} key={item.id}>
+                        <DraggableCore handle='.move-handler' position={{x: item.left, y: item.top}}
+                            deltaPosition={{x: 0, y: 0}}
+                            cursor={this.state.cursor}
+                            onDrag={this.onControlledDrag.bind(this, item, index)}
+                            onDragEnd={this.onDragEnd.bind(this, item, index)}
+                            onHover={this.onHover.bind(this)}
+                            onDragStart={this.onDragStart.bind(this)}>
+                            <div style={style} className="compose-img" onClick={select.bind(null,index)}>
+                                <img className='thumb move-handler' src={this.props.frameDataUrl}/>
+                            </div>
+                        </DraggableCore>
+                </DragTransform> )
         })
         return (
           <div className="compose-wrap">

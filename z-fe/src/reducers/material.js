@@ -1,4 +1,4 @@
-import { add, update, remove } from '../utils/stateSet';
+import { add, update, remove, updateArray } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -21,52 +21,28 @@ import scene from './scene';
 const defState = {
   materials: [],
   scenes: [],
-  layers: [{
-    id: 1,
-    scene_id: 3,
-    start_frame: 0,
-    end_freme: 100,
-    tranfrom: "matrix",
-    thumb: "xx.jpg",
-    path: "xx.mp4",
-    height: "900px",
-    width: "700px",
-    position: {
-      letf: 0,
-      top: 0,
-    },
-    order: 0,
-  }, {
-    id: 2,
-    scene_id: 1,
-    start_frame: 0,
-    end_freme: 100,
-    tranfrom: "matrix",
-    thumb: "ggg.jpg",
-    path: "ggg.mp4",
-      height: "900px",
-      width: "700px",
-    position: {
-      left: 0,
-      top: 0,
-    },
-    order: 2
-  }, {
-    id: 3,
-    scene_id: 3,
-    start_frame: 0,
-    end_freme: 100,
-    tranfrom: "matrix",
-    thumb: "hhh.jpg",
-    path: "hhh.mp4",
-    height: "100px",
-    width: "60px",
-    position: {
-      left: 0,
-      top: 0
-    },
-    order: 1
-  }],
+  layers: [
+    {
+      baseLayer: true,
+      create_time: "1513486522",
+      id: "33",
+      path: "/data/materials/33/source/video.ogv",
+      "properties": {
+        height: 192,
+        length: 1465,
+        thumbnail: "/data/materials/33/sequence/00000.jpg",
+        time: null,
+        width: 320,
+      },
+      order: 0,
+      scene_id: 3,
+      status: "0",
+      type: "video",
+      update_time: "1513486523",
+      user_id: "32",
+      work_id: "51",
+    }
+  ],
 };
 
 const actionTypes = {
@@ -79,7 +55,18 @@ const actionTypes = {
   SET_FRAMES: 'SET_FRAMES',
   CLEAR_MATERIALS: 'CLEAE_MATERIALS',
   ADD_LAYERS: 'ADD_LAYERS',
+  DELETE_LAYER: 'DELETE_LAYER',
+  UPDATE_LAYERS: 'UPDATE_LAYERS'
 };
+
+/**
+ * 更新镜头图层
+ * param(Array)
+ */
+export const updateLayers = (layers) => ({
+  type: actionTypes.UPDATE_LAYERS,
+  layers
+});
 
 /**
  * 添加镜头图层
@@ -88,6 +75,16 @@ export const addLayers = (layer) => ({
   type: actionTypes.ADD_LAYERS,
   layer
 });
+
+/**
+ * 删除镜头图层
+ */
+
+export const deleteLayer = (layer) => ({
+  type: actionTypes.DELETE_LAYER,
+  layer
+});
+
 /**
  * 获取素材列表
  */
@@ -101,10 +98,10 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
         type: "roto",
         material_id: "33"
       }, {
-          id: 2,
-          type: "roto",
-          material_id: "34",
-        }]
+        id: 2,
+        type: "roto",
+        material_id: "34",
+      }]
     });
   });
 });
@@ -196,10 +193,16 @@ export default (state = defState, action) => {
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
 
     case actionTypes.CLEAR_MATERIALS:
-      return { ...state, materials: []};
+      return { ...state, materials: [] };
 
-    case actionTypes.ADD_LAYERS: 
-      return { ...state, layers: add(state.layers, action.layer)};
+    case actionTypes.ADD_LAYERS:
+      return { ...state, layers: add(state.layers, action.layer) };
+
+    case actionTypes.DELETE_LAYER:
+      return { ...state, layers: remove(state.layers, action.layer.id, "id") };
+
+    case actionTypes.UPDATE_LAYERS:
+      return { ...state, layers: updateArray(state.layers, action.layers, "id") }
 
     default:
       return state;

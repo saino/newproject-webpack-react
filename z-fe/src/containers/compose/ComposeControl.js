@@ -56,68 +56,68 @@ export default class ComposeControl extends Component {
                           commonProps={{select, removeMaterial, toggleMaterial}}></DragList>
             </ul>
             <style>{`
-          .pick {
-            font-size: 14px;
-            font-family: 'microsoft yahei';
-            display: flex;
-            flex-flow: column nowrap;
-            align-items: stretch;
-          }
+                .pick {
+                    font-size: 14px;
+                    font-family: 'microsoft yahei';
+                    display: flex;
+                    flex-flow: column nowrap;
+                    align-items: stretch;
+                }
 
-          .compose-control> .header {
-            text-align: center;
-            line-height: 40px;
-            color: #fff;
-            background: #2d8bbd;
-          }
-          .compose-control> .addMaterial {
-              width:90%;
-              margin:0 auto;
-              margin-top:16px;
-              margin-bottom:16px;
-          }
-           .compose-control> .addMaterial button {
-              width:100%;
-          }
+                .compose-control> .header {
+                    text-align: center;
+                    line-height: 40px;
+                    color: #fff;
+                    background: #2d8bbd;
+                }
+                .compose-control> .addMaterial {
+                    width:90%;
+                    margin:0 auto;
+                    margin-top:16px;
+                    margin-bottom:16px;
+                }
+                .compose-control> .addMaterial button {
+                    width:100%;
+                }
 
-          .compose-control .material-item{
-              background-color:#fff;
-              border:2px solid transparent;
-              height:32px;
-              margin:0 16px;
-              overflow:hidden;
-          }
-          .compose-control .toggle-view,.compose-control .layer-icon{
-            float:left;
-            width:33px;
-            text-align:center;
-            height:100%;
+                .compose-control .material-item{
+                    background-color:#fff;
+                    border:2px solid transparent;
+                    height:32px;
+                    margin:0 16px;
+                    overflow:hidden;
+                }
+                .compose-control .toggle-view,.compose-control .layer-icon{
+                    float:left;
+                    width:33px;
+                    text-align:center;
+                    height:100%;
 
-          }
-          .compose-control .layer-icon{
-          margin-right:16px;
-          }
+                }
+                .compose-control .layer-icon{
+                margin-right:16px;
+                }
 
-          .compose-control .toggle-view{
-          margin-top:6px;
-          }
-           .compose-control .layer-icon img{
-             max-height:100%;
-             max-width:100%;
+                .compose-control .toggle-view{
+                margin-top:6px;
+                }
+                .compose-control .layer-icon img{
+                    max-height:100%;
+                    max-width:100%;
 
-            }
+                    }
 
-           .compose-control .material-item.even{
-             background-color:#ecf6fd
-          }
-          .compose-control .material-item .toggle-view{
-             cursor:pointer;
-          }
-           .compose-control .material-item.selected{
-             border-color:#2d8bbd
-          }
-        `}</style>
-        </div>)
+                .compose-control .material-item.even{
+                    background-color:#ecf6fd
+                }
+                .compose-control .material-item .toggle-view{
+                    cursor:pointer;
+                }
+                .compose-control .material-item.selected{
+                    border-color:#2d8bbd
+                }
+            `}</style>
+            </div>)
     }
 }
 

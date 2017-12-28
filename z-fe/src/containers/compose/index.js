@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
-import { Button, Popover, Modal } from 'antd'
+import { Button, Modal, Tooltip, Icon} from 'antd'
 import DragList from 'react-draggable-list'
 import classNames from 'classnames'
+import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
+import DragTransform from '../../components/interaction/transform';
 import { addMaterial, changeLayer, select, removeMaterial, toggleMaterial } from '../../reducers/compose'
-import { addLayers } from '../../reducers/material'
+import { addLayers, deleteLayer, updateLayers } from '../../reducers/material'
 import ToggleViewImg from '../../statics/toggle_view.png'
 import { connect } from 'react-redux';
 import ComposeControl from './ComposeControl1'
 import ComposeItem from './ComposeItem'
 import ComposeSceneItem from "./ComposeSceneItem";
+import TransControl from "./transControl";
 import SceneDisplay from '../roto/SceneDisplay';
 import index from 'pure-render-immutable-decorator';
 import { bindActionCreators } from 'redux';
@@ -35,17 +38,34 @@ class MaterialItem extends Component {
             "selected": this.state.selected
         });
         return (<div className={materialClass} onClick={this.onSelectClick}>
-            {material.id}
+            <img className="material-thumb" src={material.properties.thumbnail} />
+            <div className="material-title">{/[^/]+(?=\.)/.exec(material.path)[0]}</div>
             <style>{`
                 .material-item{
-                    height: 80px;
+                    height: 100px;
                     cursor: pointer;
-                    margin-bottom: 10px;
-                    background: rgba(0,0,0,0.2);
+                    // background: rgba(0,0,0,0.2);
+                    width: 23%;
+                    margin-right: 2%;
+                }
+                .material-thumb{
+                    height: calc( 100% - 20px);
+                    width: 100%;
+                    object-fit: cover;
+                }
+                .material-title{
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    height: 20px;
+                    line-height: 20px;
+                    text-align: center;
+                    margin-top: -4px;
                 }
                 .selected{
-                    background: grey;
+                    border: solid 2px blue;
                 }
+                
             `}</style>
         </div>);
     }
@@ -53,6 +73,45 @@ class MaterialItem extends Component {
         this.setState({
             selected: !this.state.selected
         });
+    }
+}
+
+class LayterItem extends Component {
+    render() {
+        const { item, dragHandle, commonProps } = this.props;
+        const layerClass = classNames({
+            "scenes-layer-item": true,
+            "select": commonProps.currentLayer.id === item.id
+        });
+        return dragHandle(<div className={layerClass} key={item.id} onClick={this.onLayerClick.bind(this, item)}>
+            <div className="scenes-layer-item-title">镜头素材{": " + (/[^/]+(?=\.)/.exec(item.path)[0])}</div>
+            <div className="scenes-layer-item-delete" onClick={this.onDeleteScenesLayer.bind(this, item)}>
+                <Tooltip title="删除" placement="right">
+                    <a className="delete-btn" href="javascript:;">
+                        <Icon type="delete" />
+                    </a>
+                </Tooltip>
+            </div>
+        </div>);
+    }
+
+    /**
+     * 点击选择镜头
+     */
+    onLayerClick = ( layer, event) => {
+        const { onLayerClick } = this.props.commonProps;
+        onLayerClick(layer);
+    }
+
+    /**
+    * 删除图层镜头
+    */
+    onDeleteScenesLayer = (layer, event) => {
+        event.stopPropagation();
+        event.preventDefault();
+        const { getCurrentLayers, deleteLayer, updateLayers } = this.props.commonProps;
+        deleteLayer(layer);
+        updateLayers(getCurrentLayers());
     }
 }
 
@@ -67,11 +126,15 @@ class ComposeWrap extends Component {
             //当前选择的镜头ID
             currentSceneId: '',
 
-            //当前选择镜头下的所有图层
-            // scenesLayers: [],
-
-
+            //选择素材列表是否可见
             materialListVisible: false,
+
+            currentLayer: {
+                id: '',
+                cursor: "default",
+                x: 0,
+                y: 0
+            }
         }
     }
     componentWillMount(){
@@ -80,35 +143,141 @@ class ComposeWrap extends Component {
             const materialId = this.props.materialId;
             const materialScenes = scenes.filter(scene => scene.material_id === materialId);
             const currentSceneId = materialScenes[0].id;
-            // const scenesLayers = layers.filter(layer => layer.scene_id === currentSceneId);
             this.setState({
                 currentSceneId,
                 materialScenes,
-                // scenesLayers,
             });
         }, 10);
     }
+
+    /**
+     * 左侧镜头列表
+     */
     renderComposeSceneItem() {
         const materialScenes = this.state.materialScenes;
-        return materialScenes.map((sceneItem, index) => {
-            return (<ComposeSceneItem key={sceneItem.id}
-                scene={sceneItem}
-                sceneIndex={index}
-                currentSceneId={this.state.currentSceneId}
-                onChangeCurrentSceneId={this.onChangeCurrentSceneId}/>)
+        return <DragList list={materialScenes}
+            itemKey="id"
+            template={ComposeSceneItem}
+            onMoveEnd={this.onScenesMoveEnd}
+            commonProps={{
+                currentSceneId: this.state.currentSceneId,
+                onChangeCurrentSceneId: this.onChangeCurrentSceneId
+            }} />
+        // return materialScenes.map((sceneItem, index) => {
+            // return (<ComposeSceneItem key={sceneItem.id}
+                // scene={sceneItem}
+                // sceneIndex={index}
+                // currentSceneId={this.state.currentSceneId}
+                // onChangeCurrentSceneId={this.onChangeCurrentSceneId}/>)
+        // });
+    }
+    onScenesMoveEnd = () =>{
+        console.log(arguments);
+    }
+    /**
+     * 中间镜头图层编辑
+     */
+    renderComposeLayers() {
+        const scenesLayers = this.getCurrentLayers();
+        return scenesLayers.map((scenesLayer, index) => {
+            let style = {width: scenesLayer.config.width, height: scenesLayer.config.height};
+            let imgStyle = {};
+            if (scenesLayer.config.transformString) {
+                imgStyle.transform = scenesLayer.config.transformString;
+                imgStyle.transformOrigin = '0 0';
+            }
+            const imgClass = classNames({
+                "compose-item-thumb": true,
+                "select": scenesLayer.id === this.state.currentLayer.id
+            });
+            return (<DraggableCore key={scenesLayer.id} 
+                        position={{x: scenesLayer.config.left, y: scenesLayer.config.top}}
+                        deltaPosition={{x: 0, y: 0}}
+                        cursor={ this.state.currentLayer.cursor}
+                        onHover={(cursor)=>{this.setState({currentLayer: {...this.state.currentLayer, cursor}});}}
+                        onDragStart={this.onDragStart}
+                        onDrag={this.onControledDrag.bind(this, scenesLayer)}
+                        onDragEnd={this.onDragEnd}>
+                        <div style={style} className="compose-item" onClick={this.onLayerClick.bind(this, scenesLayer)}>
+                            <img style={imgStyle} className={imgClass} src={scenesLayer.properties.thumbnail} />
+                            {/* 左上角控制点 */}
+                            <TransControl controlPoint={0} control={scenesLayer.config.controls[0]} currentLayer={this.state.currentLayer}
+                                layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
+                            {/* 右上角控制点 */}
+                            <TransControl controlPoint={1} control={scenesLayer.config.controls[1]} currentLayer={this.state.currentLayer} 
+                                layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
+                            {/* 右下角控制点 */}
+                            <TransControl controlPoint={2} control={scenesLayer.config.controls[2]} currentLayer={this.state.currentLayer} 
+                                layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
+                            {/* 左下角控制点 */}
+                            <TransControl controlPoint={3} control={scenesLayer.config.controls[3]} currentLayer={this.state.currentLayer} 
+                                layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
+                        </div>
+                    </DraggableCore>);
         });
     }
-    renderLayersList() {
-        const { layers } = this.props.material;
-        const { currentSceneId } = this.state;
-        const scenesLayers = layers.filter(layer => layer.scene_id === currentSceneId);
-        console.log(layers);
-        return scenesLayers.map((scenesLayer, index) =>{
-            return <div className="scenes-layer-item" key={scenesLayer.id}>
-                镜头图层{index+1+": "+scenesLayer.path}
-            </div>
-        })
+    onTransfromStart = (layer, controlPoint) => {
+        this.transControlDragStart = {
+            left: layer.config.controls[controlPoint].left,
+            top: layer.config.controls[controlPoint].top
+        }
     }
+    onTransfrom = (layer, controlPoint, disx, disy, transformString) => {
+        const newLayer = { ...layer };
+        newLayer.config.controls[controlPoint].left = disx + this.transControlDragStart.left;
+        newLayer.config.controls[controlPoint].top = disy + this.transControlDragStart.top;
+        newLayer.config.transformString = transformString;
+        this.props.updateLayers(newLayer);
+    }
+
+    onDragStart = (x, y) =>{
+        this.setState({
+            currentLayer: {...this.state.currentLayer, x, y}
+        });
+        // console.log("ondragStart", arguments);
+    }
+    onControledDrag = (layer, disx, disy) => {
+        // console.log(disx, disy);
+        this.props.updateLayers({ ...layer, config: { ...layer.config, left: (disx + this.state.currentLayer.x), top: (disy + this.state.currentLayer.y)}});
+        // console.log("onDrag", arguments);
+    }
+    onDragEnd = (item, index, x, y) => {
+        // console.log("onDragEdn", arguments);
+    }
+
+    /**
+     * 右侧镜头图层列表
+     */
+    renderLayersList() {
+        const { deleteLayer, updateLayers } = this.props;
+        const scenesLayers = this.getCurrentLayers();
+        return <DragList list={scenesLayers} 
+            itemKey="id" 
+            template={LayterItem} 
+            onMoveEnd={this.onMoveEnd} 
+            commonProps={{ 
+                            deleteLayer, 
+                            getCurrentLayers: this.getCurrentLayers, 
+                            updateLayers: this.onMoveEnd, 
+                            onLayerClick: this.onLayerClick,
+                            currentLayer: this.state.currentLayer
+                        }}/>;
+    }
+
+    /**
+     * 调整图层层级顺序结束
+     */
+    onMoveEnd = (newList, movedItem, oldIndex, newIndex) => {
+
+        const layers = newList.map((layer, index) => {
+            return {...layer, order: index+1}
+        });
+        this.props.updateLayers(layers);
+    }
+
+    /**
+     * 添加素材列表
+     */
     renderMaterialList() {
         const materials = this.props.material.materials;
         return materials.map((materialItem, index) => {
@@ -117,27 +286,64 @@ class ComposeWrap extends Component {
                 ref={`material-item-${index}`}/>
         });
     }
+
+    /**
+     * 获取当前镜头下的基础图层
+     */
+    getCurrentBaseLayer = () => {
+        const { layers } = this.props.material;
+        return layers.find(layer => {
+            return (layer.scene_id === this.state.currentSceneId) && layer.baseLayer;
+        });
+    }
+
+    /**
+     * 获取当前镜头下的所有非基础图层
+     * （按照图层层级排序）
+     */
+    getCurrentLayers = () => {
+        const { layers } = this.props.material;
+        return layers.filter(layer => {
+            return (layer.scene_id === this.state.currentSceneId) && (!layer.baseLayer);
+        }).sort((layer1, layer2) => {
+            return layer1.order > layer2.order;
+        });
+    }
     render() {
+        const baseLayer = this.getCurrentBaseLayer();
         return (<div className='compose-wrap'>
+
+            {/* 左侧镜头 */}
             <div className="compose-scenes">
                 {this.renderComposeSceneItem()}
             </div>
 
+            {/* 中间图层编辑 */}
             <div className='compose-render'>
-                <ComposeItem />
+                <div className='compose-render-wrap'>
+                    {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
+                        <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
+                    </div> : null}
+                    {this.renderComposeLayers()}
+                </div>
             </div>
+
+            {/* 右侧图层列表 */}
             <div className="compose-control">
                 <div className="header">第四步： 素材植入</div>
                 <div className="addMaterial" onClick={this.onAddMaterialClick}>
                     <Button icon="plus" type="primary">添加素材</Button>
                 </div>
-                
                 <ul className="compose-layers-list">
+                    {baseLayer ? <div className="scenes-layer-item" key={baseLayer.id}>
+                        <div className="scenes-layer-item-title">基础镜头{": " + (/[^/]+(?=\.)/.exec(baseLayer.path)[0])}</div>
+                    </div> : null}
                     {this.renderLayersList()}
-                    {/* <DragList> */}
                 </ul>
                 <div className="compose-complete">完成植入</div>
             </div>
+
+            {/* 素材选择列表弹出框 */}
             <Modal title="请选择素材"
                 visible={this.state.materialListVisible}
                 onOk={this.onConfirmAddMaterial}
@@ -145,11 +351,9 @@ class ComposeWrap extends Component {
                 okText="确认"
                 cancelText="取消"
                 closable={false}>
-                <div className="material-list">
-                {
+                <div className="material-list">{
                     this.renderMaterialList()
-                }
-                </div>
+                }</div>
             </Modal>
 
             <style>{`
@@ -164,8 +368,31 @@ class ComposeWrap extends Component {
                     width: 200px;
                 }
                 .compose-render{
-                    height: 700px;
-                    width: 800px;
+                    flex: 1;
+                    position: relative;
+                }
+                .compose-render-wrap{
+                    font-size: 0;
+                    position: relative;
+                    width: 100%;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+                .base-compose-item{
+                    position: relative;
+                }
+                .base-compose-item-thumb{
+                    width: 100%;
+                }
+                .compose-item{
+                    // border: 1px solid #1EBC9C;
+                }
+                .compose-item-thumb{
+                    width: 100%;
+                    height: 100%;
+                }
+                .compose-item-thumb.select{
+                    border: 1px solid #1EBC9C;
                 }
                 .compose-control{
                     position: relative;
@@ -190,13 +417,39 @@ class ComposeWrap extends Component {
                 .material-list{
                     height: 500px;
                     width: 500px;
-                    background: grey;
                     overflow-y: auto;
+                    display: flex;
+                    flex-flow: wrap row;
+                    justify-content: flex-start;
                 }
                 .compose-layers-list{
                     width: 90%;
                     margin: 0 auto;
                     height: 80%;
+                }
+                .scenes-layer-item{
+                    display: flex;
+                    justify-content: space-between;
+                    height: 30px;
+                    width: 100%;
+                    margin-bottom: 10px;
+                    line-height: 30px;
+                    border: solid 1px grey;
+                    cursor: pointer;
+                }
+                .scenes-layer-item.select{
+                    border: solid 1px #1EBC9C;
+                }
+                .scenes-layer-item-title{
+                    flex: 1;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+                .scenes-layer-item-delete{
+                    height: 30px;
+                    width: 30px;
+                    font-size: 20px;
                 }
                 .compose-complete{
                     position: absolute;
@@ -224,12 +477,8 @@ class ComposeWrap extends Component {
      * 改变选择的镜头
      */
     onChangeCurrentSceneId = (sceneId) => {
-        console.log(sceneId);
-        // const { layers } = this.props.material;
-        // const scenesLayers = layers.filter(layer => layer.scene_id === sceneId);
         this.setState({
             currentSceneId: sceneId,
-            // scenesLayers
         });
     }
 
@@ -247,14 +496,33 @@ class ComposeWrap extends Component {
      */
     onConfirmAddMaterial = () => {
         const selectedMaterials = [];
-        const { materials, layers } = this.props.material;//.materials;
+        const { materials, layers } = this.props.material;
+        const { currentSceneId }  = this.state;
         const materialsNum = materials.length;
+        let layerOrder = this.getCurrentLayers().length + 1;
         for(let i=0; i<materialsNum; i++){
             const materialItemComponent = this.refs[`material-item-${i}`];
-            
             if (materialItemComponent.isSelected()){
                 let layerId = new Date().getTime();
-                selectedMaterials.push({ ...materials[i], scene_id: this.state.currentSceneId, id: materials[i].id+"-"+layerId });
+                const layer = {
+                    ...materials[i],
+                    id: materials[i].id + "-" + layerId,
+                    scene_id: currentSceneId,
+                    order: layerOrder++,
+                    config: {
+                        height: 70,
+                        width: 100,
+                        top: 0,
+                        left: 0,
+                        controls: [
+                            {top: -5, left: -5},
+                            {top: -5, left: 95},
+                            {top: 65, left: 95},
+                            {top: 65, left: -5}
+                        ]
+                    }
+                }
+                selectedMaterials.push(layer);
             }
             materialItemComponent.cancelSelected();
         }
@@ -263,13 +531,12 @@ class ComposeWrap extends Component {
             materialListVisible: false,
         });
     }
+
     /**
      * 点击取消添加素材按钮
      */
     onCancelAddMaterial = () => {
-        const materials = this.props.material.materials;
         const materialsNum = this.props.material.materials.length;
-
         for (let i = 0; i < materialsNum; i++) {
             const materialItemComponent = this.refs[`material-item-${i}`];
             materialItemComponent.cancelSelected();
@@ -279,12 +546,23 @@ class ComposeWrap extends Component {
             materialListVisible: false
         });
     }
+
+    /**
+     * 点击选择当前镜头图层
+     */
+    onLayerClick = (layer) => {
+        this.setState({
+            currentLayer: {...this.state.currentLayer, id: layer.id}
+        });
+    }
 }
 
 const mapStatToProps = ({ material }) => ({
     material
 });
 const mapDispatchToProps = (dispatch) => ({
-    addLayers: bindActionCreators(addLayers, dispatch)
+    addLayers: bindActionCreators(addLayers, dispatch),
+    deleteLayer: bindActionCreators(deleteLayer, dispatch),
+    updateLayers: bindActionCreators(updateLayers, dispatch)
 });
 export default connect(mapStatToProps, mapDispatchToProps)(ComposeWrap);
