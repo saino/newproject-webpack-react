@@ -73,6 +73,7 @@ class Make extends Component {
   handleJoinComposePage = (index, sceneId) => {
     const { material, addLayers } = this.props;
     const materialObj = { ...getItemByKey(material.materials, this.state.materialId, 'id'), baseLayer: true, order: 0, scene_id: sceneId };
+
     this.handleChangeStep(index, sceneId);
     addLayers(materialObj);
   };
@@ -136,7 +137,7 @@ class Make extends Component {
           );
       case 999:
         return (
-          <ComposeWrap materialId={ this.state.materialId } currentSceneId={ currentSceneId }  />
+          <ComposeWrap materialId={ this.state.materialId } currentSceneId={ currentSceneId } workId={ work.id } workName={ work.name }  />
         );
       default :
           return null;
