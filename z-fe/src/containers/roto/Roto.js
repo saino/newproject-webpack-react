@@ -14,7 +14,7 @@ import Timeline from './Timeline';
 export default class Roto extends Component {
   state = {
     sceneId: null,
-    aiRotoed: false,
+    aiRotoed: true,
     aiRotoProgress: null
   };
 
@@ -65,7 +65,7 @@ export default class Roto extends Component {
   };
 
   handleGenerateRotoMaterial = () => {
-    alert('xxoo');
+    this.props.onJoinCompose(2);  
   };
 
   handleSelectFrame = (frame) =>

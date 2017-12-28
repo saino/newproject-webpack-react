@@ -103,6 +103,7 @@ class Make extends Component {
             workName={ work.name }
             onFetchStart={ this.handleFetchStart }
             onFetchEnd={ this.handleFetchEnd }
+            onJoinCompose={ this.handleChangeStep }
             onCreateRoto={ this.handleCreateRoto }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
