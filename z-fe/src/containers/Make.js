@@ -6,10 +6,11 @@ import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
 import Compose from './compose/ComposeRender';
+import { fetchStart, fetchEnd } from '../reducers/app';
 import ComposeWrap from './compose/index';
 import {
-  getMaterials, deleteMaterial, uploadMaterial,
-  createScene, setDuration, setFrames, clearMaterials
+  getMaterials, deleteMaterial, uploadMaterial, setCurrFrameByScene,
+  createScene, setDuration, clearMaterials, createRoto, addLayers
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
@@ -25,38 +26,65 @@ class Make extends Component {
   };
 
   handleDeleteProjectMaterial = materialId =>
-    this.props.deleteMaterial(materialId);
+    this.props.deleteMaterial({ materialId });
 
   handleEditMaterial = materialId =>
     this.setState({
       materialId,
-      selectedIndex: 999
+      selectedIndex: 1
     }, () => {
       const { material, createScene } = this.props;
       const { materialId } = this.state;
 
       // 进入到抠像页
       createScene({
-        id: material.scenes.length + 1,
+        id: material.scenes.length,
         mtype: 'roto',
         materialId,
-        roto: []
+        currFrame: 1
       });
     });
 
-  handleSetMaterialTime = (duration) =>
-    this.props.setDuration(this.state.materialId, duration);
+  handleUploadMaterial = (material) =>
+    this.props.uploadMaterial({ material });
 
-  handleSetMaterialFrames = (frames) =>
-    this.props.setFrames(this.state.materialId, frames);
+  handleSetMaterialTime = (duration) =>
+    this.props.setDuration({ materialId: this.state.materialId, duration });
+
+  handleCreateRoto = (sceneId, frame, svg) =>
+    this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
+
+  handleFetchStart = () =>
+    this.props.fetchStart();
+
+  handleFetchEnd = () =>
+    this.props.fetchEnd();
+
+  handleChangeStep = (index) =>
+    this.setState({ selectedIndex: index });
+
+  handleGetMaterials = () =>
+    this.props.getMaterials({ workId: this.props.match.params.workId });
+
+  handleSetCurrFrameByScene = (sceneId, currFrame) =>
+    this.props.setCurrFrameByScene({ sceneId, currFrame });
+
+  handleJoinComposePage = (index, sceneId) => {
+    const { material, addLayers } = this.props;
+    const materialObj = { ...getItemByKey(material.materials, this.state.materialId, 'id'), baseLayer: true, order: 0, scene_id: sceneId };
+    console.log(sceneId);
+    this.handleChangeStep(index);
+    addLayers(materialObj);
+  };
 
   renderChild(index) {
     const {
-      material, match, user, compose,
-      uploadMaterial, addMaterial, changeLayer,
+      material, match, user, compose, app, userWorks,
+      addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
     } = this.props;
+    const work = getItemByKey(userWorks.works, match.params.workId, 'id') || {};
 
     switch (index) {
       case 0:
@@ -65,8 +93,9 @@ class Make extends Component {
             user={ user }
             workId={ match.params.workId }
             materials={ material.materials }
+            onGetMaterials={ this.handleGetMaterials }
             clearMaterials={ clearMaterials }
-            onUploadMaterial={ uploadMaterial }
+            onUploadMaterial={ this.handleUploadMaterial }
             onEdit={ this.handleEditMaterial }
             onDelete={ this.handleDeleteProjectMaterial } />
         );
@@ -75,8 +104,17 @@ class Make extends Component {
         return (
           <Roto
             scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
-            material={ getItemByKey(material.materials, this.state.materialId, 'id') }
-            onSetMaterialFrames={ this.handleSetMaterialFrames }
+            materials={ material.materials }
+            material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
+            rotos={ material.rotos }
+            app={ app }
+            workId={ work.id }
+            workName={ work.name }
+            onFetchStart={ this.handleFetchStart }
+            onFetchEnd={ this.handleFetchEnd }
+            onJoinCompose={ this.handleJoinComposePage }
+            onCreateRoto={ this.handleCreateRoto }
+            onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
 
@@ -95,27 +133,28 @@ class Make extends Component {
             style={{ width: '900px', height: '700px', left: "20%", top: "100px" }}
             frameDataUrl='http://localhost:3000/sample.jpg' />
           );
-      case 999: 
+      case 999:
         return (
-          <ComposeWrap materialId={this.state.materialId} />
+          <ComposeWrap materialId={ this.state.materialId } />
         );
-      default : 
+      default :
           return null;
     }
   }
 
   componentWillMount() {
-    this.props.getMaterials({ workId: this.props.match.params.workId });
+    this.handleGetMaterials();
   }
 
   render() {
+    const { handleChangeStep } = this.props;
     const { selectedIndex } = this.state;
 
     return (
       <div className="make-wrap">
 
         <div className="make-header">
-          <Step step={ selectedIndex } />
+          <Step step={ selectedIndex } onChangeStep={ this.handleChangeStep } />
         </div>
 
         <div className="make-main">
@@ -152,19 +191,25 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material, user, compose }) => ({
+const mapStateToProps = ({ material, user, compose, userWorks, app }) => ({
   material,
   user,
-  compose
+  compose,
+  userWorks,
+  app
 });
 const mapDispatchToProps = (dispatch) => ({
+  fetchStart: bindActionCreators(fetchStart, dispatch),
+  fetchEnd: bindActionCreators(fetchEnd, dispatch),
   getMaterials: bindActionCreators(getMaterials, dispatch),
   deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
   uploadMaterial: bindActionCreators(uploadMaterial, dispatch),
   createScene: bindActionCreators(createScene, dispatch),
+  addLayers: bindActionCreators(addLayers, dispatch),
   setDuration: bindActionCreators(setDuration, dispatch),
-  setFrames: bindActionCreators(setFrames, dispatch),
+  setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
+  createRoto: bindActionCreators(createRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),
   select: bindActionCreators(select, dispatch),
   removeMaterial: bindActionCreators(removeMaterial, dispatch),
@@ -172,7 +217,7 @@ const mapDispatchToProps = (dispatch) => ({
   changePosision: bindActionCreators(changePosision, dispatch),
   removeSelected: bindActionCreators(removeSelected, dispatch),
   changeContralPosision: bindActionCreators(changeContralPosision, dispatch),
-  clearMaterials: bindActionCreators(clearMaterials, dispatch),
+  clearMaterials: bindActionCreators(clearMaterials, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Make);

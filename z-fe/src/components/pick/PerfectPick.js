@@ -2,27 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Table } from 'antd';
-import { fetchStart, fetchEnd } from '../../reducers/app';
+import { Table, Button } from 'antd';
 
-function mapStateToProps ({ api }) {
-  return { api };
-}
-
-class PerfectPick extends Component {
-  static propTypes = {
-    onPrev: PropTypes.func.isRequired
-  };
-
+export default class PerfectPick extends Component {
   columns = [{
     title: '帧',
-    dataIndex: 'frameId',
-    key: 'frameId'
-  }, {
-    title: '准确率',
-    dataIndex: 'rate',
-    key: 'rate'
-  }, {
+    dataIndex: 'frame',
+    key: 'frame'
+  },{
     title: '类别',
     dataIndex: 'category',
     key: 'category'
@@ -33,6 +20,12 @@ class PerfectPick extends Component {
   }];
 
   render() {
+    let {
+      rotoFrames, frame, app,
+      onGenerateRotoMaterial, onSelectFrame
+    } = this.props;
+    rotoFrames = rotoFrames.map(({ frame }) => ({ frame, category: 'ROTO', status: '已修改' }));
+
     return (
       <div className="perfect-pick">
 
@@ -41,31 +34,24 @@ class PerfectPick extends Component {
         </div>
 
         <div className="pick-grid">
-          <Table columns={ this.columns } dataSource={[{
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }, {
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }, {
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }, {
-            frameId: 3,
-            rate: '75%',
-            category: 'AI',
-            status: 'true'
-          }]}></Table>
+          <Table
+            rowKey="frame"
+            columns={ this.columns }
+            dataSource={ rotoFrames }
+            rowSelection={{
+              type: 'radio',
+              selectedRowKeys: [ frame ],
+              onChange: (_, rows) => onSelectFrame(rows[0].frame) }} />
         </div>
 
         <div className="build">
-          <button onClick={ this.props.onPrev }>开始生成抠像素材</button>
+          <Button
+            type="primary"
+            className="generate-rotomaterial"
+            loading={ app.isFetching }
+            onClick={ onGenerateRotoMaterial }>
+            开始生成抠像素材
+          </Button>
         </div>
 
         <style>{`
@@ -105,13 +91,13 @@ class PerfectPick extends Component {
             color: #fff;
           }
 
-          .perfect-pick .ant-table-tbody > tr:nth-child(even) {
+          /*.perfect-pick .ant-table-tbody > tr:nth-child(even) {
             background: #ecf6fd;
-          }
+          } */
 
-          .perfect-pick .ant-table-tbody > tr:hover > td {
+          /*.perfect-pick .ant-table-tbody > tr:hover > td {
             background: transparent;
-          }
+          }*/
 
           .perfect-pick .ant-table-tbody > tr > td {
             border: 0 none;
@@ -125,7 +111,7 @@ class PerfectPick extends Component {
             padding: 40px 15px 0;
           }
 
-          .perfect-pick .build button {
+          .perfect-pick .build .generate-rotomaterial {
             display: block;
             width: 100%;
             line-height: 30px;
@@ -143,11 +129,3 @@ class PerfectPick extends Component {
     );
   }
 }
-
-// function mapDispatchToProps (dispatch) {
-//   return {
-//     getSceneType: bindActionCreators(getSceneType, dispatch)
-//   };
-// }
-
-export default connect(mapStateToProps)(PerfectPick);

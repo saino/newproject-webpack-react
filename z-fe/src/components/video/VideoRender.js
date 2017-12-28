@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { is } from 'immutable';
 
@@ -16,29 +16,43 @@ export default class VideoRender extends Component {
   }
 
   render() {
-    return (
-      <Draggable>
-        <div className="video-render" style={ this.props.style }>
-          <div className="video-render-inner"></div>
-          <img src={ this.props.frameImageUrl } />
-          <style>{`
+    const { style, frameImageUrl, onMouseDown, onMouseMove, onMouseUp, children, cursor } = this.props;
 
+    return (
+      <Draggable cursor={ cursor }>
+        <div
+          className="video-render"
+          style={ this.props.style }>
+          <div className="video-render-inner"
+            onMouseDown={ onMouseDown }
+            onMouseMove={ onMouseMove }
+            onMouseUp={ onMouseUp }>
+            <img src={ this.props.frameImageUrl } />
+            <div className="svg-wrap">
+              { children }
+            </div>
+          </div>
+          <style>{`
             .video-render-inner {
               position: absolute;
-              width: 100%;
-              height: 100%;
               left: 0;
-              top: 0;
-              background: rgba(0,0,0,.25);
+              top: 50%;
+              transform: translateY(-50%);
+              width: 100%;
             }
-
             .video-render img {
               display: block;
               width: 100%;
               height: 100%;
               object-fit: contain;
             }
-
+            .svg-wrap {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+            }
           `}</style>
         </div>
       </Draggable>

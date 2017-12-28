@@ -16,8 +16,8 @@ export default class TransformToolbar extends Component {
 
     return (
       <div className="transform-toolbar">
-        <span onClick={ onZoomOut }><Tooltip title="放大"><img src={ upPNG } /></Tooltip></span>
-        <span onClick={ onZoomIn }><Tooltip title="缩小"><img src={ downPNG } /></Tooltip></span>
+        <span onClick={ onZoomOut }><Tooltip title="放大" placement="right"><img src={ upPNG } /></Tooltip></span>
+        <span onClick={ onZoomIn }><Tooltip title="缩小" placement="right"><img src={ downPNG } /></Tooltip></span>
         <style>{`
           .transform-toolbar {
             padding: 12px;

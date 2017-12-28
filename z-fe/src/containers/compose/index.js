@@ -65,7 +65,7 @@ class MaterialItem extends Component {
                 .selected{
                     border: solid 2px blue;
                 }
-                
+
             `}</style>
         </div>);
     }
@@ -200,7 +200,7 @@ class ComposeWrap extends Component {
                 "compose-item-thumb": true,
                 "select": scenesLayer.id === this.state.currentLayer.id
             });
-            return (<DraggableCore key={scenesLayer.id} 
+            return (<DraggableCore key={scenesLayer.id}
                         position={{x: scenesLayer.config.left, y: scenesLayer.config.top}}
                         deltaPosition={{x: 0, y: 0}}
                         cursor={ this.state.currentLayer.cursor}
@@ -214,13 +214,13 @@ class ComposeWrap extends Component {
                             <TransControl controlPoint={0} control={scenesLayer.config.controls[0]} currentLayer={this.state.currentLayer}
                                 layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
                             {/* 右上角控制点 */}
-                            <TransControl controlPoint={1} control={scenesLayer.config.controls[1]} currentLayer={this.state.currentLayer} 
+                            <TransControl controlPoint={1} control={scenesLayer.config.controls[1]} currentLayer={this.state.currentLayer}
                                 layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
                             {/* 右下角控制点 */}
-                            <TransControl controlPoint={2} control={scenesLayer.config.controls[2]} currentLayer={this.state.currentLayer} 
+                            <TransControl controlPoint={2} control={scenesLayer.config.controls[2]} currentLayer={this.state.currentLayer}
                                 layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
                             {/* 左下角控制点 */}
-                            <TransControl controlPoint={3} control={scenesLayer.config.controls[3]} currentLayer={this.state.currentLayer} 
+                            <TransControl controlPoint={3} control={scenesLayer.config.controls[3]} currentLayer={this.state.currentLayer}
                                 layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
                         </div>
                     </DraggableCore>);
@@ -261,14 +261,14 @@ class ComposeWrap extends Component {
     renderLayersList() {
         const { deleteLayer, updateLayers } = this.props;
         const scenesLayers = this.getCurrentLayers();
-        return <DragList list={scenesLayers} 
-            itemKey="id" 
-            template={LayterItem} 
-            onMoveEnd={this.onMoveEnd} 
-            commonProps={{ 
-                            deleteLayer, 
-                            getCurrentLayers: this.getCurrentLayers, 
-                            updateLayers: this.onMoveEnd, 
+        return <DragList list={scenesLayers}
+            itemKey="id"
+            template={LayterItem}
+            onMoveEnd={this.onMoveEnd}
+            commonProps={{
+                            deleteLayer,
+                            getCurrentLayers: this.getCurrentLayers,
+                            updateLayers: this.onMoveEnd,
                             onLayerClick: this.onLayerClick,
                             currentLayer: this.state.currentLayer
                         }}/>;
@@ -291,7 +291,7 @@ class ComposeWrap extends Component {
     renderMaterialList() {
         const materials = this.props.material.materials;
         return materials.map((materialItem, index) => {
-            return <MaterialItem material={materialItem} 
+            return <MaterialItem material={materialItem}
                 key={materialItem.id}
                 ref={`material-item-${index}`}/>
         });
@@ -340,7 +340,7 @@ class ComposeWrap extends Component {
 
             {/* 右侧图层列表 */}
             <div className="compose-control">
-                <div className="header">第四步： 素材植入</div>
+                <div className="header">第三步： 素材植入</div>
                 <div className="addMaterial" onClick={this.onAddMaterialClick}>
                     <Button icon="plus" type="primary">添加素材</Button>
                 </div>
@@ -536,7 +536,7 @@ class ComposeWrap extends Component {
             }
             materialItemComponent.cancelSelected();
         }
-        this.props.addLayers(selectedMaterials);        
+        this.props.addLayers(selectedMaterials);
         this.setState({
             materialListVisible: false,
         });

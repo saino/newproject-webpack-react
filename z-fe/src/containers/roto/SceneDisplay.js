@@ -5,7 +5,7 @@ import { solutionFrame } from '../../reducers/frame';
 import { getItemByKey } from '../../utils/stateSet';
 
 /* 业务组件 */
-import TransformToolBar from '../make/TransformToolbar';
+import TransformToolBar from './TransformToolbar';
 import PenTool from './PenTool';
 import VideoRender from '../../components/video/VideoRender';
 import Matting from '../../components/matting/Matting';
@@ -14,70 +14,65 @@ import ParseMaterialToTime from '../../components/video/ParseMaterialToTime';
 import sceneBgJPG from '../../statics/scene_bg.jpg';
 
 export default class SceneDisplay extends Component {
-  static propTypes = {
-    materialId: PropTypes.number.isRequired,
-    sceneId: PropTypes.number.isRequired,
-    materials: PropTypes.array.isRequired,
-    frameDataUrl: PropTypes.string
-  };
-  static defaultProps = {
-    frameDataUrl: ''
-  };
   state = {
     scale: 1,
-    imageUrl: ''
+    imageUrl: '',
+    isOpenPen: false,
+    visibleRoto: true
   };
 
-  parseFrameComplete = (frames) => {
-    const { materialId, sceneId, solutionFrame } = this.props;
-
-    solutionFrame(frames.map(item => ({ ...item, materialId, sceneId })));
-  };
-
-  handleZoomOut = () =>
+  handleSetZoomOut = () =>
     this.setState({ scale: this.state.scale + config.transform.stepScale });
 
-  handleZoomIn = () =>
+  handleSetZoomIn = () =>
     this.setState({ scale: this.state.scale - config.transform.stepScale });
 
   handleSetFrameImageUrl = (imageUrl) =>
     this.setState({ imageUrl });
 
+  handleMettingComplete = (svg) =>
+    this.setState({ isOpenPen: false }, () => {
+      this.props.onCreateRoto([{
+        path_type: 'bezier',
+        closed: svg.closed,
+        points: svg.points
+      }]);
+    });
+
+  handleOpenPen = () =>
+    this.setState({ isOpenPen: true });
+
+  handleMoveNode = () => {};
+
+  handleAddNode = () => {};
+
+  handleRemoveNode = () => {
+
+  };
+
+  handleVisibleShadow = () =>
+    this.setState({ visibleRoto: !this.state.visibleRoto });
+
+  handleComplete = () => {
+
+  };
+    // this.setState({ isOpenPen: false }, () => {
+    //   const svg = this.refs.matting.state.pathData;
+    //
+    //   this.props.onCreateRoto([{
+    //     path_type: 'bezier',
+    //     closed: svg.closed,
+    //     points: svg.points
+    //   }]);
+    // });
+
   render() {
-    const { path, frameLength, time, frame, scene } = this.props;
-    const { scale, imageUrl } = this.state;
-
-    // const { src, totalFrame } = getItemByKey(materials, materialId, 'materialId') || {};
-    // let renderSomething = (
-    //   <VideoRender
-    //     ref="video_render"
-    //     style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-    //     frameDataUrl={ frameDataUrl } />
-    // );
-
-    // switch (selectStep.key){
-    //     case 'effect':
-    //     {/* 画出在video中每帧对应的秒数的图片 */}
-    //         renderSomething= <VideoRender
-    //             ref="video_render"
-    //             style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-    //             frameDataUrl={ frameDataUrl } />
-    //         break
-    //     case 'combine':
-    //        renderSomething=<ComposeRender
-    //            style={{ width: '100%', height: '100%' }}
-    //            frameDataUrl='http://localhost:3000/sample.jpg'></ComposeRender>
-    //         break;
-    //     default:
-    //         renderSomething= <VideoRender
-    //             ref="video_render"
-    //             style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-    //             frameDataUrl={ frameDataUrl } />
-    //}
+    const { path, frameLength, time, frame, roto, onSetMaterialTime } = this.props;
+    const { scale, imageUrl, isOpenPen, visibleRoto } = this.state;
+    const points = roto && visibleRoto ? roto.svg[0].points : [];
 
     return (
       <div className="scene-center">
-
         <div className="scene-center-inner">
            <div className="canvas">
 
@@ -87,16 +82,17 @@ export default class SceneDisplay extends Component {
                frameLength={ frameLength }
                time={ time }
                frame={ frame }
-               onSetFrameImageUrl={ this.handleSetFrameImageUrl  }
-               onSetMaterialTime={ this.props.onSetMaterialTime } />
+               onSetFrameImageUrl={ this.handleSetFrameImageUrl }
+               onSetMaterialTime={ onSetMaterialTime } />
 
              {/* 抠像 */}
-             <Matting style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0)', position: 'absolute', left: 0, top: 0, zIndex: 10000 }}></Matting>
-
-             {/* 播放视频每张帧图片 */}
-             <VideoRender
-               style={{ width: '100%', height: '100%', zIndex: 9999, transform: `scale(${ scale })` }}
-               frameImageUrl={ imageUrl } />
+             <Matting ref="matting" onComplete={ this.handleMettingComplete } isMetting={ this.state.isOpenPen } points={ points }>
+               {/* 显示帧图片 */}
+               <VideoRender
+                 style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}
+                 cursor={ isOpenPen ? 'default' : 'move' }
+                 frameImageUrl={ imageUrl } />
+             </Matting>
 
            </div>
         </div>
@@ -104,13 +100,21 @@ export default class SceneDisplay extends Component {
         <div className="tooltip">
 
           <div className="node">
-            <PenTool />
+            {/* 钢笔工具栏 */}
+            <PenTool
+              onOpenPen={ this.handleOpenPen }
+              onMoveNode={ this.handleMoveNode }
+              onAddNode={ this.handleAddNode }
+              onRemoveNode={ this.handleRemoveNode }
+              onVisibleShadow={ this.handleVisibleShadow }
+              onComplete={ this.handleComplete } />
           </div>
 
           <div className="transform">
+            {/* 变形栏 */}
             <TransformToolBar
-              onZoomOut={ this.handleZoomOut }
-              onZoomIn={ this.handleZoomIn } />
+              onZoomOut={ this.handleSetZoomOut }
+              onZoomIn={ this.handleSetZoomIn } />
           </div>
 
         </div>
@@ -136,6 +140,7 @@ export default class SceneDisplay extends Component {
           .scene-center-inner .canvas {
             flex: 1;
             position:relative;
+            overflow: hidden;
           }
           .tooltip {
             width: 40px;
@@ -150,14 +155,3 @@ export default class SceneDisplay extends Component {
     );
   }
 }
-
-// function mapDispatchToProps (dispatch) {
-//   return {
-//     solutionFrame: bindActionCreators(solutionFrame, dispatch)
-//   };
-// }
-//
-// export default connect(
-//   null,
-//   mapDispatchToProps
-// )(SceneDisplay);

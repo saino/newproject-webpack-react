@@ -61,13 +61,10 @@ export default class DraggableCore extends Component {
   handleDragStart = this.handleDragStart.bind(this);
   handlePressSpaceStart = this.handlePressSpaceStart.bind(this);
   handlePressSpaceEnd = this.handlePressSpaceEnd.bind(this);
-  handleMouseOver = this.handleMouseOver.bind(this);
-  handleMouseOut = this.handleMouseOut.bind(this);
 
   handleDragStart(evt) {
     if (!this.hasPressSpace)
       return;
-
 
     const el = findDOMNode(this);
     const { ownerDocument } = el;
@@ -135,16 +132,6 @@ export default class DraggableCore extends Component {
     removeEvent(ownerDocument, 'keyup', this.handlePressSpaceEnd);
   }
 
-  handleMouseOver() {
-    const { onHover } = this.props;
-    onHover('move');
-  }
-
-  handleMouseOut() {
-    const { onHover } = this.props;
-    onHover('default');
-  }
-
   getCurrStyle() {
     const { cursor, position, deltaPosition } = this.props;
 
@@ -159,21 +146,19 @@ export default class DraggableCore extends Component {
   render() {
     return React.cloneElement(React.Children.only(this.props.children), {
       style: { ...this.getCurrStyle(),  ...this.props.children.props.style },
-      onMouseDown: this.handleDragStart,
-      onMouseOver: this.handleMouseOver,
-      onMouseOut: this.handleMouseOut
+      onMouseDown: this.handleDragStart
     });
   }
 
   componentDidMount() {
     const { ownerDocument } = findDOMNode(this);
     addEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
-    this.mouted=true
+    this.mouted = true;
   }
 
   componentWillUnmount() {
       const { ownerDocument } = findDOMNode(this);
       removeEvent(ownerDocument, 'keydown', this.handlePressSpaceStart);
-      this.mouted=false
+      this.mouted = false;
   }
 }

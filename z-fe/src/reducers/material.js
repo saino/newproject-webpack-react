@@ -1,4 +1,4 @@
-import { add, update, remove, updateArray } from '../utils/stateSet';
+import { add, update, remove, updateArray, getItemByKey, asc } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -21,28 +21,8 @@ import scene from './scene';
 const defState = {
   materials: [],
   scenes: [],
-  layers: [
-    {
-      baseLayer: true,
-      create_time: "1513486522",
-      id: "33",
-      path: "/data/materials/33/source/video.ogv",
-      "properties": {
-        height: 192,
-        length: 1465,
-        thumbnail: "/data/materials/33/sequence/00000.jpg",
-        time: null,
-        width: 320,
-      },
-      order: 0,
-      scene_id: 3,
-      status: "0",
-      type: "video",
-      update_time: "1513486523",
-      user_id: "32",
-      work_id: "51",
-    }
-  ],
+  rotos: [],
+  layers: []
 };
 
 const actionTypes = {
@@ -50,10 +30,12 @@ const actionTypes = {
   UPLOAD_MATERIAL: 'UPLOAD_MATERIAL',
   DELETE_MATERIAL: 'DELETE_MATERIAL',
   CREATE_SCENE: 'CREATE_SCENE',
+  SET_CURRFRAME: 'SET_CURRFRAME',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION',
   SET_FRAMES: 'SET_FRAMES',
   CLEAR_MATERIALS: 'CLEAE_MATERIALS',
+  CREATE_ROTO: 'CREATE_ROTO',
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
@@ -101,15 +83,7 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
       materials: resp.materials || [],
-      scenes: resp.scenes || [{
-        id: 1,
-        type: "roto",
-        material_id: "33"
-      }, {
-        id: 2,
-        type: "roto",
-        material_id: "34",
-      }]
+      scenes: resp.config.scenes || []
     });
   });
 });
@@ -125,9 +99,8 @@ export const clearMaterials = () => {
 
 /**
  * 删除素材
- * @param id { String } 素材id
  */
-export const deleteMaterial = (materialId) => ({
+export const deleteMaterial = ({ materialId }) => ({
   type: actionTypes.DELETE_MATERIAL,
   materialId
 });
@@ -135,7 +108,7 @@ export const deleteMaterial = (materialId) => ({
 /**
  * 上传素材
  */
-export const uploadMaterial = (material) => ({
+export const uploadMaterial = ({ material }) => ({
   type: actionTypes.UPLOAD_MATERIAL,
   material
 });
@@ -143,40 +116,68 @@ export const uploadMaterial = (material) => ({
 /**
  * 创建镜头
  */
-export const createScene = ({ id, mtype, materialId, roto }) => ({
+export const createScene = ({ id, mtype, materialId, currFrame }) => ({
   type: actionTypes.CREATE_SCENE,
   id,
   mtype,
   materialId,
-  roto
+  currFrame
 });
 
 /**
  * 设置素材时长
  */
-export const setDuration = (materialId, duration) => ({
+export const setDuration = ({ materialId, duration }) => ({
   type: actionTypes.SET_DURATION,
   materialId,
   duration
 });
 
 /**
- * 设置素材帧图片集合
+ * 设置镜头当前帧
  */
-export const setFrames = (materialId, frames) => {
-  return {
-    type: actionTypes.SET_FRAMES,
-    materialId,
-    frames
-  };
-};
+export const setCurrFrameByScene = ({ sceneId, currFrame }) => ({
+  type: actionTypes.SET_CURRFRAME,
+  sceneId,
+  currFrame
+});
+
+/**
+ * 创建抠像svg path
+ * @param option { Object }
+ *  option.materialId 素材id
+ *  option.sceneId 镜头id
+ *  option.frame 帧
+ *  option.type 抠像类别
+ *  option.svg svg集合
+ */
+export const createRoto = ({ materialId, sceneId, frame, mtype, svg }) => ({
+  type: actionTypes.CREATE_ROTO,
+  materialId,
+  sceneId,
+  frame,
+  mtype,
+  svg
+});
 
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
-      const { materials, scenes } = action;
+      let { materials, scenes } = action;
+      const addScenes = [];
 
-      return { ...state, materials, scenes };
+      scenes = scenes.map((scene) => {
+        scene.currFrame == null && (scene.currFrame = 1);
+        return scene;
+      });
+
+      scenes.forEach((scene) => {
+        if (!getItemByKey(state.scenes, scene.id, 'id')) {
+          addScenes.push(scene);
+        }
+      });
+
+      return { ...state, materials, scenes: [ ...state.scenes, ...addScenes ] };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;
@@ -189,13 +190,23 @@ export default (state = defState, action) => {
       return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.CREATE_SCENE:
-      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, roto: action.roto };
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, currFrame: action.currFrame };
 
-      return { ...state, scenes: add(state.scenes, scene) };
+      return { ...state, scenes: asc(add(state.scenes, scene)) };
 
-    case actionTypes.SET_FRAMES:
-      console.log(action.frames, action.materialId, 'xxxoo');
-      return { ...state, materials: update(state.materials, { 'properties.frames': action.frames }, action.materialId, 'id') };
+    case actionTypes.SET_CURRFRAME:
+      return { ...state, scenes: update(state.scenes, { currFrame: action.currFrame }, action.sceneId, 'id') };
+
+    case actionTypes.CREATE_ROTO:
+      const diffFn = (item) => item.materialId == action.materialId && item.sceneId == action.sceneId && item.frame == action.frame;
+      const hasRoto = !!getItemByKey(state.rotos, diffFn);
+      const roto = { material_id: action.materialId, scene_id: action.sceneId, frame: action.frame, type: action.mtype, svg: action.svg };
+
+      if (!hasRoto) {
+        return { ...state, rotos: add(state.rotos, roto) };
+      } else {
+        return { ...state, rotos: update(state.rotos, roto, diffFn) };
+      }
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };

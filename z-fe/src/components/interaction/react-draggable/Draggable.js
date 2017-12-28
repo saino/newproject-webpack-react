@@ -2,7 +2,7 @@
  * React拖拽组件
  */
 
-import React, { Component } from 'react';
+import React, { Component, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
@@ -88,15 +88,15 @@ export default class Draggable extends Component {
     newX = this.state.x + newDeltaX;
     newY = this.state.y + newDeltaY;
 
-    if (newX < this.minX)
-      newX = this.minX;
-    else if (newX > maxX + this.minX)
-      newX = maxX + this.minX;
-
-    if (newY < this.minY)
-      newY = this.minY;
-    else if (newY > maxY + this.minY)
-      newY = maxY + this.minY;
+    // if (newX < this.minX)
+    //   newX = this.minX;
+    // else if (newX > maxX + this.minX)
+    //   newX = maxX + this.minX;
+    //
+    // if (newY < this.minY)
+    //   newY = this.minY;
+    // else if (newY > maxY + this.minY)
+    //   newY = maxY + this.minY;
 
     this.setState({ deltaX: newX, deltaY: newY });
   }
@@ -108,28 +108,22 @@ export default class Draggable extends Component {
     this.setState({ x: endX, y: endY });
   }
 
-  onHover(cursor) {
-    this.setState({ cursor });
-  }
-
   render() {
-
     return (
-      <DraggableCore
-        position={{ x: this.state.x, y: this.state.y }}
-        deltaPosition={{ x: this.state.deltaX, y: this.state.deltaY }}
-        cursor={ this.state.cursor }
-        onDragStart={ this.onDragStart.bind(this) }
-        onDrag={ this.onDrag.bind(this) }
-        onDragEnd={ this.onDragEnd.bind(this) }
-        onHover={ this.onHover.bind(this) }>
+        <DraggableCore
+          position={{ x: this.state.x, y: this.state.y }}
+          deltaPosition={{ x: this.state.deltaX, y: this.state.deltaY }}
+          cursor={ this.props.cursor }
+          onDragStart={ this.onDragStart.bind(this) }
+          onDrag={ this.onDrag.bind(this) }
+          onDragEnd={ this.onDragEnd.bind(this) }>
 
-        {React.cloneElement(React.Children.only(this.props.children), {
-          className: classNames(this.props.children.props.className, this.props.className),
-          style: { ...this.props.children.props.style, ...this.props.style }
-        })}
+          {cloneElement(this.props.children, {
+            className: classNames(this.props.children.props.className, this.props.className),
+            style: { ...this.props.children.props.style, ...this.props.style }
+          })}
 
-      </DraggableCore>
+        </DraggableCore>
     );
   }
 

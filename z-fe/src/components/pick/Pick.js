@@ -1,38 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-//import { connect } from 'react-redux';
-
-/* 自定义组件 */
 import PerfectPick from './PerfectPick';
 import PrePick from './PrePick';
 
 export default class Pick extends Component {
-  static propTypes = {
-    material: PropTypes.object
-  };
-  static defaultProps = {
-    material: {}
-  };
-  state = {
-    index: 0
-  };
-
-  getDontSuffixFilename() {
-    const { path } = this.props.material;
-
-    return /[^/]+(?=\.)/.exec(path)[0];
+  getDontSuffixFilename(filename) {
+    return /([^/]+)(?=\.)/.exec(filename) ? RegExp.$1 : ''
   }
 
   render() {
+    const {
+      filename, app, workId, sceneId,
+      rotoFrames, frame, aiRotoed, aiRotoProgress,
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto
+    } = this.props;
+
     return (
       <div className="pick">
-
-        <div className="header">{ !this.state.index ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
+        <div className="header">{ !aiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
 
         <div className="main">
-          { !this.state.index ?
-            (<PrePick filename={ this.getDontSuffixFilename() } onNext={ () => { this.setState({ index: 1 }) } } />) :
-            (<PerfectPick onPrev={ () => { this.setState({ index: 0 }) } } />)
+          { !aiRotoed ?
+            (<PrePick filename={ this.getDontSuffixFilename(filename) } app={ app } aiRotoProgress={ aiRotoProgress } onAutoRoto={ onAutoRoto } />) :
+            (<PerfectPick app={ app } rotoFrames={ rotoFrames } frame={ frame } onSelectFrame={ onSelectFrame } onGenerateRotoMaterial={ onGenerateRotoMaterial } />)
           }
         </div>
 
@@ -64,9 +54,3 @@ export default class Pick extends Component {
       (<PrePick />) : (<PerfectPick />);
   }
 }
-
-// function mapStateToProps ({ material }) {
-//   return { material };
-// }
-//
-// export default connect(mapStateToProps)(Pick);
