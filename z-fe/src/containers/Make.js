@@ -22,7 +22,8 @@ import { finds, getItemByKey } from '../utils/stateSet';
 class Make extends Component {
   state = {
     materialId: '',
-    selectedIndex: 0
+    selectedIndex: 0,
+    currentSceneId: ''
   };
 
   handleDeleteProjectMaterial = materialId =>
@@ -60,8 +61,8 @@ class Make extends Component {
   handleFetchEnd = () =>
     this.props.fetchEnd();
 
-  handleChangeStep = (index) =>
-    this.setState({ selectedIndex: index });
+  handleChangeStep = (index, sceneId) =>
+    this.setState({ selectedIndex: index, currentSceneId: sceneId == null ? '' : sceneId });
 
   handleGetMaterials = () =>
     this.props.getMaterials({ workId: this.props.match.params.workId });
@@ -72,8 +73,7 @@ class Make extends Component {
   handleJoinComposePage = (index, sceneId) => {
     const { material, addLayers } = this.props;
     const materialObj = { ...getItemByKey(material.materials, this.state.materialId, 'id'), baseLayer: true, order: 0, scene_id: sceneId };
-    console.log(sceneId);
-    this.handleChangeStep(index);
+    this.handleChangeStep(index, sceneId);
     addLayers(materialObj);
   };
 
@@ -84,6 +84,7 @@ class Make extends Component {
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
     } = this.props;
+    const { materialId, currentSceneId } = this.state;
     const work = getItemByKey(userWorks.works, match.params.workId, 'id') || {};
 
     switch (index) {
@@ -135,7 +136,7 @@ class Make extends Component {
           );
       case 999:
         return (
-          <ComposeWrap materialId={ this.state.materialId } />
+          <ComposeWrap materialId={ this.state.materialId } currentSceneId={ currentSceneId }  />
         );
       default :
           return null;
