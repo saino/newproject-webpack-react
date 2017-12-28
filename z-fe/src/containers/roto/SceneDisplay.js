@@ -67,7 +67,7 @@ export default class SceneDisplay extends Component {
     // });
 
   render() {
-    const { path, frameLength, time, frame, scene, roto, onSetMaterialTime } = this.props;
+    const { path, frameLength, time, frame, roto, onSetMaterialTime } = this.props;
     const { scale, imageUrl, isOpenPen, visibleRoto } = this.state;
     const points = roto && visibleRoto ? roto.svg[0].points : [];
 

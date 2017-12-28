@@ -7,8 +7,8 @@ import Pick from '../../components/pick/Pick';
 export default class ControllerPanel extends Component {
   render() {
     const {
-      filename, frame, app, rotoFrames,
-      onSelectFrame, onAutoRoto
+      filename, frame, app, rotoFrames, aiRotoed, aiRotoProgress,
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto
     } = this.props;
 
     return (
@@ -18,6 +18,9 @@ export default class ControllerPanel extends Component {
          app={ app }
          rotoFrames={ rotoFrames }
          frame={ frame }
+         aiRotoed={ aiRotoed }
+         aiRotoProgress={ aiRotoProgress }
+         onGenerateRotoMaterial={ onGenerateRotoMaterial }
          onAutoRoto={ onAutoRoto }
          onSelectFrame={ onSelectFrame } />
 

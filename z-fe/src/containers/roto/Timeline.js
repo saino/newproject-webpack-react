@@ -140,29 +140,27 @@ class Timeline extends Component {
   handlePlayOrPause = () =>
     this.setState({ isPlay: !this.state.isPlay }, this.execute);
 
-  handlePlayAction = (getCurrFrame: Function, warningMsg: String) => () => {
-    const { isPlay } = this.state;
-    const { frame, frameLength, onChangeFrame } = this.props;
-    let newFrame;
+  handlePlayAction = function (getCurrFrame, warningMsg) {
+    return function () {
+      const { isPlay } = this.state;
+      const { frame, frameLength, onChangeFrame } = this.props;
+      let newFrame;
 
-    if (isPlay) {
-      message.warning('正在播放中，请先暂停');
-      return;
+      if (isPlay) {
+        message.warning('正在播放中，请先暂停');
+        return;
+      }
+
+      newFrame = getCurrFrame(frame);
+
+      if (newFrame <= 0 || newFrame > frameLength) {
+        message.warning(warningMsg);
+        return;
+      }
+
+      onChangeFrame(newFrame);
     }
-
-    newFrame = getCurrFrame(frame);
-
-    if (newFrame <= 0 || newFrame > frameLength) {
-      message.warning(warningMsg);
-      return;
-    }
-
-    onChangeFrame(newFrame);
   };
-
-  // shouldComponentUpdate(nextProps) {
-  //   return nextProps.path !== this.props.path || nextProps.time !== this.props.time;
-  // }
 
   render() {
     const { path, frames, frame, time, frameLength, onChangeFrame } = this.props;
@@ -181,9 +179,9 @@ class Timeline extends Component {
 
           <div className="header">
             <div className="player">
-              <div className="backward" onClick={ this.handleBackward }><Icon type="backward" /></div>
+              <div className="backward" onClick={ this.handleBackward.bind(this) }><Icon type="backward" /></div>
               <div className="playing" onClick={ this.handlePlayOrPause }><Icon type={ isPlay ? 'pause-circle-o' : 'play-circle-o' } /></div>
-              <div className="forward" onClick={ this.handleForward }><Icon type="forward" /></div>
+              <div className="forward" onClick={ this.handleForward.bind(this) }><Icon type="forward" /></div>
             </div>
 
             <div className="currframe">

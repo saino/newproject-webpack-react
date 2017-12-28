@@ -6,50 +6,42 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from 'antd';
 import UserMaterial from './UserMaterial';
-import { getItemByKey } from '../../utils/stateSet';
+import { getItemByKey, desc } from '../../utils/stateSet';
 import { deleteMaterial } from '../../reducers/material';
 
 export default class Material extends Component {
-  state = {
-    flag: 0
-  };
+  componentWillMount() {
+    this.props.onGetMaterials();
+  }
 
-  handleNavItemChange = (flag) => () =>
-    this.setState({ flag });
-
-  renderChildMaterial(flag) {
+  renderChildMaterial() {
     const {
       materials, user, workId, clearMaterials,
       onUploadMaterial, onDelete, onEdit
     } = this.props;
 
-    switch (flag) {
-      case 0:
-        return (
-          <UserMaterial
-            user={ user }
-            workId={ workId }
-            clearMaterials={ clearMaterials }
-            onUploadMaterial={ onUploadMaterial }
-            materials={ materials }
-            onEdit={ onEdit }
-            onDelete={ onDelete } />);
-    }
+    return (
+      <UserMaterial
+        user={ user }
+        workId={ workId }
+        clearMaterials={ clearMaterials }
+        onUploadMaterial={ onUploadMaterial }
+        materials={ desc(materials) }
+        onEdit={ onEdit }
+        onDelete={ onDelete } />
+    );
   }
 
   render() {
-
     return (
       <div className="material-wrap">
         <div className="material-middle">
           <div className="material-middle-inner">
             <ul className="material-middle-left-nav">
-              <li><a href="javascript:;" className={`item-inner ${ this.state.flag == 0 ? 'active' : '' }`} onClick={ this.handleNavItemChange(0) }><Icon type="picture" />项目素材</a></li>
-              <li><a href="javascript:;" className={`item-inner ${ this.state.flag == 1 ? 'active' : '' }`} onClick={ this.handleNavItemChange(1) }><Icon type="picture" />公共素材</a></li>
-              <li><a href="javascript:;" className={`item-inner ${ this.state.flag == 2 ? 'active' : '' }`} onClick={ this.handleNavItemChange(2) }><Icon type="picture" />我的素材</a></li>
+              <li><a href="javascript:;" className={`item-inner active`}><Icon type="picture" />项目素材</a></li>
             </ul>
             <div className="material-middle-right-main">
-              { this.renderChildMaterial(this.state.flag) }
+              { this.renderChildMaterial() }
             </div>
           </div>
         </div>

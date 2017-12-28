@@ -1,4 +1,4 @@
-import { add, update, remove, getItemByKey } from '../utils/stateSet';
+import { add, update, remove, getItemByKey, asc } from '../utils/stateSet';
 import packageToken from '../utils/packageToken';
 import { post } from '../fetch/fetch';
 import { logout } from './user';
@@ -28,6 +28,7 @@ const actionTypes = {
   UPLOAD_MATERIAL: 'UPLOAD_MATERIAL',
   DELETE_MATERIAL: 'DELETE_MATERIAL',
   CREATE_SCENE: 'CREATE_SCENE',
+  SET_CURRFRAME: 'SET_CURRFRAME',
   SET_FRAME_RATE: 'SET_FRAME_RATE',
   SET_DURATION: 'SET_DURATION',
   SET_FRAMES: 'SET_FRAMES',
@@ -43,7 +44,7 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
       materials: resp.materials || [],
-      scenes: resp.scenes || []
+      scenes: resp.scenes || resp.config.scenes || []
     });
   });
 });
@@ -76,11 +77,12 @@ export const uploadMaterial = ({ material }) => ({
 /**
  * 创建镜头
  */
-export const createScene = ({ id, mtype, materialId }) => ({
+export const createScene = ({ id, mtype, materialId, currFrame }) => ({
   type: actionTypes.CREATE_SCENE,
   id,
   mtype,
-  materialId
+  materialId,
+  currFrame
 });
 
 /**
@@ -90,6 +92,15 @@ export const setDuration = ({ materialId, duration }) => ({
   type: actionTypes.SET_DURATION,
   materialId,
   duration
+});
+
+/**
+ * 设置镜头当前帧
+ */
+export const setCurrFrameByScene = ({ sceneId, currFrame }) => ({
+  type: actionTypes.SET_CURRFRAME,
+  sceneId,
+  currFrame
 });
 
 /**
@@ -113,9 +124,21 @@ export const createRoto = ({ materialId, sceneId, frame, mtype, svg }) => ({
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
-      const { materials, scenes } = action;
+      let { materials, scenes } = action;
+      const addScenes = [];
 
-      return { ...state, materials, scenes };
+      scenes = scenes.map((scene) => {
+        scene.currFrame == null && (scene.currFrame = 1);
+        return scene;
+      });
+
+      scenes.forEach((scene) => {
+        if (!getItemByKey(state.scenes, scene.id, 'id')) {
+          addScenes.push(scene);
+        }
+      });
+
+      return { ...state, materials, scenes: [ ...state.scenes, ...addScenes ] };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;
@@ -128,9 +151,12 @@ export default (state = defState, action) => {
       return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.CREATE_SCENE:
-      const scene = { id: action.id, type: action.mtype, material_id: action.materialId };
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, currFrame: action.currFrame };
 
-      return { ...state, scenes: add(state.scenes, scene) };
+      return { ...state, scenes: asc(add(state.scenes, scene)) };
+
+    case actionTypes.SET_CURRFRAME:
+      return { ...state, scenes: update(state.scenes, { currFrame: action.currFrame }, action.sceneId, 'id') };
 
     case actionTypes.CREATE_ROTO:
       const diffFn = (item) => item.materialId == action.materialId && item.sceneId == action.sceneId && item.frame == action.frame;

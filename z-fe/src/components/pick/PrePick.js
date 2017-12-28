@@ -2,32 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Button } from 'antd';
+import { Button, Progress } from 'antd';
 
 class PrePick extends Component {
-  handleAutoRoto = () => {
-    // const { onFetchStart, onFetchEnd, workId, sceneId } = this.props;
-    // const token = getAuth().token;
-    //
-    // onFetchStart();
-    //
-    // post('/user/saveWork', { token, work_id: workId, status: 1, config: {} })
-
-    // post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, resp => {
-    //   console.log(resp, '提交抠像');
-    // }, () => onFetchEnd());
-    //this.autoRoto({ workId, sceneId });
-  };
-  // autoRoto = packageToken((dispatch, { token, workId, sceneId }) => {
-  //   console.log(token, workId, 'hhha');
-  //   post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, resp => {
-  //     console.log(resp, '提交抠像');
-  //   });
-  // });
-
   render() {
-    const { filename, app, onAutoRoto } = this.props;
-    const rotoText = app.isFetching ? '作品保存中...' : '开始云端AI自动抠像';
+    const { filename, app, aiRotoProgress, onAutoRoto } = this.props;
 
     return (
       <div className="pre-pick">
@@ -37,7 +16,11 @@ class PrePick extends Component {
         </div>
 
         <div className="auto-start">
-          <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ onAutoRoto }>{ rotoText }</Button>
+          <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ onAutoRoto }>开始云端AI自动抠像</Button>
+        </div>
+
+        <div className="roto-progress">
+          { aiRotoProgress != null ? (<Progress percent={ aiRotoProgress } size="small" />) : void 0 }
         </div>
 
         <style>{`
@@ -71,6 +54,10 @@ class PrePick extends Component {
             outline: none;
             letter-spacing: 1px;
             cursor: pointer;
+          }
+
+          .roto-progress {
+            padding: 12px 15px 0;
           }
 
         `}</style>

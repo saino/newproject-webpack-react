@@ -2,14 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Table } from 'antd';
-import { fetchStart, fetchEnd } from '../../reducers/app';
+import { Table, Button } from 'antd';
 
-function mapStateToProps ({ api }) {
-  return { api };
-}
-
-class PerfectPick extends Component {
+export default class PerfectPick extends Component {
   columns = [{
     title: '帧',
     dataIndex: 'frame',
@@ -25,7 +20,10 @@ class PerfectPick extends Component {
   }];
 
   render() {
-    let { rotoFrames, onSelectFrame, frame } = this.props;
+    let {
+      rotoFrames, frame, app,
+      onGenerateRotoMaterial, onSelectFrame
+    } = this.props;
     rotoFrames = rotoFrames.map(({ frame }) => ({ frame, category: 'ROTO', status: '已修改' }));
 
     return (
@@ -43,11 +41,17 @@ class PerfectPick extends Component {
             rowSelection={{
               type: 'radio',
               selectedRowKeys: [ frame ],
-              onChange: (_, rows) => this.props.onSelectFrame(rows[0].frame) }} />
+              onChange: (_, rows) => onSelectFrame(rows[0].frame) }} />
         </div>
 
         <div className="build">
-          <button onClick={ this.props.onPrev }>开始生成抠像素材</button>
+          <Button
+            type="primary"
+            className="generate-rotomaterial"
+            loading={ app.isFetching }
+            onClick={ onGenerateRotoMaterial }>
+            开始生成抠像素材
+          </Button>
         </div>
 
         <style>{`
@@ -107,7 +111,7 @@ class PerfectPick extends Component {
             padding: 40px 15px 0;
           }
 
-          .perfect-pick .build button {
+          .perfect-pick .build .generate-rotomaterial {
             display: block;
             width: 100%;
             line-height: 30px;
@@ -125,11 +129,3 @@ class PerfectPick extends Component {
     );
   }
 }
-
-// function mapDispatchToProps (dispatch) {
-//   return {
-//     getSceneType: bindActionCreators(getSceneType, dispatch)
-//   };
-// }
-
-export default connect(mapStateToProps)(PerfectPick);
