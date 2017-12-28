@@ -348,7 +348,7 @@ class ComposeWrap extends Component {
                     </div> : null}
                     {this.renderLayersList()}
                 </ul>
-                <div className="compose-complete" onClick={this.onCompleteWorkClick}>完成植入</div>
+                <Button className="compose-complete" type="primary" onClick={this.onCompleteWorkClick}>完成植入</Button>
             </div>
 
             {/* 素材选择列表弹出框 */}
@@ -575,6 +575,7 @@ class ComposeWrap extends Component {
             name: this.props.workName,
             config: this.props.material
         }
+        console.log(this);
         post('/user/saveWork', options, resp => {
             console.log(resp);
         });
