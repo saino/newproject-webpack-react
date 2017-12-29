@@ -67,7 +67,6 @@ class MaterialItem extends Component {
                 .selected{
                     border: solid 2px blue;
                 }
-
             `}</style>
         </div>);
     }
@@ -90,7 +89,7 @@ class LayterItem extends Component {
             <div className="scenes-layer-item-delete" onClick={this.onDeleteScenesLayer.bind(this, item)}>
                 <Tooltip title="删除" placement="right">
                     <a className="delete-btn" href="javascript:;">
-                        <Icon type="delete" />
+                        <Icon type="delete" size="small" style={{ color: '#999' }} />
                     </a>
                 </Tooltip>
             </div>
@@ -378,6 +377,8 @@ class ComposeWrap extends Component {
                 .compose-render{
                     flex: 1;
                     position: relative;
+                    padding: 20px;
+                    box-sizing: border-box;
                 }
                 .compose-render-wrap{
                     font-size: 0;
@@ -404,7 +405,7 @@ class ComposeWrap extends Component {
                 }
                 .compose-control{
                     position: relative;
-                    width: 200px;
+                    width: 300px;
                     background: rgba(200,200,200,0.5);
                 }
                 .compose-control> .header {
@@ -435,41 +436,42 @@ class ComposeWrap extends Component {
                     margin: 0 auto;
                     height: 80%;
                 }
+                .compose-layers-list > div:nth-of-type(2) > div:nth-of-type(even) .scenes-layer-item {
+                  background: #f1faff;
+                }
+                .compose-layers-list > div:nth-of-type(2) > div {
+                  margin-bottom: 0!important;
+                }
                 .scenes-layer-item{
                     display: flex;
                     justify-content: space-between;
                     height: 30px;
                     width: 100%;
-                    margin-bottom: 10px;
                     line-height: 30px;
-                    border: solid 1px grey;
                     cursor: pointer;
-                }
-                .scenes-layer-item.select{
-                    border: solid 1px #1EBC9C;
+                    background: #fff;
                 }
                 .scenes-layer-item-title{
                     flex: 1;
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap;
+                    padding: 0 10px;
                 }
                 .scenes-layer-item-delete{
                     height: 30px;
                     width: 30px;
-                    font-size: 20px;
+                    font-size: 16px;
+                    color: #f1f1f1;
                 }
                 .compose-complete{
                     position: absolute;
                     width: 90%;
                     left: 5%;
                     bottom: 30px;
-                    background: rgba(100,100,100,0.5);
                     height: 28px;
                     text-align: center;
                     line-height: 28px;
-                    color: #fff;
-                    cursor: pointer;
                 }
                 // .compose-material{
                 //     position: absolute;
