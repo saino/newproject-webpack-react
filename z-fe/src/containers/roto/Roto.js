@@ -31,7 +31,7 @@ export default class Roto extends Component {
     const { scenes, onCreateRoto } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id');
-    
+
     onCreateRoto(this.state.sceneId, scene.currFrame, svg);
   };
 
@@ -67,9 +67,6 @@ export default class Roto extends Component {
   handleGenerateRotoMaterial = () => {
     this.props.onJoinCompose(999, this.state.sceneId);
   };
-
-  handleSelectFrame = (frame) =>
-    this.setState({ currFrame: frame });
 
   componentWillReceiveProps(nextProps) {
     if (this.state.sceneId == null) {
@@ -114,7 +111,7 @@ export default class Roto extends Component {
             aiRotoProgress={ aiRotoProgress }
             onGenerateRotoMaterial={ this.handleGenerateRotoMaterial }
             onAutoRoto={ this.handleAutoRoto }
-            onSelectFrame={ this.handleSelectFrame } />
+            onSelectFrame={ this.handleChangeFrame } />
 
         </div>
         <div className="roto-bottom">
