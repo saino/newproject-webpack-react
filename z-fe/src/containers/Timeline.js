@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import Scrollbar from 'react-custom-scrollbars';
 import { Icon, message } from 'antd';
-import { setImageData } from '../../reducers/imageData';
-import { getItemByKey, add, finds } from '../../utils/stateSet';
-import ParseMaterialToFrameImage from '../../components/video/ParseMaterialToFrameImage';
-import Tick from '../../components/interaction/react-tick/Tick';
+import { setImageData } from '../reducers/imageData';
+import { getItemByKey, add, finds } from '../utils/stateSet';
+import ParseMaterialToFrameImage from '../components/video/ParseMaterialToFrameImage';
+import Tick from '../components/interaction/react-tick/Tick';
 //import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
-import config from '../../config';
+import config from '../config';
 
 class Timeline extends Component {
   state = {
@@ -20,78 +20,10 @@ class Timeline extends Component {
   constructor(props) {
     super(props);
 
-    // 前进
     this.handleForward = this.handlePlayAction(currFrame => currFrame + 1, '已经最后一帧了！');
-    // 后退
     this.handleBackward = this.handlePlayAction(currFrame => currFrame - 1, '已经第一帧了！');
-    // 开始播放
     this.execute = this.playOrPausing.bind(this)();
   }
-
-  // handleGetFrameImage = (duration, currentTime, frameImage) => {
-  //   this.frames.push(frameImage);
-  //
-  //   // 根据帧的时长转成图片完成
-  //   if (duration == currentTime) {
-  //
-  //     // 创建播放或暂停方法
-  //     //
-  //     //console.log(this.frames, 'ddd');
-  //     // 设置视频的帧图片集合
-  //     //this.props.onSetMaterialFrames(this.frames);
-  //     //this.props.onSetMaterialTime(50.2332);
-  //     // const { material, onSetMaterialFrames } = this.props;
-  //     // onSetMaterialFrames(this.frames);
-  //     //console.log(this.frames, 'frames');
-  //     //setImageData(materialId, sceneId, this.imageUrls);
-  //
-  //     // 默认选择第一张帧
-  //     //onSelectDataUrl(this.imageUrls[0].imageUrl);
-  //
-  //     // 获取当前素材、镜头对应的帧数据
-  //     // this.setState({
-  //     //   currFrames: finds(frames,
-  //     //     item => item.materialId === materialId && item.sceneId === sceneId
-  //     //   )
-  //     // });
-  //
-  //
-  //   }
-  //   //console.log(currentTime);
-  // };
-
-  // getKeyFrames = (imageData) => {
-  //   const keyFrame = {},
-  //         res = [],
-  //         matchTimeRE = /^(.*)?(?=\.)/;
-  //   let time;
-  //
-  //   imageData.forEach(item => {
-  //     time = matchTimeRE.test(item.time) && RegExp.$1;
-  //
-  //     if (!(time in keyFrame)) {
-  //       keyFrame[time] = item;
-  //       res.push(item);
-  //     }
-  //
-  //   });
-  //
-  //   return res;
-  // };
-  //
-  // checkFrameId = frameId =>
-  //   getItemByKey(this.state.currFrames, frameId, 'frameId');
-
-  // getDataSource = () => {
-  //   const { imageData, materialId, sceneId } = this.props;
-  //   const { dataSource = [] } = getItemByKey(
-  //     imageData,
-  //     item =>
-  //       item.materialId === materialId && item.sceneId === sceneId
-  //   ) || {};
-  //
-  //   return dataSource;
-  // };
 
   playOrPausing = function () {
     const timers = {};

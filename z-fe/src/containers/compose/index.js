@@ -17,6 +17,8 @@ import index from 'pure-render-immutable-decorator';
 import { bindActionCreators } from 'redux';
 import { post } from "../../fetch/fetch";
 import { getAuth } from "../../utils/auth";
+import Timeline from '../Timeline';
+import { finds, getItemByKey } from '../../utils/stateSet';
 
 class MaterialItem extends Component {
     constructor() {
@@ -316,38 +318,59 @@ class ComposeWrap extends Component {
             return layer1.order > layer2.order;
         });
     }
+
+    handleChangeFrame = (frame) => {
+      console.log(frame);
+    };
+
     render() {
+        const { materials, scenes, materialId, currentSceneId } = this.props;
         const baseLayer = this.getCurrentBaseLayer();
-        return (<div className='compose-wrap'>
+        const material = getItemByKey(materials, materialId, 'id');
+        const scene = getItemByKey(scenes, currentSceneId, 'id');
 
-            {/* 左侧镜头 */}
-            <div className="compose-scenes">
-                {this.renderComposeSceneItem()}
+        return (
+          <div className='compose-wrap'>
+            <div className="compose-inner">
+              {/* 左侧镜头 */}
+              <div className="compose-scenes">
+                  {this.renderComposeSceneItem()}
+              </div>
+
+              {/* 中间图层编辑 */}
+              <div className='compose-render'>
+                  <div className='compose-render-wrap'>
+                      {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
+                          <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
+                      </div> : null}
+                      {this.renderComposeLayers()}
+                  </div>
+              </div>
+
+              {/* 右侧图层列表 */}
+              <div className="compose-control">
+                  <div className="header">第三步： 素材植入</div>
+                  <div className="addMaterial" onClick={this.onAddMaterialClick}>
+                      <Button icon="plus" type="primary">添加素材</Button>
+                  </div>
+                  <ul className="compose-layers-list">
+                      {baseLayer ? <div className="scenes-layer-item" key={baseLayer.id}>
+                          <div className="scenes-layer-item-title">基础镜头{": " + (/[^/]+(?=\.)/.exec(baseLayer.path)[0])}</div>
+                      </div> : null}
+                      {this.renderLayersList()}
+                  </ul>
+                  <Button className="compose-complete" type="primary" onClick={this.onCompleteWorkClick}>完成植入</Button>
+              </div>
             </div>
 
-            {/* 中间图层编辑 */}
-            <div className='compose-render'>
-                <div className='compose-render-wrap'>
-                    {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
-                        <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
-                    </div> : null}
-                    {this.renderComposeLayers()}
-                </div>
-            </div>
-
-            {/* 右侧图层列表 */}
-            <div className="compose-control">
-                <div className="header">第三步： 素材植入</div>
-                <div className="addMaterial" onClick={this.onAddMaterialClick}>
-                    <Button icon="plus" type="primary">添加素材</Button>
-                </div>
-                <ul className="compose-layers-list">
-                    {baseLayer ? <div className="scenes-layer-item" key={baseLayer.id}>
-                        <div className="scenes-layer-item-title">基础镜头{": " + (/[^/]+(?=\.)/.exec(baseLayer.path)[0])}</div>
-                    </div> : null}
-                    {this.renderLayersList()}
-                </ul>
-                <Button className="compose-complete" type="primary" onClick={this.onCompleteWorkClick}>完成植入</Button>
+            <div className="compose-bottom">
+              <Timeline
+                path={ material.path }
+                frameLength={ material.properties.length }
+                frame={ scene.currFrame }
+                time={ material.properties.time }
+                frameLength={ material.properties.length }
+                onChangeFrame={ this.handleChangeFrame } />
             </div>
 
             {/* 素材选择列表弹出框 */}
@@ -366,9 +389,15 @@ class ComposeWrap extends Component {
             <style>{`
                 .compose-wrap{
                     display: flex;
+                    flex-flow: column nowrap;
                     position: relative;
                     justify-content: space-between;
                     width: 100%;
+                }
+                .compose-inner {
+                  display: flex;
+                  flex: 1 0 0;
+                  flex-flow: row nowrap;
                 }
                 .compose-scenes{
                     background: rgba(200,200,200,0.5);

@@ -18,7 +18,7 @@ export default class SceneDisplay extends Component {
     scale: 1,
     imageUrl: '',
     isOpenPen: false,
-    visibleRoto: true
+    visibleShadow: true
   };
 
   handleSetZoomOut = () =>
@@ -51,7 +51,7 @@ export default class SceneDisplay extends Component {
   };
 
   handleVisibleShadow = () =>
-    this.setState({ visibleRoto: !this.state.visibleRoto });
+    this.setState({ visibleShadow: !this.state.visibleShadow });
 
   handleComplete = () => {
 
@@ -68,8 +68,8 @@ export default class SceneDisplay extends Component {
 
   render() {
     const { path, frameLength, time, frame, roto, onSetMaterialTime } = this.props;
-    const { scale, imageUrl, isOpenPen, visibleRoto } = this.state;
-    const points = roto && visibleRoto ? roto.svg[0].points : [];
+    const { scale, imageUrl, isOpenPen, visibleShadow } = this.state;
+    const points = roto && visibleShadow ? roto.svg[0].points : [];
 
     return (
       <div className="scene-center">

@@ -9,7 +9,7 @@ import { message } from 'antd';
 import Scenes from './Scenes';
 import SceneDisplay from './SceneDisplay';
 import ControllerPanel from './ControllerPanel';
-import Timeline from './Timeline';
+import Timeline from '../Timeline';
 
 export default class Roto extends Component {
   state = {
@@ -82,7 +82,7 @@ export default class Roto extends Component {
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
 
     return (
-      <div className="roto">
+      <div className="roto-wrap">
         <div className="roto-inner">
           {/* 镜头列表 */}
           <div className="scenes">
@@ -126,7 +126,7 @@ export default class Roto extends Component {
 
         </div>
         <style>{`
-          .roto {
+          .roto-wrap {
             display: flex;
             flex-flow: column nowrap;
             width: 100%;

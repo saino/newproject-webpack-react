@@ -137,7 +137,13 @@ class Make extends Component {
           );
       case 999:
         return (
-          <ComposeWrap materialId={ this.state.materialId } currentSceneId={ currentSceneId } workId={ work.id } workName={ work.name }  />
+          <ComposeWrap
+            materials={ material.materials }
+            scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
+            materialId={ this.state.materialId }
+            currentSceneId={ currentSceneId }
+            workId={ work.id }
+            workName={ work.name }  />
         );
       default :
           return null;
