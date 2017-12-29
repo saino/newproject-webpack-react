@@ -262,6 +262,7 @@ class ComposeWrap extends Component {
         const scenesLayers = this.getCurrentLayers();
         return <DragList list={scenesLayers}
             itemKey="id"
+            padding={0}
             template={LayterItem}
             onMoveEnd={this.onMoveEnd}
             commonProps={{
@@ -468,9 +469,9 @@ class ComposeWrap extends Component {
                 .compose-layers-list > div:nth-of-type(2) > div:nth-of-type(even) .scenes-layer-item {
                   background: #f1faff;
                 }
-                .compose-layers-list > div:nth-of-type(2) > div {
-                  margin-bottom: 0!important;
-                }
+                // .compose-layers-list > div:nth-of-type(2) > div {
+                //   margin-bottom: 0!important;
+                // }
                 .scenes-layer-item{
                     display: flex;
                     justify-content: space-between;
@@ -479,6 +480,9 @@ class ComposeWrap extends Component {
                     line-height: 30px;
                     cursor: pointer;
                     background: #fff;
+                }
+                .scenes-layer-item.select{
+                    border: solid 1px #1EBC9C;
                 }
                 .scenes-layer-item-title{
                     flex: 1;
@@ -606,7 +610,6 @@ class ComposeWrap extends Component {
             name: this.props.workName,
             config: this.props.material
         }
-        console.log(this);
         post('/user/saveWork', options, resp => {
             console.log(resp);
         });
