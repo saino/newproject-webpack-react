@@ -223,7 +223,7 @@ export default (state = defState, action) => {
 
     case actionTypes.UPDATE_LAYERS:
       return { ...state, layers: updateArray(state.layers, action.layers, "id") };
-    
+
     case actionTypes.UPDATE_SCEBES:
       return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
 

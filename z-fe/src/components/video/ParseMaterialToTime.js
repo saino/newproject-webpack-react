@@ -48,9 +48,15 @@ export default class ParseMaterialToTime extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.time != null && (nextProps.frame == 1 && this.props.time !== nextProps.time) || (nextProps.frame !== this.props.frame)) {
+    //console.log(this.props)
+
+    //console.log(nextProps, this.props, nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc, 'false');
+    if (nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc) {
       this.setTime(nextProps);
     }
+    // if ((nextProps.time != this.props.time) || (nextProps.frame == 1 && this.props.time !== nextProps.time) || (nextProps.frame !== this.props.frame)) {
+    //
+    // }
   }
 
   render() {
@@ -64,15 +70,21 @@ export default class ParseMaterialToTime extends Component {
 
   componentDidMount() {
     this.playerEl.addEventListener('seeked', () => this.computeFrame(), false);
-    this.playerEl.addEventListener('loadedmetadata', () => {
-      this.videoFrame = new VideoFrame({
-        duration: this.playerEl.duration,
-        frames: this.props.frameLength
-      });
 
-      // 设置素材的总时长
-      this.props.onSetMaterialTime(this.playerEl.duration);
-    }, false);
+    if (this.props.time == null) {
+      this.playerEl.addEventListener('loadedmetadata', () => {
+        this.videoFrame = new VideoFrame({
+          duration: this.playerEl.duration,
+          frames: this.props.frameLength
+        });
+
+        // 设置素材的总时长
+        this.props.onSetMaterialTime(this.playerEl.duration);
+      }, false);
+    } else {
+      this.setTime(this.props);
+    }
+
     this.frameCanvasContext = this.frameCanvasEl.getContext('2d');
   }
 }

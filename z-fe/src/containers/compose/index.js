@@ -522,7 +522,7 @@ class ComposeWrap extends Component {
                     width:100%;
                 }
                 .material-list{
-                    height: 500px;
+                    max-height: 500px;
                     width: 500px;
                     overflow-y: auto;
                     display: flex;

@@ -17,7 +17,7 @@ import {
   removeMaterial, toggleMaterial, changePosision,
   changeContralPosision, removeSelected
 } from '../reducers/compose';
-import { finds, getItemByKey } from '../utils/stateSet';
+import { finds, getItemByKey, desc } from '../utils/stateSet';
 
 class Make extends Component {
   state = {
@@ -27,7 +27,7 @@ class Make extends Component {
   };
 
   handleDeleteProjectMaterial = materialId =>
-    this.props.deleteMaterial({ materialId });
+    this.props.deleteMaterial({ materialId }) ;
 
   handleEditMaterial = materialId =>
     this.setState({
@@ -39,7 +39,7 @@ class Make extends Component {
 
       // 进入到抠像页
       createScene({
-        id: material.scenes.length,
+        id: desc(material.scenes)[0].id + 1,
         mtype: 'roto',
         materialId,
         currFrame: 1
