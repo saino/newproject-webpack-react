@@ -260,6 +260,7 @@ class ComposeWrap extends Component {
     renderLayersList() {
         const { deleteLayer, updateLayers } = this.props;
         const scenesLayers = this.getCurrentLayers();
+        // console.log(scenesLayers);
         return <DragList list={scenesLayers}
             itemKey="id"
             padding={0}
@@ -302,6 +303,7 @@ class ComposeWrap extends Component {
      */
     getCurrentBaseLayer = () => {
         const { layers } = this.props.material;
+        // console.log(layers);
         return layers.find(layer => {
             return (layer.scene_id === this.state.currentSceneId) && layer.baseLayer;
         });
@@ -329,7 +331,8 @@ class ComposeWrap extends Component {
         const baseLayer = this.getCurrentBaseLayer();
         const material = getItemByKey(materials, materialId, 'id');
         const scene = getItemByKey(scenes, currentSceneId, 'id');
-
+        // console.log(scenes, this.state.currentSceneId);
+        console.log(this.props.material.layers, this.getCurrentLayers());
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
