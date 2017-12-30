@@ -138,7 +138,7 @@ export default class Roto extends Component {
             flex-flow: row nowrap;
           }
           .scenes {
-            flex: 0 0 190px;
+            flex: 0 0 200px;
             height: 100%;
             overflow: auto;
           }

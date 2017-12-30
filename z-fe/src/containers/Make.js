@@ -143,7 +143,8 @@ class Make extends Component {
             materialId={ this.state.materialId }
             currentSceneId={ currentSceneId }
             workId={ work.id }
-            workName={ work.name }  />
+            workName={ work.name }
+            onSetCurrFrameByScene={ this.handleSetCurrFrameByScene } />
         );
       default :
           return null;
