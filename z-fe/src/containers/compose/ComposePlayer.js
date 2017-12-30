@@ -38,12 +38,12 @@ export default class ComposePlayer extends Component {
   renderComposes() {
     const { players, positionX, positionY } = this.props;
 
-    return finds(players, ({ baseLayer }) => !baseLayer).map(({ id, x, y, width, height, transformStyle }) =>
+    return finds(players, ({ baseLayer }) => !baseLayer).map(({ id, x, y, width, height, order, transformStyle }) =>
       <div
         key={ id }
         ref={ `render_${ id }` }
         className="compose-item"
-        style={{ left: `${ x + positionX }px`, top: `${ y + positionY }px`, width: `${ width }px`, height: `${ height }px`, ...transformStyle }}>
+        style={{ left: `${ x + positionX }px`, top: `${ y + positionY }px`, width: `${ width }px`, height: `${ height }px`, zIndex: order, ...transformStyle }}>
         <img />
       </div>
     );
@@ -77,31 +77,35 @@ export default class ComposePlayer extends Component {
 
     players.forEach(({ id, baseLayer }) => {
       canvas = findDOMNode(this.refs[`canvas_${ id }`]);
-      canvasContext = canvas.getContext('2d');
-      player = findDOMNode(this.refs[`player_${ id }`]);
-      width = canvas.width;
-      height = canvas.height;
-      canvasContext.drawImage(player, 0, 0, width, height);
-      frameImageData = canvasContext.getImageData(0, 0, width, height);
+      
+      if (canvas) {
+        canvasContext = canvas.getContext('2d');
+        player = findDOMNode(this.refs[`player_${ id }`]);
+        width = canvas.width;
+        height = canvas.height;
+        canvasContext.drawImage(player, 0, 0, width, height);
+        frameImageData = canvasContext.getImageData(0, 0, width, height);
 
-      for (i = 0, l = frameImageData.data.length / 4; i < l; i++) {
-        r = frameImageData.data[ i * 4 + 0 ];
-        g = frameImageData.data[ i * 4 + 1 ];
-        b = frameImageData.data[ i * 4 + 2 ];
-      }
+        for (i = 0, l = frameImageData.data.length / 4; i < l; i++) {
+          r = frameImageData.data[ i * 4 + 0 ];
+          g = frameImageData.data[ i * 4 + 1 ];
+          b = frameImageData.data[ i * 4 + 2 ];
+        }
 
-      canvasContext.putImageData(frameImageData, 0, 0);
+        canvasContext.putImageData(frameImageData, 0, 0);
 
-      if (baseLayer) {
-        findDOMNode(this.refs.base_item).querySelector('img').src = canvas.toDataURL('image/jpeg');
-      } else {
-        findDOMNode(this.refs[`render_${ id }`]).querySelector('img').src = canvas.toDataURL('image/jpeg');
+        if (baseLayer) {
+          findDOMNode(this.refs.base_item).querySelector('img').src = canvas.toDataURL('image/jpeg');
+        } else {
+          findDOMNode(this.refs[`render_${ id }`]).querySelector('img').src = canvas.toDataURL('image/jpeg');
+        }
       }
 
     });
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(123);
     this.setVideoTime(nextProps.players, nextProps.frame, nextProps.frameRate);
   }
 

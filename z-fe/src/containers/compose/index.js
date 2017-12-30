@@ -124,6 +124,7 @@ class ComposeWrap extends Component {
     constructor(props){
         super(props);
 
+        this.offX = this.offY = null;
         this.state = {
 
             //当前编辑素材下的所有镜头
@@ -335,20 +336,20 @@ class ComposeWrap extends Component {
     }
 
     getCurrentPlayers = () => {
-      const material = getItemByKey(this.props.materials, this.props.materialId, 'id');
-
       return [ this.getCurrentBaseLayer() || [], ...this.getCurrentLayers() ].map(
-        ({ baseLayer, config = {} }) => ({
+        ({ baseLayer, config = {}, id, path, order }) => ({
            baseLayer,
+           id,
            x: config.left,
            y: config.top,
            width: config.width,
            height: config.height,
+           order,
            transformStyle: {
              transform: config.transformString,
              transformOrigin: '0 0 0'
            },
-           materialPath: material.path
+           materialPath: path
         })
       );
     };
@@ -356,7 +357,7 @@ class ComposeWrap extends Component {
     handleChangeFrame = (frame) => {
       const { onSetCurrFrameByScene, currentSceneId } = this.props;
       onSetCurrFrameByScene(currentSceneId, frame);
-      setTimeout(() => this.setState({ visiblePlayer: true }), 0)
+      this.setState({ visiblePlayer: true });
     };
 
     render() {
@@ -367,9 +368,14 @@ class ComposeWrap extends Component {
         const scene = getItemByKey(scenes, currentSceneId, 'id');
         const players = this.getCurrentPlayers();
         const { left, top } = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
-        const cr = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: 20, top: 20 };
+        const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
         const positionX = cr.left - left - 20;
         const positionY = cr.top - top - 20;
+
+        if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
+          this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
+          this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
+        }
 
         return (
           <div className='compose-wrap'>
@@ -395,7 +401,6 @@ class ComposeWrap extends Component {
                       </div> : null}
                       { this.renderComposeLayers() }
                     </div>
-
                   </div>
                 }
 
@@ -424,6 +429,7 @@ class ComposeWrap extends Component {
                 frame={ scene.currFrame }
                 time={ material.properties.time }
                 frameLength={ material.properties.length }
+                onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
                 onChangeFrame={ this.handleChangeFrame } />
             </div>
 
