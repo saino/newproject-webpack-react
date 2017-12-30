@@ -77,7 +77,7 @@ export default class ComposePlayer extends Component {
 
     players.forEach(({ id, baseLayer }) => {
       canvas = findDOMNode(this.refs[`canvas_${ id }`]);
-      
+
       if (canvas) {
         canvasContext = canvas.getContext('2d');
         player = findDOMNode(this.refs[`player_${ id }`]);
@@ -105,7 +105,6 @@ export default class ComposePlayer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(123);
     this.setVideoTime(nextProps.players, nextProps.frame, nextProps.frameRate);
   }
 

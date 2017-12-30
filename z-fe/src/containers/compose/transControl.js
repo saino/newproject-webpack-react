@@ -22,10 +22,6 @@ function getTransformString(matrix) {
             return results1;
         })());
     }
-
-    // results[3][0]+=5;
-    // results[3][1]+=5;
-    console.log(results, matrix);
     return results.join(',');
 }
 function getTransform(from, to) {
