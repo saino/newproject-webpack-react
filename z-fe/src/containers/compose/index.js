@@ -680,7 +680,7 @@ class ComposeWrap extends Component {
             config: this.props.material
         }
         post('/user/saveWork', options, resp => {
-            console.log(resp);
+            this.props.handleChangeStep(3, this.state.currentSceneId)
         });
     }
 }
