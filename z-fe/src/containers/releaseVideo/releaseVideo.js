@@ -13,8 +13,25 @@ class ReleaseVideo extends Component{
     }
     render() {
         return (<div className="release-video">
-            <Button type="primary" onClick={this.onReleaseVideoClick}>视频发布</Button>
+            <Button className='release-video-button' type="primary" onClick={this.onReleaseVideoClick}>视频发布</Button>
             <div className="video-url">视频地址：</div>
+            <style>{`
+                .release-video{
+                    height: 120px;
+                    width: 360px;
+                    margin: 100px auto;
+                }
+                .release-video-button{
+                    height: 50px;
+                    width: 360px;
+                }
+                .video-url{
+                    border: solid 1px #2d8bbd;
+                    height: 80px;
+                    line-height: 80px;
+                    text-indent: 50px;
+                }
+            `}</style>
         </div>);
     }
     onReleaseVideoClick = () => {
@@ -34,8 +51,8 @@ class ReleaseVideo extends Component{
                     }
                 });
             }, 500);
-            // console.log(resp);
-            // this.props.handleChangeStep(3, this.state.currentSceneId)
+        }, error=>{
+            // console.log(error);
         });
     }
 } 

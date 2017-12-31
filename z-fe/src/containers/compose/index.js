@@ -397,7 +397,7 @@ class ComposeWrap extends Component {
           this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
           this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
         }
-
+        console.log(this.state.currentSceneId, this.props.material);
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
@@ -693,12 +693,22 @@ class ComposeWrap extends Component {
      * 点击完成植入
      */
     onCompleteWorkClick = () => {
+        const { materialId, material } = this.props;
+        const { materials, scenes, rotos, layers } = material;
+        const tempScenes = scenes.map(scene => {
+            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
+            return scene;
+        });
         const options = {
             token: getAuth().token,
             work_id: this.props.workId,
             status: 1,
             name: this.props.workName,
-            config: this.props.material
+            config: {
+                materials,
+                scenes: tempScenes,
+                layers
+            }
         }
         post('/user/saveWork', options, resp => {
             this.props.handleChangeStep(3, this.state.currentSceneId)
