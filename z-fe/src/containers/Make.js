@@ -6,6 +6,7 @@ import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
 import Compose from './compose/ComposeRender';
+import ReleaseVideo from './releaseVideo/releaseVideo';
 import { fetchStart, fetchEnd } from '../reducers/app';
 import ComposeWrap from './compose/index';
 import {
@@ -87,7 +88,7 @@ class Make extends Component {
     } = this.props;
     const { materialId, currentSceneId } = this.state;
     const work = getItemByKey(userWorks.works, match.params.workId, 'id') || {};
-
+    // index = 3;
     switch (index) {
       case 0:
         return (
@@ -143,8 +144,11 @@ class Make extends Component {
             materialId={ this.state.materialId }
             currentSceneId={ currentSceneId }
             workId={ work.id }
-            workName={ work.name }  />
+            workName={ work.name }
+            handleChangeStep={ this.handleChangeStep } />
         );
+      case 3: 
+        return (<ReleaseVideo workId={ work.id }/>);
       default :
           return null;
     }
