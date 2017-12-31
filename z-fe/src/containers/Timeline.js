@@ -13,6 +13,10 @@ import Tick from '../components/interaction/react-tick/Tick';
 import config from '../config';
 
 class Timeline extends Component {
+  static defaultProps = {
+    onPlayOrPause: () => {}
+  };
+
   state = {
     isPlay: false
   };
@@ -31,10 +35,12 @@ class Timeline extends Component {
 
     return () => {
       const { isPlay } = this.state;
-      const { frame, frameLength, onChangeFrame } = this.props;
+      const { frame, frameLength, onChangeFrame, onPlayOrPause } = this.props;
       let number = 0;
       let i = frame + 1;
 
+      onPlayOrPause(isPlay);
+      
       if (isPlay) {
         for (; i <= frameLength; i++, number++) {
           timers[ i ] = ((idx, number) =>
@@ -46,25 +52,6 @@ class Timeline extends Component {
       } else {
         Object.keys(timers).forEach(key => clearTimeout(timers[ key ]));
       }
-
-      // if (isPlay) {
-      //   let list = dataSource.slice(currFrame - 1);
-      //
-      //   list.forEach((item, idx) => {
-      //     timers[ idx ] = ((i, imageUrl) => {
-      //       temp = currFrame;
-      //
-      //       return setTimeout(() => {
-      //         this.setCurrFrame(i + temp);
-      //         this.props.onSelectDataUrl(imageUrl);
-      //       }, i * 200);
-      //     })(idx, item.imageUrl);
-      //   });
-      // } else {
-      //   Object.keys(timers).forEach(key => {
-      //     clearTimeout(item);
-      //   });
-      // }
     };
   };
 

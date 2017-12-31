@@ -56,15 +56,6 @@ export default class SceneDisplay extends Component {
   handleComplete = () => {
 
   };
-    // this.setState({ isOpenPen: false }, () => {
-    //   const svg = this.refs.matting.state.pathData;
-    //
-    //   this.props.onCreateRoto([{
-    //     path_type: 'bezier',
-    //     closed: svg.closed,
-    //     points: svg.points
-    //   }]);
-    // });
 
   render() {
     const { path, frameLength, time, frame, roto, onSetMaterialTime } = this.props;

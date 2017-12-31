@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import { Button, Modal, Tooltip, Icon} from 'antd'
 import DragList from 'react-draggable-list'
 import classNames from 'classnames'
@@ -11,6 +12,7 @@ import { connect } from 'react-redux';
 import ComposeControl from './ComposeControl1'
 import ComposeItem from './ComposeItem'
 import ComposeSceneItem from "./ComposeSceneItem";
+import ComposePlayer from "./ComposePlayer";
 import TransControl from "./transControl";
 import SceneDisplay from '../roto/SceneDisplay';
 import index from 'pure-render-immutable-decorator';
@@ -24,7 +26,7 @@ class MaterialItem extends Component {
     constructor() {
         super();
         this.state = {
-            selected: false,
+            selected: false
         }
     }
     isSelected() {
@@ -66,7 +68,7 @@ class MaterialItem extends Component {
                     text-align: center;
                     margin-top: -4px;
                 }
-                .selected{
+                .material-item.selected{
                     border: solid 2px blue;
                 }
             `}</style>
@@ -119,8 +121,10 @@ class LayterItem extends Component {
 }
 
 class ComposeWrap extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
+
+        this.offX = this.offY = null;
         this.state = {
 
             //当前编辑素材下的所有镜头
@@ -132,6 +136,9 @@ class ComposeWrap extends Component {
             //选择素材列表是否可见
             materialListVisible: false,
 
+            // 是否显示播放层
+            visiblePlayer: false,
+
             currentLayer: {
                 id: '',
                 cursor: "default",
@@ -140,6 +147,11 @@ class ComposeWrap extends Component {
             }
         }
     }
+
+    componentWillReceiveProps(nextProps) {
+      this.setState({ currentSceneId: nextProps.currentSceneId });
+    }
+
     componentWillMount(){
         setTimeout(() => {
             const materialScenes = this.getMaterialScenes();
@@ -149,6 +161,9 @@ class ComposeWrap extends Component {
                 materialScenes,
             });
         }, 10);
+    }
+
+    componentDidMount() {
     }
 
     /**
@@ -301,11 +316,11 @@ class ComposeWrap extends Component {
     /**
      * 获取当前镜头下的基础图层
      */
-    getCurrentBaseLayer = () => {
+    getCurrentBaseLayer() {
         const { layers } = this.props.material;
-        // console.log(layers);
+
         return layers.find(layer => {
-            return (layer.scene_id === this.state.currentSceneId) && layer.baseLayer;
+          return (layer.scene_id === this.state.currentSceneId) && layer.baseLayer;
         });
     }
 
@@ -322,17 +337,48 @@ class ComposeWrap extends Component {
         });
     }
 
+    getCurrentPlayers = () => {
+      return [ this.getCurrentBaseLayer() || [], ...this.getCurrentLayers() ].map(
+        ({ baseLayer, config = {}, id, path, order }) => ({
+           baseLayer,
+           id,
+           x: config.left,
+           y: config.top,
+           width: config.width,
+           height: config.height,
+           order,
+           transformStyle: {
+             transform: config.transformString,
+             transformOrigin: '0 0 0'
+           },
+           materialPath: path
+        })
+      );
+    };
+
     handleChangeFrame = (frame) => {
-      console.log(frame);
+      const { onSetCurrFrameByScene, currentSceneId } = this.props;
+      onSetCurrFrameByScene(currentSceneId, frame);
+      this.setState({ visiblePlayer: true });
     };
 
     render() {
         const { materials, scenes, materialId, currentSceneId } = this.props;
+        const { visiblePlayer } = this.state;
         const baseLayer = this.getCurrentBaseLayer();
         const material = getItemByKey(materials, materialId, 'id');
         const scene = getItemByKey(scenes, currentSceneId, 'id');
-        // console.log(scenes, this.state.currentSceneId);
-        console.log(this.props.material.layers, this.getCurrentLayers());
+        const players = this.getCurrentPlayers();
+        const { left, top } = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
+        const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
+        const positionX = cr.left - left - 20;
+        const positionY = cr.top - top - 20;
+
+        if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
+          this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
+          this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
+        }
+
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
@@ -343,12 +389,23 @@ class ComposeWrap extends Component {
 
               {/* 中间图层编辑 */}
               <div className='compose-render'>
+                { visiblePlayer ?
+                  <ComposePlayer
+                    positionX={ positionX }
+                    positionY={ positionY }
+                    players={ players }
+                    frameRate={ material.properties.length / material.properties.time }
+                    frame={ scene.currFrame }/> :
                   <div className='compose-render-wrap'>
+                    <div className="compose-render-wrap-inner">
                       {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
                           <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
                       </div> : null}
-                      {this.renderComposeLayers()}
+                      { this.renderComposeLayers() }
+                    </div>
                   </div>
+                }
+
               </div>
 
               {/* 右侧图层列表 */}
@@ -374,6 +431,7 @@ class ComposeWrap extends Component {
                 frame={ scene.currFrame }
                 time={ material.properties.time }
                 frameLength={ material.properties.length }
+                onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
                 onChangeFrame={ this.handleChangeFrame } />
             </div>
 
@@ -414,17 +472,24 @@ class ComposeWrap extends Component {
                     box-sizing: border-box;
                 }
                 .compose-render-wrap{
-                    font-size: 0;
                     position: relative;
                     width: 100%;
                     top: 50%;
                     transform: translateY(-50%);
                 }
+                .compose-render-wrap-inner {
+                  position: relative;
+                  padding-top: 57.5%;
+                }
                 .base-compose-item{
-                    position: relative;
+                  position: absolute;
+                  width: 100%;
+                  height: 100%;
+                  left: 0;
+                  top: 0;
                 }
                 .base-compose-item-thumb{
-                    width: 100%;
+                  width: 100%;
                 }
                 .compose-item{
                     // border: 1px solid #1EBC9C;
@@ -457,7 +522,7 @@ class ComposeWrap extends Component {
                     width:100%;
                 }
                 .material-list{
-                    height: 500px;
+                    max-height: 500px;
                     width: 500px;
                     overflow-y: auto;
                     display: flex;

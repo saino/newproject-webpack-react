@@ -25,7 +25,7 @@ export default class Roto extends Component {
     this.props.onSetCurrFrameByScene(this.state.sceneId, frame);
 
   handleSetMaterialTime = (duration) =>
-    this.props.onSetMaterialTime(duration);
+    this.props.onSetMaterialTime(duration); 
 
   handleCreateRoto = (svg) => {
     const { scenes, onCreateRoto } = this.props;
@@ -138,7 +138,7 @@ export default class Roto extends Component {
             flex-flow: row nowrap;
           }
           .scenes {
-            flex: 0 0 190px;
+            flex: 0 0 200px;
             height: 100%;
             overflow: auto;
           }
