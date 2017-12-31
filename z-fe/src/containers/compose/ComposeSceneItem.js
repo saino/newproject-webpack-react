@@ -21,16 +21,16 @@ class ComposeSceneItem extends Component {
             "scene-item": true,
             "active": scene.id===currentSceneId
         });
-        return (dragHandle(<div className={sceneClass} 
+        return (dragHandle(<div className={sceneClass}
             key={scene.id}
             onClick={this.onSceneClick}>
-        
+
             镜头:{sceneType}
 
             <style>{`
                 .scene-item{
-                    height: 50px;
-                    line-height: 50px;
+                    height: 60px;
+                    line-height: 60px;
                     text-align: center;
                     color: #000;
                     font-size: 16px;

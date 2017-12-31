@@ -22,7 +22,9 @@ const defState = {
   materials: [],
   scenes: [],
   rotos: [],
-  layers: []
+  layers: [],
+  work_id: '',
+  work_name: ''
 };
 
 const actionTypes = {
@@ -82,9 +84,11 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
   post('/user/loadWork', { token, work_id: workId }, resp => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
-      materials: resp.config.materials || [],
+      materials: resp.materials || [],
       scenes: resp.config.scenes || [],
-      layers: resp.config.layers
+      layers: resp.config.layers || [],
+      workId: resp.id,
+      workName: resp.name
     });
   });
 });
@@ -164,7 +168,7 @@ export const createRoto = ({ materialId, sceneId, frame, mtype, svg }) => ({
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
-      let { materials, scenes, layers } = action;
+      let { materials, scenes, layers, workId, workName } = action;
       const addScenes = [];
 
       scenes = scenes.map((scene) => {
@@ -178,7 +182,7 @@ export default (state = defState, action) => {
         }
       });
 
-      return { ...state, materials, scenes: [ ...state.scenes, ...addScenes ], layers };
+      return { ...state, work_id: workId, work_name: workName, materials, scenes: [ ...state.scenes, ...addScenes ], layers: [ ...state.layers, ...layers ] };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;

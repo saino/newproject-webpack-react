@@ -131,7 +131,7 @@ class ComposeWrap extends Component {
             materialScenes: [],
 
             //当前选择的镜头ID
-            currentSceneId: '',
+            currentSceneId: null,
 
             //选择素材列表是否可见
             materialListVisible: false,
@@ -148,10 +148,6 @@ class ComposeWrap extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-      this.setState({ currentSceneId: nextProps.currentSceneId });
-    }
-
     componentWillMount(){
         setTimeout(() => {
             const materialScenes = this.getMaterialScenes();
@@ -161,9 +157,6 @@ class ComposeWrap extends Component {
                 materialScenes,
             });
         }, 10);
-    }
-
-    componentDidMount() {
     }
 
     /**
@@ -335,7 +328,7 @@ class ComposeWrap extends Component {
         }).sort((layer1, layer2) => {
             return layer1.order > layer2.order;
         });
-    }
+    };
 
     getCurrentPlayers = () => {
       return [ this.getCurrentBaseLayer() || [], ...this.getCurrentLayers() ].map(
@@ -357,24 +350,49 @@ class ComposeWrap extends Component {
     };
 
     handleChangeFrame = (frame) => {
-      const { onSetCurrFrameByScene, currentSceneId } = this.props;
+      const { scenes, onSetCurrFrameByScene } = this.props;
+      const { currentSceneId } = this.state;
 
       onSetCurrFrameByScene(currentSceneId, frame);
       this.setState({ visiblePlayer: true });
     };
 
+    handlePlayNextScene = () => {
+      const { scenes } = this.props;
+      const { currentSceneId } = this.state;
+      const currScene = getItemByKey(scenes, currentSceneId, 'id');
+
+      this.setState({ visiblePlayer: false }, () => {
+        const nextIdx = scenes.indexOf(currScene) + 1;
+
+        if (nextIdx < scenes.length) {
+          this.setState({
+            currentSceneId: scenes[ nextIdx ].id
+          }, () => {
+            this.refs.autoplayer.resetExecute();
+          });
+        }
+      });
+    };
+
+    componentDidMount() {
+      this.setState({
+        currentSceneId: this.props.currentSceneId
+      });
+    }
+
     render() {
-        const { materials, scenes, materialId, currentSceneId } = this.props;
-        const { visiblePlayer } = this.state;
+        const { materials, scenes, materialId } = this.props;
+        const { visiblePlayer, currentSceneId } = this.state;
         const baseLayer = this.getCurrentBaseLayer();
         const material = getItemByKey(materials, materialId, 'id');
-        const scene = getItemByKey(scenes, currentSceneId, 'id');
+        const scene = getItemByKey(scenes, currentSceneId, 'id') || { currFrame: 1 };
         const players = this.getCurrentPlayers();
         const { left, top } = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
         const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
         const positionX = cr.left - left - 20;
         const positionY = cr.top - top - 20;
-        console.log(this.props.material, materials, 'scenes');
+
         if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
           this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
           this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
@@ -385,7 +403,7 @@ class ComposeWrap extends Component {
             <div className="compose-inner">
               {/* 左侧镜头 */}
               <div className="compose-scenes">
-                  {this.renderComposeSceneItem()}
+                  { this.renderComposeSceneItem() }
               </div>
 
               {/* 中间图层编辑 */}
@@ -427,12 +445,14 @@ class ComposeWrap extends Component {
 
             <div className="compose-bottom">
               <Timeline
+                ref="autoplayer"
                 path={ material.path }
                 frameLength={ material.properties.length }
                 frame={ scene.currFrame }
                 time={ material.properties.time }
                 frameLength={ material.properties.length }
                 onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
+                onComplete={ this.handlePlayNextScene }
                 onChangeFrame={ this.handleChangeFrame } />
             </div>
 
@@ -610,6 +630,7 @@ class ComposeWrap extends Component {
         const selectedMaterials = [];
         const { materials, layers } = this.props.material;
         const { currentSceneId }  = this.state;
+
         const materialsNum = materials.length;
         let layerOrder = this.getCurrentLayers().length + 1;
         for(let i=0; i<materialsNum; i++){

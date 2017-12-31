@@ -12,9 +12,10 @@ import Tick from '../components/interaction/react-tick/Tick';
 //import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
 import config from '../config';
 
-class Timeline extends Component {
+export default class Timeline extends Component {
   static defaultProps = {
-    onPlayOrPause: () => {}
+    onPlayOrPause: () => {},
+    onComplete: () => {}
   };
 
   state = {
@@ -29,13 +30,16 @@ class Timeline extends Component {
     this.execute = this.playOrPausing.bind(this)();
   }
 
+  resetExecute = () =>
+    this.execute();
+
   playOrPausing = function () {
     const timers = {};
     let temp;
 
     return () => {
       const { isPlay } = this.state;
-      const { frame, frameLength, onChangeFrame, onPlayOrPause } = this.props;
+      const { frame, frameLength, onChangeFrame, onPlayOrPause, onComplete } = this.props;
       let number = 0;
       let i = frame + 1;
 
@@ -46,6 +50,10 @@ class Timeline extends Component {
           timers[ i ] = ((idx, number) =>
             setTimeout(() => {
               onChangeFrame(idx);
+
+              if (idx == frameLength) {
+                onComplete();
+              }
             }, number * 200)
           )(i, number);
         }
@@ -72,12 +80,13 @@ class Timeline extends Component {
 
       newFrame = getCurrFrame(frame);
 
-      if (newFrame <= 0 || newFrame > frameLength) {
+      if (newFrame <= 0) {
         message.warning(warningMsg);
-        return;
+      } else if (newFrame > frameLength) {
+        message.warning(warningMsg);
+      } else {
+        onChangeFrame(newFrame);
       }
-
-      onChangeFrame(newFrame);
     }
   };
 
@@ -258,13 +267,4 @@ class Timeline extends Component {
         </div>
     );
   }
-
 }
-
-function mapDispatchToProps (dispatch) {
-  return {
-    setImageData: bindActionCreators(setImageData, dispatch)
-  };
-}
-
-export default connect(null, mapDispatchToProps)(Timeline);

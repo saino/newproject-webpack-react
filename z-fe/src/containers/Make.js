@@ -37,10 +37,14 @@ class Make extends Component {
     }, () => {
       const { material, createScene } = this.props;
       const { materialId } = this.state;
+      const descScenes = desc(material.scenes);
+      const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
+
+      this.setState({ currentSceneId });
 
       // 进入到抠像页
       createScene({
-        id: desc(material.scenes)[0].id + 1,
+        id: currentSceneId,
         mtype: 'roto',
         materialId,
         currFrame: 1
@@ -71,14 +75,14 @@ class Make extends Component {
   handleSetCurrFrameByScene = (sceneId, currFrame) =>
     this.props.setCurrFrameByScene({ sceneId, currFrame });
 
-  handleJoinComposePage = (index, sceneId) => {
+  handleJoinComposePage(index, sceneId) {
     const { material, addLayers } = this.props;
     const { materialId } = this.state;
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
-    const materialObj = { ...currMaterial, id: `${ currMaterial.id }-${ Date.now() }`, baseLayer: true, order: 0, scene_id: sceneId };
+    const layer = { ...currMaterial, id: `${ currMaterial.id }-${ Date.now() }`, baseLayer: true, order: 0, scene_id: sceneId };
 
     this.handleChangeStep(index, sceneId);
-    addLayers(materialObj);
+    addLayers(layer);
   };
 
   renderChild(index) {
@@ -89,8 +93,8 @@ class Make extends Component {
       changePosision, changeContralPosision, removeSelected, clearMaterials
     } = this.props;
     const { materialId, currentSceneId } = this.state;
-    const work = getItemByKey(userWorks.works, match.params.workId, 'id') || {};
-    // index = 3;
+    const work = getItemByKey(userWorks.works, match.params.workId, 'id') || { id: material.work_id, name: material.work_name };
+
     switch (index) {
       case 0:
         return (
@@ -117,7 +121,7 @@ class Make extends Component {
             workName={ work.name }
             onFetchStart={ this.handleFetchStart }
             onFetchEnd={ this.handleFetchEnd }
-            onJoinCompose={ this.handleJoinComposePage }
+            onJoinCompose={ this.handleJoinComposePage.bind(this) }
             onCreateRoto={ this.handleCreateRoto }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
