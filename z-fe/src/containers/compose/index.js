@@ -358,6 +358,7 @@ class ComposeWrap extends Component {
 
     handleChangeFrame = (frame) => {
       const { onSetCurrFrameByScene, currentSceneId } = this.props;
+
       onSetCurrFrameByScene(currentSceneId, frame);
       this.setState({ visiblePlayer: true });
     };
@@ -373,7 +374,7 @@ class ComposeWrap extends Component {
         const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
         const positionX = cr.left - left - 20;
         const positionY = cr.top - top - 20;
-
+        console.log(this.props.material, materials, 'scenes');
         if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
           this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
           this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;

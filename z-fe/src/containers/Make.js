@@ -73,7 +73,9 @@ class Make extends Component {
 
   handleJoinComposePage = (index, sceneId) => {
     const { material, addLayers } = this.props;
-    const materialObj = { ...getItemByKey(material.materials, this.state.materialId, 'id'), baseLayer: true, order: 0, scene_id: sceneId };
+    const { materialId } = this.state;
+    const currMaterial = getItemByKey(material.materials, materialId, 'id');
+    const materialObj = { ...currMaterial, id: `${ currMaterial.id }-${ Date.now() }`, baseLayer: true, order: 0, scene_id: sceneId };
 
     this.handleChangeStep(index, sceneId);
     addLayers(materialObj);

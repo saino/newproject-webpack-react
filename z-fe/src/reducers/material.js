@@ -164,7 +164,7 @@ export const createRoto = ({ materialId, sceneId, frame, mtype, svg }) => ({
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
-      let { materials, scenes } = action;
+      let { materials, scenes, layers } = action;
       const addScenes = [];
 
       scenes = scenes.map((scene) => {
@@ -178,7 +178,7 @@ export default (state = defState, action) => {
         }
       });
 
-      return { ...state, materials, scenes: [ ...state.scenes, ...addScenes ] };
+      return { ...state, materials, scenes: [ ...state.scenes, ...addScenes ], layers };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;
