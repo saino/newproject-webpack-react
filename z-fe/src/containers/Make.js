@@ -150,7 +150,7 @@ class Make extends Component {
             handleChangeStep={ this.handleChangeStep }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene } />
         );
-      case 3: 
+      case 3:
         return (<ReleaseVideo workId={ work.id }/>);
       default :
           return null;

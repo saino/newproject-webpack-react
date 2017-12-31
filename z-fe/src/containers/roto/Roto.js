@@ -25,7 +25,7 @@ export default class Roto extends Component {
     this.props.onSetCurrFrameByScene(this.state.sceneId, frame);
 
   handleSetMaterialTime = (duration) =>
-    this.props.onSetMaterialTime(duration); 
+    this.props.onSetMaterialTime(duration);
 
   handleCreateRoto = (svg) => {
     const { scenes, onCreateRoto } = this.props;
