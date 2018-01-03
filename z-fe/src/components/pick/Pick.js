@@ -12,9 +12,9 @@ export default class Pick extends Component {
     const {
       filename, app, workId, sceneId,
       rotoFrames, frame, jobId, progress,
-      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetAiRotoProgress
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress
     } = this.props;
-    const isAiRotoed = jobId != null && progress == 1;
+    const isAiRotoed = jobId != null && progress >= 100;
 
     return (
       <div className="pick">
@@ -27,7 +27,7 @@ export default class Pick extends Component {
               app={ app }
               jobId={ jobId }
               progress={ progress }
-              onSetAiRotoProgress={ onSetAiRotoProgress }
+              onSetRotoProgress={ onSetRotoProgress }
               onAutoRoto={ onAutoRoto } />) :
             (<PerfectPick
               rotoFrames={ rotoFrames }

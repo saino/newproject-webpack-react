@@ -11,14 +11,14 @@ import { fetchStart, fetchEnd } from '../reducers/app';
 import ComposeWrap from './compose/index';
 import {
   getMaterials, deleteMaterial, uploadMaterial, setCurrFrameByScene,
-  createScene, setDuration, clearMaterials, createRoto, addLayers,
-  setAiRotoedProgressByScene, setAiJobIdByScene
+  createScene, setDuration, clearMaterials, createRoto, addLayers
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
   removeMaterial, toggleMaterial, changePosision,
   changeContralPosision, removeSelected
 } from '../reducers/compose';
+import { setRotoJobId, setRotoProgress } from '../reducers/roto-process';
 import { finds, getItemByKey, desc } from '../utils/stateSet';
 
 class Make extends Component {
@@ -78,11 +78,11 @@ class Make extends Component {
   handleSetCurrFrameByScene = (sceneId, currFrame) =>
     this.props.setCurrFrameByScene({ sceneId, currFrame });
 
-  handleSetAiJobIdByScene = (sceneId, jobId) =>
-    this.props.setAiJobIdByScene({ sceneId, jobId });
+  handleSetRotoJobId = (workId, sceneId, jobId) =>
+    this.props.setRotoJobId({ workId, sceneId, jobId });
 
-  handleSetAiRotoedProgressByScene = (sceneId, jobId) =>
-    this.props.setAiRotoedProgressByScene({ sceneId, jobId });
+  handleSetRotoProgress = (workId, sceneId, progress) =>
+    this.props.setRotoProgress({ workId, sceneId, progress });
 
   handleJoinComposePage(index, sceneId) {
     const { material, addLayers } = this.props;
@@ -91,15 +91,17 @@ class Make extends Component {
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
     const layer = { ...currMaterial, id: `${ currMaterial.id }-${ Date.now() }`, baseLayer: true, order: 0, scene_id: sceneId };
     this.handleChangeStep(index, sceneId);
-    if(layers.some(layer => layer.baseLayer&&layer.scene_id===sceneId)){
+
+    if(layers.some(layer => layer.baseLayer && layer.scene_id === sceneId)) {
       return;
     }
+
     addLayers(layer);
   };
 
   renderChild(index) {
     const {
-      material, match, user, compose, app, userWorks,
+      material, match, user, compose, app, userWorks, rotoProcess,
       addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
@@ -126,6 +128,7 @@ class Make extends Component {
           <Roto
             scenes={ finds(material.scenes, work.id, 'work_id') }
             materials={ material.materials }
+            rotoProcess={ rotoProcess }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
             rotos={ material.rotos }
             app={ app }
@@ -135,8 +138,8 @@ class Make extends Component {
             onFetchEnd={ this.handleFetchEnd }
             onJoinCompose={ this.handleJoinComposePage.bind(this) }
             onCreateRoto={ this.handleCreateRoto }
-            onSetAiRotoedProgressByScene={ this.handleSetAiRotoedProgressByScene }
-            onSetAiJobIdByScene={ this.handleSetAiJobIdByScene }
+            onSetRotoJobId={ this.handleSetRotoJobId }
+            onSetRotoProgress={ this.handleSetRotoProgress }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
@@ -224,12 +227,20 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material, user, compose, userWorks, app }) => ({
+const mapStateToProps = ({
   material,
   user,
   compose,
   userWorks,
-  app
+  app,
+  rotoProcess
+}) => ({
+  material,
+  user,
+  compose,
+  userWorks,
+  app,
+  rotoProcess
 });
 const mapDispatchToProps = (dispatch) => ({
   fetchStart: bindActionCreators(fetchStart, dispatch),
@@ -241,8 +252,8 @@ const mapDispatchToProps = (dispatch) => ({
   addLayers: bindActionCreators(addLayers, dispatch),
   setDuration: bindActionCreators(setDuration, dispatch),
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
-  setAiRotoedProgressByScene: bindActionCreators(setAiRotoedProgressByScene, dispatch),
-  setAiJobIdByScene: bindActionCreators(setAiJobIdByScene, dispatch),
+  setRotoJobId: bindActionCreators(setRotoJobId, dispatch),
+  setRotoProgress: bindActionCreators(setRotoProgress, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
   createRoto: bindActionCreators(createRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),

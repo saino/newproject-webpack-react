@@ -8,7 +8,7 @@ export default class ControllerPanel extends Component {
   render() {
     const {
       filename, frame, app, rotoFrames, jobId, progress,
-      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetAiRotoProgress
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress
     } = this.props;
 
     return (
@@ -22,7 +22,7 @@ export default class ControllerPanel extends Component {
          progress={ progress }
          onGenerateRotoMaterial={ onGenerateRotoMaterial }
          onAutoRoto={ onAutoRoto }
-         onSetAiRotoProgress={ onSetAiRotoProgress }
+         onSetRotoProgress={ onSetRotoProgress }
          onSelectFrame={ onSelectFrame } />
 
        <style>{`

@@ -36,7 +36,7 @@ export default class Roto extends Component {
   };
 
   handlePreAiRoto = () => {
-    const { workId, onFetchStart, onFetchEnd, onSetAiJobIdByScene } = this.props;
+    const { workId, onFetchStart, onFetchEnd, onSetRotoJobId } = this.props;
     const { sceneId } = this.state;
     const token = getAuth().token;
 
@@ -44,17 +44,36 @@ export default class Roto extends Component {
 
     return post('/user/aiRoto', { token, work_id: workId, scene_id: sceneId }, (resp) => {
       onFetchEnd();
-      onSetAiJobIdByScene(sceneId, resp);
+      onSetRotoJobId(workId, sceneId, resp);
 
-      this.handleSetAiRotoProgress(resp);
+      this.handleSetRotoProgress(resp);
     }, () => onFetchEnd());
   };
 
-  handleSetAiRotoProgress = (jobId) => {
-    const token = getAuth().token;
+  handleSetRotoProgress = (jobId) => {
+    const { workId, onSetRotoProgress } = this.props;
     const { sceneId } = this.state;
+    const token = getAuth().token;
+    let percent = 0;
+    const timer = setInterval(() => {
+      post('/user/getProgress',
+        {
+          token,
+          job_id: jobId
+        },
+        (resp) => {
+          percent = resp.progress == false ? 0 : parseFloat(resp.progress);
 
-    post('/user/getProgress', { token, job_id: jobId }, (resp) => this.props.onSetAiRotoedProgressByScene(sceneId, resp.progress));
+          if (Math.floor(resp.progress) >= 100) {
+            onSetRotoProgress(workId, sceneId, percent);
+            clearInterval(timer);
+            return;
+          }
+
+          onSetRotoProgress(workId, sceneId, percent);
+        }
+      );
+    }, 1000);
   };
 
   handleAutoRoto = () => {
@@ -94,12 +113,16 @@ export default class Roto extends Component {
   }
 
   render() {
-    const { scenes, material, rotos, app, workId, aiRotoProgress } = this.props;
+    const {
+      scenes, material, rotos,
+      app, workId, rotoProcess
+    } = this.props;
     const { sceneId } = this.state;
-    const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 1, jobId: null, progress: null };
+    const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 1 };
     const roto = getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
-    const { currFrame, jobId, progress } = scene;
+    const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
+    const { currFrame } = scene;
 
     return (
       <div className="roto-wrap">
@@ -127,11 +150,11 @@ export default class Roto extends Component {
             filename={ material.path }
             rotoFrames={ rotoFrames }
             frame={ currFrame }
-            jobId={ jobId }
-            aiRotoProgress={ aiRotoProgress }
+            jobId={ rotoPro['job_id'] }
+            progress={ rotoPro['progress'] }
             onGenerateRotoMaterial={ this.handleGenerateRotoMaterial }
             onAutoRoto={ this.handleAutoRoto }
-            onSetAiRotoProgress={ this.handleSetAiRotoProgress }
+            onSetRotoProgress={ this.handleSetRotoProgress }
             onSelectFrame={ this.handleChangeFrame } />
 
         </div>

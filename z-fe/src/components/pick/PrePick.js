@@ -6,14 +6,15 @@ import { Button, Progress } from 'antd';
 
 export default class PrePick extends Component {
   getAiRotoProgress = (props) => {
-    const { jobId, onSetAiRotoProgress } = props;
+    const { jobId, onSetRotoProgress } = props;
 
     if (jobId != null) {
-      onSetAiRotoProgress(jobId);
+      onSetRotoProgress(jobId);
     }
   };
 
   componentWillMount() {
+    console.log('is');
     this.getAiRotoProgress(this.props);
   }
 
@@ -22,7 +23,10 @@ export default class PrePick extends Component {
   }
 
   render() {
-    const { filename, app, jobId, progress, onAutoRoto } = this.props;
+    const {
+      filename, app, jobId, progress,
+      onAutoRoto, onSetRotoProgress
+    } = this.props;
 
     return (
       <div className="pre-pick">

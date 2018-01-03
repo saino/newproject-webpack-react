@@ -41,9 +41,7 @@ const actionTypes = {
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
-  UPDATE_SCEBES: 'UPDATe_SCENES',
-  SET_SCENE_AIROTOED_PROGRESS: 'SET_SCENE_AIROTOED_PROGRESS',
-  SET_SCENE_AIJOBID: 'SET_SCENE_AIJOBID'
+  UPDATE_SCEBES: 'UPDATe_SCENES'
 };
 /**
  * 更新镜头
@@ -151,24 +149,6 @@ export const setCurrFrameByScene = ({ sceneId, currFrame }) => ({
 });
 
 /**
- * 设置镜头ai抠像进度
- */
-export const setAiRotoedProgressByScene = ({ sceneId, progress }) => ({
-  type: actionTypes.SET_SCENE_AIROTOED_PROGRESS,
-  sceneId,
-  progress
-});
-
-/**
- * 设置镜头ai抠像工作id(job_id)
- */
-export const setAiJobIdByScene = ({ sceneId, jobId }) => ({
-  type: actionTypes.SET_SCENE_AIJOBID,
-  sceneId,
-  jobId
-});
-
-/**
  * 创建抠像svg path
  * @param option { Object }
  *  option.materialId 素材id
@@ -233,12 +213,6 @@ export default (state = defState, action) => {
       } else {
         return { ...state, rotos: update(state.rotos, roto, diffFn) };
       }
-
-    case actionTypes.SET_SCENE_AIROTOED_PROGRESS:
-      return { ...state, scenes: update(state.scenes, { progress: action.progress }, action.sceneId, 'id') };
-
-    case actionTypes.SET_SCENE_AIJOBID:
-      return { ...state, scenes: update(state.scenes, { jobId: action.jobId }, action.sceneId, 'id') };
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
