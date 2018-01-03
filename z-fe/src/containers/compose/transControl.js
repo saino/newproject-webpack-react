@@ -15,7 +15,7 @@ function getTransformString(matrix) {
             var l, results1;
             results1 = [];
             for (var j = l = 0; l < 4; j = ++l) {
-                results1.push(matrix[j][i].toFixed(20));
+                results1.push(matrix[j][i].toFixed(5));
             }
 
 

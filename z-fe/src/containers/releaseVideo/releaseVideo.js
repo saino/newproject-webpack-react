@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button } from "antd";
 import { post } from "../../fetch/fetch";
+import { getAuth } from "../../utils/auth";
 
 class ReleaseVideo extends Component{
     constructor() {
@@ -35,22 +36,32 @@ class ReleaseVideo extends Component{
         </div>);
     }
     onReleaseVideoClick = () => {
-        post('/user/buildVideo', { work_id: this.props.workId }, jobId => {
+        const options = {
+            work_id: this.props.workId,
+            token: getAuth().token
+        }
+        // console.log(options);
+        post('/user/buildVideo', options, jobId => {
             this.setState({
                 buildVideoing: true,
                 jobId: jobId
             })
-            this.buildVideoing = setInterval(()=>{
-                post("/user/getProgress", { job_id: jobId}, resp => {
+            // this.buildVideoing = setInterval(()=>{
+                // const options = {
+                //     job_id: jobId,
+                //     token: getAuth().token
+                // }
+                post("/user/getProgress", { job_id: jobId, token: getAuth.token}, resp => {
                     if (resp.progress === "100" ){
-                        clearInterval(this.buildVideoing);
+                        // clearInterval(this.buildVideoing);
                         this.setState({
                             buildVideoing: true,
                             
                         })
                     }
                 });
-            }, 500);
+
+            // }, 500);
         }, error=>{
             // console.log(error);
         });

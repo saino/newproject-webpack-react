@@ -192,18 +192,18 @@ export default (state = defState, action) => {
       let { materials, scenes, layers, workId, workName } = action;
       const addScenes = [];
 
-      scenes = scenes.map((scene) => {
-        scene.currFrame == null && (scene.currFrame = 1);
-        return scene;
-      });
+      // scenes = scenes.map((scene) => {
+      //   scene.currFrame == null && (scene.currFrame = 1);
+      //   return scene;
+      // });
 
-      scenes.forEach((scene) => {
-        if (!getItemByKey(state.scenes, scene.id, 'id')) {
-          addScenes.push(scene);
-        }
-      });
+      // scenes.forEach((scene) => {
+      //   if (!getItemByKey(state.scenes, scene.id, 'id')) {
+      //     addScenes.push(scene);
+      //   }
+      // });
 
-      return { ...state, work_id: workId, work_name: workName, materials, scenes: [ ...state.scenes, ...addScenes ], layers: [ ...state.layers, ...layers ] };
+      return { ...state, work_id: workId, work_name: workName, materials, scenes, layers };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;

@@ -382,6 +382,7 @@ class ComposeWrap extends Component {
     }
 
     render() {
+        // console.log(this.props.material.layers);
         const { materials, scenes, materialId } = this.props;
         const { visiblePlayer, currentSceneId } = this.state;
         const baseLayer = this.getCurrentBaseLayer();
@@ -392,12 +393,14 @@ class ComposeWrap extends Component {
         const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
         const positionX = cr.left - left - 20;
         const positionY = cr.top - top - 20;
-
-        if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
-          this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
-          this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
-        }
-        console.log(this.state.currentSceneId, this.props.material);
+        setTimeout(() => {
+            if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
+                this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
+                this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
+            }
+        }, 100);
+        
+        // console.log(this.state.currentSceneId, this.props.material);
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
@@ -699,6 +702,7 @@ class ComposeWrap extends Component {
             scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
             return scene;
         });
+        // console.log(getAuth().token,"klkkk");
         const options = {
             token: getAuth().token,
             work_id: this.props.workId,
