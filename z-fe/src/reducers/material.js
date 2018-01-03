@@ -41,7 +41,9 @@ const actionTypes = {
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
-  UPDATE_SCEBES: 'UPDATe_SCENES'
+  UPDATE_SCEBES: 'UPDATe_SCENES',
+  SET_SCENE_AIROTOED_PROGRESS: 'SET_SCENE_AIROTOED_PROGRESS',
+  SET_SCENE_AIJOBID: 'SET_SCENE_AIJOBID'
 };
 /**
  * 更新镜头
@@ -121,11 +123,12 @@ export const uploadMaterial = ({ material }) => ({
 /**
  * 创建镜头
  */
-export const createScene = ({ id, mtype, materialId, currFrame }) => ({
+export const createScene = ({ id, mtype, materialId, workId, currFrame }) => ({
   type: actionTypes.CREATE_SCENE,
   id,
   mtype,
   materialId,
+  workId,
   currFrame
 });
 
@@ -145,6 +148,24 @@ export const setCurrFrameByScene = ({ sceneId, currFrame }) => ({
   type: actionTypes.SET_CURRFRAME,
   sceneId,
   currFrame
+});
+
+/**
+ * 设置镜头ai抠像进度
+ */
+export const setAiRotoedProgressByScene = ({ sceneId, progress }) => ({
+  type: actionTypes.SET_SCENE_AIROTOED_PROGRESS,
+  sceneId,
+  progress
+});
+
+/**
+ * 设置镜头ai抠像工作id(job_id)
+ */
+export const setAiJobIdByScene = ({ sceneId, jobId }) => ({
+  type: actionTypes.SET_SCENE_AIJOBID,
+  sceneId,
+  jobId
 });
 
 /**
@@ -195,7 +216,7 @@ export default (state = defState, action) => {
       return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.CREATE_SCENE:
-      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, currFrame: action.currFrame };
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, work_id: action.workId, currFrame: action.currFrame };
 
       return { ...state, scenes: asc(add(state.scenes, scene)) };
 
@@ -212,6 +233,12 @@ export default (state = defState, action) => {
       } else {
         return { ...state, rotos: update(state.rotos, roto, diffFn) };
       }
+
+    case actionTypes.SET_SCENE_AIROTOED_PROGRESS:
+      return { ...state, scenes: update(state.scenes, { progress: action.progress }, action.sceneId, 'id') };
+
+    case actionTypes.SET_SCENE_AIJOBID:
+      return { ...state, scenes: update(state.scenes, { jobId: action.jobId }, action.sceneId, 'id') };
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };

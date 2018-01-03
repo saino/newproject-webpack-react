@@ -11,18 +11,31 @@ export default class Pick extends Component {
   render() {
     const {
       filename, app, workId, sceneId,
-      rotoFrames, frame, aiRotoed, aiRotoProgress,
-      onGenerateRotoMaterial, onSelectFrame, onAutoRoto
+      rotoFrames, frame, jobId, progress,
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetAiRotoProgress
     } = this.props;
+    const isAiRotoed = jobId != null && progress == 1;
 
     return (
       <div className="pick">
-        <div className="header">{ !aiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
+        <div className="header">{ !isAiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
 
         <div className="main">
-          { !aiRotoed ?
-            (<PrePick filename={ this.getDontSuffixFilename(filename) } app={ app } aiRotoProgress={ aiRotoProgress } onAutoRoto={ onAutoRoto } />) :
-            (<PerfectPick app={ app } rotoFrames={ rotoFrames } frame={ frame } onSelectFrame={ onSelectFrame } onGenerateRotoMaterial={ onGenerateRotoMaterial } />)
+          { !isAiRotoed ?
+            (<PrePick
+              filename={ this.getDontSuffixFilename(filename) }
+              app={ app }
+              jobId={ jobId }
+              progress={ progress }
+              onSetAiRotoProgress={ onSetAiRotoProgress }
+              onAutoRoto={ onAutoRoto } />) :
+            (<PerfectPick
+              rotoFrames={ rotoFrames }
+              frame={ frame }
+              app={ app }
+              progress={ progress }
+              onSelectFrame={ onSelectFrame }
+              onGenerateRotoMaterial={ onGenerateRotoMaterial } />)
           }
         </div>
 

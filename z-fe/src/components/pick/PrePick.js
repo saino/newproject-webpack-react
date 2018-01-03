@@ -4,9 +4,25 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Button, Progress } from 'antd';
 
-class PrePick extends Component {
+export default class PrePick extends Component {
+  getAiRotoProgress = (props) => {
+    const { jobId, onSetAiRotoProgress } = props;
+
+    if (jobId != null) {
+      onSetAiRotoProgress(jobId);
+    }
+  };
+
+  componentWillMount() {
+    this.getAiRotoProgress(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    //this.getAiRotoProgress(nextProps)
+  }
+
   render() {
-    const { filename, app, aiRotoProgress, onAutoRoto } = this.props;
+    const { filename, app, jobId, progress, onAutoRoto } = this.props;
 
     return (
       <div className="pre-pick">
@@ -15,13 +31,15 @@ class PrePick extends Component {
           <label>{ filename }</label>
         </div>
 
-        <div className="auto-start">
-          <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ onAutoRoto }>开始云端AI自动抠像</Button>
-        </div>
-
-        <div className="roto-progress">
-          { aiRotoProgress != null ? (<Progress percent={ aiRotoProgress } size="small" />) : void 0 }
-        </div>
+        { jobId == null ? (
+          <div className="auto-start">
+            <Button className="autoroto" type="primary" loading={ app.isFetching } onClick={ onAutoRoto }>开始云端AI自动抠像</Button>
+          </div>
+        ) : (
+          <div className="roto-progress">
+            <Progress percent={ progress } size="small" />
+          </div>
+        ) }
 
         <style>{`
           .pre-pick {
@@ -65,15 +83,3 @@ class PrePick extends Component {
     );
   }
 }
-
-function mapStateToProps ({ api }) {
-  return { api };
-}
-
-// function mapDispatchToProps (dispatch) {
-//   return {
-//     getSceneType: bindActionCreators(getSceneType, dispatch)
-//   };
-// }
-
-export default connect(mapStateToProps)(PrePick);

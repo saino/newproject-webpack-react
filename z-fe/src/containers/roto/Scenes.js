@@ -18,14 +18,6 @@ class Scenes extends PureComponent {
     this.setState({ selectedIndex: index });
     this.props.onChangeScene(sceneId);
   };
-  // handleSelect = (selectedIndex, item) => () => {
-  //   this.setState({ selectedIndex });
-  //   this.props.onSelect(item);
-  // };
-  //
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return deepCompare(this, nextProps, nextState);
-  // }
 
   render() {
     return (
@@ -55,7 +47,7 @@ class Scenes extends PureComponent {
           }
           .scenetype ul li {
             line-height: 60px;
-            padding: 0 20px;
+            padding: 0 12px;
             cursor: pointer;
           }
           .scenetype ul li.active {

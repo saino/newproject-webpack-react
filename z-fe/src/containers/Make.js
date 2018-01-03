@@ -11,7 +11,8 @@ import { fetchStart, fetchEnd } from '../reducers/app';
 import ComposeWrap from './compose/index';
 import {
   getMaterials, deleteMaterial, uploadMaterial, setCurrFrameByScene,
-  createScene, setDuration, clearMaterials, createRoto, addLayers
+  createScene, setDuration, clearMaterials, createRoto, addLayers,
+  setAiRotoedProgressByScene, setAiJobIdByScene
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
@@ -35,9 +36,10 @@ class Make extends Component {
       materialId,
       selectedIndex: 1
     }, () => {
-      const { material, createScene } = this.props;
+      const { material, createScene, match } = this.props;
       const { materialId } = this.state;
-      const descScenes = desc(material.scenes);
+      const workId = match.params.workId;
+      const descScenes = desc(finds(material.scenes, workId, 'work_id'));
       const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
 
       this.setState({ currentSceneId });
@@ -47,6 +49,7 @@ class Make extends Component {
         id: currentSceneId,
         mtype: 'roto',
         materialId,
+        workId,
         currFrame: 1
       });
     });
@@ -74,6 +77,12 @@ class Make extends Component {
 
   handleSetCurrFrameByScene = (sceneId, currFrame) =>
     this.props.setCurrFrameByScene({ sceneId, currFrame });
+
+  handleSetAiJobIdByScene = (sceneId, jobId) =>
+    this.props.setAiJobIdByScene({ sceneId, jobId });
+
+  handleSetAiRotoedProgressByScene = (sceneId, jobId) =>
+    this.props.setAiRotoedProgressByScene({ sceneId, jobId });
 
   handleJoinComposePage(index, sceneId) {
     const { material, addLayers } = this.props;
@@ -112,7 +121,7 @@ class Make extends Component {
       case 1:
         return (
           <Roto
-            scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
+            scenes={ finds(material.scenes, work.id, 'work_id') }
             materials={ material.materials }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
             rotos={ material.rotos }
@@ -123,6 +132,8 @@ class Make extends Component {
             onFetchEnd={ this.handleFetchEnd }
             onJoinCompose={ this.handleJoinComposePage.bind(this) }
             onCreateRoto={ this.handleCreateRoto }
+            onSetAiRotoedProgressByScene={ this.handleSetAiRotoedProgressByScene }
+            onSetAiJobIdByScene={ this.handleSetAiJobIdByScene }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
@@ -227,6 +238,8 @@ const mapDispatchToProps = (dispatch) => ({
   addLayers: bindActionCreators(addLayers, dispatch),
   setDuration: bindActionCreators(setDuration, dispatch),
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
+  setAiRotoedProgressByScene: bindActionCreators(setAiRotoedProgressByScene, dispatch),
+  setAiJobIdByScene: bindActionCreators(setAiJobIdByScene, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
   createRoto: bindActionCreators(createRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),
