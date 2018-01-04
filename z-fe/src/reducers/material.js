@@ -121,12 +121,13 @@ export const uploadMaterial = ({ material }) => ({
 /**
  * 创建镜头
  */
-export const createScene = ({ id, mtype, materialId, currFrame }) => ({
+export const createScene = ({ id, mtype, materialId, currFrame, order }) => ({
   type: actionTypes.CREATE_SCENE,
   id,
   mtype,
   materialId,
-  currFrame
+  currFrame,
+  order,
 });
 
 /**
@@ -195,7 +196,7 @@ export default (state = defState, action) => {
       return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.CREATE_SCENE:
-      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, currFrame: action.currFrame };
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, currFrame: action.currFrame, order: action.order };
 
       return { ...state, scenes: asc(add(state.scenes, scene)) };
 

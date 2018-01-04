@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button } from "antd";
+import { Button, Progress } from "antd";
 import { post } from "../../fetch/fetch";
 import { getAuth } from "../../utils/auth";
 
@@ -9,13 +9,16 @@ class ReleaseVideo extends Component{
         this.state = {
             videoUrl: "",
             buildVideoing: false,
+            building: false,
+            buildProgress: 0,
             jobId: ''
         }
     }
     render() {
         return (<div className="release-video">
             <Button className='release-video-button' type="primary" onClick={this.onReleaseVideoClick}>视频发布</Button>
-            <div className="video-url">视频地址：</div>
+            <div className="video-url">视频地址：{this.state.videoUrl}</div>
+            <Progress percent={this.state.buildProgress} />
             <style>{`
                 .release-video{
                     height: 120px;
@@ -40,28 +43,28 @@ class ReleaseVideo extends Component{
             work_id: this.props.workId,
             token: getAuth().token
         }
-        // console.log(options);
         post('/user/buildVideo', options, jobId => {
             this.setState({
-                buildVideoing: true,
+                building: true,
                 jobId: jobId
             })
-            // this.buildVideoing = setInterval(()=>{
-                // const options = {
-                //     job_id: jobId,
-                //     token: getAuth().token
-                // }
-                post("/user/getProgress", { job_id: jobId, token: getAuth.token}, resp => {
-                    if (resp.progress === "100" ){
-                        // clearInterval(this.buildVideoing);
+            this.buildVideoing = setInterval(()=>{
+                post("/user/getProgress", { job_id: jobId, token: getAuth().token}, resp => {
+                    if (resp.progress == "100" ){
+                        clearInterval(this.buildVideoing);
                         this.setState({
-                            buildVideoing: true,
-                            
-                        })
+                            building: false,
+                            buildProgress: 100,
+                            videoUrl: resp.result
+                        });
+                        return;
                     }
+                    this.setState({
+                        buildProgress: parseFloat(resp.progress),
+                    });
                 });
 
-            // }, 500);
+            }, 1000);
         }, error=>{
             // console.log(error);
         });

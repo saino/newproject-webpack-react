@@ -47,7 +47,8 @@ class Make extends Component {
         id: currentSceneId,
         mtype: 'roto',
         materialId,
-        currFrame: 1
+        currFrame: 1,
+        order: currentSceneId
       });
     });
 
@@ -82,6 +83,7 @@ class Make extends Component {
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
     const layer = { ...currMaterial, id: `${ currMaterial.id }-${ Date.now() }`, baseLayer: true, order: 0, scene_id: sceneId };
     this.handleChangeStep(index, sceneId);
+    if(sceneId===null){ return };
     if(layers.some(layer => layer.baseLayer&&layer.scene_id===sceneId)){
       return;
     }
