@@ -18,6 +18,7 @@ import {
   removeMaterial, toggleMaterial, changePosision,
   changeContralPosision, removeSelected
 } from '../reducers/compose';
+import { setRotoJobId, setRotoProgress } from '../reducers/roto-process';
 import { finds, getItemByKey, desc } from '../utils/stateSet';
 
 class Make extends Component {
@@ -35,9 +36,10 @@ class Make extends Component {
       materialId,
       selectedIndex: 1
     }, () => {
-      const { material, createScene } = this.props;
+      const { material, createScene, match } = this.props;
       const { materialId } = this.state;
-      const descScenes = desc(material.scenes);
+      const workId = match.params.workId;
+      const descScenes = desc(finds(material.scenes, workId, 'work_id'));
       const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
 
       this.setState({ currentSceneId });
@@ -47,8 +49,9 @@ class Make extends Component {
         id: currentSceneId,
         mtype: 'roto',
         materialId,
+        order: currentSceneId,
+        workId,
         currFrame: 1,
-        order: currentSceneId
       });
     });
 
@@ -76,6 +79,12 @@ class Make extends Component {
   handleSetCurrFrameByScene = (sceneId, currFrame) =>
     this.props.setCurrFrameByScene({ sceneId, currFrame });
 
+  handleSetRotoJobId = (workId, sceneId, jobId) =>
+    this.props.setRotoJobId({ workId, sceneId, jobId });
+
+  handleSetRotoProgress = (workId, sceneId, progress) =>
+    this.props.setRotoProgress({ workId, sceneId, progress });
+
   handleJoinComposePage(index, sceneId) {
     const { material, addLayers } = this.props;
     const { layers } = material;
@@ -87,12 +96,13 @@ class Make extends Component {
     if(layers.some(layer => layer.baseLayer&&layer.scene_id===sceneId)){
       return;
     }
+
     addLayers(layer);
   };
 
   renderChild(index) {
     const {
-      material, match, user, compose, app, userWorks,
+      material, match, user, compose, app, userWorks, rotoProcess,
       addMaterial, changeLayer,
       select, removeMaterial, toggleMaterial,
       changePosision, changeContralPosision, removeSelected, clearMaterials
@@ -117,8 +127,9 @@ class Make extends Component {
       case 1:
         return (
           <Roto
-            scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
+            scenes={ finds(material.scenes, work.id, 'work_id') }
             materials={ material.materials }
+            rotoProcess={ rotoProcess }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
             rotos={ material.rotos }
             app={ app }
@@ -128,6 +139,8 @@ class Make extends Component {
             onFetchEnd={ this.handleFetchEnd }
             onJoinCompose={ this.handleJoinComposePage.bind(this) }
             onCreateRoto={ this.handleCreateRoto }
+            onSetRotoJobId={ this.handleSetRotoJobId }
+            onSetRotoProgress={ this.handleSetRotoProgress }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
@@ -215,12 +228,20 @@ class Make extends Component {
   }
 }
 
-const mapStateToProps = ({ material, user, compose, userWorks, app }) => ({
+const mapStateToProps = ({
   material,
   user,
   compose,
   userWorks,
-  app
+  app,
+  rotoProcess
+}) => ({
+  material,
+  user,
+  compose,
+  userWorks,
+  app,
+  rotoProcess
 });
 const mapDispatchToProps = (dispatch) => ({
   fetchStart: bindActionCreators(fetchStart, dispatch),
@@ -232,6 +253,8 @@ const mapDispatchToProps = (dispatch) => ({
   addLayers: bindActionCreators(addLayers, dispatch),
   setDuration: bindActionCreators(setDuration, dispatch),
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
+  setRotoJobId: bindActionCreators(setRotoJobId, dispatch),
+  setRotoProgress: bindActionCreators(setRotoProgress, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
   createRoto: bindActionCreators(createRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),
