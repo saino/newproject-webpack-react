@@ -18,7 +18,7 @@ import {
   removeMaterial, toggleMaterial, changePosision,
   changeContralPosision, removeSelected
 } from '../reducers/compose';
-import { setRotoJobId, setRotoProgress } from '../reducers/roto-process';
+import { setRotoJobId, setRotoProgress, setRotoStop } from '../reducers/roto-process';
 import { finds, getItemByKey, desc } from '../utils/stateSet';
 
 class Make extends Component {
@@ -84,6 +84,9 @@ class Make extends Component {
   handleSetRotoProgress = (workId, sceneId, progress) =>
     this.props.setRotoProgress({ workId, sceneId, progress });
 
+  handleSetRotoStop = (workId, sceneId) =>
+    this.props.setRotoStop({ workId, sceneId });
+
   handleJoinComposePage(index, sceneId) {
     const { material, addLayers } = this.props;
     const { layers } = material;
@@ -140,6 +143,7 @@ class Make extends Component {
             onCreateRoto={ this.handleCreateRoto }
             onSetRotoJobId={ this.handleSetRotoJobId }
             onSetRotoProgress={ this.handleSetRotoProgress }
+            onSetRotoStop={ this.handleSetRotoStop }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
         );
@@ -254,6 +258,7 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
   setRotoJobId: bindActionCreators(setRotoJobId, dispatch),
   setRotoProgress: bindActionCreators(setRotoProgress, dispatch),
+  setRotoStop: bindActionCreators(setRotoStop, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
   createRoto: bindActionCreators(createRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),

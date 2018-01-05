@@ -93,7 +93,7 @@ class LayterItem extends Component {
             <div className="scenes-layer-item-delete" onClick={this.onDeleteScenesLayer.bind(this, item)}>
                 <Tooltip title="删除" placement="right">
                     <a className="delete-btn" href="javascript:;">
-                        <Icon type="delete" size="small" style={{ color: '#999' }} />
+                       <Icon type="delete" size="small" style={{ color: '#999' }} />
                     </a>
                 </Tooltip>
             </div>
@@ -399,7 +399,7 @@ class ComposeWrap extends Component {
                 this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
-        
+
         // console.log(this.state.currentSceneId, this.props.material);
         return (
           <div className='compose-wrap'>

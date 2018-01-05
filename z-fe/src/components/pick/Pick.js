@@ -11,8 +11,8 @@ export default class Pick extends Component {
   render() {
     const {
       filename, app, workId, sceneId,
-      rotoFrames, frame, jobId, progress,
-      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress
+      rotoFrames, frame, jobId, progress, status,
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto
     } = this.props;
     const isAiRotoed = jobId != null && progress >= 100;
 
@@ -25,9 +25,13 @@ export default class Pick extends Component {
             (<PrePick
               filename={ this.getDontSuffixFilename(filename) }
               app={ app }
+              workId={ workId }
+              sceneId={ sceneId }
               jobId={ jobId }
               progress={ progress }
+              status={ status }
               onSetRotoProgress={ onSetRotoProgress }
+              onStopAiRoto={ onStopAiRoto }
               onAutoRoto={ onAutoRoto } />) :
             (<PerfectPick
               rotoFrames={ rotoFrames }

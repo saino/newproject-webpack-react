@@ -44,6 +44,7 @@ class Scenes extends PureComponent {
           .scenetype ul {
             font-size: 16px;
             color: #000;
+            background: #f2f2f2;
           }
           .scenetype ul li {
             line-height: 60px;
