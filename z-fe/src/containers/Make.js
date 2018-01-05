@@ -173,7 +173,7 @@ class Make extends Component {
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene } />
         );
       case 3:
-        return (<ReleaseVideo workId={ work.id }/>);
+        return (<ReleaseVideo workId={ work.id } workName={ work.name}/>);
       default :
           return null;
     }

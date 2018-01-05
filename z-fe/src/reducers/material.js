@@ -23,6 +23,7 @@ const defState = {
   scenes: [],
   rotos: [],
   layers: [],
+  buildVideo: {},
   work_id: '',
   work_name: ''
 };
@@ -41,8 +42,18 @@ const actionTypes = {
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
-  UPDATE_SCEBES: 'UPDATe_SCENES'
+  UPDATE_SCEBES: 'UPDATE_SCENES',
+  UPDATE_BUILDVIDEO: 'UPDATE_BUILDVIDEO'
 };
+
+/**
+ * 更新合成视频数据
+ */
+export const updateBuildVideo = ( buildVideo ) => ({
+  type: actionTypes.UPDATE_BUILDVIDEO,
+  buildVideo
+});
+
 /**
  * 更新镜头
  */
@@ -232,6 +243,8 @@ export default (state = defState, action) => {
 
     case actionTypes.UPDATE_SCEBES:
       return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
+    case actionTypes.UPDATE_BUILDVIDEO: 
+      return { ...state, buildVideo: action.buildVideo}
 
     default:
       return state;
