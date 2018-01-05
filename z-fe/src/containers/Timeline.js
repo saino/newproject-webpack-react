@@ -44,7 +44,7 @@ export default class Timeline extends Component {
       let i = frame + 1;
 
       onPlayOrPause(isPlay);
-      
+
       if (isPlay) {
         for (; i <= frameLength; i++, number++) {
           timers[ i ] = ((idx, number) =>
@@ -80,7 +80,7 @@ export default class Timeline extends Component {
 
       newFrame = getCurrFrame(frame);
 
-      if (newFrame <= 0) {
+      if (newFrame <= -1) {
         message.warning(warningMsg);
       } else if (newFrame > frameLength) {
         message.warning(warningMsg);
@@ -93,7 +93,7 @@ export default class Timeline extends Component {
   render() {
     const { path, frames, frame, time, frameLength, onChangeFrame } = this.props;
     const { isPlay } = this.state;
-
+    
     return (
         <div className="timeline">
 

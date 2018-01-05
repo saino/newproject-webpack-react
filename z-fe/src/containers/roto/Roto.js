@@ -18,7 +18,7 @@ export default class Roto extends Component {
   handleChangeScene = (sceneId) => {
     const { rotoProcess, workId } = this.props;
     let rotoPro;
-    
+
     this.handleStopAiRoto();
     this.setState({ sceneId }, () => {
       rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
@@ -128,14 +128,6 @@ export default class Roto extends Component {
         }
       });
     }
-
-    // currRotoPro = getItemByKey(this.props.rotos, (item) => item.work_id == this.props.workId && item.scene_id == this.state.sceneId);
-    // nextRotoPro = getItemByKey(nextProps.rotos, (item) => item.work_id == nextProps.workId && item.scene_id == this.state.sceneId);
-    //
-    // if (nextProps.scenes[0].id === this.state.sceneId && currRotoPro.progress != nextRotoPro.progress) {
-    //   this.handleStopAiRoto();
-    //   console.log('开始加载');
-    // }
   }
 
   render() {
@@ -144,7 +136,7 @@ export default class Roto extends Component {
       app, workId, rotoProcess
     } = this.props;
     const { sceneId } = this.state;
-    const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 1 };
+    const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
     const roto = getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
@@ -162,7 +154,7 @@ export default class Roto extends Component {
           <div className="scene-display">
             <SceneDisplay
               path={ material.path }
-              frameLength={ material.properties.length }
+              frameLength={ material.properties.length - 1 }
               time={ material.properties.time }
               frame={ currFrame }
               roto={ roto }
@@ -192,10 +184,9 @@ export default class Roto extends Component {
           {/* 时间轴 */}
           <Timeline
             path={ material.path }
-            frameLength={ material.properties.length }
             frame={ scene.currFrame }
             time={ material.properties.time }
-            frameLength={ material.properties.length }
+            frameLength={ material.properties.length - 1 }
             onChangeFrame={ this.handleChangeFrame } />
 
         </div>

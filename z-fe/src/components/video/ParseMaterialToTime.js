@@ -48,15 +48,9 @@ export default class ParseMaterialToTime extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    //console.log(this.props)
-
-    //console.log(nextProps, this.props, nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc, 'false');
     if (nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc) {
       this.setTime(nextProps);
     }
-    // if ((nextProps.time != this.props.time) || (nextProps.frame == 1 && this.props.time !== nextProps.time) || (nextProps.frame !== this.props.frame)) {
-    //
-    // }
   }
 
   render() {

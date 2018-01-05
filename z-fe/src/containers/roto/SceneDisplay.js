@@ -70,9 +70,9 @@ export default class SceneDisplay extends Component {
              {/* 得到视频的时长 */}
              <ParseMaterialToTime
                videoSrc={ path }
-               frameLength={ frameLength }
+               frameLength={ frameLength + 1 }
                time={ time }
-               frame={ frame }
+               frame={ frame + 1 }
                onSetFrameImageUrl={ this.handleSetFrameImageUrl }
                onSetMaterialTime={ onSetMaterialTime } />
 

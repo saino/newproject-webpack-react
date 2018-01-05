@@ -19,7 +19,7 @@ export default class Tick extends PureComponent {
   getStepComponents () {
     const res = [];
 
-    for (let i = 1; i <= this.props.max; i++) {
+    for (let i = 0; i <= this.props.max; i++) {
       res.push(
         i % this.props.step == 0
           ? (<li onClick={ changeTick(i).bind(this) }>
@@ -47,7 +47,7 @@ export default class Tick extends PureComponent {
     return (
       <div className="tick">
         { max
-           ? (<div className="tick-triangle" style={{ transform: `translateX(${ (index - 1) * 8 }px)` }}></div>)
+           ? (<div className="tick-triangle" style={{ transform: `translateX(${ (index) * 8 }px)` }}></div>)
            : void 0 }
 
         <ul className="clearfix">

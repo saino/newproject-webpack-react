@@ -50,7 +50,7 @@ class Make extends Component {
         mtype: 'roto',
         materialId,
         workId,
-        currFrame: 1
+        currFrame: 0
       });
     });
 

@@ -417,7 +417,7 @@ class ComposeWrap extends Component {
                     positionY={ positionY }
                     players={ players }
                     frameRate={ material.properties.length / material.properties.time }
-                    frame={ scene.currFrame }/> :
+                    frame={ scene.currFrame + 1 }/> :
                   <div className='compose-render-wrap'>
                     <div className="compose-render-wrap-inner">
                       {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
@@ -450,10 +450,9 @@ class ComposeWrap extends Component {
               <Timeline
                 ref="autoplayer"
                 path={ material.path }
-                frameLength={ material.properties.length }
+                frameLength={ material.properties.length - 1 }
                 frame={ scene.currFrame }
                 time={ material.properties.time }
-                frameLength={ material.properties.length }
                 onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
                 onComplete={ this.handlePlayNextScene }
                 onChangeFrame={ this.handleChangeFrame } />
