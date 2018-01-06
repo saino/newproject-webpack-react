@@ -7,7 +7,7 @@ import Pick from '../../components/pick/Pick';
 export default class ControllerPanel extends Component {
   render() {
     const {
-      filename, frame, app, rotoFrames, jobId, progress, status, workId, sceneId,
+      filename, frame, app, rotoFrames, jobId, materialJobId, progress, generateProgress, workId, sceneId,
       onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto
     } = this.props;
 
@@ -21,8 +21,9 @@ export default class ControllerPanel extends Component {
          workId={ workId }
          sceneId={ sceneId }
          jobId={ jobId }
+         materialJobId={ materialJobId }
          progress={ progress }
-         status={ status }
+         generateProgress={ generateProgress }
          onGenerateRotoMaterial={ onGenerateRotoMaterial }
          onAutoRoto={ onAutoRoto }
          onSetRotoProgress={ onSetRotoProgress }

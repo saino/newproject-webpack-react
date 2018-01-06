@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Table, Button } from 'antd';
+import { Table, Button, Progress } from 'antd';
 
 export default class PerfectPick extends Component {
   columns = [{
@@ -21,7 +21,7 @@ export default class PerfectPick extends Component {
 
   render() {
     let {
-      rotoFrames, frame, app,
+      rotoFrames, frame, app, materialJobId, generateProgress,
       onGenerateRotoMaterial, onSelectFrame
     } = this.props;
     rotoFrames = rotoFrames.map(({ frame }) => ({ frame, category: 'ROTO', status: '已修改' }));
@@ -45,13 +45,22 @@ export default class PerfectPick extends Component {
         </div>
 
         <div className="build">
-          <Button
-            type="primary"
-            className="generate-rotomaterial"
-            loading={ app.isFetching }
-            onClick={ onGenerateRotoMaterial }>
-            开始生成抠像素材
-          </Button>
+          { materialJobId == null ?
+            (
+              <Button
+                type="primary"
+                className="generate-rotomaterial"
+                loading={ app.isFetching }
+                onClick={ onGenerateRotoMaterial }>
+                开始生成抠像素材
+              </Button>
+            ) :
+            (
+              <div className="generateroto-progres">
+                <Progress percent={ generateProgress } size="small" />
+              </div>
+            )
+          }
         </div>
 
         <style>{`
@@ -122,6 +131,10 @@ export default class PerfectPick extends Component {
             outline: none;
             letter-spacing: 1px;
             cursor: pointer;
+          }
+
+          .generateroto-progress {
+            padding: 12px 15px 0;
           }
 
         `}</style>

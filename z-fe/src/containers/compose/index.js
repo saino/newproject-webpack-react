@@ -195,7 +195,9 @@ class ComposeWrap extends Component {
      * 中间镜头图层编辑
      */
     renderComposeLayers() {
+        const { scenes } = this.props;
         const scenesLayers = this.getCurrentLayers();
+
         return scenesLayers.map((scenesLayer, index) => {
             let style = {width: scenesLayer.config.width, height: scenesLayer.config.height};
             let imgStyle = {};
@@ -207,6 +209,13 @@ class ComposeWrap extends Component {
                 "compose-item-thumb": true,
                 "select": scenesLayer.id === this.state.currentLayer.id
             });
+            const points = getItemByKey(scenes, scenesLayer[ 'scene_id' ], 'id').roto[0].svg[0].points.map((item) => `${ item.x }px ${ item.y }px`);
+            // console.log(getItemByKey(scenes, scenesLayer[ 'scene_id' ], 'id'), 'id');
+            // //console.log(this.points, 'points');
+            // //this.points = [];
+            imgStyle['WebkitClipPath'] = `polygon(${ points.join(', ') })`;
+            imgStyle['clipPath'] = `polygon(${ points.join(', ') })`;
+
             return (<DraggableCore key={scenesLayer.id}
                         position={{x: scenesLayer.config.left, y: scenesLayer.config.top}}
                         deltaPosition={{x: 0, y: 0}}
@@ -487,6 +496,8 @@ class ComposeWrap extends Component {
                 .compose-scenes{
                     background: rgba(200,200,200,0.5);
                     width: 200px;
+                    height: 100%;
+                    overflow: auto;
                 }
                 .compose-render{
                     flex: 1;
@@ -512,7 +523,7 @@ class ComposeWrap extends Component {
                   top: 0;
                 }
                 .base-compose-item-thumb{
-                  width: 100%;
+                  /*width: 100%;*/
                 }
                 .compose-item{
                     // border: 1px solid #1EBC9C;

@@ -11,7 +11,7 @@ export default class Pick extends Component {
   render() {
     const {
       filename, app, workId, sceneId,
-      rotoFrames, frame, jobId, progress, status,
+      rotoFrames, frame, jobId, materialJobId, progress, generateProgress,
       onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto
     } = this.props;
     const isAiRotoed = jobId != null && progress >= 100;
@@ -29,7 +29,6 @@ export default class Pick extends Component {
               sceneId={ sceneId }
               jobId={ jobId }
               progress={ progress }
-              status={ status }
               onSetRotoProgress={ onSetRotoProgress }
               onStopAiRoto={ onStopAiRoto }
               onAutoRoto={ onAutoRoto } />) :
@@ -37,7 +36,8 @@ export default class Pick extends Component {
               rotoFrames={ rotoFrames }
               frame={ frame }
               app={ app }
-              progress={ progress }
+              materialJobId={ materialJobId }
+              generateProgress={ generateProgress }
               onSelectFrame={ onSelectFrame }
               onGenerateRotoMaterial={ onGenerateRotoMaterial } />)
           }

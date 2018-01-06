@@ -58,9 +58,9 @@ export default class SceneDisplay extends Component {
   };
 
   render() {
-    const { path, frameLength, time, frame, roto, onSetMaterialTime } = this.props;
+    const { path, frameLength, time, frame, roto, onSetMaterialTime, width, height } = this.props;
     const { scale, imageUrl, isOpenPen, visibleShadow } = this.state;
-    const points = roto && visibleShadow ? roto.svg[0].points : [];
+    const points = roto && visibleShadow ? roto.svg.reduce((curr, next) => curr.concat(next.points), []) : [];
 
     return (
       <div className="scene-center">
@@ -81,6 +81,8 @@ export default class SceneDisplay extends Component {
                {/* 显示帧图片 */}
                <VideoRender
                  style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}
+                 width={ width }
+                 height={ height }
                  cursor={ isOpenPen ? 'default' : 'move' }
                  frameImageUrl={ imageUrl } />
              </Matting>

@@ -5,27 +5,6 @@ import { connect } from 'react-redux';
 import { Button, Progress } from 'antd';
 
 export default class PrePick extends Component {
-  getAiRotoProgress = (prevProps, props) => {
-    // const { jobId, sceneId, progress, onSetRotoProgress, onStopAiRoto } = props;
-    // console.log(prevProps, props, 'd');
-    // if (jobId != null || prevProps.progress != progress) {
-    //   onSetRotoProgress(jobId);
-    // }
-    //  else if (jobId != null && sceneId !== prevProps.sceneId) {
-    //   console.log('太阳');
-    //   onStopAiRoto();
-    // }
-  };
-
-  componentWillReceiveProps(nextProps) {
-    //this.getAiRotoProgress(this.props, nextProps);
-    // if (nextProps.sceneId != this.props.sceneId) {
-    //   //nextProps.onStopAiRoto(this.props.workId, this.props.sceneId);
-    // } else {
-    //   this.getAiRotoProgress(this.props, nextProps)
-    // }
-  }
-
   render() {
     const {
       filename, app, jobId, progress,

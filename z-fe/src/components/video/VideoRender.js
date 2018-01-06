@@ -16,7 +16,10 @@ export default class VideoRender extends Component {
   }
 
   render() {
-    const { style, frameImageUrl, onMouseDown, onMouseMove, onMouseUp, children, cursor } = this.props;
+    const {
+      style, frameImageUrl, width, height, children, cursor,
+      onMouseDown, onMouseMove, onMouseUp
+    } = this.props;
 
     return (
       <Draggable cursor={ cursor }>
@@ -35,16 +38,16 @@ export default class VideoRender extends Component {
           <style>{`
             .video-render-inner {
               position: absolute;
-              left: 0;
+              left: 50%;
               top: 50%;
-              transform: translateY(-50%);
-              width: 100%;
+              transform: translate(-50%, -50%);
+              width: ${ width }px;
+              height: ${ height }px;
             }
             .video-render img {
               display: block;
               width: 100%;
               height: 100%;
-              object-fit: contain;
             }
             .svg-wrap {
               position: absolute;

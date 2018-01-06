@@ -22,6 +22,7 @@ const defState = {
   materials: [],
   scenes: [],
   rotos: [],
+  aiRotos: [],
   layers: [],
   work_id: '',
   work_name: ''
@@ -38,6 +39,7 @@ const actionTypes = {
   SET_FRAMES: 'SET_FRAMES',
   CLEAR_MATERIALS: 'CLEAE_MATERIALS',
   CREATE_ROTO: 'CREATE_ROTO',
+  CREATE_AI_ROTO: 'CREATE_AI_ROTO',
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
@@ -63,9 +65,9 @@ export const updateLayers = (layers) => ({
 /**
  * 添加镜头图层
  */
-export const addLayers = (layer) => ({
+export const addLayers = (layers) => ({
   type: actionTypes.ADD_LAYERS,
-  layer
+  layers
 });
 
 /**
@@ -166,22 +168,25 @@ export const createRoto = ({ materialId, sceneId, frame, mtype, svg }) => ({
   svg
 });
 
+/**
+ * 创建ai抠像
+ * @param option { Object }
+ * option.materialId { Number } 素材id
+ * option.sceneId { Number } 镜头id
+ * option.frame { Number } 帧
+ * option.type { String } 抠像类别
+ * option.svg { Array } svg集合
+ */
+export const createAiRoto = ({ aiRotos }) => ({
+  type: actionTypes.CREATE_AI_ROTO,
+  aiRotos
+});
+
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
       let { materials, scenes, layers, workId, workName } = action;
       const addScenes = [];
-
-      // scenes = scenes.map((scene) => {
-      //   scene.currFrame == null && (scene.currFrame = 1);
-      //   return scene;
-      // });
-
-      // scenes.forEach((scene) => {
-      //   if (!getItemByKey(state.scenes, scene.id, 'id')) {
-      //     addScenes.push(scene);
-      //   }
-      // });
 
       return { ...state, work_id: workId, work_name: workName, materials, scenes, layers };
 
@@ -204,15 +209,18 @@ export default (state = defState, action) => {
       return { ...state, scenes: update(state.scenes, { currFrame: action.currFrame }, action.sceneId, 'id') };
 
     case actionTypes.CREATE_ROTO:
-      const diffFn = (item) => item.materialId == action.materialId && item.sceneId == action.sceneId && item.frame == action.frame;
+      const diffFn = (item) => item.material_id == action.materialId && item.scene_id == action.sceneId && item.frame == action.frame;
       const hasRoto = !!getItemByKey(state.rotos, diffFn);
       const roto = { material_id: action.materialId, scene_id: action.sceneId, frame: action.frame, type: action.mtype, svg: action.svg };
 
       if (!hasRoto) {
         return { ...state, rotos: add(state.rotos, roto) };
       } else {
-        return { ...state, rotos: update(state.rotos, roto, diffFn) };
+        return { ...state, rotos: update(state.rotos, { svg: roto.svg }, diffFn) };
       }
+
+    case actionTypes.CREATE_AI_ROTO:
+      return { ...state, aiRotos: add(state.aiRotos, action.aiRotos) };
 
     case actionTypes.SET_DURATION:
       return { ...state, materials: update(state.materials, { 'properties.time': action.duration }, action.materialId, 'id') };
@@ -221,7 +229,7 @@ export default (state = defState, action) => {
       return { ...state, materials: [] };
 
     case actionTypes.ADD_LAYERS:
-      return { ...state, layers: add(state.layers, action.layer) };
+      return { ...state, layers: add(state.layers, action.layers) };
 
     case actionTypes.DELETE_LAYER:
       return { ...state, layers: remove(state.layers, action.layer.id, "id") };

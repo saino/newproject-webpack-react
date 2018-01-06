@@ -11,14 +11,15 @@ import { fetchStart, fetchEnd } from '../reducers/app';
 import ComposeWrap from './compose/index';
 import {
   getMaterials, deleteMaterial, uploadMaterial, setCurrFrameByScene,
-  createScene, setDuration, clearMaterials, createRoto, addLayers
+  createScene, setDuration, clearMaterials, addLayers,
+  createRoto, createAiRoto
 } from '../reducers/material';
 import {
   addMaterial, changeLayer, select,
   removeMaterial, toggleMaterial, changePosision,
   changeContralPosision, removeSelected
 } from '../reducers/compose';
-import { setRotoJobId, setRotoProgress, setRotoStop } from '../reducers/roto-process';
+import { setRotoJobId, setRotoProgress, setRotoMaterialJobId, setRotoMaterialProgress } from '../reducers/roto-process';
 import { finds, getItemByKey, desc } from '../utils/stateSet';
 
 class Make extends Component {
@@ -63,6 +64,9 @@ class Make extends Component {
   handleCreateRoto = (sceneId, frame, svg) =>
     this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
 
+  handleCreateAiRoto = (aiRotos) =>
+    this.props.createAiRoto({ aiRotos });
+
   handleFetchStart = () =>
     this.props.fetchStart();
 
@@ -84,22 +88,46 @@ class Make extends Component {
   handleSetRotoProgress = (workId, sceneId, progress) =>
     this.props.setRotoProgress({ workId, sceneId, progress });
 
+  handleSetRotoMaterialJobId = (workId, sceneId, materialJobId) =>
+    this.props.setRotoMaterialJobId({ workId, sceneId, materialJobId });
+
+  handleSetRotoMaterialProgress = (workId, sceneId, generateProgress) =>
+    this.props.setRotoMaterialProgress({ workId, sceneId, generateProgress });
+
   handleSetRotoStop = (workId, sceneId) =>
     this.props.setRotoStop({ workId, sceneId });
 
-  handleJoinComposePage(index, sceneId) {
+  handleJoinComposePage(index, sceneId, rotoLayer) {
     const { material, addLayers } = this.props;
     const { layers } = material;
     const { materialId } = this.state;
+    const now = Date.now();
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
-    const layer = { ...currMaterial, id: `${ currMaterial.id }-${ Date.now() }`, baseLayer: true, order: 0, scene_id: sceneId };
+    const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: sceneId };
     this.handleChangeStep(index, sceneId);
+    rotoLayer = {
+      ...rotoLayer,
+      id: `${ rotoLayer.id }-${ now }`,
+      order: 1,
+      scene_id: sceneId,
+      config: {
+        width: rotoLayer.properties.width,
+        height: rotoLayer.properties.height,
+        left: 0,
+        top: 0,
+        controls: [
+          { top: -5, left: -5 },
+          { top: -5, left: rotoLayer.properties.width - 5 },
+          { top: rotoLayer.properties.height - 5, left: rotoLayer.properties.width - 5 },
+          { top: rotoLayer.properties.height - 5, left: -5 }
+        ]
+    }};
 
-    if(layers.some(layer => layer.baseLayer && layer.scene_id === sceneId)) {
+    if (layers.some(layer => layer.baseLayer && layer.scene_id === sceneId)) {
       return;
     }
 
-    addLayers(layer);
+    addLayers([ layer, rotoLayer ]);
   };
 
   renderChild(index) {
@@ -134,6 +162,7 @@ class Make extends Component {
             rotoProcess={ rotoProcess }
             material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
             rotos={ material.rotos }
+            aiRotos={ material.aiRotos }
             app={ app }
             workId={ work.id }
             workName={ work.name }
@@ -141,8 +170,11 @@ class Make extends Component {
             onFetchEnd={ this.handleFetchEnd }
             onJoinCompose={ this.handleJoinComposePage.bind(this) }
             onCreateRoto={ this.handleCreateRoto }
+            onCreateAiRoto={ this.handleCreateAiRoto }
             onSetRotoJobId={ this.handleSetRotoJobId }
             onSetRotoProgress={ this.handleSetRotoProgress }
+            onSetRotoMaterialJobId={ this.handleSetRotoMaterialJobId }
+            onSetRotoMaterialProgress={ this.handleSetRotoMaterialProgress }
             onSetRotoStop={ this.handleSetRotoStop }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onSetMaterialTime={ this.handleSetMaterialTime } />
@@ -167,7 +199,7 @@ class Make extends Component {
         return (
           <ComposeWrap
             materials={ material.materials }
-            scenes={ finds(material.scenes, this.state.materialId, 'material_id') }
+            scenes={ finds(material.scenes, work.id, 'work_id') }
             materialId={ this.state.materialId }
             currentSceneId={ currentSceneId }
             workId={ work.id }
@@ -258,9 +290,11 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
   setRotoJobId: bindActionCreators(setRotoJobId, dispatch),
   setRotoProgress: bindActionCreators(setRotoProgress, dispatch),
-  setRotoStop: bindActionCreators(setRotoStop, dispatch),
+  setRotoMaterialJobId: bindActionCreators(setRotoMaterialJobId, dispatch),
+  setRotoMaterialProgress: bindActionCreators(setRotoMaterialProgress, dispatch),
   addMaterial: bindActionCreators(addMaterial, dispatch),
   createRoto: bindActionCreators(createRoto, dispatch),
+  createAiRoto: bindActionCreators(createAiRoto, dispatch),
   changeLayer: bindActionCreators(changeLayer, dispatch),
   select: bindActionCreators(select, dispatch),
   removeMaterial: bindActionCreators(removeMaterial, dispatch),
