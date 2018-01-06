@@ -24,6 +24,7 @@ const defState = {
   rotos: [],
   aiRotos: [],
   layers: [],
+  buildVideo: {},
   work_id: '',
   work_name: ''
 };
@@ -43,8 +44,18 @@ const actionTypes = {
   ADD_LAYERS: 'ADD_LAYERS',
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
-  UPDATE_SCEBES: 'UPDATe_SCENES'
+  UPDATE_SCEBES: 'UPDATE_SCENES',
+  UPDATE_BUILDVIDEO: 'UPDATE_BUILDVIDEO'
 };
+
+/**
+ * 更新合成视频数据
+ */
+export const updateBuildVideo = ( buildVideo ) => ({
+  type: actionTypes.UPDATE_BUILDVIDEO,
+  buildVideo
+});
+
 /**
  * 更新镜头
  */
@@ -123,13 +134,14 @@ export const uploadMaterial = ({ material }) => ({
 /**
  * 创建镜头
  */
-export const createScene = ({ id, mtype, materialId, workId, currFrame }) => ({
+export const createScene = ({ id, mtype, materialId, workId, currFrame, order }) => ({
   type: actionTypes.CREATE_SCENE,
   id,
   mtype,
   materialId,
   workId,
-  currFrame
+  currFrame,
+  order
 });
 
 /**
@@ -201,7 +213,7 @@ export default (state = defState, action) => {
       return { ...state, materials: add(state.materials, material) };
 
     case actionTypes.CREATE_SCENE:
-      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, work_id: action.workId, currFrame: action.currFrame };
+      const scene = { id: action.id, type: action.mtype, material_id: action.materialId, work_id: action.workId, currFrame: action.currFrame, order: action.order };
 
       return { ...state, scenes: asc(add(state.scenes, scene)) };
 
@@ -239,6 +251,8 @@ export default (state = defState, action) => {
 
     case actionTypes.UPDATE_SCEBES:
       return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
+    case actionTypes.UPDATE_BUILDVIDEO: 
+      return { ...state, buildVideo: action.buildVideo}
 
     default:
       return state;

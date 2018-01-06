@@ -50,6 +50,7 @@ class Make extends Component {
         id: currentSceneId,
         mtype: 'roto',
         materialId,
+        order: currentSceneId,
         workId,
         currFrame: 0
       });
@@ -105,6 +106,7 @@ class Make extends Component {
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
     const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: sceneId };
     this.handleChangeStep(index, sceneId);
+
     rotoLayer = {
       ...rotoLayer,
       id: `${ rotoLayer.id }-${ now }`,
@@ -208,7 +210,7 @@ class Make extends Component {
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene } />
         );
       case 3:
-        return (<ReleaseVideo workId={ work.id }/>);
+        return (<ReleaseVideo workId={ work.id } workName={ work.name}/>);
       default :
           return null;
     }

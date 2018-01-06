@@ -187,7 +187,7 @@ class ComposeWrap extends Component {
     }
     onScenesMoveEnd = (newList) =>{
         const scenes = newList.map((scene, index) => {
-            return { ...scene, order: index + 1 }
+            return { ...scene, order: index }
         });
         this.props.updateScenes(scenes);
     }
@@ -201,8 +201,8 @@ class ComposeWrap extends Component {
         return scenesLayers.map((scenesLayer, index) => {
             let style = {width: scenesLayer.config.width, height: scenesLayer.config.height};
             let imgStyle = {};
-            if (scenesLayer.config.transformString) {
-                imgStyle.transform = scenesLayer.config.transformString;
+            if (scenesLayer.config.transformString1) {
+                imgStyle.transform = scenesLayer.config.transformString1;
                 imgStyle.transformOrigin = '0 0';
             }
             const imgClass = classNames({
@@ -248,10 +248,21 @@ class ComposeWrap extends Component {
             top: layer.config.controls[controlPoint].top
         }
     }
-    onTransfrom = (layer, controlPoint, disx, disy, transformString) => {
+    onTransfrom = (layer, controlPoint, disx, disy, transformString1) => {
         const newLayer = { ...layer };
         newLayer.config.controls[controlPoint].left = disx + this.transControlDragStart.left;
         newLayer.config.controls[controlPoint].top = disy + this.transControlDragStart.top;
+        newLayer.config.transformString1 = transformString1;
+        let transformString = "matrix3d(";
+        for(let i=0; i<4; i++){
+            let left = newLayer.config.controls[i].left + 5 + newLayer.config.left;
+            let top = newLayer.config.controls[i].top + 5 + newLayer.config.top;
+            transformString  = transformString + left + "," + top;
+            if (i !== 3) {
+                transformString += ",";
+            }
+        }
+        transformString += ")";
         newLayer.config.transformString = transformString;
         this.props.updateLayers(newLayer);
     }
@@ -260,15 +271,21 @@ class ComposeWrap extends Component {
         this.setState({
             currentLayer: {...this.state.currentLayer, x, y}
         });
-        // console.log("ondragStart", arguments);
     }
     onControledDrag = (layer, disx, disy) => {
-        // console.log(disx, disy);
-        this.props.updateLayers({ ...layer, config: { ...layer.config, left: (disx + this.state.currentLayer.x), top: (disy + this.state.currentLayer.y)}});
-        // console.log("onDrag", arguments);
+        let transformString = "matrix3d(";
+        for(let i=0; i< 4; i++){
+            let left = layer.config.controls[i].left + 5 + disx + this.state.currentLayer.x;
+            let top = layer.config.controls[i].top + 5 + disy + this.state.currentLayer.y;
+            transformString  = transformString + left + "," + top;
+            if(i!==3){
+                transformString += ",";
+            }
+        }
+        transformString += ")";
+        this.props.updateLayers({ ...layer, config: { ...layer.config, left: (disx + this.state.currentLayer.x), top: (disy + this.state.currentLayer.y), transformString}});
     }
     onDragEnd = (item, index, x, y) => {
-        // console.log("onDragEdn", arguments);
     }
 
     /**
@@ -665,7 +682,8 @@ class ComposeWrap extends Component {
                             {top: -5, left: 95},
                             {top: 65, left: 95},
                             {top: 65, left: -5}
-                        ]
+                        ],
+                        transformString: "matrix3d(0,0,100,0,100,70,0,70)",
                     }
                 }
                 selectedMaterials.push(layer);
