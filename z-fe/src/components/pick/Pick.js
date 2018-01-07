@@ -21,7 +21,7 @@ export default class Pick extends Component {
         <div className="header">{ !isAiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
 
         <div className="main">
-          { isAiRotoed ?
+          { !isAiRotoed ?
             (<PrePick
               filename={ this.getDontSuffixFilename(filename) }
               app={ app }

@@ -98,7 +98,7 @@ export default class UserMaterial extends Component {
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
         title={ /[^/]+(?=\.)/.exec(item.path)[0] }
-        cover={ <img src={ config.api.host + item.properties.thumbnail } style={{ objectFit: 'cover' }} /> }
+        cover={ <img src={ config.api.host + item.properties.thumbnail } /> }
         actions={ [
           (<Tooltip title="编辑" placement="bottom">
             {/* <Icon type='edit' /> */}

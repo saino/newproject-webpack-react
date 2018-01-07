@@ -540,7 +540,7 @@ class ComposeWrap extends Component {
                   top: 0;
                 }
                 .base-compose-item-thumb{
-                  /*width: 100%;*/
+                  width: 100%;
                 }
                 .compose-item{
                     // border: 1px solid #1EBC9C;
