@@ -19,7 +19,7 @@ import {
   removeMaterial, toggleMaterial, changePosision,
   changeContralPosision, removeSelected
 } from '../reducers/compose';
-import { setRotoJobId, setRotoProgress, setRotoMaterialJobId, setRotoMaterialProgress } from '../reducers/roto-process';
+import { setRotoJobId, updateRotoJobId, setRotoProgress, setRotoMaterialJobId, setRotoMaterialProgress } from '../reducers/roto-process';
 import { finds, getItemByKey, desc } from '../utils/stateSet';
 
 class Make extends Component {
@@ -74,8 +74,8 @@ class Make extends Component {
   handleFetchEnd = () =>
     this.props.fetchEnd();
 
-  handleChangeStep = (index, sceneId) =>
-    this.setState({ selectedIndex: index, currentSceneId: sceneId == null ? '' : sceneId });
+  handleChangeStep = (index) => {
+    this.setState({ selectedIndex: index })};
 
   handleGetMaterials = () =>
     this.props.getMaterials({ workId: this.props.match.params.workId });
@@ -85,6 +85,9 @@ class Make extends Component {
 
   handleSetRotoJobId = (workId, sceneId, jobId) =>
     this.props.setRotoJobId({ workId, sceneId, jobId });
+
+  handleUpdateRotoJobId = (workId, sceneId, jobId) =>
+    this.props.updateRotoJobId({ workId, sceneId, jobId });
 
   handleSetRotoProgress = (workId, sceneId, progress) =>
     this.props.setRotoProgress({ workId, sceneId, progress });
@@ -174,6 +177,7 @@ class Make extends Component {
             onCreateRoto={ this.handleCreateRoto }
             onCreateAiRoto={ this.handleCreateAiRoto }
             onSetRotoJobId={ this.handleSetRotoJobId }
+            onUpdateRotoJobId={ this.handleUpdateRotoJobId }
             onSetRotoProgress={ this.handleSetRotoProgress }
             onSetRotoMaterialJobId={ this.handleSetRotoMaterialJobId }
             onSetRotoMaterialProgress={ this.handleSetRotoMaterialProgress }
@@ -291,6 +295,7 @@ const mapDispatchToProps = (dispatch) => ({
   setDuration: bindActionCreators(setDuration, dispatch),
   setCurrFrameByScene: bindActionCreators(setCurrFrameByScene, dispatch),
   setRotoJobId: bindActionCreators(setRotoJobId, dispatch),
+  updateRotoJobId: bindActionCreators(updateRotoJobId, dispatch),
   setRotoProgress: bindActionCreators(setRotoProgress, dispatch),
   setRotoMaterialJobId: bindActionCreators(setRotoMaterialJobId, dispatch),
   setRotoMaterialProgress: bindActionCreators(setRotoMaterialProgress, dispatch),

@@ -183,6 +183,7 @@ export default class Roto extends Component {
 
             onSetRotoMaterialProgress(workId, sceneId, percent);
             this.handleStopGenerateMaterial();
+
             onJoinCompose(999, this.state.sceneId, rotoMaterial);
 
             return;
@@ -195,7 +196,10 @@ export default class Roto extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { rotoProcess, scenes, workId } = nextProps;
+    const {
+      rotoProcess, scenes, workId,
+      onSetRotoJobId, onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
+     } = nextProps;
     let rotoPro;
 
     if (this.state.sceneId == null) {
@@ -205,9 +209,31 @@ export default class Roto extends Component {
         if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
           this.handleStopAiRoto();
           this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
-        } else if (rotoPro[ 'job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
+        } else if (rotoPro[ 'material_job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
           this.handleStopGenerateMaterial();
-          this.handleSetRotoMaterialProgress(rotoPro[ 'job_id' ]);
+          this.handleSetRotoMaterialProgress(rotoPro[ 'material_job_id' ]);
+        }
+      });
+    }
+  }
+
+  componentWillMount() {
+    const {
+      rotoProcess, scenes, workId,
+      onSetRotoJobId, onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
+    } = this.props;
+    let rotoPro;
+
+    if (this.state.sceneId == null) {
+      this.setState({ sceneId: scenes[0].id }, () => {
+        rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
+
+        if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
+          this.handleStopAiRoto();
+          this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
+        } else if (rotoPro[ 'material_job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
+          this.handleStopGenerateMaterial();
+          this.handleSetRotoMaterialProgress(rotoPro[ 'material_job_id' ]);
         }
       });
     }
@@ -216,7 +242,8 @@ export default class Roto extends Component {
   render() {
     const {
       scenes, material, rotos, aiRotos,
-      app, workId, rotoProcess
+      app, workId, rotoProcess,
+      onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
     } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
@@ -224,7 +251,7 @@ export default class Roto extends Component {
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
     const { currFrame } = scene;
-
+    console.log(rotoPro, 'rotoPro');
     return (
       <div className="roto-wrap">
         <div className="roto-inner">
@@ -262,6 +289,10 @@ export default class Roto extends Component {
             onGenerateRotoMaterial={ this.handleGenerateRotoMaterial }
             onAutoRoto={ this.handleAutoRoto }
             onStopAiRoto={ this.handleStopAiRoto }
+            onUpdateRotoJobId={ onUpdateRotoJobId }
+            onSetRotoMaterialJobId={ onSetRotoMaterialJobId }
+            onSetRotoMaterialProgress={ onSetRotoMaterialProgress }
+            onClearRotoProgress={ onSetRotoProgress }
             onSetRotoProgress={ this.handleSetRotoProgress }
             onSelectFrame={ this.handleChangeFrame } />
 
@@ -304,5 +335,6 @@ export default class Roto extends Component {
 
   componentWillUnmount() {
     this.handleStopAiRoto();
+    this.handleStopGenerateMaterial();
   }
 }

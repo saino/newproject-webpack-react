@@ -141,4 +141,19 @@ export default class PerfectPick extends Component {
       </div>
     );
   }
+
+  componentWillUnmount() {
+    const {
+      workId, sceneId, materialJobId, generateProgress,
+      onUpdateRotoJobId, onSetRotoMaterialJobId, onSetRotoMaterialProgress, onClearRotoProgress
+    } = this.props;
+
+    if (materialJobId != null && generateProgress >= 100) {
+      console.log(workId, sceneId);
+      onUpdateRotoJobId(workId, sceneId, null);
+      onClearRotoProgress(workId, sceneId, 0);
+      onSetRotoMaterialJobId(workId, sceneId, null);
+      onSetRotoMaterialProgress(workId, sceneId, 0);
+    }
+  }
 }

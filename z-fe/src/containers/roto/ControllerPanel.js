@@ -8,9 +8,10 @@ export default class ControllerPanel extends Component {
   render() {
     const {
       filename, frame, app, rotoFrames, jobId, materialJobId, progress, generateProgress, workId, sceneId,
-      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto,
+      onUpdateRotoJobId, onSetRotoMaterialJobId, onSetRotoMaterialProgress, onClearRotoProgress
     } = this.props;
-
+    console.log(progress, 'xxdd');
     return (
       <div className="controller-panel">
        <Pick
@@ -24,6 +25,10 @@ export default class ControllerPanel extends Component {
          materialJobId={ materialJobId }
          progress={ progress }
          generateProgress={ generateProgress }
+         onUpdateRotoJobId={ onUpdateRotoJobId }
+         onSetRotoMaterialJobId={ onSetRotoMaterialJobId }
+         onSetRotoMaterialProgress={ onSetRotoMaterialProgress }
+         onClearRotoProgress={ onClearRotoProgress }
          onGenerateRotoMaterial={ onGenerateRotoMaterial }
          onAutoRoto={ onAutoRoto }
          onSetRotoProgress={ onSetRotoProgress }

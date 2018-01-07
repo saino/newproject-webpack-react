@@ -12,10 +12,11 @@ export default class Pick extends Component {
     const {
       filename, app, workId, sceneId,
       rotoFrames, frame, jobId, materialJobId, progress, generateProgress,
-      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto
+      onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto,
+      onUpdateRotoJobId, onSetRotoMaterialJobId, onSetRotoMaterialProgress, onClearRotoProgress
     } = this.props;
     const isAiRotoed = jobId != null && progress >= 100;
-
+    console.log(workId, sceneId, 'wid');
     return (
       <div className="pick">
         <div className="header">{ !isAiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
@@ -36,8 +37,14 @@ export default class Pick extends Component {
               rotoFrames={ rotoFrames }
               frame={ frame }
               app={ app }
+              workId={ workId }
+              sceneId={ sceneId }
               materialJobId={ materialJobId }
               generateProgress={ generateProgress }
+              onUpdateRotoJobId={ onUpdateRotoJobId }
+              onSetRotoMaterialJobId={ onSetRotoMaterialJobId }
+              onSetRotoMaterialProgress={ onSetRotoMaterialProgress }
+              onClearRotoProgress={ onClearRotoProgress }
               onSelectFrame={ onSelectFrame }
               onGenerateRotoMaterial={ onGenerateRotoMaterial } />)
           }

@@ -3,6 +3,7 @@ import { add, update, remove, updateArray, getItemByKey, asc } from '../utils/st
 const defState = [];
 const actionTypes = {
   SET_ROTO_JOBID: 'SET_ROTO_JOBID',
+  UPDATE_ROTO_JOBID: 'UPDATE_ROTO_JOBID',
   SET_ROTO_PROGRESS: 'SET_ROTO_PROGRESS',
   SET_ROTO_MATERIAL_JOBID: 'SET_ROTO_MATERIAL_JOBID',
   SET_ROTO_MATERIAL_PROGRESS: 'SET_ROTO_MATERIAL_PROGRESS'
@@ -11,6 +12,15 @@ const actionTypes = {
 export function setRotoJobId ({ workId, sceneId, jobId }) {
   return {
     type: actionTypes.SET_ROTO_JOBID,
+    workId,
+    sceneId,
+    jobId
+  };
+}
+
+export function updateRotoJobId ({ workId, sceneId, jobId }) {
+  return {
+    type: actionTypes.UPDATE_ROTO_JOBID,
     workId,
     sceneId,
     jobId
@@ -47,7 +57,15 @@ export function setRotoMaterialProgress ({ workId, sceneId, generateProgress }) 
 export default function rotoProgress (state = defState, action) {
   switch (action.type) {
     case actionTypes.SET_ROTO_JOBID:
-      return add(state, { 'work_id': action.workId, 'scene_id': action.sceneId, 'job_id': action.jobId, progress: 0 });
+      const isAddAction = !getItemByKey(state, (item) => item[ 'work_id' ] == action.workId && item[ 'scene_id' ] == action.sceneId);
+
+      if (isAddAction) {
+        return add(state, { 'work_id': action.workId, 'scene_id': action.sceneId, 'job_id': action.jobId, progress: 0 });
+      } else {
+        return update(state, { 'job_id': action.jobId }, (item) => item[ 'work_id' ] == action.workId && item[ 'scene_id' ] == action.sceneId);
+      }
+    case actionTypes.UPDATE_ROTO_JOBID:
+      return update(state, { 'job_id': action.jobId }, (item) => item[ 'work_id' ] == action.workId && item[ 'scene_id' ] == action.sceneId);
     case actionTypes.SET_ROTO_PROGRESS:
       return update(state, { progress: action.progress }, (item) => item.work_id == action.workId && item.scene_id == action.sceneId);
     case actionTypes.SET_ROTO_MATERIAL_JOBID:
