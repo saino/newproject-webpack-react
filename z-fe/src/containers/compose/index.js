@@ -537,18 +537,19 @@ class ComposeWrap extends Component {
                     overflow: hidden;
                 }
                 .compose-render-wrap-inner {
+                    position: relative;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                }
+                .base-compose-item{
+                    position: relative;
                     width: 100%;
                     height: 100%;
                 }
-                .base-compose-item{
-                  position: absolute;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%);
-                }
-                /*.base-compose-item-thumb{
+                .base-compose-item-thumb{
                   width: 100%;
-                }*/
+                }
                 .compose-item{
                     // border: 1px solid #1EBC9C;
                 }
