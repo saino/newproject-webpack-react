@@ -149,7 +149,6 @@ export default class PerfectPick extends Component {
     } = this.props;
 
     if (materialJobId != null && generateProgress >= 100) {
-      console.log(workId, sceneId);
       onUpdateRotoJobId(workId, sceneId, null);
       onClearRotoProgress(workId, sceneId, 0);
       onSetRotoMaterialJobId(workId, sceneId, null);

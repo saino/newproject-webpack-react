@@ -51,7 +51,7 @@ export default class ComposePlayer extends Component {
 
   renderCanvas() {
     return this.props.players.map(({ id }) =>
-      <canvas key={ id } ref={ `canvas_${ id }` } style={{ display: 'none' }}></canvas>
+      <canvas key={ id } ref={ `canvas_${ id }` } style={{ display: 'none' }} width={ this.props.width } height={ this.props.height }></canvas>
     );
   }
 
@@ -66,15 +66,14 @@ export default class ComposePlayer extends Component {
   }
 
   setVideoTime(players, frame, frameRate) {
-    console.log(frame, this.getFrameTime(frame, frameRate), 'frame');
     players.forEach(({ id }) => {
       findDOMNode(this.refs[`player_${ id }`]).currentTime = this.getFrameTime(frame, frameRate);
     });
   }
 
   computeFrame() {
-    const { players, roto } = this.props;
-    let canvasContext, canvas, player, frameImageData, l, i, r, g, b, width, height, el;
+    const { players, roto, width, height } = this.props;
+    let canvasContext, canvas, player, frameImageData, l, i, r, g, b, el;
     const points = roto[0].svg[0].points.map((item) => `${ item.x }px ${ item.y }px`);
 
     players.forEach(({ id, baseLayer }) => {
@@ -83,8 +82,6 @@ export default class ComposePlayer extends Component {
       if (canvas) {
         canvasContext = canvas.getContext('2d');
         player = findDOMNode(this.refs[`player_${ id }`]);
-        width = canvas.width;
-        height = canvas.height;
         canvasContext.drawImage(player, 0, 0, width, height);
         frameImageData = canvasContext.getImageData(0, 0, width, height);
 
@@ -136,16 +133,16 @@ export default class ComposePlayer extends Component {
             width: 100%;
             height: 100%;
           }
-          .compose-player-render img {
+          /*.compose-player-render img {
             display: block;
             width: 100%;
-          }
-          .compose-base-item {
+          }*/
+          /*.compose-base-item {
             position: relative;
             width: 100%;
             top: 50%;
             transform: translateY(-50%);
-          }
+          }*/
           .compose-item {
             position: absolute;
           }

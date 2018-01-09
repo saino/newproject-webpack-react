@@ -15,8 +15,9 @@ export default class ParseMaterialToTime extends Component {
   }
 
   computeFrame = () => {
-    const canvasWidth = this.frameCanvasEl.width;
-    const canvasHeight = this.frameCanvasEl.height;
+    const canvasWidth = this.props.width;
+    const canvasHeight = this.props.height;
+
     let frameImageData, l, i, r, g, b;
 
     this.frameCanvasContext.drawImage(this.playerEl, 0, 0, canvasWidth, canvasHeight);
@@ -54,9 +55,11 @@ export default class ParseMaterialToTime extends Component {
   }
 
   render() {
+    const { width, height } = this.props;
+
     return (
       <div>
-        <canvas ref={ el => this.frameCanvasEl = el } style={{ display: 'none' }}></canvas>
+        <canvas ref={ el => this.frameCanvasEl = el } style={{ display: 'none' }} width={ width } height={ height }></canvas>
         <video style={{ display: 'none' }} crossOrigin="Anonymous" ref={ el => this.playerEl = el } src={ this.props.videoSrc }></video>
       </div>
     );

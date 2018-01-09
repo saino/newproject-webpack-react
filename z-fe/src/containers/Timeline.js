@@ -93,7 +93,7 @@ export default class Timeline extends Component {
   render() {
     const { path, frames, frame, time, frameLength, onChangeFrame } = this.props;
     const { isPlay } = this.state;
-    
+
     return (
         <div className="timeline">
 
@@ -168,6 +168,8 @@ export default class Timeline extends Component {
               align-items: stretch;
               height: 100%;
               color: #fff;
+              position: relative;
+              z-index: 1;
             }
 
             .timeline .header {

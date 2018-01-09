@@ -73,6 +73,8 @@ export default class SceneDisplay extends Component {
                frameLength={ frameLength + 1 }
                time={ time }
                frame={ frame + 1 }
+               width={ width }
+               height={ height }
                onSetFrameImageUrl={ this.handleSetFrameImageUrl }
                onSetMaterialTime={ onSetMaterialTime } />
 

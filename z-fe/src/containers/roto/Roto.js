@@ -256,7 +256,7 @@ export default class Roto extends Component {
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
     const { currFrame } = scene;
-    console.log(rotos, material.id, scene.id, scene.currFrame, 'roto');
+    
     return (
       <div className="roto-wrap">
         <div className="roto-inner">

@@ -357,10 +357,10 @@ class ComposeWrap extends Component {
     };
 
     getCurrentPlayers = () => {
-      const baseLayer = this.getCurrentBaseLayer();
+      const currBaseLayer = this.getCurrentBaseLayer();
 
       return [ this.getCurrentBaseLayer() || [], ...this.getCurrentLayers() ].map(
-        ({ baseLayer, config = {}, id, order }) => ({
+        ({ baseLayer, config = {}, id, path, order }) => ({
            baseLayer,
            id,
            x: config.left,
@@ -372,7 +372,7 @@ class ComposeWrap extends Component {
              transform: config.transformString,
              transformOrigin: '0 0 0'
            },
-           materialPath: baseLayer ? baseLayer.path : ''
+           materialPath: currBaseLayer ? currBaseLayer.path : ''
         })
       );
     };
@@ -427,7 +427,7 @@ class ComposeWrap extends Component {
                 this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
-
+        console.log(materials, this.props.material.layers, this.state.currentSceneId, 'ms');
         // console.log(this.state.currentSceneId, this.props.material);
         return (
           <div className='compose-wrap'>
@@ -445,6 +445,8 @@ class ComposeWrap extends Component {
                     positionY={ positionY }
                     players={ players }
                     roto={ scene.roto }
+                    width={ material.properties.width }
+                    height={ material.properties.height }
                     frameRate={ material.properties.length / material.properties.time }
                     frame={ scene.currFrame + 1 } /> :
                   <div className='compose-render-wrap'>
@@ -482,6 +484,8 @@ class ComposeWrap extends Component {
                 frameLength={ material.properties.length - 1 }
                 frame={ scene.currFrame }
                 time={ material.properties.time }
+                width={ material.properties.width }
+                height={ material.properties.height }
                 onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
                 onComplete={ this.handlePlayNextScene }
                 onChangeFrame={ this.handleChangeFrame } />
@@ -520,31 +524,31 @@ class ComposeWrap extends Component {
                     overflow: auto;
                 }
                 .compose-render{
-                    flex: 1;
                     position: relative;
                     padding: 20px;
                     box-sizing: border-box;
+                    width: -webkit-calc(100% - 500px);
+                    width: calc(100% - 500px);
                 }
                 .compose-render-wrap{
                     position: relative;
                     width: 100%;
-                    top: 50%;
-                    transform: translateY(-50%);
+                    height: 100%;
+                    overflow: hidden;
                 }
                 .compose-render-wrap-inner {
-                  position: relative;
-                  padding-top: 57.5%;
+                    width: 100%;
+                    height: 100%;
                 }
                 .base-compose-item{
                   position: absolute;
-                  width: 100%;
-                  height: 100%;
-                  left: 0;
-                  top: 0;
+                  left: 50%;
+                  top: 50%;
+                  transform: translate(-50%, -50%);
                 }
-                .base-compose-item-thumb{
+                /*.base-compose-item-thumb{
                   width: 100%;
-                }
+                }*/
                 .compose-item{
                     // border: 1px solid #1EBC9C;
                 }

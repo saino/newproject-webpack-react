@@ -128,9 +128,9 @@ class Make extends Component {
         ]
     }};
 
-    if (layers.some(layer => layer.baseLayer && layer.scene_id === sceneId)) {
-      return;
-    }
+    // if (layers.some(layer => layer.baseLayer && layer.scene_id === sceneId)) {
+    //   return;
+    // }
 
     addLayers([ layer, rotoLayer ]);
   };
