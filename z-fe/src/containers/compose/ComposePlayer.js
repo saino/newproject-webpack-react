@@ -36,8 +36,8 @@ export default class ComposePlayer extends Component {
   }
 
   renderComposes() {
-    const { players, positionX, positionY } = this.props;
-
+    const { players, positionX, positionY, roto } = this.props;
+    console.log(roto, 'roto');
     return finds(players, ({ baseLayer }) => !baseLayer).map(({ id, x, y, width, height, order, transformStyle }) =>
       <div
         key={ id }

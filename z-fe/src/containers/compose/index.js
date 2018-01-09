@@ -413,7 +413,7 @@ class ComposeWrap extends Component {
         const { visiblePlayer, currentSceneId } = this.state;
         const baseLayer = this.getCurrentBaseLayer();
         const material = getItemByKey(materials, materialId, 'id');
-        const scene = getItemByKey(scenes, currentSceneId, 'id') || { currFrame: 1 };
+        const scene = getItemByKey(scenes, currentSceneId, 'id') || { currFrame: 1, roto: [] };
         const players = this.getCurrentPlayers();
         const { left, top } = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
         const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
@@ -442,6 +442,7 @@ class ComposeWrap extends Component {
                     positionX={ positionX }
                     positionY={ positionY }
                     players={ players }
+                    roto={ scene.roto }
                     frameRate={ material.properties.length / material.properties.time }
                     frame={ scene.currFrame + 1 }/> :
                   <div className='compose-render-wrap'>

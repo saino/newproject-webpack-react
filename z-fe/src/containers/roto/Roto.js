@@ -118,6 +118,11 @@ export default class Roto extends Component {
     const scene = getItemByKey(scenes, sceneId, 'id');
     const token = getAuth().token;
 
+    if (sceneId == null) {
+      message.error('至少需要一个镜头');
+      return;
+    }
+
     if (workId == null) {
       message.error('请回退到作品页，编辑一个作品');
       return;
@@ -202,7 +207,7 @@ export default class Roto extends Component {
      } = nextProps;
     let rotoPro;
 
-    if (this.state.sceneId == null) {
+    if (this.state.sceneId == null && scenes[0] != null) {
       this.setState({ sceneId: scenes[0].id }, () => {
         rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
 
@@ -224,7 +229,7 @@ export default class Roto extends Component {
     } = this.props;
     let rotoPro;
 
-    if (this.state.sceneId == null) {
+    if (this.state.sceneId == null && scenes[0] != null) {
       this.setState({ sceneId: scenes[0].id }, () => {
         rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
 
@@ -251,7 +256,7 @@ export default class Roto extends Component {
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
     const { currFrame } = scene;
-    console.log(rotoPro, 'rotoPro');
+    console.log(rotos, material.id, scene.id, scene.currFrame, 'roto');
     return (
       <div className="roto-wrap">
         <div className="roto-inner">

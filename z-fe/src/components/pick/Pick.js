@@ -16,7 +16,7 @@ export default class Pick extends Component {
       onUpdateRotoJobId, onSetRotoMaterialJobId, onSetRotoMaterialProgress, onClearRotoProgress
     } = this.props;
     const isAiRotoed = jobId != null && progress >= 100;
-    console.log(workId, sceneId, 'wid');
+    
     return (
       <div className="pick">
         <div className="header">{ !isAiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>

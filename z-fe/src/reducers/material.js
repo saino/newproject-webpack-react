@@ -100,6 +100,7 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
       materials: resp.materials || [],
       scenes: resp.config.scenes || [],
       layers: resp.config.layers || [],
+      aiRotos: resp.config.aiRotos || [],
       workId: resp.id,
       workName: resp.name
     });
@@ -198,9 +199,9 @@ export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
       let { materials, scenes, layers, workId, workName } = action;
-      const addScenes = [];
+      const rotos = [].concat.apply([], scenes.map(({ roto = [] }) => roto));
 
-      return { ...state, work_id: workId, work_name: workName, materials, scenes, layers };
+      return { ...state, work_id: workId, work_name: workName, materials, scenes, layers, rotos };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;
@@ -251,7 +252,7 @@ export default (state = defState, action) => {
 
     case actionTypes.UPDATE_SCEBES:
       return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
-    case actionTypes.UPDATE_BUILDVIDEO: 
+    case actionTypes.UPDATE_BUILDVIDEO:
       return { ...state, buildVideo: action.buildVideo}
 
     default:

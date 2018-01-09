@@ -11,7 +11,7 @@ export default class ControllerPanel extends Component {
       onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto,
       onUpdateRotoJobId, onSetRotoMaterialJobId, onSetRotoMaterialProgress, onClearRotoProgress
     } = this.props;
-    console.log(progress, 'xxdd');
+    
     return (
       <div className="controller-panel">
        <Pick
