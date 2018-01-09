@@ -36,8 +36,8 @@ export default class ComposePlayer extends Component {
   }
 
   renderComposes() {
-    const { players, positionX, positionY, roto } = this.props;
-    console.log(roto, 'roto');
+    const { players, positionX, positionY } = this.props;
+
     return finds(players, ({ baseLayer }) => !baseLayer).map(({ id, x, y, width, height, order, transformStyle }) =>
       <div
         key={ id }
@@ -66,14 +66,16 @@ export default class ComposePlayer extends Component {
   }
 
   setVideoTime(players, frame, frameRate) {
+    console.log(frame, this.getFrameTime(frame, frameRate), 'frame');
     players.forEach(({ id }) => {
       findDOMNode(this.refs[`player_${ id }`]).currentTime = this.getFrameTime(frame, frameRate);
     });
   }
 
   computeFrame() {
-    const { players } = this.props;
-    let canvasContext, canvas, player, frameImageData, l, i, r, g, b, width, height;
+    const { players, roto } = this.props;
+    let canvasContext, canvas, player, frameImageData, l, i, r, g, b, width, height, el;
+    const points = roto[0].svg[0].points.map((item) => `${ item.x }px ${ item.y }px`);
 
     players.forEach(({ id, baseLayer }) => {
       canvas = findDOMNode(this.refs[`canvas_${ id }`]);
@@ -95,9 +97,13 @@ export default class ComposePlayer extends Component {
         canvasContext.putImageData(frameImageData, 0, 0);
 
         if (baseLayer) {
-          findDOMNode(this.refs.base_item).querySelector('img').src = canvas.toDataURL('image/jpeg');
+          el = findDOMNode(this.refs.base_item).querySelector('img')
+          el.src = canvas.toDataURL('image/jpeg');
         } else {
-          findDOMNode(this.refs[`render_${ id }`]).querySelector('img').src = canvas.toDataURL('image/jpeg');
+          el = findDOMNode(this.refs[`render_${ id }`]).querySelector('img');
+          el.style[ 'webkitClipPath' ] = `polygon(${ points.join(', ') })`;
+          el.style[ 'clipPath' ] = `polygon(${ points.join(', ') })`;
+          el.src = canvas.toDataURL('image/jpeg');
         }
       }
 

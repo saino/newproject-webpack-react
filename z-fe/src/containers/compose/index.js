@@ -357,8 +357,10 @@ class ComposeWrap extends Component {
     };
 
     getCurrentPlayers = () => {
+      const baseLayer = this.getCurrentBaseLayer();
+
       return [ this.getCurrentBaseLayer() || [], ...this.getCurrentLayers() ].map(
-        ({ baseLayer, config = {}, id, path, order }) => ({
+        ({ baseLayer, config = {}, id, order }) => ({
            baseLayer,
            id,
            x: config.left,
@@ -370,7 +372,7 @@ class ComposeWrap extends Component {
              transform: config.transformString,
              transformOrigin: '0 0 0'
            },
-           materialPath: path
+           materialPath: baseLayer ? baseLayer.path : ''
         })
       );
     };
@@ -444,7 +446,7 @@ class ComposeWrap extends Component {
                     players={ players }
                     roto={ scene.roto }
                     frameRate={ material.properties.length / material.properties.time }
-                    frame={ scene.currFrame + 1 }/> :
+                    frame={ scene.currFrame + 1 } /> :
                   <div className='compose-render-wrap'>
                     <div className="compose-render-wrap-inner">
                       {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
