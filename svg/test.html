@@ -194,7 +194,7 @@ var init = function(){
 	gPoints.addClass('points');
 }
 
-	init();
+init();
 
 var drawPoint = function(p, prevPoint, isFloating){
 	var className;
@@ -211,7 +211,6 @@ var drawPoint = function(p, prevPoint, isFloating){
 	gPoints.add(circle);
 
 	if( p.cx1 ){
-		console.log('cx1');
 		circle = paper.circle(p.cx1, p.cy1, RADIUS);
 		circle.addClass('control');
 		circle.node.targetPoint = p;
@@ -239,7 +238,6 @@ var computePath = function(){
 		drawPoint(pathData.floatingPoint, pathData.lastPoint(), true);
 	}
 
-	console.log(pathData.points.length, 'gan');
 	for( var i in pathData.points ){
 		p = pathData.points[i];
 		path += p.generatePath(i == 0);
@@ -257,7 +255,6 @@ var computePath = function(){
 	gPath.add(paper.path(path).attr('fill-rule', 'evenodd'));	// 多条的情况固定交叉相减，不走顺时针逆时针
 	gPathFocus.clear();
 	if( pointSelected && pathData.points.length > 1 ){
-		console.log('hahahhaha');
 		var i = pathData.indexOf(pointSelected);
 		if( i > 0 || pathData.closed ){
 			var focusPath = pathData.prevPoint(i).generatePath(true) + pointSelected.generatePath();
@@ -282,13 +279,11 @@ $('body').on('mousemove', function(e){
 	var x = e.offsetX;
 	var y = e.offsetY;
 	var redraw = false;
-	//console.log(pathData.lastPoint(), 'henhao');
+	console.log(drawStatus, dragging);
 	if( !dragging ){
 		if( pathData.floatingPoint || drawStatus == 1 ){
 			pathData.floatingPoint = new Point(x, y);
-	//		console.log(pathData.lastPoint(), 'ddd');
 			pathData.floatingPoint.setControl(Point.CONTROL1, pathData.lastPoint().getOppositeControl(Point.CONTROL2));
-			console.log(pathData.points.length, 'x');
 			// hover 到起点的时候使用起点的控制点2
 			var p1 = pathData.firstPoint();
 			if( pathData.points.length > 1 && p1.isInside(x, y) ){
@@ -306,9 +301,8 @@ $('body').on('mousemove', function(e){
 				pathData.firstPoint().setControl(Point.CONTROL2, pathData.firstPoint().getOppositeControl([x, y]));
 				break;
 			default:
-			  console.log('cd');
 				if( pointSelected ){
-					console.log('caodan');
+					console.log( x - lastX);
 					pathData.movePoint(pointSelected, x - lastX, y - lastY, movingControl);
 					lastX = x;
 					lastY = y;
@@ -323,7 +317,7 @@ $('body').on('mousemove', function(e){
 $('body').on('mousedown', 'circle:not(.floating)', function(e){
 	var x = e.offsetX;
 	var y = e.offsetY;
-	console.log('s');
+
 	dragging = true;
 	if( drawStatus == 1 ){
 		drawStatus = 2;

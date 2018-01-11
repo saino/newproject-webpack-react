@@ -195,7 +195,7 @@ class ComposeWrap extends Component {
      * 中间镜头图层编辑
      */
     renderComposeLayers() {
-        const { scenes } = this.props;
+        const { scenes, layers } = this.props;
         const scenesLayers = this.getCurrentLayers();
 
         return scenesLayers.map((scenesLayer, index) => {
@@ -210,11 +210,11 @@ class ComposeWrap extends Component {
                 "select": scenesLayer.id === this.state.currentLayer.id
             });
             const points = getItemByKey(scenes, scenesLayer[ 'scene_id' ], 'id').roto[0].svg[0].points.map((item) => `${ item.x }px ${ item.y }px`);
-            // console.log(getItemByKey(scenes, scenesLayer[ 'scene_id' ], 'id'), 'id');
-            // //console.log(this.points, 'points');
-            // //this.points = [];
-            imgStyle['WebkitClipPath'] = `polygon(${ points.join(', ') })`;
-            imgStyle['clipPath'] = `polygon(${ points.join(', ') })`;
+
+            if (scenesLayer.isRoto) {
+              imgStyle['WebkitClipPath'] = `polygon(${ points.join(', ') })`;
+              imgStyle['clipPath'] = `polygon(${ points.join(', ') })`;
+            }
 
             return (<DraggableCore key={scenesLayer.id}
                         position={{x: scenesLayer.config.left, y: scenesLayer.config.top}}
@@ -357,9 +357,7 @@ class ComposeWrap extends Component {
     };
 
     getCurrentPlayers = () => {
-      const currBaseLayer = this.getCurrentBaseLayer();
-
-      return [ this.getCurrentBaseLayer() || [], ...this.getCurrentLayers() ].map(
+      return [ ...(this.getCurrentBaseLayer() ? [ this.getCurrentBaseLayer() ] : []), ...this.getCurrentLayers() ].map(
         ({ baseLayer, config = {}, id, path, order }) => ({
            baseLayer,
            id,
@@ -372,7 +370,7 @@ class ComposeWrap extends Component {
              transform: config.transformString,
              transformOrigin: '0 0 0'
            },
-           materialPath: currBaseLayer ? currBaseLayer.path : ''
+           materialPath: path
         })
       );
     };
@@ -427,8 +425,7 @@ class ComposeWrap extends Component {
                 this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
-        console.log(materials, this.props.material.layers, this.state.currentSceneId, 'ms');
-        // console.log(this.state.currentSceneId, this.props.material);
+
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">

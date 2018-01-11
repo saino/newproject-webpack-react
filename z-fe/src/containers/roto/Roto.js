@@ -150,7 +150,6 @@ export default class Roto extends Component {
     post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes } }, (resp) => {
       this.handleFinishRotoMaterial();
     });
-
   };
 
   handleFinishRotoMaterial = () => {
@@ -198,6 +197,20 @@ export default class Roto extends Component {
         }
       );
     }, 1000);
+  };
+
+  handleRemoveMettingPoint = (points) => {
+    const {
+      scenes, material, rotos, aiRotos,
+      app, workId, rotoProcess,
+      onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
+    } = this.props;
+    const { sceneId } = this.state;
+    const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
+    const roto = getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
+
+    roto.svg[0].points = points;
+    //console.log(points, roto);
   };
 
   componentWillReceiveProps(nextProps) {
@@ -256,7 +269,7 @@ export default class Roto extends Component {
     const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
     const { currFrame } = scene;
-    
+
     return (
       <div className="roto-wrap">
         <div className="roto-inner">
@@ -276,6 +289,7 @@ export default class Roto extends Component {
               frame={ currFrame }
               roto={ roto }
               onCreateRoto={ this.handleCreateRoto }
+              onRemoveMettingPoint={ this.handleRemoveMettingPoint }
               onSetMaterialTime={ this.handleSetMaterialTime } />
           </div>
 

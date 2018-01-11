@@ -1,3 +1,5 @@
+import Point from './Point';
+
 export default class Path {
 	constructor(points) {
 	  this.points = points;
@@ -34,6 +36,31 @@ export default class Path {
 
 	addPoint(index, p) {
 	  this.points[index] = p;
+	}
+
+	removePoint(p){
+		var i = this.points.indexOf(p);
+		this.points.splice(i, 1);
+	}
+
+	movePoint(p, dx, dy, movingControl){
+		var i = this.indexOf(p);
+		try {	// 对面控制点不存在就忽略
+			switch( movingControl ){
+				case Point.CONTROL1:
+					p.move(dx, dy, movingControl);
+					this.prevPoint(i).setControl(Point.CONTROL2, this.prevPoint(i).getOppositeControl([p.cx1, p.cy1]));
+					break;
+				case Point.CONTROL2:
+					p.move(dx, dy, movingControl);
+					this.nextPoint(i).setControl(Point.CONTROL1, p.getOppositeControl(Point.CONTROL2));
+					break;
+				default:
+					p.move(dx, dy);
+					p.move(dx, dy, Point.CONTROL2);
+					this.nextPoint(i).move(dx, dy, Point.CONTROL1);
+			}
+		} catch(e) {}
 	}
 
 	indexOf(p) {
