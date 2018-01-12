@@ -108,6 +108,7 @@ class Make extends Component {
     const now = Date.now();
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
     const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: sceneId };
+    console.log(layer, '99');
     this.handleChangeStep(index, sceneId);
 
     rotoLayer = {
@@ -115,6 +116,7 @@ class Make extends Component {
       id: `${ rotoLayer.id }-${ now }`,
       order: 1,
       scene_id: sceneId,
+      isRoto: true,
       config: {
         width: rotoLayer.properties.width,
         height: rotoLayer.properties.height,
@@ -205,6 +207,7 @@ class Make extends Component {
         return (
           <ComposeWrap
             materials={ material.materials }
+            layers={ material.layers }
             scenes={ finds(material.scenes, work.id, 'work_id') }
             materialId={ this.state.materialId }
             currentSceneId={ currentSceneId }

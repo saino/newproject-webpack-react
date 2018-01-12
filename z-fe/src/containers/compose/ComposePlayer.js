@@ -94,13 +94,13 @@ export default class ComposePlayer extends Component {
         canvasContext.putImageData(frameImageData, 0, 0);
 
         if (baseLayer) {
-          el = findDOMNode(this.refs.base_item).querySelector('img')
-          el.src = canvas.toDataURL('image/jpeg');
+          el = findDOMNode(this.refs.base_item).querySelector('img');
+          el.src = canvas.toDataURL('image/png');
         } else {
           el = findDOMNode(this.refs[`render_${ id }`]).querySelector('img');
-          el.style[ 'webkitClipPath' ] = `polygon(${ points.join(', ') })`;
-          el.style[ 'clipPath' ] = `polygon(${ points.join(', ') })`;
-          el.src = canvas.toDataURL('image/jpeg');
+          //el.style[ 'webkitClipPath' ] = `polygon(${ points.join(', ') })`;
+          //el.style[ 'clipPath' ] = `polygon(${ points.join(', ') })`;
+          el.src = canvas.toDataURL('image/png');
         }
       }
 
