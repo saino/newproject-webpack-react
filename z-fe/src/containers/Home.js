@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
+import jsfeat from 'jsfeat'
 
 /* 自定义组件 */
 import Header from './header/Header';
@@ -144,6 +145,45 @@ class Home extends Component {
   };
 
   render() {
+    // console.log("homeLLLLLLL");
+    // var columns = 10, rows = 240;
+    // var data_type = jsfeat.U8_t | jsfeat.C1_t;
+    // var data_buffer = new jsfeat.data_t(columns * rows);
+    // var my_matrix = new jsfeat.matrix_t(columns, rows, data_type, data_buffer);
+    // // var my_matrix = new jsfeat.matrix_t(columns, rows, data_type);
+    // var newInput = document.createElement("input"); 
+    // newInput.type = "file",
+    // newInput.src = "http://localhost:3000" + useThreePNG;
+    // newInput.value = "http://localhost:3000" + useThreePNG;
+    // console.log(newInput, newInput.files, newInput.files[0]);
+
+    // console.log("data_type---->",data_type);
+    // console.log("data_buffer---->", data_buffer);
+    // console.log("my_matrix---->", my_matrix);
+    // console.log("imgage_data---->", useThreePNG);
+
+    // var image = new Image();
+    // image.src = "http://localhost:3000"+useThreePNG;
+    // image.onload = () => {
+    //   console.log(image, "ddddd");
+    //   console.log(image.files);
+    //   console.log(image.files[0]);
+      // var reader = new FileReader(image);
+      // var data = reader.readAsDataURL();
+      // console.log(data);
+      // console.log(reader);
+      // reader
+    // }
+
+    // var reader  = new FileReader();
+    // console.log(reader);
+    // var dd = reader.readAsArrayBuffer(useThreePNG);
+    // console.log(dd);
+    // jsfeat.optical_flow_lk.track(prev_pyr: pyramid_t, curr_pyr: pyramid_t,
+    //   prev_xy: Array, curr_xy: Array, count,
+    //   win_size, max_iter = 30, status: Array = null,
+    //   eps = 0.01, min_eigen_threshold = 0.0001);
+    // console.log(jsfeat);
     const {
       root,
       hd, hdImg, makeBtn,
