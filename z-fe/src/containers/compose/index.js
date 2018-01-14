@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
 import DragTransform from '../../components/interaction/transform';
 import { addMaterial, changeLayer, select, removeMaterial, toggleMaterial } from '../../reducers/compose'
-import { addLayers, deleteLayer, updateLayers, updateScenes } from '../../reducers/material'
+import { addLayers, deleteLayer, updateLayers, updateScenes, getMaterials } from '../../reducers/material'
 import ToggleViewImg from '../../statics/toggle_view.png'
 import { connect } from 'react-redux';
 import ComposeControl from './ComposeControl1'
@@ -149,6 +149,7 @@ class ComposeWrap extends Component {
     }
 
     componentWillMount(){
+        // this.props.getMaterials({ workId: this.props.workId });
         setTimeout(() => {
             const materialScenes = this.getMaterialScenes();
             const currentSceneId = this.props.currentSceneId || materialScenes[0].id;
@@ -653,6 +654,31 @@ class ComposeWrap extends Component {
      * 点击添加素材按钮
      */
     onAddMaterialClick = () => {
+        // this.props.getMaterials({ workId: this.props.workId})
+        const { materialId, material } = this.props;
+        const { materials, scenes, rotos, layers } = material;
+        const tempScenes = scenes.map(scene => {
+            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
+            return scene;
+        });
+        // console.log(getAuth().token,"klkkk");
+        const options = {
+            token: getAuth().token,
+            work_id: this.props.workId,
+            status: 1,
+            name: this.props.workName,
+            config: {
+                materials,
+                scenes: tempScenes,
+                layers
+            }
+        }
+        post('/user/saveWork', options, resp => {
+            this.props.getMaterials({ workId: this.props.workId })
+            // this.props.handleChangeStep(3, this.state.currentSceneId)
+        });
+
+        
         this.setState({
             materialListVisible: true,
         })
@@ -757,6 +783,7 @@ const mapStatToProps = ({ material }) => ({
     material
 });
 const mapDispatchToProps = (dispatch) => ({
+    getMaterials: bindActionCreators(getMaterials, dispatch),
     addLayers: bindActionCreators(addLayers, dispatch),
     deleteLayer: bindActionCreators(deleteLayer, dispatch),
     updateLayers: bindActionCreators(updateLayers, dispatch),
