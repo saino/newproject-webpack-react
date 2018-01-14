@@ -17,10 +17,11 @@ export default class Path {
 	}
 
 	prevPoint(index) {
-		if (index > 0 || this.closed) {
-		  const i = index > 0 ? index - 1 : this.points.length - 1;
-			return this.points[i];
-		}
+		//if (index > 0 || this.closed) {
+	  const i = index > 0 ? index - 1 : this.points.length - 1;
+
+		return this.points[i];
+		//}
 	}
 
 	nextPoint(index) {
