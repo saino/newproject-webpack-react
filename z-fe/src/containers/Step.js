@@ -26,7 +26,10 @@ export default class Step extends Component {
                            <span className={`item middle ${ step == 0 ? 'selected' : '' }`}>素材上传</span>
                         </li>
                         <li onClick={ this.handleChangeStep(1) }>
-                           <span className={`item middle ${ step != 0 ? 'selected' : '' }`}>镜头特效</span>
+                           <span className={`item middle ${ step == 1 ? 'selected' : '' }`}>镜头特效</span>
+                        </li>
+                        <li onClick={ this.handleChangeStep(999) }>
+                           <span className={`item middle ${ step == 999 ? 'selected' : '' }`}>视频编辑</span>
                         </li>
                         {/*<li onClick={ this.handleChangeStep(2) }>
                            <span className={`item middle ${ step == 2 ? 'selected' : '' }`}>3.镜头组合</span>
