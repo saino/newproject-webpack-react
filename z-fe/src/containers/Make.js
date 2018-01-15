@@ -101,7 +101,7 @@ class Make extends Component {
   handleSetRotoStop = (workId, sceneId) =>
     this.props.setRotoStop({ workId, sceneId });
 
-  handleJoinComposePage(index, sceneId, rotoLayer) {
+  handleJoinComposePage(index, sceneId) {
     const { material, addLayers } = this.props;
     const { layers } = material;
     const { materialId } = this.state;
@@ -109,30 +109,29 @@ class Make extends Component {
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
     const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: sceneId };
     this.handleChangeStep(index, sceneId);
+    addLayers(layer);
 
-    rotoLayer = {
-      ...rotoLayer,
-      id: `${ rotoLayer.id }-${ now }`,
-      order: 1,
-      scene_id: sceneId,
-      config: {
-        width: rotoLayer.properties.width,
-        height: rotoLayer.properties.height,
-        left: 0,
-        top: 0,
-        controls: [
-          { top: -5, left: -5 },
-          { top: -5, left: rotoLayer.properties.width - 5 },
-          { top: rotoLayer.properties.height - 5, left: rotoLayer.properties.width - 5 },
-          { top: rotoLayer.properties.height - 5, left: -5 }
-        ]
-    }};
+    // rotoLayer = {
+    //   ...rotoLayer,
+    //   id: `${ rotoLayer.id }-${ now }`,
+    //   order: 1,
+    //   scene_id: sceneId,
+    //   config: {
+    //     width: rotoLayer.properties.width,
+    //     height: rotoLayer.properties.height,
+    //     left: 0,
+    //     top: 0,
+    //     controls: [
+    //       { top: -5, left: -5 },
+    //       { top: -5, left: rotoLayer.properties.width - 5 },
+    //       { top: rotoLayer.properties.height - 5, left: rotoLayer.properties.width - 5 },
+    //       { top: rotoLayer.properties.height - 5, left: -5 }
+    //     ]
+    // }};
 
     // if (layers.some(layer => layer.baseLayer && layer.scene_id === sceneId)) {
     //   return;
     // }
-
-    addLayers([ layer, rotoLayer ]);
   };
 
   renderChild(index) {

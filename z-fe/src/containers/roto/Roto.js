@@ -188,7 +188,7 @@ export default class Roto extends Component {
             onSetRotoMaterialProgress(workId, sceneId, percent);
             this.handleStopGenerateMaterial();
 
-            onJoinCompose(999, this.state.sceneId, rotoMaterial);
+            onJoinCompose(999, this.state.sceneId);
 
             return;
           }
