@@ -82,6 +82,7 @@ export default class ComposePlayer extends Component {
       if (canvas) {
         canvasContext = canvas.getContext('2d');
         player = findDOMNode(this.refs[`player_${ id }`]);
+        // canvasContext.clearRect(0, 0, width, height);
         canvasContext.drawImage(player, 0, 0, width, height);
         frameImageData = canvasContext.getImageData(0, 0, width, height);
 
@@ -137,12 +138,13 @@ export default class ComposePlayer extends Component {
             display: block;
             width: 100%;
           }*/
-          /*.compose-base-item {
+          .compose-base-item {
+            left: 50%;
             position: relative;
-            width: 100%;
             top: 50%;
-            transform: translateY(-50%);
-          }*/
+            transform: translate(-50%, -50%);
+            font-size: 0;
+          }
           .compose-item {
             position: absolute;
           }

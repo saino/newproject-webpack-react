@@ -545,9 +545,10 @@ class ComposeWrap extends Component {
                     position: relative;
                     width: 100%;
                     height: 100%;
+                    font-size: 0;
                 }
                 .base-compose-item-thumb{
-                  width: 100%;
+                //   width: 100%;
                 }
                 .compose-item{
                     // border: 1px solid #1EBC9C;
@@ -705,15 +706,15 @@ class ComposeWrap extends Component {
                     scene_id: currentSceneId,
                     order: layerOrder++,
                     config: {
-                        height: 70,
-                        width: 100,
+                        height: materials[i].properties.height,
+                        width: materials[i].properties.width,
                         top: 0,
                         left: 0,
                         controls: [
                             {top: -5, left: -5},
-                            {top: -5, left: 95},
-                            {top: 65, left: 95},
-                            {top: 65, left: -5}
+                            { top: -5, left: materials[i].properties.width - 5},
+                            { top: materials[i].properties.height - 5, left: materials[i].properties.width - 5},
+                            { top: materials[i].properties.height - 5, left: -5}
                         ],
                         transformString: "matrix3d(0,0,100,0,100,70,0,70)",
                     }
