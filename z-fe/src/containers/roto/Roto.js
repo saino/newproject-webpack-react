@@ -21,12 +21,14 @@ export default class Roto extends Component {
     let rotoPro;
 
     this.handleStopAiRoto();
+    this.handleStopGenerateMaterial();
+
     this.setState({ sceneId }, () => {
       rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
-
+      console.log(rotoPro, 'rpo');
       if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
         this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
-      } else if (rotoPro[ 'job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
+      } else if (rotoPro[ 'material_job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
         this.handleSetRotoMaterialProgress(rotoPro[ 'job_id' ]);
       }
     });
