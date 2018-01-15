@@ -210,7 +210,6 @@ export default class Roto extends Component {
     const roto = getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
 
     roto.svg[0].points = points;
-    //console.log(points, roto);
   };
 
   componentWillReceiveProps(nextProps) {

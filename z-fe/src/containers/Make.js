@@ -37,11 +37,15 @@ class Make extends Component {
       materialId,
       selectedIndex: 1
     }, () => {
-      const { material, createScene, match } = this.props;
+      const { material, createScene, match, addLayers } = this.props;
+      const { layers } = material;
       const { materialId } = this.state;
       const workId = match.params.workId;
       const descScenes = desc(finds(material.scenes, workId, 'work_id'));
       const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
+      const now = Date.now();
+      const currMaterial = getItemByKey(material.materials, materialId, 'id');
+      const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: currentSceneId };
 
       this.setState({ currentSceneId });
 
@@ -54,6 +58,9 @@ class Make extends Component {
         workId,
         currFrame: 0
       });
+
+      // 设置基础layer
+      addLayers(layer);
     });
 
   handleUploadMaterial = (material) =>
