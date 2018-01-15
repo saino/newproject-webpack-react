@@ -157,6 +157,7 @@ class ComposeWrap extends Component {
                 currentSceneId,
                 materialScenes,
             });
+            console.log(this.props.material , this.props.currentSceneId);
         }, 10);
     }
 
