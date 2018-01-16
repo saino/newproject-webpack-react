@@ -174,6 +174,7 @@ class Make extends Component {
             material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
             rotos={ material.rotos }
             aiRotos={ material.aiRotos }
+            layers={ material.layers }
             app={ app }
             workId={ work.id }
             workName={ work.name }
