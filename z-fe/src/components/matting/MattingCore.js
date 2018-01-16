@@ -99,6 +99,7 @@ export default class Core extends Component {
 		    path += 'Z';
       }
 
+      console.log(state,'dd');
       this.setState({ ...state, path });
     });
   }
