@@ -141,6 +141,12 @@ class Make extends Component {
     // }
   };
 
+  handleChangeCurrentSceneId = (currentSceneId) => {
+    this.setState({
+      currentSceneId
+    });
+  }
+
   renderChild(index) {
     const {
       material, match, user, compose, app, userWorks, rotoProcess,
@@ -190,7 +196,8 @@ class Make extends Component {
             onSetRotoMaterialProgress={ this.handleSetRotoMaterialProgress }
             onSetRotoStop={ this.handleSetRotoStop }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
-            onSetMaterialTime={ this.handleSetMaterialTime } />
+            onSetMaterialTime={ this.handleSetMaterialTime } 
+            onChangeSceneId={ this.handleChangeCurrentSceneId }/>
         );
 
       case 2:

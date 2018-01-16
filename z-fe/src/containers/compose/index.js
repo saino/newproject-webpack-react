@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import { Button, Modal, Tooltip, Icon} from 'antd'
+import { Button, Modal, Tooltip, Icon, message} from 'antd'
 import DragList from 'react-draggable-list'
 import classNames from 'classnames'
 import DraggableCore from '../../components/interaction/react-draggable/DraggableCore';
@@ -166,9 +166,9 @@ class ComposeWrap extends Component {
      */
     getMaterialScenes(){
         const { scenes } = this.props.material;
-        const materialId = this.props.materialId;
-        const materialScenes = scenes.filter(scene => scene.material_id === materialId);
-        return materialScenes.sort((scene1, scene2) => {
+        // const materialId = this.props.materialId;
+        // const materialScenes = scenes.filter(scene => scene.material_id === materialId);
+        return scenes.sort((scene1, scene2) => {
             return scene1.order > scene2.order;
         });
     }
@@ -661,6 +661,10 @@ class ComposeWrap extends Component {
         // this.props.getMaterials({ workId: this.props.workId})
         const { materialId, material } = this.props;
         const { materials, scenes, rotos, layers } = material;
+        if (!scenes || scenes.length == 0) {
+            message.warning("请先添加镜头");
+            return;
+        }
         const tempScenes = scenes.map(scene => {
             scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
             return scene;
@@ -761,6 +765,10 @@ class ComposeWrap extends Component {
     onCompleteWorkClick = () => {
         const { materialId, material } = this.props;
         const { materials, scenes, rotos, layers } = material;
+        if(!scenes || scenes.length == 0){
+            message.warning("请先添加镜头");
+            return;
+        }
         const tempScenes = scenes.map(scene => {
             scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
             return scene;

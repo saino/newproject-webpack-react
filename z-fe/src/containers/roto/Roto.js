@@ -20,6 +20,7 @@ export default class Roto extends Component {
     const { rotoProcess, workId } = this.props;
     let rotoPro;
 
+    this.props.onChangeSceneId(sceneId);
     this.handleStopAiRoto();
     this.handleStopGenerateMaterial();
 
@@ -276,7 +277,7 @@ export default class Roto extends Component {
         <div className="roto-inner">
           {/* 镜头列表 */}
           <div className="scenes">
-            <Scenes scenes={ scenes } onChangeScene={ this.handleChangeScene } />
+            <Scenes scenes={scenes} onChangeScene={this.handleChangeScene} />
           </div>
 
           {/* 镜头展示 */}
