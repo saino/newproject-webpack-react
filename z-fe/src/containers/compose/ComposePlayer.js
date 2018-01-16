@@ -51,7 +51,7 @@ export default class ComposePlayer extends Component {
 
   renderCanvas() {
     return this.props.players.map(({ id }) =>
-      <canvas key={ id } ref={ `canvas_${ id }` } style={{ display: 'none' }} width={ this.props.width } height={ this.props.height }></canvas>
+      <canvas ref={ `canvas_${ id }` } style={{ display: 'none' }} width={ this.props.width } height={ this.props.height }></canvas>
     );
   }
 
