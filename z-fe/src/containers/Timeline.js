@@ -280,4 +280,8 @@ export default class Timeline extends Component {
         </div>
     );
   }
+
+  componentWillUnmount() {
+    this.clearAllTimer();
+  }
 }

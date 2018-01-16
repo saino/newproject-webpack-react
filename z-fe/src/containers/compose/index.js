@@ -418,14 +418,14 @@ class ComposeWrap extends Component {
         const material = getItemByKey(materials, materialId, 'id') || { path: '', properties: { width: 0, height: 0, time: 0, length: 0 } };
         const scene = getItemByKey(scenes, currentSceneId, 'id') || { currFrame: 1, roto: [] };
         const players = this.getCurrentPlayers();
-        const { left, top } = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
-        const cr = findDOMNode(this) ? (findDOMNode(this).querySelector('.compose-render-wrap-inner') ? findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
+        const { left, top } = this.getDOMNode ? this.getDOMNode().querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
+        const cr = this.getDOMNode ? (this.getDOMNode().querySelector('.compose-render-wrap-inner') ? this.getDOMNode().querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
         const positionX = cr.left - left - 20;
         const positionY = cr.top - top - 20;
-        setTimeout(() => {
-            if (findDOMNode(this) && findDOMNode(this).querySelector('.compose-render-wrap-inner')) {
-                this.offX = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
-                this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
+        this.timer = setTimeout(() => {
+            if (this.getDOMNode && this.getDOMNode().querySelector('.compose-render-wrap-inner')) {
+                this.offX = this.getDOMNode().querySelector('.compose-render-wrap-inner').getBoundingClientRect().left;
+                this.offY = this.getDOMNode().querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
 
@@ -480,12 +480,11 @@ class ComposeWrap extends Component {
             <div className="compose-bottom">
               <Timeline
                 ref="autoplayer"
+                flag={ currentSceneId }
                 path={ material.path }
                 frameLength={ material.properties.length - 1 }
                 frame={ scene.currFrame }
                 time={ material.properties.time }
-                width={ material.properties.width }
-                height={ material.properties.height }
                 onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
                 onComplete={ this.handlePlayNextScene }
                 onChangeFrame={ this.handleChangeFrame } />
@@ -642,6 +641,10 @@ class ComposeWrap extends Component {
                 // }
             `}</style>
         </div>);
+    }
+
+    componentWillUnmount() {
+      clearTimeout(this.timer);
     }
 
     /**

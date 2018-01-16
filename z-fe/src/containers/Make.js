@@ -69,8 +69,8 @@ class Make extends Component {
   handleSetMaterialTime = (duration) =>
     this.props.setDuration({ materialId: this.state.materialId, duration });
 
-  handleCreateRoto = (sceneId, frame, svg) =>
-    this.props.createRoto({ materialId: this.state.materialId, sceneId, frame, mtype: 'manual', svg });
+  handleCreateRoto = (materialId, sceneId, frame, svg) =>
+    this.props.createRoto({ materialId, sceneId, frame, mtype: 'manual', svg });
 
   handleCreateAiRoto = (aiRotos) =>
     this.props.createAiRoto({ aiRotos });

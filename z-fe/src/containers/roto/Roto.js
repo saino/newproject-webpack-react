@@ -46,7 +46,7 @@ export default class Roto extends Component {
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id');
 
-    onCreateRoto(this.state.sceneId, scene.currFrame, svg);
+    onCreateRoto(scene.materialId, this.state.sceneId, scene.currFrame, svg);
   };
 
   handlePreAiRoto = () => {
@@ -72,10 +72,11 @@ export default class Roto extends Component {
 
   handleSetRotoProgress = (jobId) => {
     const {
-      workId, rotoProcess, material,
+      workId, rotoProcess, material, scenes,
       onSetRotoProgress, onSetRotoStop, onCreateAiRoto
     } = this.props;
     const { sceneId } = this.state;
+    const scene = getItemByKey(scenes, sceneId, 'id');
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId)
     const token = getAuth().token;
     let percent = 0, aiRotos;
@@ -91,7 +92,7 @@ export default class Roto extends Component {
 
           if (Math.floor(resp.progress) >= 100) {
             aiRotos = JSON.parse(resp.result).map((item) => ({
-              material_id: material.id,
+              material_id: scene.materialId,
               scene_id: sceneId,
               frame: item.frame,
               type: item.type,
@@ -267,7 +268,7 @@ export default class Roto extends Component {
     } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
+    const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame);
     const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
     const rotoPro = sceneId == null ? { 'job_id': null, 'material_job_id': null, progress: null, 'generate_progress': null } : (getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null });
     const { currFrame } = scene;
