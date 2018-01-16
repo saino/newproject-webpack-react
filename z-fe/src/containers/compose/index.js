@@ -648,6 +648,7 @@ class ComposeWrap extends Component {
      * 改变选择的镜头
      */
     onChangeCurrentSceneId = (sceneId) => {
+        this.props.onChangeSceneId(sceneId);
         this.setState({
             currentSceneId: sceneId,
             visiblePlayer: false
