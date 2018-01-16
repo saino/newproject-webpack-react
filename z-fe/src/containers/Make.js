@@ -182,6 +182,7 @@ class Make extends Component {
             aiRotos={ material.aiRotos }
             layers={ material.layers }
             app={ app }
+            sceneId={ currentSceneId }
             workId={ work.id }
             workName={ work.name }
             onFetchStart={ this.handleFetchStart }
@@ -196,7 +197,7 @@ class Make extends Component {
             onSetRotoMaterialProgress={ this.handleSetRotoMaterialProgress }
             onSetRotoStop={ this.handleSetRotoStop }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
-            onSetMaterialTime={ this.handleSetMaterialTime } 
+            onSetMaterialTime={ this.handleSetMaterialTime }
             onChangeSceneId={ this.handleChangeCurrentSceneId }/>
         );
 

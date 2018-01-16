@@ -217,13 +217,13 @@ export default class Roto extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      rotoProcess, scenes, workId,
+      rotoProcess, scenes, workId, sceneId,
       onSetRotoJobId, onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
      } = nextProps;
     let rotoPro;
 
-    if (this.state.sceneId == null && scenes[0] != null) {
-      this.setState({ sceneId: scenes[0].id }, () => {
+    if (this.state.sceneId == null && sceneId != null) {
+      this.setState({ sceneId }, () => {
         rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
 
         if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
@@ -239,13 +239,13 @@ export default class Roto extends Component {
 
   componentWillMount() {
     const {
-      rotoProcess, scenes, workId,
+      rotoProcess, scenes, workId, sceneId,
       onSetRotoJobId, onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
     } = this.props;
     let rotoPro;
 
-    if (this.state.sceneId == null && scenes[0] != null) {
-      this.setState({ sceneId: scenes[0].id }, () => {
+    if (this.state.sceneId == null && sceneId != null) {
+      this.setState({ sceneId }, () => {
         rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
 
         if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
@@ -267,9 +267,9 @@ export default class Roto extends Component {
     } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
-    const rotoFrames = finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
-    const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null };
+    const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
+    const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
+    const rotoPro = sceneId == null ? { 'job_id': null, 'material_job_id': null, progress: null, 'generate_progress': null } : (getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null });
     const { currFrame } = scene;
 
     return (
@@ -277,17 +277,17 @@ export default class Roto extends Component {
         <div className="roto-inner">
           {/* 镜头列表 */}
           <div className="scenes">
-            <Scenes scenes={scenes} onChangeScene={this.handleChangeScene} />
+            <Scenes scenes={scenes} sceneId={ sceneId } onChangeScene={this.handleChangeScene} />
           </div>
 
           {/* 镜头展示 */}
           <div className="scene-display">
             <SceneDisplay
-              path={ material.path }
-              frameLength={ material.properties.length - 1 }
-              time={ material.properties.time }
-              width={ material.properties.width }
-              height={ material.properties.height }
+              path={ sceneId == null ? '' : material.path }
+              frameLength={ sceneId == null ? 0 : material.properties.length - 1 }
+              time={ sceneId == null ? 0 : material.properties.time }
+              width={ sceneId == null ? 0 : material.properties.width }
+              height={ sceneId == null ? 0 : material.properties.height }
               frame={ currFrame }
               roto={ roto }
               onCreateRoto={ this.handleCreateRoto }
@@ -298,7 +298,7 @@ export default class Roto extends Component {
           {/* 控制面板 */}
           <ControllerPanel
             app={ app }
-            filename={ material.path }
+            filename={ sceneId == null ? '' : material.path }
             rotoFrames={ rotoFrames }
             frame={ currFrame }
             workId={ workId }
@@ -322,10 +322,10 @@ export default class Roto extends Component {
           {/* 时间轴 */}
           <Timeline
             flag={ sceneId }
-            path={ material.path }
+            path={ sceneId == null ? '' : material.path }
             frame={ scene.currFrame }
-            time={ material.properties.time }
-            frameLength={ material.properties.length - 1 }
+            time={ sceneId == null ? 0 : material.properties.time }
+            frameLength={ sceneId == null ? 0 : material.properties.length - 1 }
             onChangeFrame={ this.handleChangeFrame } />
 
         </div>

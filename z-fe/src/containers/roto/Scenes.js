@@ -10,26 +10,22 @@ class Scenes extends PureComponent {
     onChangeScene: PropTypes.func
   };
 
-  state = {
-    selectedIndex: 0
-  };
-
-  handleChangeScene = (sceneId, index) => () => {
-    this.setState({ selectedIndex: index });
+  handleChangeScene = (sceneId) => () => {
     this.props.onChangeScene(sceneId);
   };
 
   render() {
+    const { sceneId, scenes } = this.props;
+
     return (
       <div className="scenetype">
         <ul>{ this.props.scenes.map((item, index) => {
-          const { id } = item;
-          const selected = this.state.selectedIndex === index;
+          const selected = sceneId == item.id;
 
           return (
             <li
-              onClick={ this.handleChangeScene(id, index) }
-              key={ id }
+              onClick={ this.handleChangeScene(item.id) }
+              key={ item.id }
               className={ selected ? 'active' : void 0 }>
               {`镜头${ index + 1 } : 固定广告植入`}
             </li>

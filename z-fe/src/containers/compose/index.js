@@ -428,7 +428,7 @@ class ComposeWrap extends Component {
                 this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
-        console.log(scene.currFrame, 'cf')
+
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
