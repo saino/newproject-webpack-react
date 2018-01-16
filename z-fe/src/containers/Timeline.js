@@ -18,28 +18,32 @@ export default class Timeline extends Component {
     onComplete: () => {}
   };
 
-  state = {
-    isPlay: false
-  };
-
   constructor(props) {
     super(props);
 
+    this.state = {
+      isPlay: false,
+      frame: props.frame,
+      frameLength: props.frameLength
+    };
+    this.timers = {};
     this.handleForward = this.handlePlayAction(currFrame => currFrame + 1, '已经最后一帧了！');
     this.handleBackward = this.handlePlayAction(currFrame => currFrame - 1, '已经第一帧了！');
     this.execute = this.playOrPausing.bind(this)();
   }
 
   resetExecute = () =>
-    this.execute();
+    this.execute(this.state.frame, this.state.frameLength);
+
+  clearAllTimer = () =>
+    Object.keys(this.timers).forEach(key => clearTimeout(this.timers[ key ]));
 
   playOrPausing = function () {
-    const timers = {};
     let temp;
 
-    return () => {
+    return (frame, frameLength) => {
       const { isPlay } = this.state;
-      const { frame, frameLength, onChangeFrame, onPlayOrPause, onComplete } = this.props;
+      const { onChangeFrame, onPlayOrPause, onComplete } = this.props;
       let number = 0;
       let i = frame + 1;
 
@@ -47,30 +51,31 @@ export default class Timeline extends Component {
 
       if (isPlay) {
         for (; i <= frameLength; i++, number++) {
-          timers[ i ] = ((idx, number) =>
+          this.timers[ i ] = ((idx, number) =>
             setTimeout(() => {
               onChangeFrame(idx);
 
               if (idx == frameLength) {
                 onComplete();
               }
+
             }, number * 200)
           )(i, number);
         }
       } else {
-        Object.keys(timers).forEach(key => clearTimeout(timers[ key ]));
+        this.clearAllTimer();
       }
     };
   };
 
   // 播放或暂停
   handlePlayOrPause = () =>
-    this.setState({ isPlay: !this.state.isPlay }, this.execute);
+    this.setState({ isPlay: !this.state.isPlay }, () => this.execute(this.state.frame, this.state.frameLength));
 
   handlePlayAction = function (getCurrFrame, warningMsg) {
     return function () {
-      const { isPlay } = this.state;
-      const { frame, frameLength, onChangeFrame } = this.props;
+      const { isPlay, frame, frameLength } = this.state;
+      const { onChangeFrame } = this.props;
       let newFrame;
 
       if (isPlay) {
@@ -90,20 +95,26 @@ export default class Timeline extends Component {
     }
   };
 
+  componentWillReceiveProps(props) {
+    const flag = this.props.flag;
+
+    this.setState({
+      frame: props.frame,
+      frameLength: props.frameLength
+    }, () => {
+      if (flag !== props.flag) {
+        this.clearAllTimer();
+        this.execute(this.state.frame, this.state.frameLength);
+      }
+    });
+  }
+
   render() {
-    const { path, frames, frame, time, frameLength, onChangeFrame } = this.props;
-    const { isPlay } = this.state;
+    const { path, frames, time, onChangeFrame } = this.props;
+    const { isPlay, frame, frameLength } = this.state;
 
     return (
         <div className="timeline">
-
-          {/* 转换素材的帧图片 */}
-          {/*<ParseMaterialToFrameImage
-            videoSrc={ path }
-            duration={ time }
-            frames={ frames }
-            frameLength={ frameLength }
-            onGetFrameImage={ this.handleGetFrameImage } />*/}
 
           <div className="header">
             <div className="player">

@@ -74,7 +74,7 @@ export default class ComposePlayer extends Component {
   computeFrame() {
     const { players, roto, width, height } = this.props;
     let canvasContext, canvas, player, frameImageData, l, i, r, g, b, el;
-    const points = roto[0].svg[0].points.map((item) => `${ item.x }px ${ item.y }px`);
+    //const points = roto[0].svg[0].points.map((item) => `${ item.x }px ${ item.y }px`);
 
     players.forEach(({ id, baseLayer }) => {
       canvas = findDOMNode(this.refs[`canvas_${ id }`]);
