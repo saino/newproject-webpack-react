@@ -670,7 +670,7 @@ class ComposeWrap extends Component {
             return;
         }
         const tempScenes = scenes.map(scene => {
-            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
+            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.materialId && scene_id == scene.id);
             return scene;
         });
         // console.log(getAuth().token,"klkkk");
@@ -774,7 +774,7 @@ class ComposeWrap extends Component {
             return;
         }
         const tempScenes = scenes.map(scene => {
-            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == materialId && scene_id == scene.id);
+            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.materialId && scene_id == scene.id);
             return scene;
         });
         // console.log(getAuth().token,"klkkk");
