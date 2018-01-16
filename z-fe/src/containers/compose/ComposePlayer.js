@@ -121,8 +121,8 @@ export default class ComposePlayer extends Component {
         <div className="compose-player-render">
           <div ref="base_item" className="compose-base-item">
             <img />
+            { this.renderComposes() }
           </div>
-          { this.renderComposes() }
         </div>
         <style>{`
           .compose-player-wrap {
