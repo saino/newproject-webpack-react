@@ -22,12 +22,14 @@ export default class Roto extends Component {
 
     this.props.onChangeSceneId(sceneId);
     this.handleStopAiRoto();
+    this.handleStopGenerateMaterial();
+
     this.setState({ sceneId }, () => {
       rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
 
       if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
         this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
-      } else if (rotoPro[ 'job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
+      } else if (rotoPro[ 'material_job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
         this.handleSetRotoMaterialProgress(rotoPro[ 'job_id' ]);
       }
     });
@@ -319,6 +321,7 @@ export default class Roto extends Component {
         <div className="roto-bottom">
           {/* 时间轴 */}
           <Timeline
+            flag={ sceneId }
             path={ material.path }
             frame={ scene.currFrame }
             time={ material.properties.time }

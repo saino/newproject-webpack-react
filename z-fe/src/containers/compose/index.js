@@ -152,16 +152,12 @@ class ComposeWrap extends Component {
         // this.props.getMaterials({ workId: this.props.workId });
         setTimeout(() => {
             const materialScenes = this.getMaterialScenes();
-            if(!materialScenes || materialScenes.length == 0){
-                message.warning("至少需要一个镜头");
-                return;
-            }
-            const currentSceneId = this.props.currentSceneId || materialScenes[0].id;
+            const currentSceneId = this.props.currentSceneId != null ? this.props.currentSceneId : materialScenes[0].id;
+
             this.setState({
                 currentSceneId,
                 materialScenes,
             });
-            console.log(this.props.material , this.props.currentSceneId);
         }, 10);
     }
 
@@ -355,6 +351,7 @@ class ComposeWrap extends Component {
      */
     getCurrentLayers = () => {
         const { layers } = this.props.material;
+
         return layers.filter(layer => {
             return (layer.scene_id === this.state.currentSceneId) && (!layer.baseLayer);
         }).sort((layer1, layer2) => {
@@ -418,7 +415,7 @@ class ComposeWrap extends Component {
         const { materials, scenes, materialId } = this.props;
         const { visiblePlayer, currentSceneId } = this.state;
         const baseLayer = this.getCurrentBaseLayer();
-        const material = getItemByKey(materials, materialId, 'id');
+        const material = getItemByKey(materials, materialId, 'id') || { path: '', properties: { width: 0, height: 0, time: 0, length: 0 } };
         const scene = getItemByKey(scenes, currentSceneId, 'id') || { currFrame: 1, roto: [] };
         const players = this.getCurrentPlayers();
         const { left, top } = findDOMNode(this) ? findDOMNode(this).querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
@@ -431,7 +428,7 @@ class ComposeWrap extends Component {
                 this.offY = findDOMNode(this).querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
-
+        console.log(scene.currFrame, 'cf')
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
@@ -653,6 +650,7 @@ class ComposeWrap extends Component {
     onChangeCurrentSceneId = (sceneId) => {
         this.setState({
             currentSceneId: sceneId,
+            visiblePlayer: false
         });
     }
 
@@ -688,7 +686,7 @@ class ComposeWrap extends Component {
             // this.props.handleChangeStep(3, this.state.currentSceneId)
         });
 
-        
+
         this.setState({
             materialListVisible: true,
         })
