@@ -226,7 +226,7 @@ class Make extends Component {
             workId={ work.id }
             workName={ work.name }
             handleChangeStep={ this.handleChangeStep }
-            onSetCurrFrameByScene={ this.handleSetCurrFrameByScene } 
+            onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
             onChangeSceneId={this.handleChangeCurrentSceneId}/>
         );
       case 3:
@@ -238,6 +238,12 @@ class Make extends Component {
 
   componentWillMount() {
     this.handleGetMaterials();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // if (!finds(nextProps.material.scenes, nextProps.match.params.workId, 'work_id').length) {
+    //   this.handleChangeCurrentSceneId('');
+    // }
   }
 
   render() {

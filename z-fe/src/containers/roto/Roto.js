@@ -122,7 +122,7 @@ export default class Roto extends Component {
     const scene = getItemByKey(scenes, sceneId, 'id');
     const token = getAuth().token;
 
-    if (sceneId == null) {
+    if (sceneId == null || !scenes.length) {
       message.error('至少需要一个镜头');
       return;
     }
@@ -132,7 +132,7 @@ export default class Roto extends Component {
       return;
     }
 
-    scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == material.id && scene_id == scene.id);
+    scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.materialId && scene_id == scene.id);
 
     post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes, layers } }, resp => {
       this.handlePreAiRoto();
@@ -248,7 +248,6 @@ export default class Roto extends Component {
     if (this.state.sceneId == null && sceneId != null) {
       this.setState({ sceneId }, () => {
         rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
-
         if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
           this.handleStopAiRoto();
           this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
