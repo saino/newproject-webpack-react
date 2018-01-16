@@ -127,6 +127,11 @@ export default class Roto extends Component {
       return;
     }
 
+    if (!getItemByKey(scenes, sceneId, 'id')) {
+      message.error('请选中一个镜头');
+      return;
+    }
+
     if (workId == null) {
       message.error('请回退到作品页，编辑一个作品');
       return;
@@ -223,7 +228,7 @@ export default class Roto extends Component {
      } = nextProps;
     let rotoPro;
 
-    if (this.state.sceneId == null && sceneId != null) {
+    //if (this.state.sceneId == null && sceneId != null) {
       this.setState({ sceneId }, () => {
         rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
 
@@ -235,7 +240,7 @@ export default class Roto extends Component {
           this.handleSetRotoMaterialProgress(rotoPro[ 'material_job_id' ]);
         }
       });
-    }
+    //}
   }
 
   componentWillMount() {
@@ -245,18 +250,18 @@ export default class Roto extends Component {
     } = this.props;
     let rotoPro;
 
-    if (this.state.sceneId == null && sceneId != null) {
-      this.setState({ sceneId }, () => {
-        rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
-        if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
-          this.handleStopAiRoto();
-          this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
-        } else if (rotoPro[ 'material_job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
-          this.handleStopGenerateMaterial();
-          this.handleSetRotoMaterialProgress(rotoPro[ 'material_job_id' ]);
-        }
-      });
-    }
+    //if (this.state.sceneId == null && sceneId != null) {
+    this.setState({ sceneId }, () => {
+      rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == this.state.sceneId) || { 'job_id': null, progress: null };
+      if (rotoPro[ 'job_id' ] != null && rotoPro[ 'progress' ] < 100) {
+        this.handleStopAiRoto();
+        this.handleSetRotoProgress(rotoPro[ 'job_id' ]);
+      } else if (rotoPro[ 'material_job_id' ] != null && rotoPro[ 'generate_progress' ] < 100) {
+        this.handleStopGenerateMaterial();
+        this.handleSetRotoMaterialProgress(rotoPro[ 'material_job_id' ]);
+      }
+    });
+    //}
   }
 
   render() {
