@@ -415,8 +415,8 @@ class ComposeWrap extends Component {
         const { materials, scenes, materialId } = this.props;
         const { visiblePlayer, currentSceneId } = this.state;
         const baseLayer = this.getCurrentBaseLayer();
-        const material = getItemByKey(materials, materialId, 'id') || { path: '', properties: { width: 0, height: 0, time: 0, length: 0 } };
-        const scene = getItemByKey(scenes, currentSceneId, 'id') || { currFrame: 1, roto: [] };
+        const scene = getItemByKey(scenes, (item) => item.id === currentSceneId) || { currFrame: 0, 'material_id': '', roto: [] };
+        const material = getItemByKey(materials, scene[ 'material_id' ], 'id') || { path: '', properties: { width: 0, height: 0, time: 0, length: 1 } };
         const players = this.getCurrentPlayers();
         const { left, top } = this.getDOMNode ? this.getDOMNode().querySelector('.compose-render').getBoundingClientRect() : { left: 0, top: 0 };
         const cr = this.getDOMNode ? (this.getDOMNode().querySelector('.compose-render-wrap-inner') ? this.getDOMNode().querySelector('.compose-render-wrap-inner').getBoundingClientRect() : { left: this.offX, top: this.offY } ) : { left: 20, top: 20 };
@@ -448,7 +448,7 @@ class ComposeWrap extends Component {
                     width={ material.properties.width }
                     height={ material.properties.height }
                     frameRate={ material.properties.length / material.properties.time }
-                    frame={ scene.currFrame + 1 } /> :
+                    frame={ scene.currFrame } /> :
                   <div className='compose-render-wrap'>
                     <div className="compose-render-wrap-inner">
                       {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>

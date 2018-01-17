@@ -97,7 +97,7 @@ export default class Timeline extends Component {
 
   componentWillReceiveProps(props) {
     const flag = this.props.flag;
-
+    
     this.setState({
       frame: props.frame,
       frameLength: props.frameLength

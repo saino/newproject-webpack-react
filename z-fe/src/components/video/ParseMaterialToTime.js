@@ -20,7 +20,12 @@ export default class ParseMaterialToTime extends Component {
 
     let frameImageData, l, i, r, g, b;
 
-    this.frameCanvasContext.drawImage(this.playerEl, 0, 0, canvasWidth, canvasHeight);
+    if (this.frameCanvasContext && this.frameCanvasEl) {
+      this.frameCanvasContext.drawImage(this.playerEl, 0, 0, canvasWidth, canvasHeight);
+      this.props.onSetFrameImageUrl(this.frameCanvasEl.toDataURL('image/png'));
+    }
+
+
     // frameImageData = this.frameCanvasContext.getImageData(0, 0, canvasWidth, canvasHeight);
     //
     // for (i = 0, l = frameImageData.data.length / 4; i < l; i++) {
@@ -34,7 +39,6 @@ export default class ParseMaterialToTime extends Component {
     // }
     //
     // this.frameCanvasContext.putImageData(frameImageData, 0, 0);
-    this.props.onSetFrameImageUrl(this.frameCanvasEl.toDataURL('image/png'));
   };
 
   getFrameTime(props) {
