@@ -20,7 +20,7 @@ class Scenes extends PureComponent {
     return (
       <div className="scenetype">
         <ul>{ this.props.scenes.map((item, index) => {
-          const selected = sceneId == item.id;
+          const selected = sceneId === item.id;
 
           return (
             <li

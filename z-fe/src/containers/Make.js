@@ -125,7 +125,7 @@ class Make extends Component {
     const currMaterial = getItemByKey(material.materials, materialId, 'id');
     const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: sceneId };
     this.handleChangeStep(index, sceneId);
-    addLayers(layer);
+    //addLayers(layer);
 
     // rotoLayer = {
     //   ...rotoLayer,
@@ -247,12 +247,6 @@ class Make extends Component {
 
   componentWillMount() {
     this.handleGetMaterials();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // if (!finds(nextProps.material.scenes, nextProps.match.params.workId, 'work_id').length) {
-    //   this.handleChangeCurrentSceneId('');
-    // }
   }
 
   render() {
