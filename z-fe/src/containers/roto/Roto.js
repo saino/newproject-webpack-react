@@ -271,10 +271,10 @@ export default class Roto extends Component {
       onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
     } = this.props;
     const { sceneId } = this.state;
-    const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame);
-    const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id);
-    const rotoPro = sceneId == null ? { 'job_id': null, 'material_job_id': null, progress: null, 'generate_progress': null } : (getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null });
+    const scene = getItemByKey(scenes, (item) => item.id === sceneId) || { currFrame: 0 };
+    const roto = getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id && item.frame == scene.currFrame);
+    const rotoFrames = finds(rotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id);
+    const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id === scene.id) || { 'job_id': null, progress: null };
     const { currFrame } = scene;
 
     return (
