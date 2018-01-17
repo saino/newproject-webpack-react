@@ -216,7 +216,7 @@ export default class Roto extends Component {
     } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = getItemByKey(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id && item.frame == scene.currFrame);
+    const roto = getItemByKey(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame);
 
     roto.svg[0].points = points;
   };
