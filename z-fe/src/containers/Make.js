@@ -236,7 +236,7 @@ class Make extends Component {
             workName={ work.name }
             handleChangeStep={ this.handleChangeStep }
             onSetCurrFrameByScene={ this.handleSetCurrFrameByScene }
-            onChangeSceneId={this.handleChangeCurrentSceneId}/>
+            onChangeSceneId={ this.handleChangeCurrentSceneId } />
         );
       case 3:
         return (<ReleaseVideo workId={ work.id } workName={ work.name}/>);

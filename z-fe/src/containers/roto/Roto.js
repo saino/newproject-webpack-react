@@ -275,7 +275,7 @@ export default class Roto extends Component {
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
     const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame);
-    const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == material.id && item.scene_id == scene.id);
+    const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id);
     const rotoPro = sceneId == null ? { 'job_id': null, 'material_job_id': null, progress: null, 'generate_progress': null } : (getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null });
     const { currFrame } = scene;
 
