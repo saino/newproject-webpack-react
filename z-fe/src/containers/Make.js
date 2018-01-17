@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { message } from 'antd';
 import Step from './Step';
 import Material from './material/Material';
 import Roto from './roto/Roto';
@@ -33,8 +34,15 @@ class Make extends Component {
     this.props.deleteMaterial({ materialId }) ;
 
   handleEditMaterial = materialId => {
-    const descScenes = desc(finds(this.props.material.scenes, this.props.match.params.workId, 'work_id'));
+    const { material, match } = this.props;
+    const descScenes = desc(finds(material.scenes, match.params.workId, 'work_id'));
     const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
+    const currentMaterial = getItemByKey(material.materials, materialId, 'id');
+
+    if (currentMaterial.path.indexOf('.webm') > 0) {
+      message.error('目前暂不支持webm格式的素材的抠像');
+      return;
+    }
 
     this.setState({
       materialId,
