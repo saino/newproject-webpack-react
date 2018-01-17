@@ -266,12 +266,13 @@ export default class Roto extends Component {
 
   render() {
     const {
-      scenes, material, rotos, aiRotos,
+      scenes, rotos, aiRotos, materials,
       app, workId, rotoProcess,
       onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
     } = this.props;
     const { sceneId } = this.state;
-    const scene = getItemByKey(scenes, (item) => item.id === sceneId) || { currFrame: 0 };
+    const scene = getItemByKey(scenes, (item) => item.id === sceneId) || { currFrame: 0, 'material_id': '' };
+    const material = getItemByKey(materials, scene[ 'material_id' ], 'id') || { path: '', properties: { length: 1, time: 0, width: 0, height: 0 } };
     const roto = getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id && item.frame == scene.currFrame);
     const rotoFrames = finds(rotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id === scene.id) || { 'job_id': null, progress: null };

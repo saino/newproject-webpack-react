@@ -186,7 +186,7 @@ class Make extends Component {
             scenes={ finds(material.scenes, work.id, 'work_id') }
             materials={ material.materials }
             rotoProcess={ rotoProcess }
-            material={ getItemByKey(material.materials, this.state.materialId, 'id') || { properties: {} } }
+            material={ getItemByKey(material.materials, this.state.materialId, 'id') }
             rotos={ material.rotos }
             aiRotos={ material.aiRotos }
             layers={ material.layers }
