@@ -46,7 +46,7 @@ export default class Roto extends Component {
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id');
 
-    onCreateRoto(scene.materialId, this.state.sceneId, scene.currFrame, svg);
+    onCreateRoto(scene.material_id, this.state.sceneId, scene.currFrame, svg);
   };
 
   handlePreAiRoto = () => {
@@ -91,8 +91,9 @@ export default class Roto extends Component {
           percent = resp.progress == false ? 0 : parseFloat(resp.progress);
 
           if (Math.floor(resp.progress) >= 100) {
+            console.log(scene, 'scene')
             aiRotos = JSON.parse(resp.result).map((item) => ({
-              material_id: scene.materialId,
+              material_id: scene.material_id,
               scene_id: sceneId,
               frame: item.frame,
               type: item.type,
@@ -137,7 +138,7 @@ export default class Roto extends Component {
       return;
     }
 
-    scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.materialId && scene_id == scene.id);
+    scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
 
     post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes, layers } }, resp => {
       this.handlePreAiRoto();
@@ -154,7 +155,7 @@ export default class Roto extends Component {
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id');
     const token = getAuth().token;
-    scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == material.id && scene_id == scene.id);
+    scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
 
     post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes } }, (resp) => {
       this.handleFinishRotoMaterial();
@@ -216,7 +217,7 @@ export default class Roto extends Component {
     } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = getItemByKey(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame);
+    const roto = getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame);
 
     roto.svg[0].points = points;
   };
@@ -274,8 +275,8 @@ export default class Roto extends Component {
     } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id && item.frame == scene.currFrame);
-    const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == scene.materialId && item.scene_id == scene.id);
+    const roto = sceneId == null ? null : getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame) || getItemByKey(aiRotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame);
+    const rotoFrames = sceneId == null ? null : finds(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id);
     const rotoPro = sceneId == null ? { 'job_id': null, 'material_job_id': null, progress: null, 'generate_progress': null } : (getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId) || { 'job_id': null, progress: null });
     const { currFrame } = scene;
 
@@ -284,7 +285,7 @@ export default class Roto extends Component {
         <div className="roto-inner">
           {/* 镜头列表 */}
           <div className="scenes">
-            <Scenes scenes={scenes} sceneId={ sceneId } onChangeScene={this.handleChangeScene} />
+            <Scenes scenes={scenes} sceneId={ sceneId } onChangeScene={ this.handleChangeScene } />
           </div>
 
           {/* 镜头展示 */}
