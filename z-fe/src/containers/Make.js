@@ -32,22 +32,22 @@ class Make extends Component {
   handleDeleteProjectMaterial = materialId =>
     this.props.deleteMaterial({ materialId }) ;
 
-  handleEditMaterial = materialId =>
+  handleEditMaterial = materialId => {
+    const descScenes = desc(finds(this.props.material.scenes, this.props.match.params.workId, 'work_id'));
+    const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
+
     this.setState({
       materialId,
-      selectedIndex: 1
+      selectedIndex: 1,
+      currentSceneId
     }, () => {
       const { material, createScene, match, addLayers } = this.props;
       const { layers } = material;
-      const { materialId } = this.state;
+      const { materialId, currentSceneId } = this.state;
       const workId = match.params.workId;
-      const descScenes = desc(finds(material.scenes, workId, 'work_id'));
-      const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
       const now = Date.now();
       const currMaterial = getItemByKey(material.materials, materialId, 'id');
       const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: currentSceneId };
-
-      this.setState({ currentSceneId });
 
       // 进入到抠像页
       createScene({
@@ -62,6 +62,7 @@ class Make extends Component {
       // 设置基础layer
       addLayers(layer);
     });
+  }
 
   handleUploadMaterial = (material) =>
     this.props.uploadMaterial({ material });
