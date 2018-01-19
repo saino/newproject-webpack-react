@@ -45,10 +45,11 @@ export default class ParseMaterialToTime extends Component {
     const { time, frame, frameLength } = props;
     const frameRate = frameLength / time;
 
-    return (frame * (1000 / frameRate)) / 1000;
+    return parseFloat(((frame * (1000 / frameRate)) / 1000).toFixed(2));
   }
 
   setTime = (props) => {
+    console.log(this.getFrameTime(props), 'ddd');
     this.playerEl.currentTime = this.getFrameTime(props);
   }
 
@@ -70,7 +71,8 @@ export default class ParseMaterialToTime extends Component {
   }
 
   componentDidMount() {
-    this.playerEl.addEventListener('seeked', () => this.computeFrame(), false);
+    this.playerEl.addEventListener('seeked', () => { console.log('xxdd');this.computeFrame() }, false);
+    this.playerEl.addEventListener('waiting', () => console.log('缓冲'), false);
 
     if (this.props.time == null) {
       this.playerEl.addEventListener('loadedmetadata', () => {

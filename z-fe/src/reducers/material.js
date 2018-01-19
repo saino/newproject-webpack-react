@@ -215,7 +215,7 @@ export default (state = defState, action) => {
 
     case actionTypes.CREATE_SCENE:
       const scene = { id: action.id, type: action.mtype, material_id: action.materialId, work_id: action.workId, currFrame: action.currFrame, order: action.order };
-
+      
       return { ...state, scenes: asc(add(state.scenes, scene)) };
 
     case actionTypes.SET_CURRFRAME:

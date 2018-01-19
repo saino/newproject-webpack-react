@@ -93,7 +93,7 @@ export default class UserMaterial extends Component {
     });
   };
 
-  getMaterialDoms(arr) {
+  getMaterialDoms(arr, isFetching) {
     arr = arr.map((item, key) => (
       <Card
         style={{ width: '100%', boxSizing: 'border-box', border: '1px solid #dbdbdb' }}
@@ -104,7 +104,7 @@ export default class UserMaterial extends Component {
             {/* <Icon type='edit' /> */}
             <Popover title="请选择镜头类型"
               trigger='click'
-              content={<a href='javascript:;' onClick={ this.handleEditMaterial(item.id) }>固定镜头广告植入</a>}>
+              content={<Button loading={ isFetching } onClick={ this.handleEditMaterial(item.id) } style={{ width: '100%', border: '0 none', height: 20, padding: 0, textAlign: 'left', lineHeight: 1, color: '#108ee9' }}>固定镜头广告植入</Button>}>
               <a className="edit-btn" href="javascript:;"><Icon type="edit" /></a>
             </Popover>
            </Tooltip>),
@@ -163,13 +163,15 @@ export default class UserMaterial extends Component {
   }
 
   render() {
+    const { materials, app } = this.props;
+
     return (
       <div className="user-material-wrap">
 
         {/* 素材列表 */}
-        <CardList elements={ this.getMaterialDoms(this.props.materials) } columns={ 5 } isPaginate={ false } />
+        <CardList elements={ this.getMaterialDoms(materials, app.isFetching) } columns={ 5 } isPaginate={ false } />
 
-        {this.renderUploadProgress()}
+        { this.renderUploadProgress() }
 
         <style>{`
           .add-action {

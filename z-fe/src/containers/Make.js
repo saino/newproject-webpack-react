@@ -10,6 +10,8 @@ import Compose from './compose/ComposeRender';
 import ReleaseVideo from './releaseVideo/releaseVideo';
 import { fetchStart, fetchEnd } from '../reducers/app';
 import ComposeWrap from './compose/index';
+import { post } from '../fetch/fetch';
+import { getAuth } from '../utils/auth';
 import {
   getMaterials, deleteMaterial, uploadMaterial, setCurrFrameByScene,
   createScene, setDuration, clearMaterials, addLayers,
@@ -34,42 +36,91 @@ class Make extends Component {
     this.props.deleteMaterial({ materialId }) ;
 
   handleEditMaterial = materialId => {
-    const { material, match } = this.props;
+    const { material, match, createScene, addLayers } = this.props;
+    const workId = match.params.workId;
+    const workName = material['work_name'];
     const descScenes = desc(finds(material.scenes, match.params.workId, 'work_id'));
     const currentSceneId = descScenes[0] ? descScenes[0].id + 1 : 0;
     const currentMaterial = getItemByKey(material.materials, materialId, 'id');
+    let scene, copyScene, baseLayer;
 
-    if (currentMaterial.path.indexOf('.webm') > 0) {
-      message.error('目前暂不支持webm格式的素材的抠像');
+    if (currentMaterial.path.indexOf('.mp4') < 0) {
+      message.error('目前暂不支持webm格式的素材的抠像推荐上传mp4格式素材视频');
       return;
     }
 
-    this.setState({
+    scene = {
+      'id': currentSceneId,
+      'mtype': 'roto',
       materialId,
-      selectedIndex: 1,
-      currentSceneId
-    }, () => {
-      const { material, createScene, match, addLayers } = this.props;
-      const { layers } = material;
-      const { materialId, currentSceneId } = this.state;
-      const workId = match.params.workId;
-      const now = Date.now();
-      const currMaterial = getItemByKey(material.materials, materialId, 'id');
-      const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: currentSceneId };
+      'order': currentSceneId,
+      workId,
+      'currFrame': 0
+    };
+    baseLayer = { ...currentMaterial, 'id': `${ currentMaterial.id }-${ Date.now() }`, 'baseLayer': true, 'order': 0, 'scene_id': currentSceneId };
+    copyScene = { ...scene };
+    delete copyScene.materialId;
+    delete copyScene.workId;
+    delete copyScene.mtype;
+    copyScene[ 'material_id' ] = scene.materialId;
+    copyScene[ 'work_id' ] = scene.workId;
+    copyScene[ 'type' ] = scene.mtype;
+    this.handleFetchStart();
 
-      // 进入到抠像页
-      createScene({
-        id: currentSceneId,
-        mtype: 'roto',
-        materialId,
-        order: currentSceneId,
-        workId,
-        currFrame: 0
-      });
+    // 本地创建镜头
+    createScene(scene);
+    // 服务端创建镜头
+    post(
+      '/user/saveWork',
+      {
+        'token': getAuth().token,
+        'work_id': workId,
+        'status': 1,
+        'name': workName,
+        'config': {
+          'materials': material.materials,
+          'scenes': [ ...finds(material.scenes, workId, 'work_id'), copyScene ],
+          'layers': [ ...material.layers, baseLayer ]
+        }
+      },
+      resp => {
+        // 清除创建服务端镜头请求状态
+        this.handleFetchEnd();
+        // 跳转到抠像页
+        this.setState({
+          materialId,
+          selectedIndex: 1,
+          currentSceneId
+        }, () => addLayers(baseLayer));
+      }
+    );
 
-      // 设置基础layer
-      addLayers(layer);
-    });
+    // this.setState({
+    //   materialId,
+    //   selectedIndex: 1,
+    //   currentSceneId
+    // }, () => {
+    //   const { material, createScene, match, addLayers } = this.props;
+    //   const { layers } = material;
+    //   const { materialId, currentSceneId } = this.state;
+    //   const workId = match.params.workId;
+    //   const now = Date.now();
+    //   const currMaterial = getItemByKey(material.materials, materialId, 'id');
+    //   const layer = { ...currMaterial, id: `${ currMaterial.id }-${ now }`, baseLayer: true, order: 0, scene_id: currentSceneId };
+    //
+    //   // 进入到抠像页
+    //   createScene({
+    //     id: currentSceneId,
+    //     mtype: 'roto',
+    //     materialId,
+    //     order: currentSceneId,
+    //     workId,
+    //     currFrame: 0
+    //   });
+    //
+    //   // 设置基础layer
+    //   addLayers(layer);
+    // });
   }
 
   handleUploadMaterial = (material) =>
@@ -170,6 +221,7 @@ class Make extends Component {
       case 0:
         return (
           <Material
+            app={ app }
             user={ user }
             workId={ match.params.workId }
             materials={ material.materials }
