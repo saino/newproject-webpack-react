@@ -201,7 +201,7 @@ class ComposeWrap extends Component {
         const scenesLayers = this.getCurrentLayers();
 
         return scenesLayers.map((scenesLayer, index) => {
-            let style = {width: scenesLayer.config.width, height: scenesLayer.config.height};
+            // let style = {width: scenesLayer.config.width, height: scenesLayer.config.height};
             let imgStyle = {};
             if (scenesLayer.config.transformString1) {
                 imgStyle.transform = scenesLayer.config.transformString1;
@@ -226,7 +226,7 @@ class ComposeWrap extends Component {
                         onDragStart={this.onDragStart}
                         onDrag={this.onControledDrag.bind(this, scenesLayer)}
                         onDragEnd={this.onDragEnd}>
-                        <div style={style} className="compose-item" onClick={this.onLayerClick.bind(this, scenesLayer)}>
+                        <div className="compose-item" onClick={this.onLayerClick.bind(this, scenesLayer)}>
                             <img style={imgStyle} className={imgClass} src={scenesLayer.properties.thumbnail} />
                             {/* 左上角控制点 */}
                             <TransControl controlPoint={0} control={scenesLayer.config.controls[0]} currentLayer={this.state.currentLayer}
@@ -552,10 +552,13 @@ class ComposeWrap extends Component {
                 }
                 .compose-item{
                     // border: 1px solid #1EBC9C;
+                    height: 0px;
+                    width: 0px;
+                    font-size: 0;
                 }
                 .compose-item-thumb{
-                    width: 100%;
-                    height: 100%;
+                    // width: 100%;
+                    // height: 100%;
                 }
                 .compose-item-thumb.select{
                     border: 1px solid #1EBC9C;
