@@ -662,7 +662,28 @@ class ComposeWrap extends Component {
     }
 
     componentWillUnmount() {
-      clearTimeout(this.timer);
+        clearTimeout(this.timer);
+        const { material } = this.props;
+        const { materials, scenes, rotos, layers } = material;
+        const tempScenes = scenes.map(scene => {
+            scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.materialId && scene_id == scene.id);
+            return scene;
+        });
+        // console.log(getAuth().token,"klkkk");
+        const options = {
+            token: getAuth().token,
+            work_id: this.props.workId,
+            status: 1,
+            name: this.props.workName,
+            config: {
+                materials,
+                scenes: tempScenes,
+                layers
+            }
+        }
+        post('/user/saveWork', options, resp => {
+            // this.props.getMaterials({ workId: this.props.workId })
+        });
     }
 
     /**
@@ -705,7 +726,6 @@ class ComposeWrap extends Component {
         }
         post('/user/saveWork', options, resp => {
             this.props.getMaterials({ workId: this.props.workId })
-            // this.props.handleChangeStep(3, this.state.currentSceneId)
         });
 
 
