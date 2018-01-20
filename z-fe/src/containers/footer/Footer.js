@@ -98,7 +98,7 @@ export default class Footer extends Component {
                 &gt;<span style={ companyCroxyFlagItemText }>用户协议</span>
               </li>
             </ul>
-            <div>Copy Right © 2011 - 2015 gli.cn 上海致戎网络科技有限公司   沪ICP备17003463号</div>
+            <div>Copy Right © 2011 - 2018 上海致戎网络科技有限公司   沪ICP备17003463号</div>
           </div>
 
         </div>
