@@ -4,7 +4,8 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { post } from "../../fetch/fetch";
 import { getAuth } from "../../utils/auth";
-import { updateBuildVideo } from '../../reducers/material'
+import { updateBuildVideo } from '../../reducers/material';
+import { fetchStart, fetchEnd } from '../../reducers/app';
 
 class ReleaseVideo extends Component{
     constructor() {
@@ -16,12 +17,15 @@ class ReleaseVideo extends Component{
         }
     }
     componentWillMount() {
-        const { material } = this.props;
-        console.log(material);
+        const { material, fetchStart, fetchEnd } = this.props;
         const { buildVideo } = material;
+
         if(!buildVideo) { return; }
         const { jobId, progress, videoUrl } = buildVideo;
         if(!jobId){ return; };
+
+        fetchStart();
+
         this.buildVideoing0 = setInterval(()=>{
             post("/user/getProgress", { job_id: jobId, token: getAuth().token }, resp => {
                 if (!resp.progress) {
@@ -29,10 +33,12 @@ class ReleaseVideo extends Component{
                 }
                 if(resp.progress == "100"){
                     clearInterval(this.buildVideoing0);
+                    fetchEnd();
                     this.setState({
                         buildProgress: 100,
                         videoUrl: resp.result,
                     });
+
                     return;
                 }
                 this.setState({
@@ -66,18 +72,18 @@ class ReleaseVideo extends Component{
     }
     render() {
         return (<div className="release-video">
-            <Button className='release-video-button' type="primary" onClick={this.onReleaseVideoClick}>视频发布</Button>
+            <Button loading={ this.props.app.isFetching } className='release-video-button' type="primary" onClick={this.onReleaseVideoClick}>视频发布</Button>
             <div className="video-url">视频地址：{window.api + this.state.videoUrl}</div>
             <Progress percent={this.state.buildProgress} />
             <style>{`
                 .release-video{
                     height: 120px;
-                    width: 460px;
+                    width: 500px;
                     margin: 100px auto;
                 }
                 .release-video-button{
                     height: 50px;
-                    width: 460px;
+                    width: 500px;
                 }
                 .video-url{
                     border: solid 1px #2d8bbd;
@@ -91,7 +97,11 @@ class ReleaseVideo extends Component{
         const options = {
             work_id: this.props.workId,
             token: getAuth().token
-        }
+        };
+        const { fetchStart, fetchEnd } = this.props;
+
+        fetchStart();
+        
         post('/user/buildVideo', options, jobId => {
             this.setState({
                 jobId
@@ -103,6 +113,7 @@ class ReleaseVideo extends Component{
                     }
                     if (resp.progress == "100" ){
                         clearInterval(this.buildVideoing);
+                        fetchEnd();
                         this.setState({
                             buildProgress: 100,
                             videoUrl: resp.result
@@ -121,15 +132,18 @@ class ReleaseVideo extends Component{
     }
 } 
 
-const mapStateToProps = ({ material }) =>{
+const mapStateToProps = ({ material, app }) =>{
     return {
-        material
+        material,
+        app
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateBuildVideo: bindActionCreators(updateBuildVideo, dispatch)
+        updateBuildVideo: bindActionCreators(updateBuildVideo, dispatch),
+        fetchStart: bindActionCreators(fetchStart, dispatch),
+        fetchEnd: bindActionCreators(fetchEnd, dispatch)
     }
 }
 
