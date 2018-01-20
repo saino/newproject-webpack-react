@@ -22,6 +22,8 @@ import { getAuth } from "../../utils/auth";
 import Timeline from '../Timeline';
 import { finds, getItemByKey } from '../../utils/stateSet';
 
+import Draggable from '../../components/interaction/react-draggable/Draggable';
+
 class MaterialItem extends Component {
     constructor() {
         super();
@@ -198,6 +200,7 @@ class ComposeWrap extends Component {
      */
     renderComposeLayers() {
         const { scenes, layers } = this.props;
+        const baseLayer = this.getCurrentBaseLayer();
         const scenesLayers = this.getCurrentLayers();
 
         return scenesLayers.map((scenesLayer, index) => {
@@ -225,7 +228,9 @@ class ComposeWrap extends Component {
                         onHover={(cursor)=>{this.setState({currentLayer: {...this.state.currentLayer, cursor}});}}
                         onDragStart={this.onDragStart}
                         onDrag={this.onControledDrag.bind(this, scenesLayer)}
-                        onDragEnd={this.onDragEnd}>
+                        onDragEnd={this.onDragEnd}
+                        isAble={!(baseLayer && (baseLayer.id === this.state.currentLayer.id))}>
+                        
                         <div className="compose-item" onClick={this.onLayerClick.bind(this, scenesLayer)}>
                             <img style={imgStyle} className={imgClass} src={scenesLayer.properties.thumbnail} />
                             {/* 左上角控制点 */}
@@ -428,7 +433,10 @@ class ComposeWrap extends Component {
                 this.offY = this.getDOMNode().querySelector('.compose-render-wrap-inner').getBoundingClientRect().top;
             }
         }, 100);
-
+        // const layerClass = classNames({
+        //     "scenes-layer-item": true,
+        //     "select": this.state.currentLayer.id === baseLayer.id
+        // });
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
@@ -450,12 +458,14 @@ class ComposeWrap extends Component {
                     frameRate={ material.properties.length / material.properties.time }
                     frame={ scene.currFrame } /> :
                   <div className='compose-render-wrap'>
-                    <div className="compose-render-wrap-inner">
-                      {baseLayer ? <div className="base-compose-item" key={baseLayer.id}>
-                          <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
-                      </div> : null}
-                      { this.renderComposeLayers() }
-                    </div>
+                    <Draggable isAble={baseLayer && (this.state.currentLayer.id === baseLayer.id)}>
+                        <div className={classNames({"compose-render-wrap-inner": true, "select":  baseLayer && (this.state.currentLayer.id === baseLayer.id) })}>
+                            {baseLayer ? <div className="base-compose-item" key={baseLayer.id} onClick={this.onLayerClick.bind(this, baseLayer)}>
+                                <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
+                            </div> : null}
+                            { this.renderComposeLayers() }
+                        </div>
+                    </Draggable>
                   </div>
                 }
 
@@ -468,10 +478,12 @@ class ComposeWrap extends Component {
                       <Button icon="plus" type="primary">添加素材</Button>
                   </div>
                   <ul className="compose-layers-list">
-                      {baseLayer ? <div className="scenes-layer-item" key={baseLayer.id}>
-                          <div className="scenes-layer-item-title">基础镜头{": " + (/[^/]+(?=\.)/.exec(baseLayer.path)[0])}</div>
-                      </div> : null}
-                      {this.renderLayersList()}
+                        {baseLayer ? <div className={classNames({"scenes-layer-item": true, "select": this.state.currentLayer.id === baseLayer.id})} 
+                            key={baseLayer.id} 
+                            onClick={this.onLayerClick.bind(this, baseLayer)}>
+                            <div className="scenes-layer-item-title">基础镜头{": " + (/[^/]+(?=\.)/.exec(baseLayer.path)[0])}</div>
+                        </div> : null}
+                        {this.renderLayersList()}
                   </ul>
                   <Button className="compose-complete" type="primary" onClick={this.onCompleteWorkClick}>完成植入</Button>
               </div>
@@ -539,7 +551,10 @@ class ComposeWrap extends Component {
                     position: relative;
                     left: 50%;
                     top: 50%;
-                    transform: translate(-50%, -50%);
+                    // transform: translate(-50%, -50%); 
+                }
+                .compose-render-wrap-inner.select{
+                    border: 1px solid #1EBC9C;
                 }
                 .base-compose-item{
                     position: relative;

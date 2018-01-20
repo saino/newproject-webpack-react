@@ -29,7 +29,9 @@ export default class Draggable extends Component {
 
     onDrag: PropTypes.func,
 
-    onDragEnd: PropTypes.func
+    onDragEnd: PropTypes.func,
+
+    isAble: true
 
   };
 
@@ -113,6 +115,7 @@ export default class Draggable extends Component {
         <DraggableCore
           position={{ x: this.state.x, y: this.state.y }}
           deltaPosition={{ x: this.state.deltaX, y: this.state.deltaY }}
+          isAble={ this.props.isAble }
           cursor={ this.props.cursor }
           onDragStart={ this.onDragStart.bind(this) }
           onDrag={ this.onDrag.bind(this) }

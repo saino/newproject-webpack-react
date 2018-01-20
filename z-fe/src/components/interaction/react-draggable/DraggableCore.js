@@ -38,18 +38,22 @@ export default class DraggableCore extends Component {
     onDragEnd: PropTypes.func,
 
     onHover: PropTypes.func,
-      handle:PropTypes.string
+    
+    handle:PropTypes.string,
+
+    isAble: PropTypes.bool
 
   };
   static defaultProps = {
-
     onDragStart: function () {},
 
     onDrag: function () {},
 
     onDragEnd: function () {},
-      handle:null
+    
+    handle: null,
 
+    isAble: true
   };
 
   tempX = 0;
@@ -63,7 +67,7 @@ export default class DraggableCore extends Component {
   handlePressSpaceEnd = this.handlePressSpaceEnd.bind(this);
 
   handleDragStart(evt) {
-    if (!this.hasPressSpace)
+    if (!this.hasPressSpace || !this.props.isAble)
       return;
 
     const el = findDOMNode(this);
@@ -78,15 +82,17 @@ export default class DraggableCore extends Component {
 
     this.tempX = evt.clientX;
     this.tempY = evt.clientY;
-
+    
     addEvent(ownerDocument, 'selectstart', clearPreDev);
     addEvent(ownerDocument, 'dragstart', clearPreDev);
     addEvent(ownerDocument, eventAlias.move, this.handleDrag);
     addEvent(ownerDocument, eventAlias.end, this.handleDragEnd);
+
+    evt.stopPropagation();
   }
 
   handleDrag(evt) {
-    if (!this.hasPressSpace)
+    if (!this.hasPressSpace || !this.props.isAble)
       return;
 
     const el = findDOMNode(this);
@@ -97,10 +103,12 @@ export default class DraggableCore extends Component {
     offsetY = evt.clientY - this.tempY;
 
     onDrag(offsetX, offsetY, el);
+
+    evt.stopPropagation();
   }
 
   handleDragEnd(evt) {
-    if (!this.hasPressSpace)
+    if (!this.hasPressSpace || !this.props.isAble)
       return;
 
     const { onDragEnd } = this.props;
@@ -114,6 +122,8 @@ export default class DraggableCore extends Component {
     removeEvent(ownerDocument, 'dragstart', clearPreDev);
     removeEvent(ownerDocument, eventAlias.move, this.handleDrag);
     removeEvent(ownerDocument, eventAlias.end, this.handleDragEnd);
+
+    evt.stopPropagation();
   }
 
   handlePressSpaceStart(evt) {
