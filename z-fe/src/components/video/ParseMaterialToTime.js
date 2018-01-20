@@ -49,7 +49,6 @@ export default class ParseMaterialToTime extends Component {
   }
 
   setTime = (props) => {
-    console.log(this.getFrameTime(props), 'ddd');
     this.playerEl.currentTime = this.getFrameTime(props);
   }
 
@@ -65,14 +64,15 @@ export default class ParseMaterialToTime extends Component {
     return (
       <div>
         <canvas ref={ el => this.frameCanvasEl = el } style={{ display: 'none' }} width={ width } height={ height }></canvas>
-        <video style={{ display: 'none' }} crossOrigin="Anonymous" ref={ el => this.playerEl = el } src={ this.props.videoSrc }></video>
+        <video style={{ display: 'none' }} crossOrigin="Anonymous" ref={ el => this.playerEl = el }>
+          <source src={ this.props.videoSrc } type='video/mp4' />
+        </video>
       </div>
     );
   }
 
   componentDidMount() {
-    this.playerEl.addEventListener('seeked', () => { console.log('xxdd');this.computeFrame() }, false);
-    this.playerEl.addEventListener('waiting', () => console.log('缓冲'), false);
+    this.playerEl.addEventListener('seeked', () => this.computeFrame(), false);
 
     if (this.props.time == null) {
       this.playerEl.addEventListener('loadedmetadata', () => {
