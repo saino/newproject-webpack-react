@@ -230,7 +230,7 @@ class ComposeWrap extends Component {
                         onDrag={this.onControledDrag.bind(this, scenesLayer)}
                         onDragEnd={this.onDragEnd}
                         isAble={!(baseLayer && (baseLayer.id === this.state.currentLayer.id))}>
-                        
+
                         <div className="compose-item" onClick={this.onLayerClick.bind(this, scenesLayer)}>
                             <img style={imgStyle} className={imgClass} src={scenesLayer.properties.thumbnail} />
                             {/* 左上角控制点 */}
@@ -375,7 +375,7 @@ class ComposeWrap extends Component {
            height: config.height,
            order,
            transformStyle: {
-             transform: config.transformString,
+             transform: config.transformString1,
              transformOrigin: '0 0 0'
            },
            materialPath: path
@@ -437,6 +437,7 @@ class ComposeWrap extends Component {
         //     "scenes-layer-item": true,
         //     "select": this.state.currentLayer.id === baseLayer.id
         // });
+        console.log(players, 'ppers');
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">
@@ -478,8 +479,8 @@ class ComposeWrap extends Component {
                       <Button icon="plus" type="primary">添加素材</Button>
                   </div>
                   <ul className="compose-layers-list">
-                        {baseLayer ? <div className={classNames({"scenes-layer-item": true, "select": this.state.currentLayer.id === baseLayer.id})} 
-                            key={baseLayer.id} 
+                        {baseLayer ? <div className={classNames({"scenes-layer-item": true, "select": this.state.currentLayer.id === baseLayer.id})}
+                            key={baseLayer.id}
                             onClick={this.onLayerClick.bind(this, baseLayer)}>
                             <div className="scenes-layer-item-title">基础镜头{": " + (/[^/]+(?=\.)/.exec(baseLayer.path)[0])}</div>
                         </div> : null}
@@ -551,7 +552,7 @@ class ComposeWrap extends Component {
                     position: relative;
                     left: 50%;
                     top: 50%;
-                    // transform: translate(-50%, -50%); 
+                    // transform: translate(-50%, -50%);
                 }
                 .compose-render-wrap-inner.select{
                     border: 1px solid #1EBC9C;
