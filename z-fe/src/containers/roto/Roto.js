@@ -139,7 +139,7 @@ export default class Roto extends Component {
 
     scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
 
-    post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { scenes } }, resp => {
+    post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes, layers } }, resp => {
       this.handlePreAiRoto();
     });
   };
