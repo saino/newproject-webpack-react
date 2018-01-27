@@ -24,7 +24,8 @@ function parseQs (qs) {
 
 const fetchConfig = {
   headers: {
-    'Content-Type': 'application/json'
+    'Accept': 'application/json',
+    'Content-Type': 'application/json; charset=UTF-8'
   }
 };
 const request = (path: String, method: String, body: Object) => {
@@ -54,7 +55,6 @@ export function post (path: String, body = {}, success: Function, fail: Function
   return request(path, 'POST', body)
    .then(resp => success(resp.data))
    .catch(error => {
-     console.log(error, 'ggggg');
      message.error(error.message);
      fail && fail(error.message);
    });

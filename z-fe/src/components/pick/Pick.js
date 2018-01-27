@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import PerfectPick from './PerfectPick';
+//import PerfectPick from './PerfectPick';
 import PrePick from './PrePick';
 
 export default class Pick extends Component {
@@ -15,14 +15,33 @@ export default class Pick extends Component {
       onGenerateRotoMaterial, onSelectFrame, onAutoRoto, onSetRotoProgress, onStopAiRoto,
       onUpdateRotoJobId, onSetRotoMaterialJobId, onSetRotoMaterialProgress, onClearRotoProgress
     } = this.props;
-    const isAiRotoed = jobId != null && progress >= 100;
-    
+
     return (
       <div className="pick">
-        <div className="header">{ !isAiRotoed ? '第一步 ：预抠像' : '第二步 ：精抠像' }</div>
+        <div className="header">抠像</div>
 
         <div className="main">
-          { !isAiRotoed ?
+          <PrePick
+            rotoFrames={ rotoFrames }
+            filename={ this.getDontSuffixFilename(filename) }
+            frame={ frame }
+            app={ app }
+            workId={ workId }
+            sceneId={ sceneId }
+            jobId={ jobId }
+            progress={ progress }
+            materialJobId={ materialJobId }
+            generateProgress={ generateProgress }
+            onSetRotoProgress={ onSetRotoProgress }
+            onStopAiRoto={ onStopAiRoto }
+            onUpdateRotoJobId={ onUpdateRotoJobId }
+            onSetRotoMaterialJobId={ onSetRotoMaterialJobId }
+            onSetRotoMaterialProgress={ onSetRotoMaterialProgress }
+            onClearRotoProgress={ onClearRotoProgress }
+            onGenerateRotoMaterial={ onGenerateRotoMaterial }
+            onSelectFrame={ onSelectFrame }
+            onAutoRoto={ onAutoRoto } />
+          {/* !isAiRotoed ?
             (<PrePick
               filename={ this.getDontSuffixFilename(filename) }
               app={ app }
@@ -46,7 +65,7 @@ export default class Pick extends Component {
               onSetRotoMaterialProgress={ onSetRotoMaterialProgress }
               onClearRotoProgress={ onClearRotoProgress }
               onSelectFrame={ onSelectFrame }
-              onGenerateRotoMaterial={ onGenerateRotoMaterial } />)
+              onGenerateRotoMaterial={ onGenerateRotoMaterial } />)*/
           }
         </div>
 
@@ -74,7 +93,5 @@ export default class Pick extends Component {
 
       </div>
     );
-    return !this.state.index ?
-      (<PrePick />) : (<PerfectPick />);
   }
 }

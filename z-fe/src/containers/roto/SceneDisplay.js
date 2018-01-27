@@ -61,7 +61,10 @@ export default class SceneDisplay extends Component {
   };
 
   render() {
-    const { path, frameLength, time, frame, roto, onSetMaterialTime, width, height } = this.props;
+    const {
+      path, frameLength, time, frame,
+      roto, onSetMaterialTime, width, height, sceneId
+    } = this.props;
     const { scale, imageUrl, isOpenPen, visibleShadow } = this.state;
     const points = roto && visibleShadow ? roto.svg.reduce((curr, next) => curr.concat(next.points), []) : [];
 
@@ -74,6 +77,7 @@ export default class SceneDisplay extends Component {
              <ParseMaterialToTime
                videoSrc={ path }
                frameLength={ frameLength + 1 }
+               sceneId={ sceneId }
                time={ time }
                frame={ frame + 1 }
                width={ width }

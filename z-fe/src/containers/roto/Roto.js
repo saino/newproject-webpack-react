@@ -90,7 +90,6 @@ export default class Roto extends Component {
           percent = resp.progress == false ? 0 : parseFloat(resp.progress);
 
           if (Math.floor(resp.progress) >= 100) {
-            console.log(scene, 'scene')
             aiRotos = JSON.parse(resp.result).map((item) => ({
               material_id: scene.material_id,
               scene_id: sceneId,
@@ -154,8 +153,17 @@ export default class Roto extends Component {
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id');
     const token = getAuth().token;
+    if (scene == null) {
+      message.error('请选中一个镜头');
+      return;
+    }
+
     scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
 
+    if (!scene.roto.length) {
+      message.error('无手动抠像数据');
+      return;
+    }
     //post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes } }, (resp) => {
     this.handleFinishRotoMaterial();
     //});
@@ -193,7 +201,6 @@ export default class Roto extends Component {
 
           if (Math.floor(resp.progress) >= 100) {
             rotoMaterial = JSON.parse(resp.result).data;
-
             onSetRotoMaterialProgress(workId, sceneId, percent);
             this.handleStopGenerateMaterial();
 
@@ -277,7 +284,7 @@ export default class Roto extends Component {
     const rotoFrames = finds(rotos, (item) => item.material_id == scene.material_id && item.scene_id === scene.id);
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id === scene.id) || { 'job_id': null, progress: null };
     const { currFrame } = scene;
-
+    //console.log(scene, material, scenes, 'mlgd');
     return (
       <div className="roto-wrap">
         <div className="roto-inner">
@@ -295,6 +302,7 @@ export default class Roto extends Component {
               width={ material.properties.width }
               height={ material.properties.height }
               frame={ currFrame }
+              sceneId={ sceneId }
               roto={ roto }
               onCreateRoto={ this.handleCreateRoto }
               onRemoveMettingPoint={ this.handleRemoveMettingPoint }

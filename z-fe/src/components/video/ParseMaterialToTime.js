@@ -53,7 +53,7 @@ export default class ParseMaterialToTime extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc) {
+    if (nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc || nextProps.sceneId != this.props.sceneId) {
       this.setTime(nextProps);
     }
   }
@@ -72,7 +72,7 @@ export default class ParseMaterialToTime extends Component {
   }
 
   componentDidMount() {
-    this.playerEl.addEventListener('seeked', () => this.computeFrame(), false);
+    this.playerEl.addEventListener('timeupdate', () => { console.log('xxoo');this.computeFrame(); }, false);
 
     if (this.props.time == null) {
       this.playerEl.addEventListener('loadedmetadata', () => {
