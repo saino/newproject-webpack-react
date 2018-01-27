@@ -68,6 +68,7 @@ class ReleaseVideo extends Component{
         clearInterval(this.buildVideoing);
         clearInterval(this.buildVideoing0);
         this.props.updateBuildVideo(buildVideo);
+        this.props.fetchEnd();
         post('/user/saveWork', options, resp => {});
     }
     render() {
