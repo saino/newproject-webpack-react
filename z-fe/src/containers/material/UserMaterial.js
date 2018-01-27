@@ -120,7 +120,7 @@ export default class UserMaterial extends Component {
       )
     );
     const upLoadOptions = {
-      baseUrl: '/user/uploadMaterial',
+      baseUrl: `${ config.api.host }/user/uploadMaterial`,
       paramAddToField: {
         work_id: this.props.workId
       },

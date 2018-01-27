@@ -35,7 +35,7 @@ const request = (path: String, method: String, body: Object) => {
   delete body.token;
 
   return fetch(
-    `${ path }${ isPost ? '' : parseQs(body) }`,
+    `${ config.api.host }${ path }${ isPost ? '' : parseQs(body) }`,
     {...fetchConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
   )
   .then(parseResp)
