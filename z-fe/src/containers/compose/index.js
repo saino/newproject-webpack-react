@@ -440,7 +440,7 @@ class ComposeWrap extends Component {
         //     "scenes-layer-item": true,
         //     "select": this.state.currentLayer.id === baseLayer.id
         // });
-        console.log(players, 'ppers');
+        // console.log(players, 'ppers');
         return (
           <div className='compose-wrap'>
             <div className="compose-inner">

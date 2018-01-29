@@ -11,6 +11,9 @@ import ParseMaterialToFrameImage from '../components/video/ParseMaterialToFrameI
 import Tick from '../components/interaction/react-tick/Tick';
 //import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
 import config from '../config';
+import { getAuth } from '../utils/auth'
+
+import FileUpload from 'react-fileupload';
 
 export default class Timeline extends Component {
   static defaultProps = {
@@ -109,10 +112,37 @@ export default class Timeline extends Component {
     });
   }
 
+  //点击添加音乐
+  onAddMusic = () => {
+    console.log("添加音乐");
+  }
+
   render() {
     const { path, frames, time, onChangeFrame } = this.props;
     const { isPlay, frame, frameLength } = this.state;
-
+    const upLoadOptions = {
+      baseUrl: `${ config.api.host }/user/uploadAudio`,
+      paramAddToField: {
+        work_id: "306"
+      },
+      fileFieldName: "file",
+      multiple: false,
+      accept: 'audio/*',
+      requestHeaders: {
+        Token: getAuth().token,
+      },
+      chooseAndUpload: true,
+      wrapperDisplay: 'block',
+      // beforeChoose: this._handleBeforeChoose,
+      // chooseFile: this._handleChooseFile,
+      // beforeUpload: this._handleBeforeUpload,
+      // uploading: this._handleUploading,
+      /*上传成功*/
+      // uploadSuccess: this._handleUploadSuccess,
+      /*xhr失败*/
+      // uploadFail: this._handleUploadFailed,
+      // uploadError: this._handleUploadFailed
+    }
     return (
         <div className="timeline">
 
@@ -130,6 +160,12 @@ export default class Timeline extends Component {
             <div className="singleframe">
               <label>每秒</label><label>5</label><label>帧</label>
             </div>
+            <FileUpload options={upLoadOptions}>
+              <div ref="chooseAndUpload">
+                <div className="addMusic">添加音乐</div>
+              </div>
+            </FileUpload>
+            
 
             {/*<div className="isloop">
               <Checkbox
@@ -192,6 +228,9 @@ export default class Timeline extends Component {
               padding: 0 20px;
             }
 
+            .addMusic{
+              cursor: pointer;
+            }
             .timeline .currframe,
             .timeline .singleframe {
               margin: 0 31px;
