@@ -26,7 +26,7 @@ export default ({
 
   // 数据请求
   api: {
-    host: 'http://192.168.3.116:8888',
+    host: 'http://shccit.eicp.net:8888',
     path: '',
     timeout: 15000
   },

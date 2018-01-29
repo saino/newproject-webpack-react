@@ -12,6 +12,7 @@ export default class ParseMaterialToTime extends Component {
 
   reset() {
     this.playerEl = this.videoFrame = null;
+    this.seekedHandle = () => this.computeFrame();
   }
 
   computeFrame = () => {
@@ -45,7 +46,7 @@ export default class ParseMaterialToTime extends Component {
     const { time, frame, frameLength } = props;
     const frameRate = frameLength / time;
 
-    return parseFloat(((frame * (1000 / frameRate)) / 1000).toFixed(2));
+    return parseFloat(((frame * (1000 / frameRate)) / 1000));
   }
 
   setTime = (props) => {
@@ -72,7 +73,7 @@ export default class ParseMaterialToTime extends Component {
   }
 
   componentDidMount() {
-    this.playerEl.addEventListener('timeupdate', () => { console.log('xxoo');this.computeFrame(); }, false);
+    this.playerEl.addEventListener('seeked', this.seekedHandle, false);
 
     if (this.props.time == null) {
       this.playerEl.addEventListener('loadedmetadata', () => {
@@ -90,4 +91,9 @@ export default class ParseMaterialToTime extends Component {
 
     this.frameCanvasContext = this.frameCanvasEl.getContext('2d');
   }
+
+  componentWillUnmount() {
+    this.playerEl.removeEventListener('seeked', this.seekedHandle);
+  }
+
 }

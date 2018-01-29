@@ -216,16 +216,17 @@ export default class Roto extends Component {
   };
 
   handleRemoveMettingPoint = (points) => {
-    const {
-      scenes, material, rotos, aiRotos,
-      app, workId, rotoProcess,
-      onUpdateRotoJobId, onSetRotoProgress, onSetRotoMaterialJobId, onSetRotoMaterialProgress
-    } = this.props;
+    const { scenes, rotos, onCreateRoto } = this.props;
     const { sceneId } = this.state;
     const scene = getItemByKey(scenes, sceneId, 'id') || { currFrame: 0 };
-    const roto = getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame);
-
-    roto.svg[0].points = points;
+    // const roto = getItemByKey(rotos, (item) => item.material_id == scene.material_id && item.scene_id == scene.id && item.frame == scene.currFrame);
+    //
+    // roto.svg[0].points = points;
+    onCreateRoto(scene.material_id, sceneId, scene.currFrame, [{
+      path_type: 'bezier',
+      closed: false,
+      points: points
+    }]);
   };
 
   componentWillReceiveProps(nextProps) {

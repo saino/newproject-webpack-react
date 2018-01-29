@@ -20,17 +20,17 @@ export default class VideoRender extends Component {
       style, frameImageUrl, width, height, children, cursor,
       onMouseDown, onMouseMove, onMouseUp
     } = this.props;
-
+    
     return (
       <Draggable cursor={ cursor }>
         <div
           className="video-render"
-          style={ this.props.style }>
+          style={ style }>
           <div className="video-render-inner"
             onMouseDown={ onMouseDown }
             onMouseMove={ onMouseMove }
             onMouseUp={ onMouseUp }>
-            <img src={ this.props.frameImageUrl } />
+            <img src={ frameImageUrl } />
             <div className="svg-wrap">
               { children }
             </div>

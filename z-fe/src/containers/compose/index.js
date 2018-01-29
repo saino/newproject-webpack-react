@@ -21,6 +21,7 @@ import { post } from "../../fetch/fetch";
 import { getAuth } from "../../utils/auth";
 import Timeline from '../Timeline';
 import { finds, getItemByKey } from '../../utils/stateSet';
+import config from '../../config';
 
 import Draggable from '../../components/interaction/react-draggable/Draggable';
 
@@ -365,6 +366,8 @@ class ComposeWrap extends Component {
     };
 
     getCurrentPlayers = () => {
+      const host = config.api.host;
+
       return [ ...(this.getCurrentBaseLayer() ? [ this.getCurrentBaseLayer() ] : []), ...this.getCurrentLayers() ].map(
         ({ baseLayer, config = {}, id, path, order }) => ({
            baseLayer,
@@ -378,7 +381,7 @@ class ComposeWrap extends Component {
              transform: config.transformString1,
              transformOrigin: '0 0 0'
            },
-           materialPath: path
+           materialPath: `${ host }${ path }`
         })
       );
     };

@@ -74,27 +74,32 @@ export default class SceneDisplay extends Component {
            <div className="canvas">
 
              {/* 得到视频的时长 */}
-             <ParseMaterialToTime
-               videoSrc={ path }
-               frameLength={ frameLength + 1 }
-               sceneId={ sceneId }
-               time={ time }
-               frame={ frame + 1 }
-               width={ width }
-               height={ height }
-               onSetFrameImageUrl={ this.handleSetFrameImageUrl }
-               onSetMaterialTime={ onSetMaterialTime } />
-
-             {/* 抠像 */}
-             <Matting ref="matting" onComplete={ this.handleMettingComplete } onRemoveMettingPoint={ this.handleRemoveMettingPoint } isMetting={ this.state.isOpenPen } points={ points }>
-               {/* 显示帧图片 */}
-               <VideoRender
-                 style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}
+             { path != '' ?
+               (<ParseMaterialToTime
+                 videoSrc={ `${ config.api.host }${ path }` }
+                 frameLength={ frameLength + 1 }
+                 sceneId={ sceneId }
+                 time={ time }
+                 frame={ frame + 1 }
                  width={ width }
                  height={ height }
-                 cursor={ isOpenPen ? 'default' : 'move' }
-                 frameImageUrl={ imageUrl } />
-             </Matting>
+                 onSetFrameImageUrl={ this.handleSetFrameImageUrl }
+                 onSetMaterialTime={ onSetMaterialTime } />) : void 0
+             }
+
+             {/* 抠像 */}
+             { path != '' ?
+               (<Matting ref="matting" onComplete={ this.handleMettingComplete } onRemoveMettingPoint={ this.handleRemoveMettingPoint } isMetting={ this.state.isOpenPen } points={ points }>
+                 {/* 显示帧图片 */}
+                 <VideoRender
+                   style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}
+                   width={ width }
+                   height={ height }
+                   cursor={ isOpenPen ? 'default' : 'move' }
+                   frameImageUrl={ imageUrl } />
+               </Matting>) : void 0
+             }
+
 
            </div>
         </div>
