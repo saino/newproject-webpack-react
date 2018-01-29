@@ -182,13 +182,15 @@ export default class Roto extends Component {
 
   handleSetRotoMaterialProgress = (jobId) => {
     const {
-      workId, rotoProcess, material,
+      workId, rotoProcess, materials, scenes, layers, workName,
       onSetRotoProgress, onSetRotoStop, onCreateAiRoto, onSetRotoMaterialProgress, onJoinCompose
     } = this.props;
     const { sceneId } = this.state;
     const rotoPro = getItemByKey(rotoProcess, (item) => item.work_id == workId && item.scene_id == sceneId)
     const token = getAuth().token;
     let percent = 0, rotoMaterial;
+    const scene = getItemByKey(scenes, sceneId, 'id');
+    // scene.roto[0].
 
     this.generateRotoTimer = setInterval(() => {
       post('/user/getProgress',
@@ -201,6 +203,11 @@ export default class Roto extends Component {
 
           if (Math.floor(resp.progress) >= 100) {
             rotoMaterial = JSON.parse(resp.result).data;
+            scene.roto[0].rotoMaterialId = rotoMaterial.id;
+
+            post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes, layers } }, resp => {
+            });
+
             onSetRotoMaterialProgress(workId, sceneId, percent);
             this.handleStopGenerateMaterial();
 

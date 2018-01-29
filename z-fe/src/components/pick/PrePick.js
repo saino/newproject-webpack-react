@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Button, Progress, Table } from 'antd';
+import { post,  }  from '../../fetch/fetch';
+import { getAuth } from '../../utils/auth';
+import scene from '../../reducers/scene';
 
-export default class PrePick extends Component {
+class PrePick extends Component {
   columns = [{
     title: '帧',
     dataIndex: 'frame',
@@ -18,7 +21,36 @@ export default class PrePick extends Component {
     dataIndex: 'status',
     key: 'status'
   }];
+  state = {
+    isLoading: false
+  }
 
+  getRotoMaterialId() {
+    const { material, sceneId } = this.props;
+    const { scenes } = material;
+    const currentScene = scenes.find(scene=>scene.id===sceneId);
+    let rotoMaterialId = null;
+    if(currentScene && currentScene.roto && currentScene.roto[0] && currentScene.roto[0].rotoMaterialId){
+      rotoMaterialId = currentScene.roto[0].rotoMaterialId;
+    }
+    return rotoMaterialId
+  }
+
+  onDownLoadRoto = () => {
+    const { material, sceneId } = this.props;
+    const { scenes } = material;
+    const currentScene = scenes.find(scene=>scene.id===sceneId);
+    let rotoMaterialId = this.getRotoMaterialId();
+    this.setState({
+      isLoading: true
+    });
+    post("/user/getMaterialFrames", {"material_id": rotoMaterialId, "token": getAuth().token}, (resp)=>{
+      this.setState({
+        isLoading: false
+      });
+      window.open(resp, '_self');
+    });
+  }
   render() {
     let {
       filename, app, jobId, progress, rotoFrames,
@@ -27,6 +59,7 @@ export default class PrePick extends Component {
     } = this.props;
     rotoFrames = rotoFrames.map(({ frame }) => ({ frame, category: 'ROTO', status: '已修改' }));
     const hasAiRotoed = jobId == null || progress >= 100;
+    const hasRotoMaterialId = this.getRotoMaterialId();
 
     return (
       <div className="pre-pick">
@@ -80,6 +113,16 @@ export default class PrePick extends Component {
               )
             }
           </div>
+          <div className="download">
+            <Button
+              type="primary"
+              className="download-roto"
+              loading={ this.state.isLoading }
+              disabled={ !hasRotoMaterialId }
+              onClick={ this.onDownLoadRoto }>
+              下载抠像素材
+            </Button>
+          </div>
         </div>
         <style>{`
           .pre-pick {
@@ -99,7 +142,7 @@ export default class PrePick extends Component {
           }
 
           .pre-pick .auto-start {
-            padding: 40px 15px 0;
+            padding: 20px 15px 0;
           }
 
           .pre-pick .auto-start .autoroto {
@@ -119,7 +162,7 @@ export default class PrePick extends Component {
           }
 
           .perfect-pick {
-            margin-top: 80px;
+            margin-top: 20px;
             width: 100%;
           }
 
@@ -171,8 +214,11 @@ export default class PrePick extends Component {
             background: #fff;
           }
 
-          .perfect-pick .build {
-            padding: 40px 15px 0;
+          .perfect-pick .build{
+            padding: 20px 15px 0;
+          }
+          .perfect-pick .download{
+            padding: 20px 15px 0;
           }
 
           .perfect-pick .build .generate-rotomaterial {
@@ -187,8 +233,25 @@ export default class PrePick extends Component {
             letter-spacing: 1px;
             cursor: pointer;
           }
+          .perfect-pick .download .download-roto {
+            display: block;
+            width: 100%;
+            line-height: 30px;
+            color: #fff;
+            text-align: center;
+            background: #2d8bbd;
+            border: 0 none;
+            outline: none;
+            letter-spacing: 1px;
+            cursor: pointer;
+          }
 
           .perfect-pick .build .generate-rotomaterial[disabled] {
+            color: rgba(0, 0, 0, 0.25);
+            background-color: #f7f7f7;
+            border-color: #d9d9d9;
+          }
+          .perfect-pick .download .download-roto[disabled] {
             color: rgba(0, 0, 0, 0.25);
             background-color: #f7f7f7;
             border-color: #d9d9d9;
@@ -218,3 +281,7 @@ export default class PrePick extends Component {
   }
 
 }
+const mapStatToProps = ({ material }) => ({
+  material
+});
+export default connect(mapStatToProps)(PrePick);

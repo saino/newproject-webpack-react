@@ -36,6 +36,7 @@ const request = (path: String, method: String, body: Object) => {
 
   return fetch(
     `${ config.api.host }${ path }${ isPost ? '' : parseQs(body) }`,
+    // `${ path }${ isPost ? '' : parseQs(body) }`,
     {...fetchConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
   )
   .then(parseResp)

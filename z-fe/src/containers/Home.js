@@ -146,9 +146,15 @@ class Home extends Component {
 
   render() {
     // console.log("homeLLLLLLL");
-    // var columns = 10, rows = 240;
-    // var data_type = jsfeat.U8_t | jsfeat.C1_t;
-    // var data_buffer = new jsfeat.data_t(columns * rows);
+    var columns = 640, rows = 480, levels = 3;
+    var data_type = jsfeat.U8_t | jsfeat.C1_t;
+    var my_pyramid = new jsfeat.pyramid_t(levels);
+    my_pyramid.allocate(columns, rows, data_type);
+    console.log(my_pyramid);
+    
+    // console.log(dd,my_pyramid);
+    // var data_buffer = new jsfeat.data_t(columns * rows*4);
+    // console.log(data_buffer);
     // var my_matrix = new jsfeat.matrix_t(columns, rows, data_type, data_buffer);
     // // var my_matrix = new jsfeat.matrix_t(columns, rows, data_type);
     // var newInput = document.createElement("input"); 
@@ -183,7 +189,7 @@ class Home extends Component {
     //   prev_xy: Array, curr_xy: Array, count,
     //   win_size, max_iter = 30, status: Array = null,
     //   eps = 0.01, min_eigen_threshold = 0.0001);
-    // console.log(jsfeat);
+    console.log(jsfeat);
     const {
       root,
       hd, hdImg, makeBtn,
