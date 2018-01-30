@@ -143,6 +143,9 @@ class ComposeWrap extends Component {
             // 是否显示播放层
             visiblePlayer: false,
 
+            // 是否自动播放
+            hasAutoPlay: false,
+
             currentLayer: {
                 id: '',
                 cursor: "default",
@@ -392,7 +395,10 @@ class ComposeWrap extends Component {
       const { currentSceneId } = this.state;
 
       onSetCurrFrameByScene(currentSceneId, frame);
-      this.setState({ visiblePlayer: true });
+      this.setState({
+        visiblePlayer: true,
+        hasAutoPlay: false
+      });
     };
 
     handlePlayNextScene = () => {
@@ -400,7 +406,10 @@ class ComposeWrap extends Component {
       const { currentSceneId } = this.state;
       const currScene = getItemByKey(scenes, currentSceneId, 'id');
 
-      this.setState({ visiblePlayer: false }, () => {
+      this.setState({
+        visiblePlayer: false,
+        hasAutoPlay: false
+      }, () => {
         const nextIdx = scenes.indexOf(currScene) + 1;
 
         if (nextIdx < scenes.length) {
@@ -503,7 +512,7 @@ class ComposeWrap extends Component {
                 frameLength={ material.properties.length - 1 }
                 frame={ scene.currFrame }
                 time={ material.properties.time }
-                onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay }) }
+                onPlayOrPause={ (isPlay) => this.setState({ visiblePlayer: isPlay, hasAutoPlay: isPlay }) }
                 onComplete={ this.handlePlayNextScene }
                 onChangeFrame={ this.handleChangeFrame } />
             </div>
@@ -699,7 +708,8 @@ class ComposeWrap extends Component {
         this.props.onChangeSceneId(sceneId);
         this.setState({
             currentSceneId: sceneId,
-            visiblePlayer: false
+            visiblePlayer: false,
+            hasAutoPlay: false
         });
     }
 
