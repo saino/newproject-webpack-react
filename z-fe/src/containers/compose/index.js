@@ -724,6 +724,11 @@ class ComposeWrap extends Component {
             message.warning("请先添加镜头");
             return;
         }
+        console.log(this.state.hasAutoPlay);
+        if(this.state.hasAutoPlay ){
+            message.warning("请先暂停播放");
+            return;
+        }
         const tempScenes = scenes.map(scene => {
             scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
             return scene;
