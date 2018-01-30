@@ -6,6 +6,7 @@ import { post } from "../../fetch/fetch";
 import { getAuth } from "../../utils/auth";
 import { updateBuildVideo } from '../../reducers/material';
 import { fetchStart, fetchEnd } from '../../reducers/app';
+import config from '../../config'
 
 class ReleaseVideo extends Component{
     constructor() {
@@ -74,7 +75,7 @@ class ReleaseVideo extends Component{
     render() {
         return (<div className="release-video">
             <Button loading={ this.props.app.isFetching } className='release-video-button' type="primary" onClick={this.onReleaseVideoClick}>视频发布</Button>
-            <div className="video-url">视频地址：{window.api + this.state.videoUrl}</div>
+            <div className="video-url">视频地址：{config.api.host + this.state.videoUrl}</div>
             <Progress percent={this.state.buildProgress} />
             <style>{`
                 .release-video{

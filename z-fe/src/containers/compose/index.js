@@ -47,7 +47,7 @@ class MaterialItem extends Component {
             "selected": this.state.selected
         });
         return (<div className={materialClass} onClick={this.onSelectClick}>
-            <img className="material-thumb" src={material.properties.thumbnail} />
+            <img className="material-thumb" src={config.api.host+material.properties.thumbnail} />
             <div className="material-title">{/[^/]+(?=\.)/.exec(material.path)[0]}</div>
             <style>{`
                 .material-item{
@@ -233,7 +233,7 @@ class ComposeWrap extends Component {
                         isAble={!(baseLayer && (baseLayer.id === this.state.currentLayer.id))}>
 
                         <div className="compose-item" onClick={this.onLayerClick.bind(this, scenesLayer)}>
-                            <img style={imgStyle} className={imgClass} src={scenesLayer.properties.thumbnail} />
+                            <img style={imgStyle} className={imgClass} src={config.api.host+scenesLayer.properties.thumbnail} />
                             {/* 左上角控制点 */}
                             <TransControl controlPoint={0} control={scenesLayer.config.controls[0]} currentLayer={this.state.currentLayer}
                                 layer={scenesLayer} onDragStart={this.onTransfromStart} onDrag={this.onTransfrom}/>
@@ -465,7 +465,7 @@ class ComposeWrap extends Component {
                     <Draggable isAble={baseLayer && (this.state.currentLayer.id === baseLayer.id)}>
                         <div className={classNames({"compose-render-wrap-inner": true, "select":  baseLayer && (this.state.currentLayer.id === baseLayer.id) })}>
                             {baseLayer ? <div className="base-compose-item" key={baseLayer.id} onClick={this.onLayerClick.bind(this, baseLayer)}>
-                                <img className="base-compose-item-thumb" src={baseLayer.properties.thumbnail} />
+                                <img className="base-compose-item-thumb" src={config.api.host+baseLayer.properties.thumbnail} />
                             </div> : null}
                             { this.renderComposeLayers() }
                         </div>
@@ -496,6 +496,7 @@ class ComposeWrap extends Component {
             <div className="compose-bottom">
               <Timeline
                 ref="autoplayer"
+                workId={ this.props.workId}
                 flag={ currentSceneId }
                 path={ material.path }
                 frameLength={ material.properties.length - 1 }

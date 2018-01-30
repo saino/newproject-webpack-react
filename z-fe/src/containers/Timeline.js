@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import Scrollbar from 'react-custom-scrollbars';
-import { Icon, message } from 'antd';
+import { Icon, message, Progress } from 'antd';
 import { setImageData } from '../reducers/imageData';
 import { getItemByKey, add, finds } from '../utils/stateSet';
 import ParseMaterialToFrameImage from '../components/video/ParseMaterialToFrameImage';
@@ -27,14 +27,18 @@ export default class Timeline extends Component {
     this.state = {
       isPlay: false,
       frame: props.frame,
-      frameLength: props.frameLength
+      frameLength: props.frameLength,
+      uploading: false,
+      uploadProgress: 0
     };
     this.timers = {};
     this.handleForward = this.handlePlayAction(currFrame => currFrame + 1, '已经最后一帧了！');
     this.handleBackward = this.handlePlayAction(currFrame => currFrame - 1, '已经第一帧了！');
     this.execute = this.playOrPausing.bind(this)();
   }
+  // state = {
 
+  // }
   resetExecute = () =>
     this.execute(this.state.frame, this.state.frameLength);
 
@@ -100,7 +104,6 @@ export default class Timeline extends Component {
 
   componentWillReceiveProps(props) {
     const flag = this.props.flag;
-    
     this.setState({
       frame: props.frame,
       frameLength: props.frameLength
@@ -111,19 +114,70 @@ export default class Timeline extends Component {
       }
     });
   }
-
-  //点击添加音乐
-  onAddMusic = () => {
-    console.log("添加音乐");
+  //选择文件之前
+  _handleBeforeChoose = () => {
+    return true;
   }
-
+  //选择文件
+  _handleChooseFile = (files) => {
+    return true;
+  }
+  //上传之前
+  _handleBeforeUpload = (files, mill) => {
+    this.setState({
+      uploading: true,
+      progressState: "active",
+      uploadProgress: 0
+    });  
+  }
+  //上传中
+  _handleUploading = (progress) => {
+    console.log(progress);
+    const progressNum = parseInt(100 * progress.loaded / progress.total);
+    this.setState({
+      uploadProgress: progressNum
+    });
+  }
+   //上传成功
+  _handleUploadSuccess = (resp) => {
+    this.setState({
+      uploadProgress: 100,
+      progressState: "success",
+    });
+    // this.props.onUploadMaterial(resp.data);
+    setTimeout(()=>{
+      this.setState({
+        uploading: false
+      });
+    }, 200);
+  }
+  //上传失败
+  _handleUploadFailed = () => {
+    this.setState({
+      uploadProgress: 0,
+      progressState: "exception"
+    })
+    setTimeout(()=>{
+      this.setState({
+        uploading: false
+      });
+    }, 200);
+  }
+  renderUploadProgress() {
+    if(this.state.uploading){
+      return <div className='upload-progress'>
+        <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
+      </div>
+    }
+    return null;
+  }
   render() {
     const { path, frames, time, onChangeFrame } = this.props;
     const { isPlay, frame, frameLength } = this.state;
     const upLoadOptions = {
       baseUrl: `${ config.api.host }/user/uploadAudio`,
       paramAddToField: {
-        work_id: "306"
+        work_id: this.props.workId,
       },
       fileFieldName: "file",
       multiple: false,
@@ -133,15 +187,15 @@ export default class Timeline extends Component {
       },
       chooseAndUpload: true,
       wrapperDisplay: 'block',
-      // beforeChoose: this._handleBeforeChoose,
-      // chooseFile: this._handleChooseFile,
-      // beforeUpload: this._handleBeforeUpload,
-      // uploading: this._handleUploading,
+      beforeChoose: this._handleBeforeChoose,
+      chooseFile: this._handleChooseFile,
+      beforeUpload: this._handleBeforeUpload,
+      uploading: this._handleUploading,
       /*上传成功*/
-      // uploadSuccess: this._handleUploadSuccess,
+      uploadSuccess: this._handleUploadSuccess,
       /*xhr失败*/
-      // uploadFail: this._handleUploadFailed,
-      // uploadError: this._handleUploadFailed
+      uploadFail: this._handleUploadFailed,
+      uploadError: this._handleUploadFailed
     }
     return (
         <div className="timeline">
@@ -207,7 +261,7 @@ export default class Timeline extends Component {
             </div>
 
           </div>
-
+          { this.renderUploadProgress() }
           <style>{`
             .timeline {
               display: flex;
@@ -312,6 +366,18 @@ export default class Timeline extends Component {
               width: 100%;
               height: 100%;
               object-fit: contain;
+            }
+            .upload-progress{
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              position: fixed;
+              background: rgba(0, 0, 0, 0.7);
+              height: 100%;
+              width: 100%;
+              top: 0;
+              left: 0;
+              color: #fff;
             }
 
           `}</style>
