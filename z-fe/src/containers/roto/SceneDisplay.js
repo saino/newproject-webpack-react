@@ -42,6 +42,13 @@ export default class SceneDisplay extends Component {
  handleRemoveMettingPoint = (points) =>
    this.props.onRemoveMettingPoint(points);
 
+ handleMoveMettingPoint = (points) =>
+   this.props.onCreateRoto([{
+     path_type: 'bezier',
+     closed: false,
+     points: points
+   }]);
+
   handleOpenPen = () =>
     this.setState({ isOpenPen: true });
 
@@ -50,7 +57,7 @@ export default class SceneDisplay extends Component {
   handleAddNode = () => {};
 
   handleRemoveNode = () => {
-
+    
   };
 
   handleVisibleShadow = () =>
@@ -89,7 +96,13 @@ export default class SceneDisplay extends Component {
 
              {/* 抠像 */}
              { path != '' ?
-               (<Matting ref="matting" onComplete={ this.handleMettingComplete } onRemoveMettingPoint={ this.handleRemoveMettingPoint } isMetting={ this.state.isOpenPen } points={ points }>
+               (<Matting
+                 ref="matting"
+                 onComplete={ this.handleMettingComplete }
+                 onRemoveMettingPoint={ this.handleRemoveMettingPoint }
+                 onMoveMettingPoint={ this.handleMoveMettingPoint }
+                 isMetting={ this.state.isOpenPen }
+                 points={ points }>
                  {/* 显示帧图片 */}
                  <VideoRender
                    style={{ width: '100%', height: '100%', transform: `scale(${ scale })`, userSelect: 'none', zIndex: 1 }}

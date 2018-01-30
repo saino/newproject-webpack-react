@@ -131,7 +131,8 @@ export default class Matting extends Component {
             this.setState({
               lastX: offsetX,
               lastY: offsetY
-            })
+            });
+            this.props.onMoveMettingPoint(pathData.points);
           }
       }
     }
