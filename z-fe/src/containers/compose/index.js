@@ -24,6 +24,7 @@ import { finds, getItemByKey } from '../../utils/stateSet';
 import config from '../../config';
 
 import Draggable from '../../components/interaction/react-draggable/Draggable';
+import { fail } from 'assert';
 
 class MaterialItem extends Component {
     constructor() {
@@ -736,6 +737,7 @@ class ComposeWrap extends Component {
 
         this.setState({
             materialListVisible: true,
+            visiblePlayer: false
         })
     }
 
