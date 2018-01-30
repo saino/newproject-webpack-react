@@ -394,10 +394,7 @@ class ComposeWrap extends Component {
       const { currentSceneId } = this.state;
 
       onSetCurrFrameByScene(currentSceneId, frame);
-      this.setState({
-        visiblePlayer: true,
-        hasAutoPlay: false
-      });
+      this.setState({ visiblePlayer: true });
     };
 
     handlePlayNextScene = () => {
