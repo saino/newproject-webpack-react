@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import { deepCompare } from 'pure-render-immutable-decorator';
 import VideoFrame from '../../utils/video-frame';
@@ -11,8 +12,18 @@ export default class ParseMaterialToTime extends Component {
   }
 
   reset() {
-    this.playerEl = this.videoFrame = null;
+    this.hasUpdated = false;
+    this.videoEl = this.videoFrame = null;
     this.seekedHandle = () => this.computeFrame();
+    this.loadedmetadataHandle = () => {
+      this.videoFrame = new VideoFrame({
+        duration: this.videoEl.duration,
+        frames: this.props.frameLength
+      });
+
+      // 设置素材的总时长
+      this.props.onSetMaterialTime(this.videoEl.duration);
+    };
   }
 
   computeFrame = () => {
@@ -22,7 +33,8 @@ export default class ParseMaterialToTime extends Component {
     let frameImageData, l, i, r, g, b;
 
     if (this.frameCanvasContext && this.frameCanvasEl) {
-      this.frameCanvasContext.drawImage(this.playerEl, 0, 0, canvasWidth, canvasHeight);
+      //this.frameCanvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
+      this.frameCanvasContext.drawImage(this.videoEl, 0, 0, canvasWidth, canvasHeight);
       this.props.onSetFrameImageUrl(this.frameCanvasEl.toDataURL('image/png'));
     }
 
@@ -50,12 +62,38 @@ export default class ParseMaterialToTime extends Component {
   }
 
   setTime = (props) => {
-    this.playerEl.currentTime = this.getFrameTime(props);
+    this.videoEl.currentTime = this.getFrameTime(props);
+  }
+
+  createVideoEl = () => {
+    this.videoEl = document.createElement('video');
+    this.videoEl.setAttribute('crossOrigin', 'Anonymous');
+    this.videoEl.src = this.props.videoSrc;
+    this.videoEl.style.display = 'none';
+    this.el.appendChild(this.videoEl);
+
+    return () => {
+      this.el.removeChild(this.videoEl);
+      this.videoEl = null;
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc || nextProps.sceneId != this.props.sceneId) {
-      this.setTime(nextProps);
+    this.hasUpdated = nextProps.time != this.props.time || nextProps.frame != this.props.frame || nextProps.videoSrc != this.props.videoSrc || nextProps.sceneId != this.props.sceneId;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.hasUpdated) {
+      this.removeVideoEl();
+      this.removeVideoEl = this.createVideoEl();
+      this.videoEl.removeEventListener('seeked', this.seekedHandle);
+      this.videoEl.addEventListener('seeked', this.seekedHandle, false);
+
+      if (prevProps.time == null) {
+        this.loadedmetadataHandle();
+      }
+
+      this.setTime(prevProps);
     }
   }
 
@@ -63,37 +101,25 @@ export default class ParseMaterialToTime extends Component {
     const { width, height } = this.props;
 
     return (
-      <div>
-        <canvas ref={ el => this.frameCanvasEl = el } style={{ display: 'none' }} width={ width } height={ height }></canvas>
-        <video style={{ display: 'none' }} crossOrigin="Anonymous" ref={ el => this.playerEl = el }>
-          <source src={ this.props.videoSrc } type='video/mp4' />
-        </video>
+      <div ref={ el => this.el = el }>
+        <canvas ref='canvas' style={{ display: 'none' }} width={ width } height={ height }></canvas>
       </div>
     );
   }
 
   componentDidMount() {
-    this.playerEl.addEventListener('seeked', this.seekedHandle, false);
-
-    if (this.props.time == null) {
-      this.playerEl.addEventListener('loadedmetadata', () => {
-        this.videoFrame = new VideoFrame({
-          duration: this.playerEl.duration,
-          frames: this.props.frameLength
-        });
-
-        // 设置素材的总时长
-        this.props.onSetMaterialTime(this.playerEl.duration);
-      }, false);
-    } else {
-      this.setTime(this.props);
-    }
-
+    this.frameCanvasEl = findDOMNode(this.refs.canvas);
     this.frameCanvasContext = this.frameCanvasEl.getContext('2d');
+    this.removeVideoEl = this.createVideoEl();
+    this.videoEl.addEventListener('seeked', this.seekedHandle, false);
+    this.videoEl.addEventListener('loadedmetadata', this.loadedmetadataHandle, false);
+    this.setTime(this.props);
   }
 
   componentWillUnmount() {
-    this.playerEl.removeEventListener('seeked', this.seekedHandle);
+    this.videoEl.removeEventListener('seeked', this.seekedHandle);
+    this.videoEl.removeEventListener('loadedmetadata', this.loadedmetadataHandle);
+    this.removeVideoEl();
   }
 
 }

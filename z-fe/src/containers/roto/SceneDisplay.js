@@ -57,7 +57,7 @@ export default class SceneDisplay extends Component {
   handleAddNode = () => {};
 
   handleRemoveNode = () => {
-    
+
   };
 
   handleVisibleShadow = () =>
