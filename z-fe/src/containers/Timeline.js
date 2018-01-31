@@ -12,10 +12,12 @@ import Tick from '../components/interaction/react-tick/Tick';
 //import Scrollbar from '../../components/interaction/react-scrollbar/Scrollbar';
 import config from '../config';
 import { getAuth } from '../utils/auth'
+import { post } from '../fetch/fetch'
+import { addMusic } from '../reducers/material'
 
 import FileUpload from 'react-fileupload';
 
-export default class Timeline extends Component {
+class Timeline extends Component {
   static defaultProps = {
     onPlayOrPause: () => {},
     onComplete: () => {}
@@ -132,7 +134,7 @@ export default class Timeline extends Component {
   }
   //上传中
   _handleUploading = (progress) => {
-    console.log(progress);
+    // console.log(progress);
     const progressNum = parseInt(100 * progress.loaded / progress.total);
     this.setState({
       uploadProgress: progressNum
@@ -140,10 +142,33 @@ export default class Timeline extends Component {
   }
    //上传成功
   _handleUploadSuccess = (resp) => {
+    console.log("ssssss");
     this.setState({
       uploadProgress: 100,
       progressState: "success",
     });
+    // resp.data;
+    console.log(resp, this.props);
+    const { material } = this.props;
+    const { materials, scenes, layers } = material;
+    const options = {
+      token: getAuth().token,
+      work_id: this.props.workId,
+      status: 1,
+      name: this.props.workName,
+      audio: resp.data,
+      config: {
+          audio: resp.data,
+          materials,
+          scenes,
+          layers
+      }
+    }
+    console.log("sdddsdkjhksdjlsdj");
+    this.props.addMusic(resp.data);
+    console.log(this.props.material);
+    post('/user/saveWork', options, resp => {});
+
     // this.props.onUploadMaterial(resp.data);
     setTimeout(()=>{
       this.setState({
@@ -153,6 +178,7 @@ export default class Timeline extends Component {
   }
   //上传失败
   _handleUploadFailed = () => {
+    console.log("ddddd");
     this.setState({
       uploadProgress: 0,
       progressState: "exception"
@@ -390,3 +416,10 @@ export default class Timeline extends Component {
     this.clearAllTimer();
   }
 }
+const mapStateToProps = ( {material}) => ({
+  material
+});
+const mapDispatchToProps = (dispatch) => ({
+  addMusic: bindActionCreators(addMusic, dispatch)
+})
+export default connect(mapStateToProps, mapDispatchToProps)(Timeline);

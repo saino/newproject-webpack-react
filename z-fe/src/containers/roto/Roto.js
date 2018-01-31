@@ -112,7 +112,7 @@ export default class Roto extends Component {
 
   handleAutoRoto = () => {
     const {
-      workId, workName, material,
+      workId, workName, material, audio,
       materials, scenes, rotos, layers,
       onFetchStart, onFetchEnd,
       onSetAiRotoedProgressByScene, onSetAiJobIdByScene
@@ -138,7 +138,7 @@ export default class Roto extends Component {
 
     scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
 
-    post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes, layers } }, resp => {
+    post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: {audio, materials, scenes, layers } }, resp => {
       this.handlePreAiRoto();
     });
   };
@@ -182,7 +182,7 @@ export default class Roto extends Component {
 
   handleSetRotoMaterialProgress = (jobId) => {
     const {
-      workId, rotoProcess, materials, scenes, layers, workName,
+      workId, rotoProcess, materials, scenes, layers, workName, audio,
       onSetRotoProgress, onSetRotoStop, onCreateAiRoto, onSetRotoMaterialProgress, onJoinCompose
     } = this.props;
     const { sceneId } = this.state;
@@ -205,7 +205,7 @@ export default class Roto extends Component {
             rotoMaterial = JSON.parse(resp.result).data;
             scene.roto[0].rotoMaterialId = rotoMaterial.id;
 
-            post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: { materials, scenes, layers } }, resp => {
+            post('/user/saveWork', { token, work_id: workId, status: 1, name: workName, config: {audio, materials, scenes, layers } }, resp => {
             });
 
             onSetRotoMaterialProgress(workId, sceneId, percent);
@@ -343,6 +343,8 @@ export default class Roto extends Component {
         <div className="roto-bottom">
           {/* 时间轴 */}
           <Timeline
+            workId={ this.props.workId}
+            workName={ this.props.workName}
             flag={ sceneId }
             path={ material.path }
             frame={ scene.currFrame }

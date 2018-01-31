@@ -504,6 +504,7 @@ class ComposeWrap extends Component {
               <Timeline
                 ref="autoplayer"
                 workId={ this.props.workId}
+                workName={ this.props.workName}
                 flag={ currentSceneId }
                 path={ material.path }
                 frameLength={ material.properties.length - 1 }
@@ -676,7 +677,7 @@ class ComposeWrap extends Component {
     componentWillUnmount() {
         clearTimeout(this.timer);
         const { material } = this.props;
-        const { materials, scenes, rotos, layers } = material;
+        const { materials, scenes, rotos, layers, audio } = material;
         const tempScenes = scenes.map(scene => {
             scene.roto = finds(rotos, ({ material_id, scene_id }) => material_id == scene.material_id && scene_id == scene.id);
             return scene;
@@ -688,6 +689,7 @@ class ComposeWrap extends Component {
             status: 1,
             name: this.props.workName,
             config: {
+                audio,
                 materials,
                 scenes: tempScenes,
                 layers
@@ -716,7 +718,7 @@ class ComposeWrap extends Component {
     onAddMaterialClick = () => {
         // this.props.getMaterials({ workId: this.props.workId})
         const { materialId, material } = this.props;
-        const { materials, scenes, rotos, layers } = material;
+        const { materials, scenes, rotos, layers, audio } = material;
         if (!scenes || scenes.length == 0) {
             message.warning("请先添加镜头");
             return;
@@ -737,6 +739,7 @@ class ComposeWrap extends Component {
             status: 1,
             name: this.props.workName,
             config: {
+                audio,
                 materials,
                 scenes: tempScenes,
                 layers
@@ -825,7 +828,7 @@ class ComposeWrap extends Component {
      */
     onCompleteWorkClick = () => {
         const { materialId, material } = this.props;
-        const { materials, scenes, rotos, layers } = material;
+        const { materials, scenes, rotos, layers, audio } = material;
         if(!scenes || scenes.length == 0){
             message.warning("请先添加镜头");
             return;
@@ -841,6 +844,7 @@ class ComposeWrap extends Component {
             status: 1,
             name: this.props.workName,
             config: {
+                audio,
                 materials,
                 scenes: tempScenes,
                 layers

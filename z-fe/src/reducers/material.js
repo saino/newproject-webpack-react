@@ -19,6 +19,7 @@ import scene from './scene';
   item.frameRate Number 帧率 前端自己设置，无需服务端返回
 */
 const defState = {
+  audio: '',
   materials: [],
   scenes: [],
   rotos: [],
@@ -45,8 +46,17 @@ const actionTypes = {
   DELETE_LAYER: 'DELETE_LAYER',
   UPDATE_LAYERS: 'UPDATE_LAYERS',
   UPDATE_SCEBES: 'UPDATE_SCENES',
-  UPDATE_BUILDVIDEO: 'UPDATE_BUILDVIDEO'
+  UPDATE_BUILDVIDEO: 'UPDATE_BUILDVIDEO',
+  ADD_MUSIC: 'ADD_MUSIC'
 };
+/**
+ * 添加音乐
+ * @param {*string 音乐地址} audio 
+ */
+export const addMusic = (audio) => ({
+  type: actionTypes.ADD_MUSIC,
+  audio
+});
 
 /**
  * 更新合成视频数据
@@ -252,8 +262,13 @@ export default (state = defState, action) => {
 
     case actionTypes.UPDATE_SCEBES:
       return { ...state, scenes: updateArray(state.scenes, action.scenes, "id") };
+
     case actionTypes.UPDATE_BUILDVIDEO:
       return { ...state, buildVideo: action.buildVideo}
+
+    case actionTypes.ADD_MUSIC:
+      console.log("addd", actionTypes.audio);
+      return { ...state, audio: action.audio}
 
     default:
       return state;

@@ -78,6 +78,7 @@ class Make extends Component {
         'status': 1,
         'name': workName,
         'config': {
+          'audio': material.audio,
           'materials': material.materials,
           'scenes': [ ...finds(material.scenes, workId, 'work_id'), copyScene ],
           'layers': [ ...material.layers, baseLayer ]
@@ -235,6 +236,7 @@ class Make extends Component {
       case 1:
         return (
           <Roto
+            audio={ material.audio }
             scenes={ finds(material.scenes, work.id, 'work_id') }
             materials={ material.materials }
             rotoProcess={ rotoProcess }

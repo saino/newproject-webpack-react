@@ -6,6 +6,7 @@ import { Button, Progress, Table } from 'antd';
 import { post,  }  from '../../fetch/fetch';
 import { getAuth } from '../../utils/auth';
 import scene from '../../reducers/scene';
+import config from '../../config'
 
 class PrePick extends Component {
   columns = [{
@@ -48,7 +49,7 @@ class PrePick extends Component {
       this.setState({
         isLoading: false
       });
-      window.open(resp, '_self');
+      window.open(config.api.host+resp, '_self');
     });
   }
   render() {
