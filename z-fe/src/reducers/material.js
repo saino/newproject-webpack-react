@@ -107,6 +107,7 @@ export const getMaterials = packageToken((dispatch, { token, workId }) => {
   post('/user/loadWork', { token, work_id: workId }, resp => {
     dispatch({
       type: actionTypes.GET_MATERIALS,
+      audio: resp.config.audio || '',
       materials: resp.materials || [],
       scenes: resp.config.scenes || [],
       layers: resp.config.layers || [],
@@ -208,10 +209,10 @@ export const createAiRoto = ({ aiRotos }) => ({
 export default (state = defState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIALS:
-      let { materials, scenes, layers, workId, workName } = action;
+      let { materials, scenes, layers, workId, workName, audio } = action;
       const rotos = [].concat.apply([], scenes.map(({ roto = [] }) => roto));
 
-      return { ...state, work_id: workId, work_name: workName, materials, scenes, layers, rotos };
+      return { ...state, work_id: workId, work_name: workName, materials, scenes, layers, rotos, audio };
 
     case actionTypes.DELETE_MATERIAL:
       const { materialId } = action;
