@@ -7,8 +7,11 @@
 	<script type="text/javascript" src="https://cdn.staticfile.org/snap.svg/0.5.1/snap.svg-min.js"></script>
 	<style type="text/css">
 		#container {width: 100vw; height: 100vh;}
-		.outline path {fill: rgba(0, 0, 0, 0.3); stroke: black; stroke-width: 1;}
-		.focus path {fill: none; stroke-width: 2; stroke: lightskyblue;}
+		#container.drawing {cursor: crosshair;}
+		.outline path {fill: transparent; stroke: black; stroke-width: 1;}  /* 必须是半透明才能选中 */
+		.mask path {fill: rgba(0, 0, 0, 0.3); stroke-width: 0;}
+		.focus path, path.selected {stroke-width: 2; stroke: lightskyblue;}
+		.focus path {fill: none;}
 		.control path {stroke: red;}
 		.points circle {fill: white; stroke: blue; stroke-width: 1;}
 		.points circle.selected {fill: lightskyblue;}
@@ -23,19 +26,41 @@
 
 const RADIUS = 3;
 
-var paper = Snap('#container');
-var gPoints, gControlLine, gPath, gPathFocus;
+let paper = Snap('#container');
+let gPoints, gControlLine, gPath, gPathFocus, gMask, gDebug;
 
-var pathData,
+let pathData,
+	mode,	// 操作模式：0 钢笔工具 | 2 曲线选择编辑工具
 	drawStatus,	// 绘制状态：0 未开始 | 1 未闭合 | 2 已闭合
 	dragging,	// 是否拖拽
+	pathSelected,	// 选中曲线
 	pointSelected,	// 选中点
 	movingControl,	// 拖拽的是否是控制点
+	clickTimer,	// 双击计时器
 	lastX,	// 拖拽上下文
-	lastY;
+	lastY,
+	containerOffset;
+
+// 唯一计时器，附带参数一致性检查
+class Timer {
+	isOn(params){
+		return this.timer && this.params == params;
+	}
+	turnOn(params, time){
+		clearTimeout(this.timer);
+		this.params = params;
+		time = time || 500;
+		let self = this;
+		return this.timer = setTimeout(this.turnOff.bind(self), time);
+	}
+	turnOff(){
+		clearTimeout(this.timer);
+		this.timer = undefined;
+	}
+}
 
 class Point {
-	static get CONTROL1() { return 1; }	// 控制点类型1
+	static get CONTROL1() { return 1; }	// 控制点类型1，实际是上一个点的后控制点
 	static get CONTROL2() { return 2; }	// 控制点类型2
 
 	constructor(x, y, cx1, cy1, cx2, cy2){
@@ -59,12 +84,30 @@ class Point {
 			this.cy2 = arr[1];
 		}
 	}
+	removeControl(type){
+		if( type == Point.CONTROL1 ){
+			delete this.cx1;
+			delete this.cy1;
+		} else {
+			delete this.cx2;
+			delete this.cy2;
+		}
+	}
 	getControl(type){
 		return type == Point.CONTROL1 ? [this.cx1, this.cy1] : [this.cx2, this.cy2];
 	}
+	hasControl(type){
+		switch(type){
+			case Point.CONTROL1 : return Number.isFinite(this.cx1);
+			case Point.CONTROL2 : return Number.isFinite(this.cx2);
+			// both
+			case Point.CONTROL1 + Point.CONTROL2 : return Number.isFinite(this.cx1) && Number.isFinite(this.cx2);
+			default: return Number.isFinite(this.cx1) || Number.isFinite(this.cx2);
+		}
+	}
 	getOppositeControl(type){
-		var x = this.x * 2;
-		var y = this.y * 2;
+		let x = this.x * 2;
+		let y = this.y * 2;
 		switch( type ){
 			case Point.CONTROL1:
 				x -= this.cx1;
@@ -100,11 +143,11 @@ class Point {
 		if( moveOnly ){
 			return 'M' + this.x + ' ' + this.y;
 		}
-		if( this.cx1 && this.cx2 ){
+		if( this.hasControl(Point.CONTROL1 | Point.CONTROL2) ){
 			return 'C' + this.cx1 + ' ' + this.cy1 + ' ' + this.cx2 + ' ' + this.cy2 + ' ' + this.x + ' ' + this.y;
-		} else if( this.cx1 || this.cx2 ){
-			var cx = this.cx1 || this.cx2;
-			var cy = this.cy1 || this.cy2;
+		} else if( this.hasControl() ){
+			const cx = this.cx1 || this.cx2;
+			const cy = this.cy1 || this.cy2;
 			return 'Q' + cx + ' ' + cy + ' ' + this.x + ' ' + this.y;
 		}
 		return 'L' + this.x + ' ' + this.y;
@@ -112,12 +155,26 @@ class Point {
 	isInside(x, y){
 		return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) < RADIUS * RADIUS;
 	}
+	add(p){
+		return new Point(this.x + p.x, this.y + p.y);
+	}
+	subtract(p){
+		return new Point(this.x - p.x, this.y - p.y);
+	}
+	length(){
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	}
+	normalize(newLen){
+		const l = this.length() / (newLen || 1);
+		return new Point(this.x / l, this.y / l);
+	}
 }
 
-
 class Path {
-	// TODO: 改成多组
 	constructor() {
+		this.clear();
+	}
+	clear(){
 		this.points = [];
 		this.floatingPoint = false;
 		this.closed = false;
@@ -130,13 +187,13 @@ class Path {
 	}
 	prevPoint(index){
 		if( index > 0 || this.closed ){
-			var i = index > 0 ? index - 1 : this.points.length - 1;
+			const i = index > 0 ? index - 1 : this.points.length - 1;
 			return this.points[i];
 		}
 	}
 	nextPoint(index){
 		if( index < this.points.length - 1 || this.closed ){
-			var i = index < this.points.length - 1 ? index + 1 : 0;
+			const i = index < this.points.length - 1 ? index + 1 : 0;
 			return this.points[i];
 		}
 	}
@@ -148,23 +205,25 @@ class Path {
 		this.floatingPoint = false;
 	}
 	removePoint(p){
-		var i = this.points.indexOf(p);
+		const i = this.points.indexOf(p);
 		this.points.splice(i, 1);
 	}
 	insertPoint(index, p){
 		this.points.splice(index, 0, p);
 	}
 	movePoint(p, dx, dy, movingControl){
-		var i = this.indexOf(p);
+		const i = this.indexOf(p);
 		try {	// 对面控制点不存在就忽略
 			switch( movingControl ){
 				case Point.CONTROL1:
 					p.move(dx, dy, movingControl);
-					this.prevPoint(i).setControl(Point.CONTROL2, this.prevPoint(i).getOppositeControl([p.cx1, p.cy1]));
+					// 不联动
+					// this.prevPoint(i).setControl(Point.CONTROL2, this.prevPoint(i).getOppositeControl([p.cx1, p.cy1]));
 					break;
 				case Point.CONTROL2:
 					p.move(dx, dy, movingControl);
-					this.nextPoint(i).setControl(Point.CONTROL1, p.getOppositeControl(Point.CONTROL2));
+					// 不联动
+					// this.nextPoint(i).setControl(Point.CONTROL1, p.getOppositeControl(Point.CONTROL2));
 					break;
 				default:
 					p.move(dx, dy);
@@ -173,32 +232,143 @@ class Path {
 			}
 		} catch(e) {}
 	}
+	closePath(){
+		if( !this.closed ){
+			if( this.floatingPoint && this.points.length > 1 ){
+				this.closed = true;
+				this.firstPoint().setControl(Point.CONTROL1, this.floatingPoint.getControl(Point.CONTROL1));
+				this.floatingPoint = false;
+				return true;
+			} else {
+				// 点数不足 2 自动删除
+				this.clear();
+				return false;
+			}
+		}
+		// 已闭合的返回 true
+		return true;
+	}
+	// 仅已闭合曲线的 svg string
+	closedPathStr(){
+		let pathStr = '', p;
+
+		for( const i in this.points ){
+			p = this.points[i];
+			pathStr += p.generatePath(i == 0);
+		}
+		if( this.closed ){
+			pathStr += this.firstPoint().generatePath();
+			pathStr += 'Z';
+		}
+		return pathStr;
+	}
 }
 
-var init = function(){
-	drawStatus = 0;
-	dragging = pointSelected = movingControl = false;
-	lastX = lastY = 0;
+class PathList {
+	constructor(){
+		this.list = [];
+	}
+	addPath(){
+		const path = new Path();
+		this.list.push(path);
+		return path;
+	}
+	delPath(path){
+		if( path ){
+			const index = this.list.indexOf(path);
+			this.list.splice(index, 1);
+		}
+	}
+	lastEmpty(){
+		const last = this.list[this.list.length - 1];
+		if( last && last.points.length == 0 ){
+			return last;
+		}
+		return this.addPath();
+	}
+	findByPoint(point){
+		for( const path of this.list ){
+			if( path.indexOf(point) !== -1 ){
+				return path;
+			}
+		}
+		return false;
+	}
+	findInside(x, y, startPath){
+		const from = this.list.indexOf(startPath);
+		let i = from, looped = 0, path;
+		do {
+			++ i;
+			if( i >= this.list.length ){
+				i -= this.list.length;
+				++ looped;
+			}
+			path = this.list[i];
+			if( Snap.path.isPointInside(path.closedPathStr(), x, y) ){
+				return path;
+			}
+		} while( i != from || looped < 2 );	// 从 startPath 后面开始找一个循环
+		return false;
+	}
+}
 
-	pathData = new Path();
+let init = function(){
+	containerOffset = $('#container').offset();
+
+	mode = drawStatus = 0;
+	dragging = pathSelected = pointSelected = movingControl = false;
+	lastX = lastY = 0;
+	clickTimer = new Timer();
+
+	pathData = new PathList();
 
 	paper.clear();
+	gDebug = paper.g();
+	gMask = paper.g();
 	gPath = paper.g();
 	gPathFocus = paper.g();
 	gControlLine = paper.g();
 	gPoints = paper.g();
 
+	gMask.addClass('mask');
 	gPath.addClass('outline');
 	gPathFocus.addClass('focus');
 	gControlLine.addClass('control');
 	gPoints.addClass('points');
+
+	changeMode(0, true);
 }
 
-init();
+let changeMode = function(m, force){
+	if( mode == m && !force) return;
+	if( mode == 0 ){
+		// 从钢笔工具切出时自动闭合或取消
+		if( pathSelected ){
+			pathSelected.closePath();
+		}
+		$('#container').removeClass('drawing');
+	}
+	switch(m){
+		// 钢笔
+		case 0:
+			drawStatus = 0;
+			pathSelected = pointSelected = dragging = movingControl = false;
+			$('#container').addClass('drawing');
+			break;
+		// 曲线选择编辑工具
+		case 2:
+			pointSelected = dragging = movingControl = false;
+			break;
+		default:
+			return;
+	}
+	mode = m;
+	render();
+}
 
-var drawPoint = function(p, prevPoint, isFloating){
-	var className;
-	var circle = paper.circle(p.x, p.y, RADIUS);
+let drawPoint = function(p, prevPoint, isFloating){
+	let className;
+	let circle = paper.circle(p.x, p.y, RADIUS);
 	circle.node.point = p;
 	if( isFloating ){
 		className = 'floating';
@@ -210,172 +380,294 @@ var drawPoint = function(p, prevPoint, isFloating){
 	}
 	gPoints.add(circle);
 
-	if( p.cx1 ){
-		circle = paper.circle(p.cx1, p.cy1, RADIUS);
-		circle.addClass('control');
-		circle.node.targetPoint = p;
-		circle.node.controlType = Point.CONTROL1;
-		gPoints.add(circle);
-		gControlLine.add(paper.path(prevPoint.generatePath(true) + 'L' + p.cx1 + ' ' + p.cy1));
-	}
-	if( p.cx2 ){
-		circle = paper.circle(p.cx2, p.cy2, RADIUS);
-		circle.addClass('control');
-		circle.node.targetPoint = p;
-		circle.node.controlType = Point.CONTROL2;
-		gPoints.add(circle);
-		gControlLine.add(paper.path(p.generatePath(true) + 'L' + p.cx2 + ' ' + p.cy2));
+	// 只有选中段/浮动节点才显示控制点/线
+	// TODO: 只显示选中点的控制点？
+	if( p == pointSelected || prevPoint == pointSelected || isFloating ){
+		if( p.hasControl(Point.CONTROL1) ){
+			circle = paper.circle(p.cx1, p.cy1, RADIUS);
+			circle.addClass('control');
+			circle.node.targetPoint = p;
+			circle.node.controlType = Point.CONTROL1;
+			gPoints.add(circle);
+			gControlLine.add(paper.path(prevPoint.generatePath(true) + 'L' + p.cx1 + ' ' + p.cy1));
+		}
+		if( p.hasControl(Point.CONTROL2) ){
+			circle = paper.circle(p.cx2, p.cy2, RADIUS);
+			circle.addClass('control');
+			circle.node.targetPoint = p;
+			circle.node.controlType = Point.CONTROL2;
+			gPoints.add(circle);
+			gControlLine.add(paper.path(p.generatePath(true) + 'L' + p.cx2 + ' ' + p.cy2));
+		}
 	}
 }
 
-var computePath = function(){
-	var path = '', p;
-	gPoints.clear();
-	gControlLine.clear();
-	// 浮动点本身必须在最下面才会触发固定点的 mousedown
-	//
-	if( pathData.floatingPoint ){
-		drawPoint(pathData.floatingPoint, pathData.lastPoint(), true);
+let drawPath = function(path){
+	const isCurrentPath = (pathSelected == path);
+	let pathStr = '', p;
+
+	for( const i in path.points ){
+		p = path.points[i];
+		pathStr += p.generatePath(i == 0);
+		if( isCurrentPath ){
+			drawPoint(p, path.prevPoint(i));
+		}
+	}
+	if( path.floatingPoint ){
+		if( isCurrentPath ){
+			drawPoint(path.floatingPoint, path.lastPoint(), true);
+		}
+		if( path.points.length > 0 ){	// 只有有固定点的情况浮动点 path 才有效
+			pathStr += path.floatingPoint.generatePath();
+		}
 	}
 
-	for( var i in pathData.points ){
-		p = pathData.points[i];
-		path += p.generatePath(i == 0);
-		drawPoint(p, pathData.prevPoint(i));
+	if( path.closed ){
+		pathStr += path.firstPoint().generatePath();
+		pathStr += 'Z';
 	}
-	if( pathData.points.length > 0 && pathData.floatingPoint ){	// 只有有固定点的情况浮动点 path 才有效
-		path += pathData.floatingPoint.generatePath();
-	}
-	if( pathData.closed ){
-		path += pathData.firstPoint().generatePath();
-		path += 'Z';
-	}
-	gPath.clear();
 
-	gPath.add(paper.path(path).attr('fill-rule', 'evenodd'));	// 多条的情况固定交叉相减，不走顺时针逆时针
-	gPathFocus.clear();
-	if( pointSelected && pathData.points.length > 1 ){
-		var i = pathData.indexOf(pointSelected);
-		if( i > 0 || pathData.closed ){
-			var focusPath = pathData.prevPoint(i).generatePath(true) + pointSelected.generatePath();
+	let svgPath = paper.path(pathStr);
+	// 选中当前 path 的情况高亮
+	if( mode != 0 && isCurrentPath && !pointSelected ){
+		svgPath.addClass('selected');
+	}
+	svgPath.node.path = path;
+	gPath.add(svgPath);
+
+	// 显示选中点前面的线段
+	if( isCurrentPath && pointSelected && path.points.length > 1 ){
+		const i = path.indexOf(pointSelected);
+		if( i > 0 || path.closed ){
+			const focusPath = path.prevPoint(i).generatePath(true) + pointSelected.generatePath();
 			gPathFocus.add(paper.path(focusPath));
 		}
 	}
+	return pathStr;
+}
+
+let render = function(){
+	gPoints.clear();
+	gControlLine.clear();
+	gPath.clear();
+	gPathFocus.clear();
+	gMask.clear();
+
+	// 多条线必须合并成一个 path 才能正确处理交集部分的填充
+	let maskStr = '';
+	for( const path of pathData.list ){
+		maskStr += drawPath(path);
+	}
+	gMask.add(paper.path(maskStr).attr('fill-rule', 'evenodd'));	// 固定交叉相减，不走顺时针逆时针
+
+	// debug
+	gDebug.clear();
+	gDebug.text(0, 20, 'mode: ' + mode);
+	gDebug.text(0, 40, 'drawStatus: ' + drawStatus);
+	gDebug.text(0, 60, 'dragging: ' + dragging);
+	gDebug.text(0, 80, 'pathSelected: ' + (pathSelected ? pathData.list.indexOf(pathSelected) : pathSelected));
+	gDebug.text(0, 100, 'pointSelected: ' + (pointSelected ? pointSelected.x + ',' + pointSelected.y : ''));
+	gDebug.text(0, 120, 'movingControl: ' + movingControl);
+	gDebug.text(0, 140, 'lastX: ' + lastX);
+	gDebug.text(0, 160, 'lastY: ' + lastY);
+	gDebug.text(0, 180, 'paths: ' + pathData.list.length);
+}
+
+// 相对 SVG 容器的坐标，浏览器兼容
+let mouseEventPos = function(event){
+	return {
+		x: event.pageX - containerOffset.left,
+		y: event.pageY - containerOffset.top
+	};
 }
 
 $('body').on('mousedown', function(e){
-	var x = e.offsetX;
-	var y = e.offsetY;
+	const pos = mouseEventPos(e);
+	const x = pos.x;
+	const y = pos.y;
 
-	dragging = true;
-	if( drawStatus == 0 ){
-		pathData.floatingPoint = new Point(x, y);
-		drawStatus = 1;
+	// 钢笔工具
+	if( mode == 0 ){
+		pathSelected = pathSelected || pathData.lastEmpty();
+		dragging = true;
+		// 起点闭合
+		if( drawStatus == 1 && pathSelected.firstPoint().isInside(x, y) ){
+			if( pathSelected.closePath() ){
+				drawStatus = 2;
+			} else {
+				drawStatus = 0;
+			}
+		// 开始画线
+		} else if( drawStatus == 0 ){
+			pathSelected.floatingPoint = new Point(x, y);
+			drawStatus = 1;
+		}
 	}
-	computePath();
+	// 曲线选择编辑工具
+	else if( mode == 2 ) {
+		const targetPoint = e.target.point || e.target.targetPoint;
+		// 未选中曲线时自动选中
+		if( e.target.path ){
+			// 已经选中当前曲线的情况寻找重叠的其它曲线
+			// TODO: 可以考虑改用 delegate 监听所有 .outline path 的冒泡
+			pathSelected = pathData.findInside(x, y, pathSelected) || e.target.path;
+		} else if( targetPoint ){
+			pathSelected = pathData.findByPoint(targetPoint);
+		} else {
+			pathSelected = false;
+		}
+		// 选中节点或控制点的情况
+		if( pathSelected && targetPoint ){
+			// 模拟双击
+			if( clickTimer.isOn(targetPoint) ){
+				const i = pathSelected.indexOf(pointSelected);
+				let next = pathSelected.nextPoint(i);
+				// 双击控制点直接移除
+				if( e.target.targetPoint ){
+					pointSelected.removeControl(e.target.controlType);
+				} else {
+					// 双击有控制点的节点，移除全部控制点
+					if( pointSelected.hasControl(Point.CONTROL2) || next.hasControl(Point.CONTROL1) ){
+						pointSelected.removeControl(Point.CONTROL2);
+						next.removeControl(Point.CONTROL1);
+					// 双击无控制点的节点，自动根据前后节点添加控制点
+					} else {
+						let prev = pathSelected.prevPoint(i);
+						let vector = next.subtract(prev).normalize();
+						let ctrl1 = pointSelected.add(vector.normalize(pointSelected.subtract(prev).length() / 3));
+						let ctrl2 = pointSelected.subtract(vector.normalize(pointSelected.subtract(next).length() / 3));
+						pointSelected.setControl(Point.CONTROL2, [ctrl2.x, ctrl2.y]);
+						next.setControl(Point.CONTROL1, [ctrl1.x, ctrl1.y]);
+					}
+				}
+				clickTimer.turnOff();
+			} else {
+				clickTimer.turnOn(targetPoint);
+				// 选中节点
+				pointSelected = targetPoint;
+				movingControl = false;
+				// 选中控制点
+				if (e.target.targetPoint){
+					movingControl = e.target.controlType;
+				}
+				// 初始化拖拽
+				dragging = true;
+				lastX = x;
+				lastY = y;
+			}
+		} else {
+			pointSelected = false;
+			movingControl = false;
+		}
+	}
+	render();
 });
 
 $('body').on('mousemove', function(e){
-	var x = e.offsetX;
-	var y = e.offsetY;
-	var redraw = false;
-	console.log(drawStatus, dragging);
-	if( !dragging ){
-		if( pathData.floatingPoint || drawStatus == 1 ){
-			pathData.floatingPoint = new Point(x, y);
-			pathData.floatingPoint.setControl(Point.CONTROL1, pathData.lastPoint().getOppositeControl(Point.CONTROL2));
-			// hover 到起点的时候使用起点的控制点2
-			var p1 = pathData.firstPoint();
-			if( pathData.points.length > 1 && p1.isInside(x, y) ){
-				pathData.floatingPoint.setControl(Point.CONTROL2, p1.getControl(Point.CONTROL2));
-			}
-			redraw = true;
-		}
-	} else {
-		redraw = true;
-		switch( drawStatus ){
-			case 1:
-				pathData.floatingPoint.setControl(Point.CONTROL2, pathData.floatingPoint.getOppositeControl([x, y]));
-				break;
-			case 2:
-				pathData.firstPoint().setControl(Point.CONTROL2, pathData.firstPoint().getOppositeControl([x, y]));
-				break;
-			default:
-				if( pointSelected ){
-					console.log( x - lastX);
-					pathData.movePoint(pointSelected, x - lastX, y - lastY, movingControl);
-					lastX = x;
-					lastY = y;
+	const pos = mouseEventPos(e);
+	const x = pos.x;
+	const y = pos.y;
+	let redraw = false;
+
+	if( mode == 0 && pathSelected ){
+		if( !dragging ){
+			if( pathSelected.floatingPoint || drawStatus == 1 ){
+				pathSelected.floatingPoint = new Point(x, y);
+				pathSelected.floatingPoint.setControl(Point.CONTROL1, pathSelected.lastPoint().getOppositeControl(Point.CONTROL2));
+				// hover 到起点的时候使用起点的控制点2
+				const p1 = pathSelected.firstPoint();
+				if( pathSelected.points.length > 1 && p1.isInside(x, y) ){
+					pathSelected.floatingPoint.setControl(Point.CONTROL2, p1.getControl(Point.CONTROL2));
 				}
+				redraw = true;
+			}
+		} else {
+			redraw = true;
+			switch( drawStatus ){
+				// 未闭合联动控制点
+				case 1:
+					pathSelected.floatingPoint.setControl(Point.CONTROL2, pathSelected.floatingPoint.getOppositeControl([x, y]));
+					break;
+				// 闭合中联动控制点
+				case 2:
+					pathSelected.firstPoint().setControl(Point.CONTROL2, pathSelected.firstPoint().getOppositeControl([x, y]));
+					break;
+			}
+		}
+	}
+	// 移动节点
+	else if( mode == 2 && dragging ){
+		if( pointSelected ){
+			pathSelected.movePoint(pointSelected, x - lastX, y - lastY, movingControl);
+			lastX = x;
+			lastY = y;
+			redraw = true;
 		}
 	}
 	if( redraw ){
-		computePath();
+		render();
 	}
-});
-
-$('body').on('mousedown', 'circle:not(.floating)', function(e){
-	var x = e.offsetX;
-	var y = e.offsetY;
-
-	dragging = true;
-	if( drawStatus == 1 ){
-		drawStatus = 2;
-		pathData.closed = true;
-		pathData.firstPoint().setControl(Point.CONTROL1, pathData.floatingPoint.getControl(Point.CONTROL1));
-		pathData.floatingPoint = false;
-	} else {
-		lastX = x;
-		lastY = y;
-		if( e.target.point ){
-			pointSelected = e.target.point;
-		} else if (e.target.targetPoint){
-			pointSelected = e.target.targetPoint;
-			movingControl = e.target.controlType;
-		}
-	}
-	e.stopPropagation();
-	computePath();
 });
 
 $('body').on('mouseup', function(e){
 	if( dragging ){
-		if( pathData.floatingPoint ){
-			pathData.confirmFloating();
+		if( mode == 0 && pathSelected && pathSelected.floatingPoint ){
+			pathSelected.confirmFloating();
 			if( drawStatus == 0 ){
 				drawStatus = 1;
 			}
 		}
 		movingControl = false;
 		dragging = false;
-			computePath();
+		render();
 	}
+	// 闭合完成
 	if( drawStatus == 2 ){
 		drawStatus = 0;
+		pathSelected = false;
+		render();
 	}
 });
 
 $('body').on('keyup', function(e){
 	switch( e.keyCode ){
+		case 49:	// "1"
+			changeMode(0);
+			break;
+		case 50:	// "2"
+			changeMode(2);
+			break;
 		case 8:		// "backspace"
-			if( pointSelected && !movingControl ){
-				pathData.removePoint(pointSelected);
-				pointSelected = false;
-				computePath();
+			if( mode != 0 && pathSelected ){
+				if( pointSelected ){
+					if( !movingControl ){
+						pathSelected.removePoint(pointSelected);
+						pointSelected = false;
+						// 删到最后一个点直接删除整条线
+						if( pathSelected.points.length <= 1 ){
+							pathData.delPath(pathSelected);
+							pathSelected = false;
+						}
+					}
+				} else {
+					pathData.delPath(pathSelected);
+					pathSelected = false;
+				}
+				render();
 			}
 			break;
 		case 220:	// "\"
-			if( pointSelected ){
-				var ele = gPathFocus.children()[0];	// 选中的线段
+			if( mode == 2 && pointSelected ){
+				const ele = gPathFocus.children()[0];	// 选中的线段
 				if( ele ){
-					var length = ele.getTotalLength();
-					var params = Snap.parsePathString(ele.getSubpath(0, length / 2))[1];	// 前半段
-					var p = new Point(params[5], params[6], params[1], params[2], params[3], params[4]);
+					const length = ele.getTotalLength();
+					let params = Snap.parsePathString(ele.getSubpath(0, length / 2))[1];	// 前半段
+					const p = new Point(params[5], params[6], params[1], params[2], params[3], params[4]);
 					params = Snap.parsePathString(ele.getSubpath(length / 2, length))[1];	// 后半段
-					pathData.insertPoint(pathData.indexOf(pointSelected), p);
+					pathSelected.insertPoint(pathSelected.indexOf(pointSelected), p);
 					pointSelected.setControl(Point.CONTROL1, [params[1], params[2]]);
 					pointSelected.setControl(Point.CONTROL2, [params[3], params[4]]);
-					computePath();
+					render();
 				}
 			}
 			break;
@@ -383,15 +675,19 @@ $('body').on('keyup', function(e){
 			init();
 			break;
 		case 27:	// "esc"
+			if( mode == 0 && pathSelected ){
+				pathSelected.closePath();
+			}
 			drawStatus = 0;
 			dragging = false;
-			pathData.floatingPoint = false;
-			pointSelected = false;
+			pathSelected = pointSelected = false;
 			movingControl = false;
-			computePath();
+			render();
 			break;
 	}
 });
+
+init();
 
 </script>
 
