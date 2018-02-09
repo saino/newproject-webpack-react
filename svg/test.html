@@ -125,16 +125,16 @@ class Point {
 		}
 		return [x, y];
 	}
-	move(dx, dy, movingControl){
-		if( movingControl == Point.CONTROL1 && this.cx1 ){
+	move(dx, dy, type){
+		if( type & Point.CONTROL1 && this.hasControl(Point.CONTROL1) ){
 			this.cx1 += dx;
 			this.cy1 += dy;
 		}
-		if( movingControl == Point.CONTROL2 && this.cx2 ){
+		if( type & Point.CONTROL2 && this.hasControl(Point.CONTROL2) ){
 			this.cx2 += dx;
 			this.cy2 += dy;
 		}
-		if( !movingControl ){
+		if( !type ){
 			this.x += dx;
 			this.y += dy;
 		}
@@ -231,6 +231,12 @@ class Path {
 					this.nextPoint(i).move(dx, dy, Point.CONTROL1);
 			}
 		} catch(e) {}
+	}
+	move(dx, dy){
+		for( const p of this.points ){
+			p.move(dx, dy);
+			p.move(dx, dy, Point.CONTROL1 | Point.CONTROL2);
+		}
 	}
 	closePath(){
 		if( !this.closed ){
@@ -516,6 +522,12 @@ $('body').on('mousedown', function(e){
 		} else {
 			pathSelected = false;
 		}
+		// 初始化拖拽
+		if( pathSelected ){
+			dragging = true;
+			lastX = x;
+			lastY = y;
+		}
 		// 选中节点或控制点的情况
 		if( pathSelected && targetPoint ){
 			// 模拟双击
@@ -550,10 +562,6 @@ $('body').on('mousedown', function(e){
 				if (e.target.targetPoint){
 					movingControl = e.target.controlType;
 				}
-				// 初始化拖拽
-				dragging = true;
-				lastX = x;
-				lastY = y;
 			}
 		} else {
 			pointSelected = false;
@@ -595,14 +603,17 @@ $('body').on('mousemove', function(e){
 			}
 		}
 	}
-	// 移动节点
 	else if( mode == 2 && dragging ){
+		// 移动节点
 		if( pointSelected ){
 			pathSelected.movePoint(pointSelected, x - lastX, y - lastY, movingControl);
-			lastX = x;
-			lastY = y;
-			redraw = true;
+		// 移动整条曲线
+		} else {
+			pathSelected.move(x - lastX, y - lastY);
 		}
+		lastX = x;
+		lastY = y;
+		redraw = true;
 	}
 	if( redraw ){
 		render();
