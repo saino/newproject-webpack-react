@@ -200,6 +200,17 @@ class Path {
 	indexOf(p){
 		return this.points.indexOf(p);
 	}
+	prevPointByPoint(point){
+		return this.prevPoint(this.indexOf(point));
+	}
+	// 真实选中的点和它后面的点
+	realSelected(selected, ctrlType){
+		const i = this.indexOf(selected);
+		if( ctrlType == Point.CONTROL1 ){
+			return [this.prevPoint(i), selected];
+		}
+		return [selected, this.nextPoint(i)];
+	}
 	confirmFloating(){
 		this.points.push(this.floatingPoint);
 		this.floatingPoint = false;
@@ -255,12 +266,17 @@ class Path {
 		return true;
 	}
 	// 仅已闭合曲线的 svg string
-	closedPathStr(){
+	svgStr(){
 		let pathStr = '', p;
 
 		for( const i in this.points ){
 			p = this.points[i];
 			pathStr += p.generatePath(i == 0);
+		}
+		if( this.floatingPoint ){
+			if( this.points.length > 0 ){	// 只有有固定点的情况浮动点 path 才有效
+				pathStr += this.floatingPoint.generatePath();
+			}
 		}
 		if( this.closed ){
 			pathStr += this.firstPoint().generatePath();
@@ -310,7 +326,7 @@ class PathList {
 				++ looped;
 			}
 			path = this.list[i];
-			if( Snap.path.isPointInside(path.closedPathStr(), x, y) ){
+			if( Snap.path.isPointInside(path.svgStr(), x, y) ){
 				return path;
 			}
 		} while( i != from || looped < 2 );	// 从 startPath 后面开始找一个循环
@@ -372,7 +388,7 @@ let changeMode = function(m, force){
 	render();
 }
 
-let drawPoint = function(p, prevPoint, isFloating){
+let drawPoint = function(p, isFloating){
 	let className;
 	let circle = paper.circle(p.x, p.y, RADIUS);
 	circle.node.point = p;
@@ -385,53 +401,22 @@ let drawPoint = function(p, prevPoint, isFloating){
 		circle.addClass(className);
 	}
 	gPoints.add(circle);
+}
 
-	// 只有选中段/浮动节点才显示控制点/线
-	// TODO: 只显示选中点的控制点？
-	if( p == pointSelected || prevPoint == pointSelected || isFloating ){
-		if( p.hasControl(Point.CONTROL1) ){
-			circle = paper.circle(p.cx1, p.cy1, RADIUS);
-			circle.addClass('control');
-			circle.node.targetPoint = p;
-			circle.node.controlType = Point.CONTROL1;
-			gPoints.add(circle);
-			gControlLine.add(paper.path(prevPoint.generatePath(true) + 'L' + p.cx1 + ' ' + p.cy1));
-		}
-		if( p.hasControl(Point.CONTROL2) ){
-			circle = paper.circle(p.cx2, p.cy2, RADIUS);
-			circle.addClass('control');
-			circle.node.targetPoint = p;
-			circle.node.controlType = Point.CONTROL2;
-			gPoints.add(circle);
-			gControlLine.add(paper.path(p.generatePath(true) + 'L' + p.cx2 + ' ' + p.cy2));
-		}
-	}
+let drawControlPoint = function(point, type, linkPoint){
+	if( !point || !point.hasControl(type) ) return;
+	const ctrlPoint = point.getControl(type);
+	circle = paper.circle(ctrlPoint[0], ctrlPoint[1], RADIUS);
+	circle.addClass('control');
+	circle.node.targetPoint = point;
+	circle.node.controlType = type;
+	gPoints.add(circle);
+	gControlLine.add(paper.path(linkPoint.generatePath(true) + 'L' + ctrlPoint[0] + ' ' + ctrlPoint[1]));
 }
 
 let drawPath = function(path){
 	const isCurrentPath = (pathSelected == path);
-	let pathStr = '', p;
-
-	for( const i in path.points ){
-		p = path.points[i];
-		pathStr += p.generatePath(i == 0);
-		if( isCurrentPath ){
-			drawPoint(p, path.prevPoint(i));
-		}
-	}
-	if( path.floatingPoint ){
-		if( isCurrentPath ){
-			drawPoint(path.floatingPoint, path.lastPoint(), true);
-		}
-		if( path.points.length > 0 ){	// 只有有固定点的情况浮动点 path 才有效
-			pathStr += path.floatingPoint.generatePath();
-		}
-	}
-
-	if( path.closed ){
-		pathStr += path.firstPoint().generatePath();
-		pathStr += 'Z';
-	}
+	const pathStr = path.svgStr();
 
 	let svgPath = paper.path(pathStr);
 	// 选中当前 path 的情况高亮
@@ -441,11 +426,25 @@ let drawPath = function(path){
 	svgPath.node.path = path;
 	gPath.add(svgPath);
 
-	// 显示选中点前面的线段
-	if( isCurrentPath && pointSelected && path.points.length > 1 ){
-		const i = path.indexOf(pointSelected);
-		if( i > 0 || path.closed ){
-			const focusPath = path.prevPoint(i).generatePath(true) + pointSelected.generatePath();
+	// 只显示当前曲线的点
+	if( isCurrentPath ){
+		for( const p of path.points ){
+			drawPoint(p);
+		}
+		if( mode == 0 ){
+			if( path.floatingPoint ){
+				drawPoint(path.floatingPoint, true);
+			}
+			const draggingPoint = drawStatus == 2 ? path.firstPoint() : path.floatingPoint;
+			drawControlPoint(draggingPoint, Point.CONTROL2, draggingPoint);
+		}
+		if( pointSelected ){
+			// 显示选中点连接的控制点
+			const pts = path.realSelected(pointSelected, movingControl);
+			drawControlPoint(pts[1], Point.CONTROL1, pts[0]);
+			drawControlPoint(pts[0], Point.CONTROL2, pts[0]);
+			// 显示选中点前面的线段
+			const focusPath = path.prevPointByPoint(pointSelected).generatePath(true) + pointSelected.generatePath();
 			gPathFocus.add(paper.path(focusPath));
 		}
 	}
@@ -472,7 +471,7 @@ let render = function(){
 	gDebug.text(0, 40, 'drawStatus: ' + drawStatus);
 	gDebug.text(0, 60, 'dragging: ' + dragging);
 	gDebug.text(0, 80, 'pathSelected: ' + (pathSelected ? pathData.list.indexOf(pathSelected) : pathSelected));
-	gDebug.text(0, 100, 'pointSelected: ' + (pointSelected ? pointSelected.x + ',' + pointSelected.y : ''));
+	gDebug.text(0, 100, 'pointSelected: ' + (pointSelected && pathSelected ? pathSelected.indexOf(pointSelected) : ''));
 	gDebug.text(0, 120, 'movingControl: ' + movingControl);
 	gDebug.text(0, 140, 'lastX: ' + lastX);
 	gDebug.text(0, 160, 'lastY: ' + lastY);
@@ -627,6 +626,10 @@ $('body').on('mouseup', function(e){
 			if( drawStatus == 0 ){
 				drawStatus = 1;
 			}
+		}
+		// 移动控制点 1 的情况要修正回真正选中的点
+		if( mode == 2 && movingControl == Point.CONTROL1 ){
+			pointSelected = pathSelected.prevPointByPoint(pointSelected);
 		}
 		movingControl = false;
 		dragging = false;
