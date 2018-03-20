@@ -26,10 +26,18 @@ baseConfig.devtool = 'cheap-source-map';
  */
 baseConfig.module.rules.push({
   test: /\.css$/i,
+  include: pathEnv.devPath,
+  exclude: pathEnv.staticPath,
   use: ExtractTextPlugin.extract({
     fallback: 'style-loader',
     name: '[name]:[chunkhash:6].css',
-    use: 'css-loader'
+    use: {
+      loader: 'css-loader',
+      options: {
+        modules: true,
+        localIdentName: '[name]__[local]-[hash:base64:3]'
+      }
+    }
   })
 });
 

@@ -37,10 +37,20 @@ baseConfig.devServer = {
  * loader config
  */
 baseConfig.module.rules.push({
-  test: /\.css/i,
+  test: /\.css$/i,
+  include: pathEnv.devPath,
+  exclude: pathEnv.staticPath,
   use: [
-    'style-loader',
-    'css-loader'
+    {
+      loader: 'style-loader'
+    },
+    {
+      loader: 'css-loader',
+      options: {
+        modules: true,
+        localIdentName: '[name]__[local]-[hash:base64:3]'
+      }
+    }
   ]
 });
 
