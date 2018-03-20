@@ -275,6 +275,7 @@ class ComposeWrap extends Component {
             }
         }
         transformString += ")";
+        // console.log(transformString, "kkkkk");
         newLayer.config.transformString = transformString;
         this.props.updateLayers(newLayer);
     }

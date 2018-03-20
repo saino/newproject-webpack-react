@@ -11,6 +11,7 @@ import imageData from './imageData';
 import compose from './compose';
 import userWorks from './userWorks';
 import rotoProcess from './roto-process';
+import work1 from './work1'
 
 const rootReducer = combineReducers({
   app,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   imageData,
   compose,
   userWorks,
-  rotoProcess
+  rotoProcess,
+  work1,
 });
 
 export default rootReducer;
