@@ -9,7 +9,11 @@ export default ({
   api: {
     host: '127.0.0.1',
     port: 9090,
-    timeout: 15000
+    timeout: 15000,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8'
+    }
   },
 
   // 分页

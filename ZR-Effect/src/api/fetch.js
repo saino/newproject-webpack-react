@@ -1,36 +1,19 @@
-// import config from '../config';
+import config from '../config';
+import { parseResp, parseQs } from '../service/format';
 
-function checkErrorCodeStatus (resp: Object) {
+const fetchHeadersConfig = { ...config.api.headers };
+
+function checkErrorCodeStatus (resp) {
   if (resp.errorCode == 0)
     return resp;
 
    throw new Error(resp.errorMessage);
 }
 
-function parseResp (resp: Object) {
-  return resp.json();
-}
-
-function parseQs (qs) {
-  let res = '?', key;
-
-  for (key in qs) {
-    res += `${ encodeURIComponent(key) }=${ encodeURIComponent(qs[ key ]) }&`
-  }
-
-  return res;
-}
-
-const fetchConfig = {
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json; charset=UTF-8'
-  }
-};
-const request = (path: String, method: String, body: Object) => {
+const request = (path, method, body) => {
   const isPost = method.toLowerCase() === 'post';
   const token = body.token;
-  fetchConfig.headers.Token = token;
+  fetchHeadersConfig.Token = token;
   delete body.token;
 
   return fetch(
@@ -42,18 +25,14 @@ const request = (path: String, method: String, body: Object) => {
   .then(checkErrorCodeStatus);
 };
 
-export function get (path: String, qs = {}, success: Function, fail: Function) {
+export function get (path, qs = {}) {
   return request(path, 'GET', qs)
-   .then(resp => success(resp.data))
-   .catch(error => {
-     fail && fail(error.message);
-   });
+   .then(resp => resp)
+   .catch(error => error.message);
 };
 
-export function post (path: String, body = {}, success: Function, fail: Function) {
+export function post (path, body = {}) {
   return request(path, 'POST', body)
-   .then(resp => success(resp.data))
-   .catch(error => {
-     fail && fail(error.message);
-   });
+   .then(resp => resp)
+   .catch(error => error.message);
 };
