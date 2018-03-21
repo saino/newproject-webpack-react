@@ -1,0 +1,39 @@
+{
+  "name": "ZR-Effect",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "react": "^15.5.0",
+    "react-dom": "^15.5.0",
+    "react-loadable": "^5.3.1",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "browser-sync": "^2.23.6",
+    "clean-webpack-plugin": "^0.1.19",
+    "cross-env": "^5.1.4",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "html-webpack-plugin": "^3.0.6",
+    "webpack": "^3.5.1",
+    "webpack-cli": "^2.0.12",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config ./React-Redux-Webpack-Scaffold/conf/dev.config.js",
+    "build": "cross-env NODE_ENV=production ./node_modules/.bin/webpack --config ./React-Redux-Webpack-Scaffold/conf/prod.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

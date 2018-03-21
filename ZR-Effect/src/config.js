@@ -8,7 +8,7 @@ export default ({
   // 数据请求
   api: {
     host: '127.0.0.1',
-    port: 9090,
+    port: 3030,
     timeout: 15000,
     headers: {
       'Accept': 'application/json',

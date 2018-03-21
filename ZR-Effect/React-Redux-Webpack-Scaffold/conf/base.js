@@ -15,19 +15,19 @@ var pathEnv = require('./path-env');
 module.exports = {
   context: pathEnv.rootPath,
   entry: {
-    app: path.join(pathEnv.devPath, 'app.js'),
-    vender: [
+    app: path.join(pathEnv.devPath, 'app.jsx'),
+    vendor: [
       'react',
       'react-dom',
       'redux',
       'react-redux',
-      'react-router',
-      'redux-thunk'
+      'react-router-dom',
+      'react-loadable'
     ]
   },
   output: {
     path: pathEnv.buildPath,
-    publicPath: '/static/'
+    publicPath: '/'
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
@@ -41,8 +41,9 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['es2015'],
+            presets: ['es2015', 'react'],
             plugins: [
+              'syntax-dynamic-import',
               'transform-class-properties',
               'transform-object-rest-spread'
             ]
@@ -77,12 +78,12 @@ module.exports = {
   },
   plugins: [
     new HtmlPlugin({
-      title: '',
-      inject: true
+      title: '量子特效',
+      inject: true,
+      template: pathEnv.rootPath + '/' + 'index.html'
     }),
     new webpack.DefinePlugin({
-      __DEV__: pathEnv.env === 'development',
-      __PROD__: pathEnv.env === 'production'
+      'process.env.NODE_ENV': JSON.stringify(pathEnv.env)
     })
   ]
 };
