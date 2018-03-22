@@ -25,7 +25,8 @@ module.exports = {
       'react-modal-dialog',
       'redux',
       'redux-thunk',
-      'redux-logger'
+      'redux-logger',
+      'antd'
     ]
   },
   output: {

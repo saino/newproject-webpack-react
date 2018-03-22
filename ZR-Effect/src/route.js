@@ -16,6 +16,12 @@ export default function createRoute (store) {
           loader: () => import('./components/layouts/HomePage'),
           loading: LayoutLoading
         }) }></Route>
+        <Route path="/specialeffec" component={
+          Loadable({
+            loader: () => import('./views/special-effec'),
+            loading: LayoutLoading
+          })
+        }></Route>
       </BrowserRouter>
     </Provider>
   );
