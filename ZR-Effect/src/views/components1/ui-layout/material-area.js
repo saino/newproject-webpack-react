@@ -2,18 +2,18 @@ import React, { Component } from "react";
 import MaterialBtn from "./material-btn";
 import AddImg from "../../statics/add.png"
 class MaterialArea extends Component {
-    constructor(props, context){
-        super(props, context);
-        this.state = {
-            materialOfWork: [
-                { type: "audio", name: "音频", active: false },
-                { type: "video", name: "素材1", active: true },
-                { type: "video", name: "素材2", active: false },
-                { type: "video", name: "素材3", active: false },
-                { type: "video", name: "素材4", active: false },
-            ]
-        }
-    }
+    // constructor(props, context){
+    //     super(props, context);
+    //     this.state = {
+    //         materialOfWork: [
+    //             { type: "audio", name: "音频", active: false },
+    //             { type: "video", name: "素材1", active: true },
+    //             { type: "video", name: "素材2", active: false },
+    //             { type: "video", name: "素材3", active: false },
+    //             { type: "video", name: "素材4", active: false },
+    //         ]
+    //     }
+    // }
     render() {
         // console.log(this.props.material);
         const { material } = this.props;

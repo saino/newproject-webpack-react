@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from "moment";
 
-import { changeMaterial } from '../../reducers/work1'
+import { changeMaterial } from '../../../stores/reducers/work'
 
 class EditArea extends Component{
 
