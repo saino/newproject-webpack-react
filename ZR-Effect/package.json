@@ -28,7 +28,9 @@
     "clean-webpack-plugin": "^0.1.19",
     "cross-env": "^5.1.4",
     "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.0.6",
+    "url-loader": "^1.0.1",
     "webpack": "^3.5.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^2.7.1"

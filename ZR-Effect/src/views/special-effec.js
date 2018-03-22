@@ -10,6 +10,7 @@ import StageArea from "./components1/ui-layout/stage-area";
 import OperationArea from "./components1/ui-layout/operation-area";
 import EditArea from "./components1/ui-layout/edit-area";
 import TimeArea from "./components1/ui-layout/time-area";
+// import '../base.css'
 // import { Transform } from 'stream';
 
 class SpecialEffec extends Component {

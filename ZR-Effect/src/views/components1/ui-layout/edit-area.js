@@ -82,6 +82,7 @@ class EditArea extends Component{
                     height: 26px;
                     width: 16px;
                     margin-left: 8px;
+                    line-height: 26px;
                 }
                 .ant-input-number-handler-wrap{
                     display: none;
@@ -93,6 +94,8 @@ class EditArea extends Component{
                     background: #3A686C;
                     color: #fff;
                     padding: 0;
+                    width: 100%;
+                    border: none;
                 }
                 .ant-input-number:hover{
                     border: none;
