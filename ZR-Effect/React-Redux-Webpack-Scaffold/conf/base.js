@@ -24,7 +24,8 @@ module.exports = {
       'react-loadable',
       'redux',
       'redux-thunk',
-      'redux-logger'
+      'redux-logger',
+      'antd'
     ]
   },
   output: {
