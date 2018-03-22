@@ -21,7 +21,7 @@ module.exports = {
       'react-dom',
       'react-redux',
       'react-router-dom',
-      'react-loadable'
+      'react-loadable',
       'redux',
       'redux-thunk',
       'redux-logger'

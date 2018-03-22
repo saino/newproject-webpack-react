@@ -16,6 +16,7 @@
 import { createStore as buildStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
+import reducer from './reducers/reducer';
 
 export default function createStore () {
   return buildStore(
