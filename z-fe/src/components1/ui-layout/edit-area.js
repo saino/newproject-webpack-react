@@ -80,7 +80,7 @@ class EditArea extends Component{
                     {currentMaterial.loop ?  <Icon type="check" /> : null} 
                 </div>
             </div>
-            <TimeControl duration={currentMaterial.duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
+            <TimeControl currentMaterial={currentMaterial} duration={currentMaterial.duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
         </div>)
     }
     onChangeLoop = () => {
