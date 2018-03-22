@@ -19,10 +19,12 @@ module.exports = {
     vendor: [
       'react',
       'react-dom',
-      'redux',
       'react-redux',
       'react-router-dom',
       'react-loadable'
+      'redux',
+      'redux-thunk',
+      'redux-logger'
     ]
   },
   output: {
