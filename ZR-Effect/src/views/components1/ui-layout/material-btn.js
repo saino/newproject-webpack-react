@@ -19,7 +19,7 @@ class MaterialBtn extends Component {
                 {this.props.model.name}
             </div>
             {
-                this.props.model.active ? <div><img src={DeleImg}/></div> : null
+                this.props.model.active ? <div onClick={this.onDeleMaterialClick}><img src={DeleImg}/></div> : null
             }
             <div className={lineClass}/>
             <style>{`
@@ -60,6 +60,18 @@ class MaterialBtn extends Component {
             `}</style>
         </div>
     }
+    onDeleMaterialClick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const {work1, model} = this.props;
+        let materials = work1.material.reduce((materials, materialItem, index)=>{
+            if(materialItem.id!==model.id){
+                materials.push(materialItem);
+            }
+            return materials
+        }, []);
+        this.props.changeMaterial(materials);
+    }
     onMaterialClick = () => {
         const {work1, model} = this.props;
         var material = work1.material.map((materialItem, index)=>{
@@ -69,7 +81,7 @@ class MaterialBtn extends Component {
             }
             return materialItem;
         });
-        work1.material = material;
+        // work1.material = material;
         this.props.changeMaterial(material);
     }
 }

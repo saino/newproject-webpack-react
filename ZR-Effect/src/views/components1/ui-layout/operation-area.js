@@ -13,8 +13,8 @@ class OperationArea extends Component {
             <div className="operation-btn1"><img src={SaveImg}/><div>保存</div></div>
             <div className="operation-btn1"><img src={PubImg} /><div>发布</div></div>
             <div className="operation-bank"></div>
-            <div className="operation-btn2">素材库</div>
-            <div className="operation-btn2">作品库</div>
+            <div className="operation-btn2" onClick={this.onMaterialLibClick}>素材库</div>
+            <div className="operation-btn2" onClick={this.onAudioLibClick}>音频库</div>
             {/* <div className="operation-transform"><img src={TransformImg}/></div> */}
             <div className="operation-icons">
                 <div><img className="operation-icon" src={CancelImg} /></div>
@@ -74,6 +74,12 @@ class OperationArea extends Component {
                 }
             `}</style>
         </div>
+    }
+    onMaterialLibClick = () => {
+        this.props.changeaActiveContainer("material");
+    }
+    onAudioLibClick = () => {
+        this.props.changeaActiveContainer("audio");
     }
 }
 export default OperationArea;

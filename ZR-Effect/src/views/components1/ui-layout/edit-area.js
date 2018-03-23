@@ -9,7 +9,7 @@ import { changeMaterial } from '../../../stores/reducers/work'
 
 class EditArea extends Component{
 
-    getCuurentmaterial() {
+    getcurrentmaterial() {
         const { work1 } = this.props;
         const { material } = work1;
         const currentMaterial = material.filter(materialItem => materialItem.active)[0];
@@ -63,6 +63,12 @@ class EditArea extends Component{
                     color: rgba(196,191,151,1);
                     justify-content: space-around;
                 }
+                .controlz{
+                    padding-left: 16px;
+                    display: flex;
+                    margin-top: 16px;
+                    color: rgba(196,191,151,1);
+                }
                 .input-number-warp{
                     display: flex;
                 }
@@ -86,18 +92,21 @@ class EditArea extends Component{
         </div>
     }
     renderControlMaterial(){
-        const currentMaterial = this.getCuurentmaterial();
+        const currentMaterial = this.getcurrentmaterial();
+        console.log(currentMaterial);
         if (!currentMaterial || !currentMaterial.active){
             return null;
         }
         if (currentMaterial.type === "audio"){
             return this.audioControl();
-        } else{
+        } else if(currentMaterial.type === "image"){
             return this.imageControl();
+        } else if(currentMaterial.type === 'video'){
+            return this.videoControl();
         }
     }
     audioControl() {
-        const currentMaterial = this.getCuurentmaterial();
+        const currentMaterial = this.getcurrentmaterial();
         const { duration } = this.props.work1;
         return (<div>
             <div className="audio-loop">
@@ -106,33 +115,57 @@ class EditArea extends Component{
                     { currentMaterial.loop ?  <Icon type="check" /> : null }
                 </div>
             </div>
-            <TimeControl currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
+            <TimeControl key={currentMaterial.id} currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
         </div>)
     }
     onChangeLoop = () => {
-        const currentMaterial = this.getCuurentmaterial();
+        const currentMaterial = this.getcurrentmaterial();
         currentMaterial.loop = !currentMaterial.loop;
         this.props.changeMaterial(currentMaterial);
     }
     imageControl() {
-        const currentMaterial = this.getCuurentmaterial();
+        const currentMaterial = this.getcurrentmaterial();
         const { duration } = this.props.work1;
         return (<div>
-            {/* <div className=""> */}
             <div className="control">
-                <div className="input-number-warp">宽<InputNumber className="input-number" min={0} /></div>
-                <div className="input-number-warp">高<InputNumber className="input-number" min={0} /></div>
+                <div className="input-number-warp">宽<InputNumber className="input-number" min={0} value={currentMaterial.width} onChange={this.onWorkPropChange("width")}/></div>
+                <div className="input-number-warp">高<InputNumber className="input-number" min={0} value={currentMaterial.height} onChange={this.onWorkPropChange("height")}/></div>
+            </div>
+            <div className="controlz">
+                <div className="input-number-warp">旋转 <InputNumber className="input-number" value={currentMaterial.rotateZ} onChange={this.onWorkPropChange("rotateZ")}/> </div>
             </div>
             <div className="control">
-                <div>旋转</div>
+                <div className="input-number-warp">X<InputNumber className="input-number" min={0} value={currentMaterial.positionX} onChange={this.onWorkPropChange("positionX")}/></div>
+                <div className="input-number-warp">Y<InputNumber className="input-number" min={0} value={currentMaterial.positionY} onChange={this.onWorkPropChange("positionY")}/></div>
             </div>
-            <div className="control">
-                <div className="input-number-warp">X<InputNumber className="input-number" min={0} /></div>
-                <div className="input-number-warp">Y<InputNumber className="input-number" min={0} /></div>
-            </div>
-            {/* </div> */}
-            <TimeControl currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
+            <TimeControl key={currentMaterial.id} currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
         </div>)
+    }
+    videoControl() {
+        const currentMaterial = this.getcurrentmaterial();
+        const { duration } = this.props.work1;
+        return (<div>
+            <div className="control">
+                <div className="input-number-warp">宽<InputNumber className="input-number" min={0} value={currentMaterial.width} onChange={this.onWorkPropChange("width")} /></div>
+                <div className="input-number-warp">高<InputNumber className="input-number" min={0} value={currentMaterial.height} onChange={this.onWorkPropChange("height")} /></div>
+            </div>
+            <div className="controlz">
+                <div className="input-number-warp">旋转 <InputNumber className="input-number" value={currentMaterial.rotateZ} onChange={this.onWorkPropChange("rotateZ")} /> </div>
+            </div>
+            <div className="control">
+                <div className="input-number-warp">X<InputNumber className="input-number" min={0} value={currentMaterial.positionX} onChange={this.onWorkPropChange("positionX")} /></div>
+                <div className="input-number-warp">Y<InputNumber className="input-number" min={0} value={currentMaterial.positionY} onChange={this.onWorkPropChange("positionY")} /></div>
+            </div>
+            <TimeControl key={currentMaterial.id} currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
+        </div>)
+    }
+    onWorkPropChange(prop){
+        return (value) => {
+            if (value == undefined || isNaN(value)) { return; }
+            const currentMaterial = this.getcurrentmaterial();
+            currentMaterial[prop] = value;
+            this.props.changeMaterial(currentMaterial);
+        }
     }
 }
 
