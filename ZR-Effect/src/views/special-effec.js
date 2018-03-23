@@ -10,9 +10,20 @@ import StageArea from "./components1/ui-layout/stage-area";
 import OperationArea from "./components1/ui-layout/operation-area";
 import EditArea from "./components1/ui-layout/edit-area";
 import TimeArea from "./components1/ui-layout/time-area";
-// import { Transform } from 'stream';
+
+import StageContainer from "./components1/ui-layout/stage-container";
+import MaterialContainer from "./components1/ui-layout/material-container";
+import AudioContainer from "./components1/ui-layout/audio-container";
 
 class SpecialEffec extends Component {
+
+    constructor(){
+        super();
+        this.state = {
+            activeContainer: "stage",
+        }
+    }
+
     render(){
         const { video, material, workName } = this.props.work1;
         return (
@@ -20,9 +31,11 @@ class SpecialEffec extends Component {
                 <HeaderNav/>
                 <Container>
                     <div className="container-layout"> 
-                        <MaterialArea material={material}></MaterialArea>
-                        <StageArea></StageArea>
-                        <OperationArea></OperationArea>
+                        <MaterialArea material={material} changeaActiveContainer={this.changeaActiveContainer}></MaterialArea>
+                        <StageArea>
+                            {this.renderContainer()}
+                        </StageArea>
+                        <OperationArea changeaActiveContainer={this.changeaActiveContainer}></OperationArea>
                         <EditArea material={material}></EditArea>
                     </div>
                     <TimeArea></TimeArea>
@@ -35,6 +48,23 @@ class SpecialEffec extends Component {
                 `}</style>
             </div>
         );
+    }
+    renderContainer = () => {
+        switch (this.state.activeContainer) {
+            case "stage":
+                return <StageContainer />;
+            case "material":
+                return <MaterialContainer />;
+            case "audio":
+                return <AudioContainer />;
+            default:
+                return <StageContainer />;
+        }
+    }
+    changeaActiveContainer = (containerName) => {
+        this.setState({
+            activeContainer: containerName
+        });
     }
 }
 

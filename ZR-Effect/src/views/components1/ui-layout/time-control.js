@@ -1,6 +1,11 @@
 import React, {Component} from "react";
 import { InputNumber } from "antd";
 import moment from "moment";
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import { changeMaterial } from '../../../stores/reducers/work'
+
 class TimeControl extends Component{
     constructor() {
         super();
@@ -28,6 +33,7 @@ class TimeControl extends Component{
         }
     }
     componentWillMount() {
+        console.log("xxxxxxx");
         let { duration, timeStart, timeEnd } = this.props;
         const maxDurationEndHour = moment.duration(duration * 1000).hours();
         const maxDurationEndMinute = moment.duration(duration * 1000).minutes();
@@ -188,8 +194,7 @@ class TimeControl extends Component{
     onTimeChange = (time, min, max) => {
         return (value) => {
             
-            if(value==undefined || isNaN(value)){ console.log("ddddddkkkkkkkk",value); return; }
-            // console.log('ddddd', value, "lll");
+            if(value==undefined || isNaN(value)){ return; }
             if(value>max){
                 value = max;
             }
@@ -198,6 +203,11 @@ class TimeControl extends Component{
             }
             this.state[time] = value;
             this.changeTime();
+            const {currentMaterial} = this.props;
+            currentMaterial.timeStart = this.getStartTime();
+            currentMaterial.timeEnd = this.getEndTime();
+            this.props.changeMaterial(currentMaterial);
+            // console.log(this.props);
         }
     }
     getStartTime(){
@@ -218,4 +228,16 @@ class TimeControl extends Component{
     }
 }
 
-export default TimeControl;
+const mapStateToProps = ({work1}) => {
+    return {
+        work1
+    };
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TimeControl);
