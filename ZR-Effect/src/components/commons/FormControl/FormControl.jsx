@@ -1,13 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import style from './style.css';
 
 export default class FormControl extends Component {
-  static propTypes = {
-    formItems: PropTypes.array.isRequired
-  };
-
-  focusHandle = (rules, handle) => (e) => {
+  focusHandle = (rules) => (e) => {
     const value = e.target.value;
     const validRes = rules.every(rule => rule(value));
 
@@ -15,32 +11,17 @@ export default class FormControl extends Component {
   };
 
   blurHandle = () => {
-
+    
   };
 
-  createFormItemComponent = ({ rules, Com }) => (
-    <li>
-      <Com onFocus={ this.focusHandle(rules) }></Com>
-    </li>
-  );
-
   render() {
-    const { formItems } = this.props;
-
-    return (
-      <div className={ style.wrapper }>
-        <ul>
-          {
-            formItems.map(
-              formItem => this.createFormItemComponent(formItem)
-            )
-          }
-        </ul>
-      </div>
+    return Children.map(this.props.children, Com =>
+      cloneElement(Com, {
+        ...Com.props
+      }), cloneElement(Com.props.children, {
+        ...Com.props.children.props,
+        onFocus: this.focusHandle(Com.props.rules)
+      });
     );
-  }
-
-  componentDidMount() {
-
   }
 }

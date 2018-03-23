@@ -22,7 +22,6 @@ module.exports = {
       'react-redux',
       'react-router-dom',
       'react-loadable',
-      'react-modal-dialog',
       'redux',
       'redux-thunk',
       'redux-logger',

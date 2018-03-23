@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+.login-panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 360px;
+  transform: translate(-50%,-50%);
+}
