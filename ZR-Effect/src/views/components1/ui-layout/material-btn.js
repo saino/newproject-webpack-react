@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import ClassNames from "classnames"
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { changeMaterial } from '../../../stores/reducers/work';
+import { changeMaterial } from '../../../stores/reducers/work'
 
 import VideoImg from "../../statics/pic.png";
 import AudioImg from "../../statics/audio.png";

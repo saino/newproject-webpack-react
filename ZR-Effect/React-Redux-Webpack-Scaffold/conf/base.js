@@ -25,7 +25,8 @@ module.exports = {
       'redux',
       'redux-thunk',
       'redux-logger',
-      'antd'
+      'antd',
+      'moment'
     ]
   },
   output: {
@@ -60,6 +61,7 @@ module.exports = {
       {
         test: /\.(png|jpg|jpeg|gif)$/i,
         use: {
+          // loader: 'url-loader',
           loader: 'url-loader',
           options: {
             limit: 10240, // 10kb以下的图片使用base64

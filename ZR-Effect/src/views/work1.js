@@ -6,6 +6,7 @@ const defaultState = {
         { id: "video0001", src: "../../statics/aaa.mp4", order: 2},
         { id: "video0002", src: "../../statics/bbb.mp4", order: 1}
     ],
+    duration: 9789,
     material: [{
         id: "material0001",
         type: "video",
@@ -13,8 +14,18 @@ const defaultState = {
         name: "视频素材",
         active: false,
         order: 1,
-        timeStart: "",
-        timeEnd: "",
+        timeStart: {
+            hour: "",
+            minute: "",
+            second: "",
+            millisecond: "",
+        },
+        timeEnd: {
+            hour: "",
+            minute: "",
+            second: "",
+            millisecond: "",
+        },
         width: "",
         height: "",
         positionX: "",
@@ -35,8 +46,18 @@ const defaultState = {
         name: "图片素材",
         active: true,
         order: 2,
-        timeStart: "",
-        timeEnd: "",
+        timeStart: {
+            hour: "",
+            minute: "",
+            second: "",
+            millisecond: "",
+        },
+        timeEnd: {
+            hour: "",
+            minute: "",
+            second: "",
+            millisecond: "",
+        },
         width: "",
         height: "",
         positionX: "",
@@ -57,9 +78,18 @@ const defaultState = {
         name: "音频素材",
         active: false,
         loop: false,
-        timeStart: "",
-        timeEnd: "",
-        duration: 3789
+        timeStart: {
+            hour: "",
+            minute: "",
+            second: "",
+            millisecond: "",
+        },
+        timeEnd: {
+            hour: "",
+            minute: "",
+            second: "",
+            millisecond: "",
+        },
     }],
 };
 

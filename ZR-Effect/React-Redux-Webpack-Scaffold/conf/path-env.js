@@ -2,9 +2,10 @@ var path = require('path');
 var rootPath = path.join(__dirname, '..', '..');
 
 module.exports = {
-  rootPath: rootPath,                         // 项目根目录
-  devPath: path.join(rootPath, 'src'),        // 开发目录
-  staticPath: path.join(rootPath, 'static'),  // 静态资源目录
-  buildPath: path.join(rootPath, 'build'),    // 打包目录
-  env: process.env.NODE_ENV.trim()             // 当前环境
+  rootPath: rootPath,                              // 项目根目录
+  devPath: path.join(rootPath, 'src'),             // 开发目录
+  vendorPath: path.join(rootPath, 'node_modules'), // 第三方包目录
+  staticPath: path.join(rootPath, 'static'),       // 静态资源目录
+  buildPath: path.join(rootPath, 'build'),         // 打包目录
+  env: process.env.NODE_ENV.trim()                 // 当前环境
 };

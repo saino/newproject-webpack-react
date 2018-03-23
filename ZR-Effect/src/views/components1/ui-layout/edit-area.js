@@ -1,8 +1,9 @@
 import React, {Component} from "react";
-import { Icon, InputNumber  } from "antd"
+import { Icon, InputNumber, Input, Radio, Button } from "antd"
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import moment from "moment";
+import TimeControl from './time-control';
 
 import { changeMaterial } from '../../../stores/reducers/work'
 
@@ -55,53 +56,31 @@ class EditArea extends Component{
                     color: #fff;
                     cursor: pointer;
                 }
-                .time{
+                .control{
                     display: flex;
-                    height: 26px;
+                    // padding-left: 16px;
                     margin-top: 16px;
-                    color: #C4BF97;
-                    padding-left: 16px;
-                    font-size: 14px;
-                    line-height: 26px;
+                    color: rgba(196,191,151,1);
+                    justify-content: space-around;
                 }
-                .time-input{
-                    height: 26px;
-                    width: 136px;
-                    background: #3A686C;
-                    color: #fff;
-                    margin-left: 16px;
-                    padding: 6px 8px;
+                .input-number-warp{
                     display: flex;
-                    line-height: 10px;
                 }
-                .time1{
-                    background: #3A686C;
-                    color: #fff;
-                    border: none;
-                    margin-top: -6px;
-                    height: 26px;
-                    width: 16px;
-                    margin-left: 8px;
-                }
-                .ant-input-number-handler-wrap{
-                    display: none;
-                }
-                .ant-input-number-input-wrap{
-                    background: #3A686C;
-                }
-                .ant-input-number-input{
-                    background: #3A686C;
-                    color: #fff;
-                    padding: 0;
-                }
-                .ant-input-number:hover{
-                    border: none;
-                }
-                .ant-input-number-focused{
-                    -webkit-box-shadow: none;
-                    box-shadow: none;
+                .input-number{
+                    width: 64px;
+                    margin-left: 16px;
                     outline: none;
-                    border:none;
+                    border: none;
+                    list-style: none;
+                    height: 26px;
+                    padding-left: 6px;
+                    background: #3A686C;
+                    border-radius: 0;
+                }
+                .input-number input{
+                    width: 100%;
+                    border: none;
+                    line-height: 26px;
                 }
             `}</style>
         </div>
@@ -119,36 +98,15 @@ class EditArea extends Component{
     }
     audioControl() {
         const currentMaterial = this.getCuurentmaterial();
-        // console.log(currentMaterial);
-        if (!currentMaterial.timeStart){
-            currentMaterial.timeStart = "00:00:00.00"
-        }
-        let endHour = moment.duration(currentMaterial.duration * 1000).hours();
-        let endMinute = moment.duration(currentMaterial.duration * 1000).minutes();
-        let endSecond = moment.duration(currentMaterial.duration * 1000).seconds();
-        let endMillisecond = moment.duration(currentMaterial.duration * 1000).milliseconds();
-        // console.log(hourEnd, minuteEnd, secondEnd, milliseconds);
+        const { duration } = this.props.work1;
         return (<div>
             <div className="audio-loop">
                 循环播放 
                 <div className="isloop" onClick={this.onChangeLoop}> 
-                    {currentMaterial.loop ?  <Icon type="check" /> : null} 
+                    { currentMaterial.loop ?  <Icon type="check" /> : null }
                 </div>
             </div>
-            <div>
-                <div className="time">开始时间 <div className="time-input">
-                    <InputNumber className="time1 startHour" min="0" max={23} defaultValue="0"/>:
-                    <InputNumber className="time1 startMinute" min="0" max="59" defaultValue="0"/>:
-                    <InputNumber className="time1 startSecond" min="0" max="59" defaultValue="0"/>.
-                    <InputNumber className="time1 startMillisecond" min="0" max="99" defaultValue="0"/>
-                </div></div>
-                <div className="time">结束时间 <div className="time-input">
-                    <InputNumber className="time1 endHour" min="0" max={23} defaultValue={endHour}/>:
-                    <InputNumber className="time1 endMinute" min="0" max="59" defaultValue={endMinute}/>:
-                    <InputNumber className="time1 endSecond" min="0" max="59" defaultValue={endSecond}/>.
-                    <InputNumber className="time1 endMillisecond" min="0" max="99" defaultValue={endMillisecond}/>
-                </div></div>
-            </div>
+            <TimeControl currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
         </div>)
     }
     onChangeLoop = () => {
@@ -157,7 +115,24 @@ class EditArea extends Component{
         this.props.changeMaterial(currentMaterial);
     }
     imageControl() {
-
+        const currentMaterial = this.getCuurentmaterial();
+        const { duration } = this.props.work1;
+        return (<div>
+            {/* <div className=""> */}
+            <div className="control">
+                <div className="input-number-warp">宽<InputNumber className="input-number" min={0} /></div>
+                <div className="input-number-warp">高<InputNumber className="input-number" min={0} /></div>
+            </div>
+            <div className="control">
+                <div>旋转</div>
+            </div>
+            <div className="control">
+                <div className="input-number-warp">X<InputNumber className="input-number" min={0} /></div>
+                <div className="input-number-warp">Y<InputNumber className="input-number" min={0} /></div>
+            </div>
+            {/* </div> */}
+            <TimeControl currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
+        </div>)
     }
 }
 

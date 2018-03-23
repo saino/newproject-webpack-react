@@ -5,13 +5,11 @@ import style from './style.css';
 export default class Home extends Component {
   render() {
     return (
-      <div className={ style.wrapper }>
-        <div className={ style.wrapperInner }>
-          <div className="login-panel">
+      <div>
+        <div className="login-panel">
 
-            {/* 登录框 */}
-            <LoginPage isShow={ true } />
-          </div>
+          {/* 登录框 */}
+          <LoginPage isShow={ true } width={ 360 } />
         </div>
       </div>
     );
