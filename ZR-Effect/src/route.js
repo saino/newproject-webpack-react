@@ -17,17 +17,18 @@ export default function createRoute (store) {
       <BrowserRouter>
         <Switch>
           {/* <Route exact path="/specialeffec" component={SpecialEffec}/> */}
-          <Route exact path="/" component={ Loadable({
-            // loader: () => import('./components/layouts/HomePage'),
-            loader: () => import('./views/special-effec'),
-            loading: LayoutLoading
-          }) }></Route>
           <Route exact path="/specialeffec" component={
             Loadable({
               loader: () => import('./views/special-effec'),
               loading: LayoutLoading
             })
           }></Route>
+          <Route exact path="/" component={ Loadable({
+            loader: () => import('./components/layouts/HomePage'),
+            // loader: () => import('./views/special-effec'),
+            loading: LayoutLoading
+          }) }></Route>
+          
         </Switch>
       </BrowserRouter>
     </Provider>
