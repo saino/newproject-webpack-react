@@ -1,7 +1,6 @@
 /**
  * webpack开发环境下配置文件
  */
-
 var webpack = require('webpack');
 var pathEnv = require('./path-env');
 var baseConfig = require('./base');
@@ -46,8 +45,20 @@ baseConfig.devServer = {
  */
 baseConfig.module.rules.push({
   test: /\.css$/i,
-  include: pathEnv.devPath,
-  exclude: pathEnv.staticPath,
+  include: pathEnv.vendorPath,
+  use: [
+    {
+      loader: 'style-loader'
+    },
+    {
+      loader: 'css-loader'
+    }
+  ]
+});
+
+baseConfig.module.rules.push({
+  test: /\.css$/i,
+  exclude: [ pathEnv.staticPath, pathEnv.vendorPath ],
   use: [
     {
       loader: 'style-loader'
