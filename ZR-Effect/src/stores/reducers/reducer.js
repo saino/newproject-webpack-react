@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import user from './user';
-import work1 from './work'
+import work1 from './work';
+// import material from './material';
 
 export default combineReducers({
   user,
-  work1
+  work1,
+  // material
 });

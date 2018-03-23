@@ -33,7 +33,6 @@ class TimeControl extends Component{
         }
     }
     componentWillMount() {
-        console.log("xxxxxxx");
         let { duration, timeStart, timeEnd } = this.props;
         const maxDurationEndHour = moment.duration(duration * 1000).hours();
         const maxDurationEndMinute = moment.duration(duration * 1000).minutes();
