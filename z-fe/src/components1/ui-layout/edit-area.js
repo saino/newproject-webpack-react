@@ -56,7 +56,24 @@ class EditArea extends Component{
                     color: #fff;
                     cursor: pointer;
                 }
-                
+                .control{
+                    display: flex;
+                    // padding-left: 16px;
+                    margin-top: 16px;
+                    color: rgba(196,191,151,1);
+                    justify-content: space-around;
+                }
+                .input-number{
+                    width: 64px;
+                    margin-left: 16px;
+                    outline: none;
+                    border: none;
+                    list-style: none;
+                    height: 26px;
+                    padding-left: 6px;
+                    background: #3A686C;
+                    border-radius: 0;
+                }
             `}</style>
         </div>
     }
@@ -73,6 +90,7 @@ class EditArea extends Component{
     }
     audioControl() {
         const currentMaterial = this.getCuurentmaterial();
+        const { duration } = this.props.work1;
         return (<div>
             <div className="audio-loop">
                 循环播放 
@@ -80,7 +98,7 @@ class EditArea extends Component{
                     {currentMaterial.loop ?  <Icon type="check" /> : null} 
                 </div>
             </div>
-            <TimeControl currentMaterial={currentMaterial} duration={currentMaterial.duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
+            <TimeControl currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd}/>
         </div>)
     }
     onChangeLoop = () => {
@@ -89,7 +107,24 @@ class EditArea extends Component{
         this.props.changeMaterial(currentMaterial);
     }
     imageControl() {
-
+        const currentMaterial = this.getCuurentmaterial();
+        const { duration } = this.props.work1;
+        return (<div>
+            {/* <div className=""> */}
+            <div className="control">
+                <div className="input-number-warp">宽<InputNumber className="input-number" min="0" /></div>
+                <div className="input-number-warp">高<InputNumber className="input-number" min="0" /></div>
+            </div>
+            <div className="control">
+                <div>旋转</div>
+            </div>
+            <div className="control">
+                <div className="input-number-warp">X<InputNumber className="input-number" min="0" /></div>
+                <div className="input-number-warp">Y<InputNumber className="input-number" min="0" /></div>
+            </div>
+            {/* </div> */}
+            <TimeControl currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
+        </div>)
     }
 }
 

@@ -6,6 +6,7 @@ const defaultState = {
         { id: "video0001", src: "../../statics/aaa.mp4", order: 2},
         { id: "video0002", src: "../../statics/bbb.mp4", order: 1}
     ],
+    duration: 9789,
     material: [{
         id: "material0001",
         type: "video",
@@ -89,7 +90,6 @@ const defaultState = {
             second: "",
             millisecond: "",
         },
-        duration: 3789
     }],
 };
 
