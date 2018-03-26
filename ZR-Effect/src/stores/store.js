@@ -16,12 +16,13 @@
 import { createStore as buildStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
+import fetchToken from './middlewares/fetch-token';
 import reducer from './reducers/reducer';
 
 export default function createStore () {
-  return buildStore(
-    reducer,
+  return buildStore(reducer,
     compose(
+      applyMiddleware(fetchToken),
       applyMiddleware(thunk),
       applyMiddleware(logger)
     )

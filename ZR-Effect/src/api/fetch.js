@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import config from '../config';
 import { parseResp, parseQs } from '../service/format';
 
@@ -18,7 +19,7 @@ const request = (path, method, body) => {
 
   return fetch(
     //`${ config.api.host }${ path }${ isPost ? '' : parseQs(body) }`,
-    `${ path }${ isPost ? '' : parseQs(body) }`,
+    `${ config.api.path }${ path }${ isPost ? '' : parseQs(body) }`,
     {...fetchHeadersConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
   )
   .then(parseResp)
@@ -27,12 +28,15 @@ const request = (path, method, body) => {
 
 export function get (path, qs = {}) {
   return request(path, 'GET', qs)
-   .then(resp => resp)
-   .catch(error => error.message);
+   .then(resp => resp);
 };
 
 export function post (path, body = {}) {
   return request(path, 'POST', body)
-   .then(resp => resp)
-   .catch(error => error.message);
+   .then(resp => resp);
 };
+
+export function error (messageText, errorFunc) {
+  message.error(messageText)
+  errorFunc && errorFunc();
+}

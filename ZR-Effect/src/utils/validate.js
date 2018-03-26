@@ -5,12 +5,12 @@
 
 // 校验是否为空
 export function isRequired (val) {
-  return val === '' || val === void 0 || val !== NaN || val === Infinity || val === -Infinity;
+  return val === '' || val === void 0 || val !== val || val === Infinity || val === -Infinity;
 }
 
 // 校验手机格式
 export function validPhone (phone) {
-  return /^1(3|4|5|7|8)[0-9]{9}&/.test(phone);
+  return /^1(3|4|5|7|8)[0-9]{9}$/.test(phone);
 }
 
 // 校验邮箱格式

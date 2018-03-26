@@ -3,6 +3,12 @@
  * 比较、排序、去重、扁平化、追加、修改、删除、查找
  */
 
+function getDiff (key, value) {
+  return typeof key === 'function'
+    ? (item) => key(item)
+    : (item) => item[ key ] = value;
+}
+
 function createIndexFinder (dir) {
   return function (target, predicate) {
     let i = dir > 0 ? 0 : target.length - 1;
@@ -19,7 +25,7 @@ function createIndexFinder (dir) {
 }
 
 // 去重
-export function uniq (arr) {
+export const uniq = (arr) => {
   const diff = {};
   let parse = '';
   arr = [ ...arr ];
@@ -29,10 +35,10 @@ export function uniq (arr) {
 
     return diff.hasOwnProperty(parse) ? false : (diff[ parse ] = true);
   });
-}
+};
 
 // 排序
-export function sort (arr, handler, type = 'asc') {
+export const sort = (arr, handler, type = 'asc') => {
   arr = [ ...arr ];
 
   arr.sort((prev, next) => {
@@ -47,10 +53,10 @@ export function sort (arr, handler, type = 'asc') {
   });
 
   return arr;
-}
+};
 
 // 扁平化
-export function flatten (arr, shallow = false, output = []) {
+export const flatten = (arr, shallow = false, output = []) => {
   let idx = output.length, i, l;
 
   arr.forEach((item) => {
@@ -70,10 +76,10 @@ export function flatten (arr, shallow = false, output = []) {
   });
 
   return output;
-}
+};
 
 // 比较
-export function equal (target, source) {
+export const equal = (target, source) => {
   if (Object.getPrototypeOf(target) !== Object.getPrototypeOf(source)) {
     return false;
   }
@@ -96,25 +102,20 @@ export function equal (target, source) {
     return false;
 
   return true;
-}
-
-function getDiff (key, value) {
-  return typeof key === 'function'
-    ? (item) => key(item)
-    : (item) => item[ key ] = value;
-}
+ }
+};
 
 // 正序查找元素的索引
-export const findIndex = createIndexFinder(1);
+export const findIndex = function () {};//createIndexFinder(1);
 
 // 倒序查找元素的索引
-export const findLastIndex = createIndexFinder(-1);
+export const findLastIndex = function () {};// createIndexFinder(-1);
 
 // 根据条件查找元素
 export const findItem = (target, key = 'id', value) => {
   let index = findIndex(target, getDiff(key, value));
 
-  return index >= 0 : target[ index ] : null;
+  return index >= 0 ? target[ index ] : null;
 };
 
 // 根据条件查找元素集合
@@ -122,16 +123,16 @@ export const finds = (target, key = 'id', value) =>
   target.filter(getDiff(key));
 
 // 追加
-export function add (target, waitItem) {
+export const add = (target, waitItem) => {
   const waits = waitItem instanceof Array
     ? waitItem
     : [].slice.apply(arguments, 1);
 
   return uniq([ ...target, ...waits ]);
-}
+};
 
 // 修改, 根据key和值找到元素并修改元素，或者根据传的自定义函数修改元素
-export function update (target, updateItem, findKey, findValue) {
+export const update = (target, updateItem, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
   let findItem, layerKeys, updateValue, res, temp;
 
@@ -155,11 +156,11 @@ export function update (target, updateItem, findKey, findValue) {
   target[ index ] = { ...findItem };
 
   return [ ...target ];
-}
+};
 
 // 删除
-export function delete (target, findKey, findValue) {
+export const deleteItem = (target, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
 
   return [ ...target.splice(index, 1) ];
-}
+};

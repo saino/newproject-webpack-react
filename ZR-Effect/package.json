@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "antd": "^2.13.13",
+    "jwt-simple": "^0.5.1",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
     "react": "^15.5.0",
