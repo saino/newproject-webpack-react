@@ -27,6 +27,7 @@ baseConfig.devtool = 'cheap-eval-source-map';
 baseConfig.devServer = {
   hot: true,
   inline: true,
+  historyApiFallback: true,
   contentBase: pathEnv.buildPath,
   port: 9000,
   stats: { colors: true },

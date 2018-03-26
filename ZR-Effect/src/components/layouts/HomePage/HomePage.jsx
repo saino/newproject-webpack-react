@@ -18,14 +18,12 @@ export default class Home extends Component {
     const { isShow } = this.state;
 
     return (
-      <div>
-        <div className="login-panel">
-          {/* 登录框 */}
-          <LoginPage
-            isShow={ isShow }
-            width={ 360 }
-            onClose={ () => this.configureLoginDialogHandle(false) } />
-        </div>
+      <div className="login-panel">
+        {/* 登录框 */}
+        <LoginPage
+          isShow={ isShow }
+          width={ 360 }
+          onClose={ () => this.configureLoginDialogHandle(false) } />
       </div>
     );
   }
