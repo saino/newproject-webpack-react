@@ -35,5 +35,9 @@ export default ({
   // 分页
   page: {
     size: 10
+  },
+  // 对话框
+  dialog: {
+    width: 360
   }
 });

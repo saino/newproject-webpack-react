@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Modal, Input, Checkbox, message } from 'antd';
 import { isRequired, validPhone } from '../../../utils/validate';
-import decodeToken from '../../../utils/decode-token';
 import defferPerform from '../../../utils/deffer-perform';
 import { set } from '../../../utils/configure-auth';
 import { login, recordUser } from '../../../stores/action-creators/app-creator';
@@ -28,9 +27,6 @@ class LoginPage extends Component {
     // 登录前处理（一般是前端验证）
     this.loginBeforeHandle = () => {
       let { phone, password } = this.state;
-
-      phone = phone.trim();
-      password = password.trim();
 
       if (isRequired(phone)) {
         message.error('手机号不能为空');
@@ -67,7 +63,7 @@ class LoginPage extends Component {
     };
     // 手机号和密码改变
     this.changeFieldHandle = (name) => (e) => {
-      this.setState({ [ name ]: e.target.value })
+      this.setState({ [ name ]: e.target.value.trim() })
     };
     // 记住用户
     this.recordUserHandle = ({ target }) => {

@@ -4,7 +4,8 @@ const isRecordUser = get('isRecordUser');
 const defState = {
   isFetch: false,
   user: get('token'),
-  isRecordUser: isRecordUser == null ? false : isRecordUser
+  isRecordUser: isRecordUser == null ? false : isRecordUser,
+  countdown: false
 };
 
 export default function app (state = defState, action) {
@@ -17,6 +18,15 @@ export default function app (state = defState, action) {
 
     case 'LOGIN':
       return { ...state, user: action.token };
+
+    case 'REGISTER':
+      return { ...state, user: action.token };
+
+    case 'SEND_VERIFYCODE':
+      return { ...state };
+
+    case 'CONFIGURE_COUNTDOWN':
+      return { ...state, countdown: action.countdown };
 
     default:
       return state;
