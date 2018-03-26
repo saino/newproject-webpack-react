@@ -21,8 +21,8 @@ export default function createRouter (store) {
             })
           }></Route>*/}
           <Route exact path="/" component={ Loadable({
-            loader: () => import('./components/layouts/HomePage/HomePage'),
-            // loader: () => import('./views/special-effec'),
+            // loader: () => import('./components/layouts/HomePage/HomePage'),
+            loader: () => import('./views/special-effec'),
             loading: LayoutLoading
           }) }></Route>
 
