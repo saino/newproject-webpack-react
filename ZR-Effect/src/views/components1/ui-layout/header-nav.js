@@ -2,7 +2,7 @@ import React, {Component} from "react";
 
 import { Avatar } from "antd";
 
-import LogImg from "../../statics/logo.png"
+import LogImg from "../../../components/containers/Header/logo.png"
 class HeaderNav extends Component {
     render() {
         return <div className="header-nav">
@@ -35,8 +35,13 @@ class HeaderNav extends Component {
                     margin-left: 32px;
                     text-indent: 40px;
                     font-size: 20px;
-                    margin-right: 64px;
-                    
+                    font-family: PingFangSC-Regular;
+                    font-size: 14px;
+                    color: #ffffff;
+                    margin-right: 24px;
+                    line-height: 50px;
+                    cursor: pointer;
+
                 }
                 .nav-logo img{
                     position: absolute;

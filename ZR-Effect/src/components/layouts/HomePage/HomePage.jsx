@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import config from '../../../config';
+import style from './style.css';
 import LoginPage from '../LoginPage/LoginPage';
 import RegisterPage from '../RegisterPage/RegisterPage';
-import style from './style.css';
-import config from '../../../config';
+import Header from '../../containers/Header/Header';
 
 export default class Home extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ export default class Home extends Component {
 
     this.state = {
       isShowLoginDialog: false,
-      isShowRegisterDialog: true
+      isShowRegisterDialog: false
     };
 
     this.configureDialogHandle = (key, isShowDialog) =>
@@ -21,7 +22,10 @@ export default class Home extends Component {
     const { isShowLoginDialog, isShowRegisterDialog } = this.state;
 
     return (
-      <div className="login-panel">
+      <div className="form-panel">
+        {/* 头部导航 */}
+        <Header />
+
         {/* 登录框 */}
         <LoginPage
           isShow={ isShowLoginDialog }
