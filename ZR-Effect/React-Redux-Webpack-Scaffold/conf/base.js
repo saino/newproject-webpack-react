@@ -75,7 +75,17 @@ module.exports = {
           loader: 'url-loader',
           options: {
             limit: 10240, // 10kb以下的图片使用base64
-            name: 'icons/[name]-[hash:6].[ext]'
+            name: 'fonts/[name]-[hash:6].[ext]'
+          }
+        }
+      },
+      {
+        test: /\.mp4(\?.*)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10240,
+            name: 'videos/[name]-[hash:6].[ext]'
           }
         }
       }

@@ -1,0 +1,26 @@
+@charset "UTF-8";
+
+.intro-wrapper {
+  background: #fff;
+  padding: 58px 0;
+  margin-top: 640px;
+}
+
+.intro-wrapper-inner {
+  width: 936px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.intro-wrapper-inner h3 {
+  font-size: 40px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.intro-wrapper-inner p {
+  font-size: 18px;
+  color: #666;
+  line-height: 24px;
+}
