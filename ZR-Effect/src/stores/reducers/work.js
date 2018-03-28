@@ -3,10 +3,10 @@ const defaultState = {
     id: "work001",
     name: "作品1",
     video: [
-        { id: "video0001", src: "../../statics/aaa.mp4", order: 2 },
-        { id: "video0002", src: "../../statics/bbb.mp4", order: 1 }
+        { id: "video0001",duration: 5000, src: "../../statics/aaa.mp4", order: 2 },
+        { id: "video0002",duration: 4000, src: "../../statics/bbb.mp4", order: 1 }
     ],
-    duration: 9789,
+    duration: 9000,
     material: [{
         id: "material0001",
         type: "video",
@@ -14,6 +14,7 @@ const defaultState = {
         name: "视频素材",
         active: false,
         order: 1,
+        duration: 1000,
         timeStart: {
             hour: "",
             minute: "",
@@ -76,6 +77,7 @@ const defaultState = {
         name: "音频素材",
         active: false,
         loop: false,
+        duration: 1000,
         timeStart: {
             hour: "",
             minute: "",

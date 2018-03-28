@@ -13,7 +13,6 @@ class AudioContainer extends Component {
     }
     getAudioMaterial(){
         const { material } = this.props;
-        // console.log(material, "ddddddddddlllllll");
         return material.reduce((audioMaterial, materialItem)=>{
             if(materialItem.type==='audio'){
                 audioMaterial.push(materialItem);0
@@ -22,7 +21,6 @@ class AudioContainer extends Component {
         }, []);
     }
     render() {
-        console.log(this.props, "dddddd");
         return <div className="audio-container">
             <div className="title-name">我的音频</div>
             <div className="audio-content">
@@ -59,7 +57,7 @@ class AudioContainer extends Component {
                     flex-flow: row wrap;
                     justify-content: flex-start;
                     overflow-x: hidden;
-                    overflow-y: scroll;
+                    overflow-y: auto;
                 }
                 .add-audio{
                     cursor: pointer;
