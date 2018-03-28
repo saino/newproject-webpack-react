@@ -1,10 +1,41 @@
 import React, {Component} from "react";
+import { connect} from "react-redux"
+import { bindActionCreators } from 'redux';
+import AudioMaterial from "./audio-material";
 import "./audio-container.css";
+import AddMaterial from "../../statics/add-material.png";
 
 class AudioContainer extends Component {
+
+    constructor() {
+        super();
+        
+    }
+    getAudioMaterial(){
+        const { material } = this.props;
+        // console.log(material, "ddddddddddlllllll");
+        return material.reduce((audioMaterial, materialItem)=>{
+            if(materialItem.type==='audio'){
+                audioMaterial.push(materialItem);0
+            }
+            return audioMaterial;
+        }, []);
+    }
     render() {
+        console.log(this.props, "dddddd");
         return <div className="audio-container">
             <div className="title-name">我的音频</div>
+            <div className="audio-content">
+                <div className="audio-item add-audio" onClick={this.onAddMaterialClick}>
+                    <img src={AddMaterial}/>
+                </div>
+                {
+                    this.getAudioMaterial().map((material)=>{
+                        return <AudioMaterial key={material.id} model={material} />
+                    })
+                }
+                {/* <AudioMaterial/> */}
+            </div>
             <style>{`
                 .audio-container{
                     height: 100%;
@@ -20,9 +51,33 @@ class AudioContainer extends Component {
                     text-align: center;
                     line-height: 40px;
                 }
+                .audio-content{
+                    padding: 0 3px 16px;
+                    height: calc(100% - 56px);
+                    width: 100%;
+                    display: flex;
+                    flex-flow: row wrap;
+                    justify-content: flex-start;
+                    overflow-x: hidden;
+                    overflow-y: scroll;
+                }
+                .add-audio{
+                    cursor: pointer;
+                }
+                
             `}</style>
         </div>
     }
+    onAddMaterialClick = () =>　{
+        alert("上传音频")
+    }
+
 }
 
-export default AudioContainer;
+const mapStateToProps = ({material}) => {
+    return {
+        material
+    };
+}
+
+export default connect(mapStateToProps)(AudioContainer);

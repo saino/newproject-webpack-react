@@ -32,7 +32,7 @@ baseConfig.devServer = {
   port: 9000,
   stats: { colors: true },
   proxy: {
-    '/api/[0-9]+/.*': {
+    '/api/[0-9\.]+/.*': {
       target: 'http://192.168.3.116:8888',
       rewrite: true,
       secure: false,
