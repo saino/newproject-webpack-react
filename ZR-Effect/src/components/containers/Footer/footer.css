@@ -1,0 +1,29 @@
+@charset "UTF-8";
+
+.wrapper {
+  width: 100%;
+  padding: 41px 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.wrapper-inner {
+  display: flex;
+  width: 936px;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+
+.wrapper-inner .copyright p {
+  line-height: 18px;
+}
+
+.wrapper-inner .copyright p:last-of-type {
+  margin-top: 14px;
+}
+
+.wrapper-inner .logo {
+  width: 240px;
+  height: 48px;
+  background: url("./logo.png") no-repeat 0 0;
+}

@@ -3,7 +3,7 @@ import { get } from '../../utils/configure-auth';
 const isRecordUser = get('isRecordUser');
 const defState = {
   isFetch: false,
-  user: get('token'),
+  token: get('token'),
   isRecordUser: isRecordUser == null ? false : isRecordUser,
   countdown: false
 };
@@ -17,10 +17,10 @@ export default function app (state = defState, action) {
       return { ...state, isRecordUser: action.isRecordUser };
 
     case 'LOGIN':
-      return { ...state, user: action.token };
+      return { ...state, token: action.token };
 
     case 'REGISTER':
-      return { ...state, user: action.token };
+      return { ...state, token: action.token };
 
     case 'SEND_VERIFYCODE':
       return { ...state };

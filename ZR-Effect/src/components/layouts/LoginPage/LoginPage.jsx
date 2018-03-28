@@ -127,7 +127,7 @@ class LoginPage extends Component {
 }
 
 const mapStateToProps = ({ app }) => ({
-  token: app.user == null ? '' : app.user,
+  token: app.token == null ? '' : app.token,
   isRecordUser: app.isRecordUser
 });
 
