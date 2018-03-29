@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import bannerStyle from './banner.css';
 import effTxtPNG from './eff-txt.png';
 import makeTxtPNG from './make-txt.png';
-import defPosterJPG from './def-poster.jpg';
+import defPosterPNG from './def-poster.png';
 import advertMP4 from './advert.mp4';
 
 export default class Banner extends Component {
@@ -14,7 +14,7 @@ export default class Banner extends Component {
     return (
       <div className={ bannerStyle[ 'banner' ] } style={ style }>
         <div className={ bannerStyle[ 'banner-inner' ] }>
-          <video className={ bannerStyle[ 'banner-advert-video' ] } src={ advertMP4 } controls poster={ defPosterJPG }></video>
+          <video className={ bannerStyle[ 'banner-advert-video' ] } src={ advertMP4 } controls poster={ defPosterPNG }></video>
           <div className={ bannerStyle[ 'banner-advert-show' ] }>
             <img src={ effTxtPNG } />
             <img src={ makeTxtPNG } />

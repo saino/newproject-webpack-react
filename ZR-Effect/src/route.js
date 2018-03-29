@@ -27,9 +27,9 @@ export default function createRouter (store) {
               loading: LayoutLoading
             })
           }></Route>
-          <Route exact path="/matting" component={
+          <Route exact path="/roto" component={
             Loadable({
-              loader: () => import('./components/layouts/Matting/Matting'),
+              loader: () => import('./components/layouts/Roto/Roto'),
               loading: LayoutLoading
             })
           }></Route>

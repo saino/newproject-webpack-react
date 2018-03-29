@@ -8,9 +8,8 @@ import logoPNG from './logo.png';
 
 class Header extends Component {
   static propTypes = {
-    style: PropTypes.object.isRequired,
-    onOpenLogin: PropTypes.func.isRequired,
-    onOpenRegister: PropTypes.func.isRequired
+    onOpenLogin: PropTypes.func,
+    onOpenRegister: PropTypes.func
   };
 
   loginHandle = () => {
@@ -22,16 +21,16 @@ class Header extends Component {
   };
 
   render() {
-    const { style, token } = this.props;
+    const { token } = this.props;
     const isLogined = !!token;
 
     return (
-      <div className={ headerStyle[ 'header' ] } style={ style }>
+      <div className={ headerStyle[ 'header' ] }>
         <div className={ headerStyle[ 'header-nav' ] }>
             <Link to="/" className={ headerStyle[ 'nav-logo' ] }>
               <img src={ logoPNG }/>
             </Link>
-            <Link to="/matting" className={ headerStyle[ 'nav-btn' ] }>智能抠像</Link>
+            <Link to="/roto" className={ headerStyle[ 'nav-btn' ] }>智能抠像</Link>
             <Link to="/special-effec" className={ headerStyle[ 'nav-btn' ] }>特效制作</Link>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>价格方案</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>帮助中心</a>

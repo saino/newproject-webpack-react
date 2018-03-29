@@ -30,10 +30,11 @@ export default class HomePage extends Component {
 
         <div className={ style[ 'home-wrapper' ] }>
           {/* 头部导航 */}
-          <Header
-            style={{ height: 50, background: 'rgba(4, 6, 11, .2)' }}
-            onOpenLogin={ () => this.configureDialogHandle('Login', true) }
-            onOpenRegister={ () => this.configureDialogHandle('Register', true) } />
+          <div className={ style[ 'header' ] }>
+            <Header
+              onOpenLogin={ () => this.configureDialogHandle('Login', true) }
+              onOpenRegister={ () => this.configureDialogHandle('Register', true) } />
+          </div>
 
           {/* banner */}
           <Banner />
@@ -48,7 +49,9 @@ export default class HomePage extends Component {
           <ProductIntroDetail />
 
           {/* 尾部 */}
-          <Footer style={{ backgroundImage: 'radial-gradient(ellipse farthest-corner at 0 0, #011f27 50%, #04060b 1450%)' }} />
+          <div className={ style[ 'footer' ] }>
+            <Footer />
+          </div>
 
           <div className={ style[ 'form-panel' ] }>
             {/* 登录框 */}
