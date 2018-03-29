@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Button } from 'antd';
-import { fetch } from '../../../stores/action-creators/app-creator';
-import defferPerform from '../../../utils/deffer-perform.js';
+import { fetch } from '../../stores/action-creators/app-creator';
+import defferPerform from '../../utils/deffer-perform.js';
 
 class SubmitButton extends Component {
   static propTypes = {

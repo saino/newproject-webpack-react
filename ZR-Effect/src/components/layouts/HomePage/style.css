@@ -1,5 +1,14 @@
 @charset "UTF-8";
 
+.header {
+  height: 50px;
+  background: rgba(4, 6, 11, .2);
+}
+
+.footer {
+  background-image: radial-gradient(ellipse farthest-corner at 0 0, #011f27 50%, #04060b 1450%);
+}
+
 .form-panel {
   position: absolute;
   left: 50%;

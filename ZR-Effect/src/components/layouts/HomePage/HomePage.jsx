@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-/* 路由跳转前验证 -- start */
-import { Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-/* 路由跳转前验证 -- end */
 import config from '../../../config';
 import style from './style.css';
 import LoginPage from '../LoginPage/LoginPage';
@@ -14,15 +10,13 @@ import ProductIntro from './ProductIntro/ProductIntro';
 import ProductIntroImg from './ProductIntroImg/ProductIntroImg';
 import ProductIntroDetail from './ProductIntroDetail/ProductIntroDetail';
 
-class HomePage extends Component {
+export default class HomePage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isShowLoginDialog: false,
       isShowRegisterDialog: false
-      // 检测是否存在该用户信息的state
-      //redirectToReferrer: props.token == null
     };
 
     this.configureDialogHandle = (key, isShowDialog) =>
@@ -36,7 +30,11 @@ class HomePage extends Component {
 
         <div className={ style[ 'home-wrapper' ] }>
           {/* 头部导航 */}
-          <Header style={{ height: 50, background: 'rgba(4, 6, 11, .2)' }} />
+          <div className={ style[ 'header' ] }>
+            <Header
+              onOpenLogin={ () => this.configureDialogHandle('Login', true) }
+              onOpenRegister={ () => this.configureDialogHandle('Register', true) } />
+          </div>
 
           {/* banner */}
           <Banner />
@@ -51,26 +49,24 @@ class HomePage extends Component {
           <ProductIntroDetail />
 
           {/* 尾部 */}
-          <Footer style={{ backgroundImage: 'radial-gradient(ellipse farthest-corner at 0 0, #011f27 50%, #04060b 1450%)' }} />
+          <div className={ style[ 'footer' ] }>
+            <Footer />
+          </div>
 
           <div className={ style[ 'form-panel' ] }>
             {/* 登录框 */}
             <LoginPage
               isShow={ isShowLoginDialog }
               width={ config.dialog.width }
-              onClose={ () => this.configureLoginDialogHandle('Login', false) } />
+              onClose={ () => this.configureDialogHandle('Login', false) } />
 
             {/* 注册框 */}
             <RegisterPage
               isShow={ isShowRegisterDialog }
               width={ config.dialog.width }
-              onClose={ () => this.configureLoginDialogHandle('Register', false) } />
+              onClose={ () => this.configureDialogHandle('Register', false) } />
           </div>
         </div>
     );
   }
 }
-
-const mapStateToProps = ({ app }) => ({ token: app.token });
-
-export default connect(mapStateToProps)(HomePage);

@@ -87,7 +87,7 @@ class MaterialBtn extends Component {
 }
 
 const mapStateToProps = ({work1}) => {
-    return { 
+    return {
         work1
     };
 }

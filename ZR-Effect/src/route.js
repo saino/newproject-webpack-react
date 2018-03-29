@@ -27,6 +27,12 @@ export default function createRouter (store) {
               loading: LayoutLoading
             })
           }></Route>
+          <Route exact path="/roto" component={
+            Loadable({
+              loader: () => import('./components/layouts/Roto/Roto'),
+              loading: LayoutLoading
+            })
+          }></Route>
           <Route component={ NotMatch }></Route>
         </Switch>
       </BrowserRouter>

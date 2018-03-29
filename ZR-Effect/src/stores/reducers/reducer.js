@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
-import user from './user';
 import work1 from './work';
 import app from './app';
-import material from './material'
+import material from './material';
+import rotoFrontendActeractive from './roto-frontend-acteractive';
 
 export default combineReducers({
-  user,
   work1,
   material,
-  app
+  app,
+  rotoFrontendActeractive
 });

@@ -7,7 +7,7 @@ import { isRequired, validPhone } from '../../../utils/validate';
 import defferPerform from '../../../utils/deffer-perform';
 import { set } from '../../../utils/configure-auth';
 import { login, recordUser } from '../../../stores/action-creators/app-creator';
-import SubmitButton from '../../commons/SubmitButton/SubmitButton';
+import SubmitButton from '../../commons/SubmitButton';
 import style from './style.css';
 
 class LoginPage extends Component {
@@ -75,16 +75,17 @@ class LoginPage extends Component {
 
   getLoginContent = () => {
     const { isRecordUser } = this.props;
+    const { phone, password } = this.state;
 
     return (
       <div className={ style[ 'wrapper' ] }>
         <div className={ style[ 'wrapper-inner'] }>
           <ul className={ style[ 'form-control'] }>
             <li className={ style.textbox }>
-              <Input onChange={ this.changeFieldHandle('phone') } className={ style[ 'textbox-input' ] } placeholder="请输入手机号" />
+              <Input value={ phone } onChange={ this.changeFieldHandle('phone') } className={ style[ 'textbox-input' ] } placeholder="请输入手机号" />
             </li>
             <li className={ style.textbox }>
-              <Input onChange={ this.changeFieldHandle('password') } className={ style[ 'textbox-input' ] } placeholder="请输入密码" />
+              <Input value={ password } type="password" onChange={ this.changeFieldHandle('password') } className={ style[ 'textbox-input' ] } placeholder="请输入密码" />
             </li>
           </ul>
 
@@ -108,6 +109,12 @@ class LoginPage extends Component {
       </div>
     );
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.isShow) {
+      this.setState({ password: '' });
+    }
+  }
 
   render() {
     const { isShow, width, onClose } = this.props;
