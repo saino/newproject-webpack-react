@@ -27,6 +27,12 @@ export default function createRouter (store) {
               loading: LayoutLoading
             })
           }></Route>
+          <Route exact path="/matting" component={
+            Loadable({
+              loader: () => import('./components/layouts/Matting/Matting'),
+              loading: LayoutLoading
+            })
+          }></Route>
           <Route component={ NotMatch }></Route>
         </Switch>
       </BrowserRouter>

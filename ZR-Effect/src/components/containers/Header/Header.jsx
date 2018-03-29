@@ -9,6 +9,16 @@ import logoPNG from './logo.png';
 class Header extends Component {
   static propTypes = {
     style: PropTypes.object.isRequired,
+    onOpenLogin: PropTypes.func.isRequired,
+    onOpenRegister: PropTypes.func.isRequired
+  };
+
+  loginHandle = () => {
+    this.props.onOpenLogin();
+  };
+
+  registerHandle = () => {
+    this.props.onOpenRegister();
   };
 
   render() {
@@ -21,8 +31,8 @@ class Header extends Component {
             <Link to="/" className={ headerStyle[ 'nav-logo' ] }>
               <img src={ logoPNG }/>
             </Link>
-            <a href="#matting" className={ headerStyle[ 'nav-btn' ] }>智能抠像</a>
-            <a href="#make_effect" className={ headerStyle[ 'nav-btn' ] }>特效制作</a>
+            <Link to="/matting" className={ headerStyle[ 'nav-btn' ] }>智能抠像</Link>
+            <Link to="/special-effec" className={ headerStyle[ 'nav-btn' ] }>特效制作</Link>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>价格方案</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>帮助中心</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>联系我们</a>
@@ -33,11 +43,11 @@ class Header extends Component {
                 ) : (
                   <ul className={ headerStyle[ 'user-auth' ] }>
                     <li>
-                      <a href="javascript:;">登录LOGIN</a>
+                      <a href="javascript:;" onClick={ this.loginHandle }>登录LOGIN</a>
                     </li>
                     <li>|</li>
                     <li>
-                      <a href="javascript:;">注册SIGN UP</a>
+                      <a href="javascript:;" onClick={ this.registerHandle }>注册SIGN UP</a>
                     </li>
                   </ul>
                 )

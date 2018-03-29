@@ -21,7 +21,7 @@ export default class Banner extends Component {
           </div>
           <div className={ bannerStyle[ 'product-entrance' ] }>
             <Link to="/matting">智能抠像</Link>
-            <Link to="/effect">特效制作</Link>
+            <Link to="/special-effec">特效制作</Link>
           </div>
         </div>
       </div>

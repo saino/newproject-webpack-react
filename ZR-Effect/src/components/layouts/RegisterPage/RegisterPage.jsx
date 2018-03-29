@@ -7,7 +7,7 @@ import { isRequired, validPhone } from '../../../utils/validate';
 import defferPerform from '../../../utils/deffer-perform';
 import { set } from '../../../utils/configure-auth';
 import { register, sendVerifyCode, configureCountdown } from '../../../stores/action-creators/app-creator';
-import SubmitButton from '../../commons/SubmitButton/SubmitButton';
+import SubmitButton from '../../commons/SubmitButton';
 import style from './style.css';
 
 class RegisterPage extends Component {
@@ -119,21 +119,21 @@ class RegisterPage extends Component {
 
   getRegisterContent = () => {
     const { countdown } = this.props;
-    const { sendVerifyCode } = this.state;
+    const { phone, verifyCode, password, confirmPassword, sendVerifyCode } = this.state;
 
     return (
       <div className={ style[ 'wrapper' ] }>
         <div className={ style[ 'wrapper-inner'] }>
           <ul className={ style[ 'form-control'] }>
             <li className={ style.textbox }>
-              <Input onChange={ this.changeFieldHandle('phone') } className={ style[ 'textbox-input' ] } placeholder="请输入手机号" />
+              <Input value={ phone } onChange={ this.changeFieldHandle('phone') } className={ style[ 'textbox-input' ] } placeholder="请输入手机号" />
             </li>
             <li className={ style.textbox }>
-              <Input onChange={ this.changeFieldHandle('password') } className={ style[ 'textbox-input' ] } placeholder="请输入新密码" />
+              <Input value={ password } onChange={ this.changeFieldHandle('password') } className={ style[ 'textbox-input' ] } placeholder="请输入新密码" />
             </li>
             <li className={ style.textbox }>
               <span className={ style.verifyCode }>
-                <Input onChange={ this.changeFieldHandle('confirmPassword') } className={ style[ 'textbox-input' ] } placeholder="请重复输入新密码" />
+                <Input value={ confirmPassword } onChange={ this.changeFieldHandle('confirmPassword') } className={ style[ 'textbox-input' ] } placeholder="请重复输入新密码" />
               </span>
               <span className={ style[ 'send-verifycode-btn'] }>
                 {/* 发送验证码 */}
@@ -141,7 +141,7 @@ class RegisterPage extends Component {
               </span>
             </li>
             <li className={ style.textbox }>
-              <Input onChange={ this.changeFieldHandle('verifyCode') } className={ style[ 'textbox-input' ] } placeholder="请输入验证码" />
+              <Input value={ verifyCode } onChange={ this.changeFieldHandle('verifyCode') } className={ style[ 'textbox-input' ] } placeholder="请输入验证码" />
             </li>
           </ul>
 
@@ -171,6 +171,17 @@ class RegisterPage extends Component {
         { this.getRegisterContent() }
       </Modal>
     );
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.isShow) {
+      this.setState({
+        phone: '',
+        verifyCode: '',
+        password: '',
+        confirmPassword: ''
+      });
+    }
   }
 }
 
