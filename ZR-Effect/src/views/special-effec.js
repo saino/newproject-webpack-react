@@ -20,7 +20,7 @@ class SpecialEffec extends Component {
     constructor(){
         super();
         this.state = {
-            activeContainer: "audio",
+            activeContainer: "material",
         }
     }
 
@@ -40,6 +40,8 @@ class SpecialEffec extends Component {
                     </div>
                     <TimeArea></TimeArea>
                 </Container>
+                
+                {/* <div></div> */}
                 <style>{`
                     .container-layout{
                         display: flex;

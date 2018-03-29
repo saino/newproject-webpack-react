@@ -9,8 +9,8 @@ class MaterialContainer extends Component {
     getVideoMaterial() {
         const { material } = this.props;
         return material.reduce((videoMaterial, materialItem) => {
-            if (materialItem.type === 'video') {
-                videoMaterial.push(materialItem); 0
+            if (materialItem.type === 'video' || materialItem.type === "image") {
+                videoMaterial.push(materialItem); 
             }
             return videoMaterial;
         }, []);
@@ -27,7 +27,6 @@ class MaterialContainer extends Component {
                         return <VideoMaterial key={material.id} model={material} />
                     })
                 }
-            {/* <materialMaterial/> */}
             </div>
             <style>{`
                 .material-container{

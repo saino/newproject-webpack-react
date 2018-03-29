@@ -5,6 +5,7 @@ const defaultState = [
         "type": "video",
         "status": 22771,
         "path": "7Ak5CoLCfM",
+        "name": "xxx",
         "properties": {
             "length": 27145,
             "time": 1522141212838,
