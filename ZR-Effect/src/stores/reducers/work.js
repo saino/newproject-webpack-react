@@ -9,12 +9,17 @@ const defaultState = {
     duration: 9000,
     material: [{
         id: "material0001",
+        materialId: "9995",
         type: "video",
-        src: "",
+        path: "",
         name: "视频素材",
+        width: 100,
+        height: 100,
+        duration: 1000,        
+        status: 96995,
+
         active: false,
         order: 1,
-        duration: 1000,
         timeStart: {
             hour: "",
             minute: "",
@@ -27,8 +32,6 @@ const defaultState = {
             second: "",
             millisecond: "",
         },
-        width: 100,
-        height: 100,
         positionX: 0,
         positionY: 0,
         rotateZ:0,
