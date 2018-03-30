@@ -99,12 +99,12 @@ const defaultState = {
 const actionTypes = {
     "GET_WORK": "GET_WORK",
     "SAVE_WORK": "SAVE_WORK",
-    "CHANGE_MATERIAL": "CHANGE_MATERIAL"
+    "CHANGE_WORK_MATERIAL": "CHANGE_WORK_MATERIAL"
 }
 
-export const changeMaterial = (materialItem) => {
+export const changeWorkMaterial = (materialItem) => {
     return {
-        type: actionTypes.CHANGE_MATERIAL,
+        type: actionTypes.CHANGE_WORK_MATERIAL,
         materialItem
     }
 }
@@ -116,7 +116,7 @@ export default (state = defaultState, action) => {
         case actionTypes.SAVE_WORK:
             let state1 = { ...action.work, video: [...action.work.video], material: [...action.work.material] }
             return state1;
-        case actionTypes.CHANGE_MATERIAL:
+        case actionTypes.CHANGE_WORK_MATERIAL:
             if (Array.isArray(action.materialItem)) {
                 return { ...state, material: [...action.materialItem] };
             }

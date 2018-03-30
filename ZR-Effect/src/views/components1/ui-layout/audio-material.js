@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import { Icon, Progress  } from "antd";
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import work, { changeWorkMaterial } from '../../../stores/reducers/work';
+import { changeMaterial } from '../../../stores/reducers/material'
+
+import dongfengpo from '../../statics/dongfengpo.mp3';
+
 class AddMaterial extends Component {
     constructor(){
         super();
@@ -29,9 +37,10 @@ class AddMaterial extends Component {
             <div className="name-edit" onMouseOver={this.onNameMouseOver}>
                 <div className="audio-name">音频名称{this.props.model.id}</div>
                 <div className="audio-detail">mp4 450K 12::45:36</div>
+                <audio ref="audio" style={{display:"none"}} src={dongfengpo} controls/>
             </div>
             <div className={useClass}>
-                <div className="use-item" onClick={this.onPreViewClick}>预览</div>
+                {/* <div className="use-item" onClick={this.onPreViewClick}>预览</div> */}
                 <div className="use-item" onClick={this.onUseClick}>使用</div>
                 <div className="use-item" onClick={this.onDeleClick}>删除</div>
             </div>
@@ -106,20 +115,66 @@ class AddMaterial extends Component {
         e.stopPropagation();
         e.preventDefault();
     }
-    onPreViewClick = () => {
-        alert("预览");
-    }
+
     onUseClick = () => {
-        alert("使用");
+        const { model, work1 } = this.props;
+        let materialItem = {
+            ...model,
+            materialId: model.id,
+            id: new Date().getTime(),
+            order: 10,
+
+            timeEnd: {
+                hour: "",
+                minute: "",
+                second: "",
+                millisecond: "",
+            },
+            active: false,
+            timeStart: {
+                hour: "",
+                minute: "",
+                second: "",
+                millisecond: "",
+            }
+        }
+        work1.material.push(materialItem);
+        this.props.changeWorkMaterial(work1.material);
     }
     onDeleClick = () => {
-        alert("删除");
+        const {material, model} = this.props;
+        const temMaterial = material.reduce((temMaterial, materialItem)=>{
+            if(materialItem.id === model.id){
+                return temMaterial;
+            }
+            temMaterial.push(materialItem);
+            return temMaterial;
+        }, []);
+        this.props.changeMaterial(temMaterial);
     }
     onAudioPlayClick = () => {
+        if(this.state.play){
+            this.refs.audio.pause();
+        }else{
+            this.refs.audio.play()
+        };
         this.setState({
             play: !this.state.play
         });
     }
 }
 
-export default AddMaterial;
+const mapStateToProps = ({ material, work1}) => {
+    return {
+        material,
+        work1
+    };
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeMaterial: bindActionCreators(changeMaterial, dispatch),
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddMaterial);
