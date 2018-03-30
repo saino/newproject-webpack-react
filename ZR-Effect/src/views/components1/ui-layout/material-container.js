@@ -60,6 +60,9 @@ class MaterialContainer extends Component {
             `}</style>
         </div>
     }
+    onAddMaterialClick = () => {
+        console.log("上传素材");
+    }
 }
 
 const mapStateToProps = ({ material }) => {
