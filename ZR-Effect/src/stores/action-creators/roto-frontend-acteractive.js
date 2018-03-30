@@ -3,16 +3,14 @@ import { post, error as fail } from '../../api/fetch';
 export function selectedRotoMatterial (materialId) {
   return {
     type: 'SELECTED_ROTO_MATTERIAL',
-    materialId,
-    isSelected: true
+    materialId
   };
 }
 
 export function cancelSelectedRotoMatterial (materialId) {
   return {
     type: 'CANCEL_SELECTED_ROTO_MATTERIAL',
-    materialId,
-    isSelected: false
+    materialId
   };
 }
 
@@ -41,17 +39,14 @@ export function selectedFrame (materialId, frame) {
 export function configureStartupAiRoto (materialId) {
   return {
     type: 'CONFIGURE_STARTUP_AI_ROTO',
-    materialId,
-    isAiRoto: true,
-    aiRotoPercent: 0
+    materialId
   };
 }
 
 export function configureCloseAiRoto (materialId) {
   return {
     type: 'CONFIGURE_CLOSE_AI_ROTO',
-    materialId,
-    isAiRoto: false
+    materialId
   };
 }
 
@@ -66,17 +61,14 @@ export function configureAiRotoPercent (materialId, aiRotoPercent) {
 export function configureStartupGenerateRotoMaterial (materialId) {
   return {
     type: 'CONFIGURE_STARTUP_GENERATE_ROTO_MATERIAL',
-    materialId,
-    isGenerateRotoMaterial: true,
-    generateRotoMaterialPercent: 0
+    materialId
   };
 }
 
 export function configureCloseGenerateRotoMaterial (materialId) {
   return {
     type: 'CONFIGURE_CLOSE_GENERATE_ROTO_MATERIAL',
-    materialId,
-    isGenerateRotoMaterial: false
+    materialId
   };
 }
 
@@ -91,17 +83,14 @@ export function configureGenerateRotoMaterialPercent (materialId, generateRotoMa
 export function configureStartupGeneratePNGFrame (materialId) {
   return {
     type: 'CONFIGURE_STARTUP_GENERATE_PNG_FRAME',
-    materialId,
-    isGeneratePNGFrame: true,
-    generatePNGFramePercent: 0
+    materialId
   };
 }
 
 export function configureCloseGeneratePNGFrame (materialId) {
   return {
     type: 'CONFIGURE_CLOSE_GENERATE_PNG_FRAME',
-    materialId,
-    isGeneratePNGFrame: false
+    materialId
   };
 }
 

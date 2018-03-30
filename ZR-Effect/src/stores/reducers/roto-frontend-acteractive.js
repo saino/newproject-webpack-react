@@ -16,6 +16,140 @@
  *   roto_stage_tool_type { Number } 扣像舞台工具类别 ( 0-撤销｜1-移动｜2-放大｜3-缩小 )
  */
 
-import { add, update, remove } from '../../utils/array-handle';
+import { add, update, remove, findItem } from '../../utils/array-handle';
 
 const defState = [];
+
+export default function rotoFrontendActerActive (state = defState, action) {
+  switch (action.type) {
+    case 'SELECTED_ROTO_MATTERIAL':
+      return update(state, { 'is_selected': true }, 'material_id', action.materialId);
+
+    case 'CANCEL_SELECTED_ROTO_MATTERIAL':
+      return update(state, { 'is_selected': false }, 'material_id', action.materialId);
+
+    case 'ADD_ROTO_MATERIAL':
+      const initRotoMaterial = {
+        'material_id': action.materialId,
+        'is_selected': true,
+        'selected_frame': 0,
+        'is_ai_roto': false,
+        'ai_roto_percent': 0,
+        'is_generate_roto_material': false,
+        'generate_roto_material_percent': 0,
+        'is_generate_png_frame': false,
+        'generate_png_frame_percent': 0,
+        'rotoed_frames': [],
+        'roto_tool_type': 0,
+        'roto_stage_tool_type': 0
+      };
+
+      return add(state, initRotoMaterial);
+
+    case 'REMOVE_ROTO_MATERIAL':
+      return remove(state, 'material_id', action.materialId);
+
+    case 'SELECTED_FRAME':
+      return update(state, { 'selected_frame': action.frame }, 'material_id', action.materialId);
+
+    case 'CONFIGURE_STARTUP_AI_ROTO':
+      return update(
+        state,
+        { 'is_ai_roto': true, 'ai_roto_percent': 0 },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_CLOSE_AI_ROTO':
+      return update(
+        state,
+        { 'is_ai_roto': false, 'ai_roto_percent': 0 },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_AI_ROTO_PERCENT':
+      return update(
+        state,
+        { 'ai_roto_percent': action.aiRotoPercent },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_STARTUP_GENERATE_ROTO_MATERIAL':
+      return update(
+        state,
+        { 'is_generate_roto_material': true, 'generate_roto_material_percent': 0 },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_CLOSE_GENERATE_ROTO_MATERIAL':
+      return update(
+        state,
+        { 'is_generate_roto_material': false, 'generate_roto_material_percent': 0 },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_GENERATE_ROTO_MATERIAL_PERCENT':
+      return update(
+        state,
+        { 'generate_roto_material_percent': action.generateRotoMaterialPercent },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_STARTUP_GENERATE_PNG_FRAME':
+      return update(
+        state,
+        { 'is_generate_png_frame': true, generate_png_frame_percent: 0 },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_CLOSE_GENERATE_PNG_FRAME':
+      return update(
+        state,
+        { 'is_generate_png_frame': false, generate_png_frame_percent: 0 },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_GENERATE_PNG_FRAME_PERCENT':
+      return update(
+        state,
+        { 'generate_png_frame_percent': action.generatePNGFramePercent },
+        'material_id',
+        action.materialId
+      );
+
+    case 'ADD_ROTOED_FRAME':
+      const { materialId, frame } = action;
+      const rotoMaterial = findItem(state, 'material_id', materialId);
+      const rotoedFrames = rotoMaterial[ 'rotoed_frames' ] = add(rotoMaterial[ 'rotoed_frames' ], frame);
+
+      return update(
+        state,
+        { 'rotoed_frames': rotoedFrames },
+        'material_id',
+        materialId
+      );
+
+    case 'CONFIGURE_ROTO_TOOL_TYPE':
+      return update(
+        state,
+        { 'roto_tool_type': action.rotoToolType },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_ROTO_STAGE_TOOL_TYPE':
+      return update(
+        state,
+        { 'roto_stage_tool_type': action.rotoStageToolType },
+        'material_id',
+        action.materialId
+      );
+  }
+}
