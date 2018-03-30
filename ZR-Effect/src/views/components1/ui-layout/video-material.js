@@ -103,7 +103,6 @@ class VideoMaterial extends Component {
         AlertView.render(<PreView model={this.props.model} />);
     }
     onUseClick = () => {
-        console.log(this.props);
         let materialItem = {
             ...this.props.model,
             materialId: this.props.model.id,
@@ -136,11 +135,7 @@ class VideoMaterial extends Component {
         };
         const {material} = this.props.work1
         material.push(materialItem);
-        console.log(materialItem, material);
         this.props.changeMaterial(material);
-        // materialItem.
-        
-        // alert("使用");
     }
     onDeleClick = () => {
         AlertView.remove();
