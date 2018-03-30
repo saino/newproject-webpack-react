@@ -7,6 +7,7 @@ import rotoStyle from './roto.css';
 import Header from '../../containers/Header/Header';
 import RotoMaterialList from './RotoMaterialList/RotoMaterialList';
 import RotoToolbar from './RotoToolbar/RotoToolbar';
+import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 
 class Matting extends Component {
   constructor(props) {
@@ -52,10 +53,13 @@ class Matting extends Component {
                 </div>
               </div>
             </div>
-            <div className={ rotoStyle[ 'right' ] }></div>
+            <div className={ rotoStyle[ 'right' ] }>
+              {/* 扣像操作面板 */}
+              <RotoOperationPanel />
+            </div>
           </div>
           <div className={ rotoStyle[ 'footer' ] }>
-
+            
           </div>
         </div>
       </div>
