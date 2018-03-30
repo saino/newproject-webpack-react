@@ -159,7 +159,7 @@ export const update = (target, updateItem, findKey, findValue) => {
 };
 
 // 删除
-export const deleteItem = (target, findKey, findValue) => {
+export const remove = (target, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
 
   return [ ...target.splice(index, 1) ];
