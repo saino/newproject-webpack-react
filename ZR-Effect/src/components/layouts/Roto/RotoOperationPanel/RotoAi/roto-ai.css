@@ -48,6 +48,13 @@
   height: 100%;
 }
 
+.roto-percent .percent-inner > label {
+  width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .percent {
   flex: 1;
 }

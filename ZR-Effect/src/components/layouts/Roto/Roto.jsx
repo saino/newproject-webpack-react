@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 /* 路由跳转前验证 -- end */
 import rotoStyle from './roto.css';
 import Header from '../../containers/Header/Header';
+import MaterialList from './MaterialList/MaterialList';
 import RotoMaterialList from './RotoMaterialList/RotoMaterialList';
 import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
@@ -14,8 +15,11 @@ class Matting extends Component {
     super(props);
 
     this.state = {
-      // 检测是否存在该用户信息的state
-      redirectToReferrer: false
+      // 检测是否存在该用户信息的state，用来做登录跳转
+      redirectToReferrer: false,
+      // 中间区域是显示添加扣像素材还是帧图片
+      // 0-显示帧图片 | 1-添加扣像素材
+      showAddMaterialOrFrameImg: 0
     };
   }
 
@@ -44,7 +48,13 @@ class Matting extends Component {
               <div className={ rotoStyle[ 'middle-inner' ] }>
                 <div className={ rotoStyle[ 'canvas' ] }>
                   <div className={ rotoStyle[ 'canvas-inner' ] }>
-
+                    {/* 画布还是素材列表 */}
+                    { this.state.showAddMaterialOrFrameImg
+                      ? (
+                        <MaterialList />
+                      )
+                      : void 0
+                    }
                   </div>
                 </div>
                 <div className={ rotoStyle[ 'toolbar' ] }>
@@ -59,7 +69,7 @@ class Matting extends Component {
             </div>
           </div>
           <div className={ rotoStyle[ 'footer' ] }>
-            
+
           </div>
         </div>
       </div>
