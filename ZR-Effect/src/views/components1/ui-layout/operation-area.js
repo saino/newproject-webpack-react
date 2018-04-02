@@ -7,11 +7,13 @@ import CancelImg from "../../statics/cancel.png";
 import ZoomInImg from "../../statics/zoomin.png";
 import ZoomOutImg from "../../statics/zoomout.png";
 import MoveImg from "../../statics/move.png";
+import AlertView from "./alert-view";
+
 class OperationArea extends Component {
     render() {
         return <div className="operation-area">
             <div className="operation-btn1"><img src={SaveImg}/><div>保存</div></div>
-            <div className="operation-btn1"><img src={PubImg} /><div>发布</div></div>
+            <div className="operation-btn1" onClick={this.onPubClick}><img src={PubImg} /><div>发布</div></div>
             <div className="operation-bank"></div>
             <div className="operation-btn2" onClick={this.onMaterialLibClick}>素材库</div>
             <div className="operation-btn2" onClick={this.onAudioLibClick}>音频库</div>
@@ -74,6 +76,10 @@ class OperationArea extends Component {
                 }
             `}</style>
         </div>
+    }
+    onPubClick = () => {
+        // console.log("ddddd");
+        AlertView.render(<div>ddddddd</div>);
     }
     onMaterialLibClick = () => {
         this.props.changeaActiveContainer("material");

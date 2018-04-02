@@ -20,7 +20,7 @@ class SpecialEffec extends Component {
     constructor(){
         super();
         this.state = {
-            activeContainer: "material",
+            activeContainer: "stage",
         }
     }
 
