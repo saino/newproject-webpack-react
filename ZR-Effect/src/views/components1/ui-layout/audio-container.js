@@ -27,12 +27,10 @@ class AudioContainer extends Component {
 
     //选择文件之前
     _handleBeforeChoose = () => {
-        // console.log("before choose");
         return true;
     }
     //选择文件
     _handleChooseFile = (files) => {
-        // console.log("choose", files);
         return true;
     }
     //上传之前
@@ -59,9 +57,7 @@ class AudioContainer extends Component {
 
     //上传中
     _handleUploading = (progress) => {
-        // console.log("sssssssssss");
         const progressNum = parseInt(100 * progress.loaded / progress.total);
-        // console.log(progressNum);
         this.setState({
             uploadProgress: progressNum
         });
@@ -87,11 +83,9 @@ class AudioContainer extends Component {
         const { material } = this.props;
 
         const temMaterial = material.push(data);
-        // material
 
         this.props.changeMaterial(temMaterial);
 
-        // console.log("ddddddddddddddddd");
         this.setState({
             uploadProgress: 100,
             progressState: "success",
