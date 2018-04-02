@@ -2,7 +2,8 @@ import React, {Component} from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { changeMaterial } from '../../../stores/reducers/work';
+import { changeWorkMaterial } from '../../../stores/reducers/work';
+import { changeMaterial } from '../../../stores/reducers/material'
 
 import AlertView from "./alert-view";
 // import video1 from '../../statics/aaa.mp4';
@@ -103,7 +104,6 @@ class VideoMaterial extends Component {
         AlertView.render(<PreView model={this.props.model} />);
     }
     onUseClick = () => {
-        console.log(this.props);
         let materialItem = {
             ...this.props.model,
             materialId: this.props.model.id,
@@ -136,26 +136,32 @@ class VideoMaterial extends Component {
         };
         const {material} = this.props.work1
         material.push(materialItem);
-        console.log(materialItem, material);
-        this.props.changeMaterial(material);
-        // materialItem.
-        
-        // alert("使用");
+        this.props.changeWorkMaterial(material);
     }
     onDeleClick = () => {
-        AlertView.remove();
+        const { material, model } = this.props;
+        const temMaterial = material.reduce((temMaterial, materialItem1)=>{
+            if(materialItem1.id === model.id){
+                return temMaterial;
+            }
+            temMaterial.push(materialItem1);
+            return temMaterial;
+        }, []);
+        this.props.changeMaterial(temMaterial);
     }
 }
 
-const mapStateToProps = ({work1}) => {
+const mapStateToProps = ({work1, material}) => {
     return {
-        work1
+        work1,
+        material
     };
 } 
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
+        changeMaterial: bindActionCreators(changeMaterial, dispatch),
     }
 }
 

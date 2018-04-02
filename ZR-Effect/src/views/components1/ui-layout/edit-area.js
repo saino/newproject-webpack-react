@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import moment from "moment";
 import TimeControl from './time-control';
 
-import { changeMaterial } from '../../../stores/reducers/work'
+import { changeWorkMaterial } from '../../../stores/reducers/work'
 
 class EditArea extends Component{
 
@@ -97,6 +97,7 @@ class EditArea extends Component{
         if (!currentMaterial || !currentMaterial.active){
             return null;
         }
+        console.log(currentMaterial);
         if (currentMaterial.type === "audio"){
             return this.audioControl();
         } else if(currentMaterial.type === "image"){
@@ -121,7 +122,7 @@ class EditArea extends Component{
     onChangeLoop = () => {
         const currentMaterial = this.getcurrentmaterial();
         currentMaterial.loop = !currentMaterial.loop;
-        this.props.changeMaterial(currentMaterial);
+        this.props.changeWorkMaterial(currentMaterial);
     }
     imageControl() {
         const currentMaterial = this.getcurrentmaterial();
@@ -164,7 +165,7 @@ class EditArea extends Component{
             if (value == undefined || isNaN(value)) { return; }
             const currentMaterial = this.getcurrentmaterial();
             currentMaterial[prop] = value;
-            this.props.changeMaterial(currentMaterial);
+            this.props.changeWorkMaterial(currentMaterial);
         }
     }
 }
@@ -176,7 +177,7 @@ const mapStateToProps = ({work1}) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch)
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(EditArea);

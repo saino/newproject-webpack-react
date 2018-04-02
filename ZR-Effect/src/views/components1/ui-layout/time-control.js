@@ -4,7 +4,7 @@ import moment from "moment";
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { changeMaterial } from '../../../stores/reducers/work'
+import { changeWorkMaterial } from '../../../stores/reducers/work'
 
 class TimeControl extends Component{
     constructor() {
@@ -205,7 +205,7 @@ class TimeControl extends Component{
             const {currentMaterial} = this.props;
             currentMaterial.timeStart = this.getStartTime();
             currentMaterial.timeEnd = this.getEndTime();
-            this.props.changeMaterial(currentMaterial);
+            this.props.changeWorkMaterial(currentMaterial);
             // console.log(this.props);
         }
     }
@@ -235,7 +235,7 @@ const mapStateToProps = ({work1}) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch)
     }
 }
 

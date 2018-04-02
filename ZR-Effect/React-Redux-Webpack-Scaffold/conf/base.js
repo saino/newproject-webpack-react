@@ -88,6 +88,16 @@ module.exports = {
             name: 'videos/[name]-[hash:6].[ext]'
           }
         }
+      },
+      {
+        test: /\.mp3(\?.*)?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 10240,
+            name: 'audios/[name]-[hash:6].[ext]'
+          }
+        }
       }
     ]
   },

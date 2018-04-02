@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import ClassNames from "classnames"
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { changeMaterial } from '../../../stores/reducers/work'
+import { changeWorkMaterial } from '../../../stores/reducers/work'
 
 import VideoImg from "../../statics/pic.png";
 import AudioImg from "../../statics/audio.png";
@@ -70,7 +70,7 @@ class MaterialBtn extends Component {
             }
             return materials
         }, []);
-        this.props.changeMaterial(materials);
+        this.props.changeWorkMaterial(materials);
     }
     onMaterialClick = () => {
         const {work1, model} = this.props;
@@ -81,8 +81,7 @@ class MaterialBtn extends Component {
             }
             return materialItem;
         });
-        // work1.material = material;
-        this.props.changeMaterial(material);
+        this.props.changeWorkMaterial(material);
     }
 }
 
@@ -94,7 +93,7 @@ const mapStateToProps = ({work1}) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch)
     };
 }
 

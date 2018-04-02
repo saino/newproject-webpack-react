@@ -157,14 +157,32 @@ const defaultState = [
 ]
 
 const actionTypes = {
-    "GET_MATERIAL": "GET_MATERIAL"
+    "GET_MATERIAL": "GET_MATERIAL",
+    "CHANGE_MATERIAL": "CHANGE_MATERIAL"
 }
 
+export const changeMaterial = (materialItems) => {
+    return  {
+        type: actionTypes.CHANGE_MATERIAL,
+        materialItems
+    };
+};
 
 export default (state = defaultState, action) => {
     switch (action.type) {
         case actionTypes.GET_MATERIAL:
             return state;
+        case actionTypes.CHANGE_MATERIAL:
+            if(Array.isArray(action.materialItems)){
+                return [...action.materialItems];
+            }
+            const tmpState = state.map((materialItem)=>{
+                if(materialItem.id===action.materialItems.id){
+                    return action.materialItems;
+                }
+                return materialItem;
+            })
+            return [...tmpState];
         default:
             return state;
     }
