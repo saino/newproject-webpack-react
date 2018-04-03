@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux"
 import { bindActionCreators } from 'redux';
+import config from '../../../config';
 import VideoMaterial from "./video-material";
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
 import { changeMaterial } from "../../../stores/reducers/material"
-
 import "./audio-container.css";
 import AddMaterial from "../../statics/add-material1.png";
 
@@ -136,30 +136,21 @@ class MaterialContainer extends Component {
     }
 
     render() {
-
-        const upLoadOptions = {
-            baseUrl: `./aa/user/uploadMaterial`,
-            paramAddToField: {
-                work_id: "this.props.workId"
-            },
-            fileFieldName: "file",
-            multiple: false,
-            accept: 'video/*, image/*',
-            requestHeaders: {
-                Token: "this.props.user.token",
-            },
-            chooseAndUpload: true,
-            wrapperDisplay: 'block',
-            beforeChoose: this._handleBeforeChoose,
-            chooseFile: this._handleChooseFile,
-            beforeUpload: this._handleBeforeUpload,
-            uploading: this._handleUploading,
-            /*上传成功*/
-            uploadSuccess: this._handleUploadSuccess,
-            /*xhr失败*/
-            uploadFail: this._handleUploadFailed,
-            uploadError: this._handleUploadFailed
-        }
+        const upLoadOptions = config.fileUpload.configureFileUpload({
+          paramAddToField: {
+            work_id: 'this.props.workId'
+          },
+          accept: 'video/*, image/*',
+          beforeChoose: this._handleBeforeChoose,
+          chooseFile: this._handleChooseFile,
+          beforeUpload: this._handleBeforeUpload,
+          uploading: this._handleUploading,
+          /*上传成功*/
+          uploadSuccess: this._handleUploadSuccess,
+          /*xhr失败*/
+          uploadFail: this._handleUploadFailed,
+          uploadError: this._handleUploadFailed
+        });
 
         return <div className="material-container">
             <div className="title-name">我的素材</div>
@@ -222,7 +213,7 @@ class MaterialContainer extends Component {
                     left: 0;
                     color: #fff;
                 }
-                
+
             `}</style>
         </div>
     }

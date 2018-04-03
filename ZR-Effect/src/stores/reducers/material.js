@@ -4,7 +4,7 @@ const defaultState = [
         "user_id": 52938,
         "type": "video",
         "status": 22771,
-        "path": "7Ak5CoLCfM",
+        "path": "7Ak5CoLCfM.mp4",
         "name": "xxx",
         "properties": {
             "length": 27145,
@@ -19,7 +19,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -33,7 +33,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -47,7 +47,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -61,7 +61,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -75,7 +75,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -89,7 +89,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -103,7 +103,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -117,7 +117,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -131,7 +131,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -145,7 +145,7 @@ const defaultState = [
         "user_id": 56241,
         "type": "image",
         "status": 30756,
-        "path": "SWvZzVquzI",
+        "path": "SWvZzVquzI.mp4",
         "properties": {
             "length": 32390,
             "time": 1522140488698,

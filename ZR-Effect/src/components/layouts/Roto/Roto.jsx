@@ -11,17 +11,16 @@ import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 
 class Matting extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    // 检测是否存在该用户信息的state，用来做登录跳转
+    redirectToReferrer: false,
+    // 中间区域是显示添加扣像素材还是帧图片
+    // 0-显示帧图片 | 1-添加扣像素材
+    showAddMaterialOrFrameImg: 0
+  };
 
-    this.state = {
-      // 检测是否存在该用户信息的state，用来做登录跳转
-      redirectToReferrer: false,
-      // 中间区域是显示添加扣像素材还是帧图片
-      // 0-显示帧图片 | 1-添加扣像素材
-      showAddMaterialOrFrameImg: 0
-    };
-  }
+  openMaterialListComponent = () =>
+    this.setState({ showAddMaterialOrFrameImg: 1 });
 
   render() {
     const { redirectToReferrer } = this.state;
@@ -42,7 +41,7 @@ class Matting extends Component {
           <div className={ rotoStyle[ 'content' ] }>
             <div className={ rotoStyle[ 'left' ] }>
               {/* 扣像素材列表 */}
-              <RotoMaterialList />
+              <RotoMaterialList onAddMaterial={ this.openMaterialListComponent } />
             </div>
             <div className={ rotoStyle[ 'middle' ] }>
               <div className={ rotoStyle[ 'middle-inner' ] }>

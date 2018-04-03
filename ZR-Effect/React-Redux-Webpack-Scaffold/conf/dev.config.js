@@ -79,7 +79,11 @@ baseConfig.module.rules.push({
  */
 baseConfig.plugins.push(
   new webpack.HotModuleReplacementPlugin(),
-  new webpack.NoErrorsPlugin()
+  new webpack.NoErrorsPlugin(),
+  new webpack.DefinePlugin({
+    host: JSON.stringify('127.0.0.1'),
+    port: 3030
+  })
 );
 
 module.exports = baseConfig;

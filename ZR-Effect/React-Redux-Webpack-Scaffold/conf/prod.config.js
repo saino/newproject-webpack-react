@@ -58,6 +58,11 @@ baseConfig.plugins.push(
   }),
   new webpack.optimize.CommonsChunkPlugin({
     name: 'manifest'
+  }),
+  // 定义生产环境的host
+  new webpack.DefinePlugin({
+    host: JSON.stringify('192.168.3.116'),
+    port: 8888
   })
 );
 

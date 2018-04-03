@@ -7,10 +7,15 @@ import videoPNG from './video.png';
 import deletePNG from './delete.png';
 
 class RotoMaterialList extends Component {
+  addMaterialHandle = () => {
+    const { onAddMaterial } = this.props;
+    onAddMaterial();
+  };
+
   getMaterialComponents() {
     const { rfa, materialList } = this.props;
     let material;
-    console.log(materialList, 'mlist');
+
     return rfa.map(item => {
       material = findItem(materialList, 'id', item[ 'material_id' ]);
 
@@ -34,7 +39,7 @@ class RotoMaterialList extends Component {
   render() {
     return (
       <div className={ rotoMaterialListStyle[ 'wrapper' ] }>
-        <div className={ rotoMaterialListStyle[ 'material-add' ] }>
+        <div className={ rotoMaterialListStyle[ 'material-add' ] } onClick={ this.addMaterialHandle }>
           扣像素材
           <img src={ addMaterialPNG } />
         </div>
