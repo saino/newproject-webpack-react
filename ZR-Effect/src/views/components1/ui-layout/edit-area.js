@@ -93,11 +93,9 @@ class EditArea extends Component{
     }
     renderControlMaterial(){
         const currentMaterial = this.getcurrentmaterial();
-        console.log(currentMaterial);
         if (!currentMaterial || !currentMaterial.active){
             return null;
         }
-        console.log(currentMaterial);
         if (currentMaterial.type === "audio"){
             return this.audioControl();
         } else if(currentMaterial.type === "image"){

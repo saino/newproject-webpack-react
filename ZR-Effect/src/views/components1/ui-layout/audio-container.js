@@ -117,10 +117,8 @@ class AudioContainer extends Component {
         const { material } = this.props;
         
         const temMaterial = material.push(data);
-        // material
 
         this.props.changeMaterial(temMaterial);
-        // console.log("xxxxxxxxx");
         this.setState({
             uploadProgress: 0,
             progressState: "exception"

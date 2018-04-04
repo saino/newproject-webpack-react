@@ -2,6 +2,8 @@
 const defaultState = {
     id: "work001",
     name: "作品1",
+    videoPX: "px1",
+    videoType: "type1",
     video: [
         { id: "video0001",duration: 5000, src: "../../statics/aaa.mp4", order: 2 },
         { id: "video0002",duration: 4000, src: "../../statics/bbb.mp4", order: 1 }
@@ -99,13 +101,20 @@ const defaultState = {
 const actionTypes = {
     "GET_WORK": "GET_WORK",
     "SAVE_WORK": "SAVE_WORK",
-    "CHANGE_WORK_MATERIAL": "CHANGE_WORK_MATERIAL"
+    "CHANGE_WORK_MATERIAL": "CHANGE_WORK_MATERIAL",
+    "CHANGE_WORK": "CHANGE_WORK"
 }
 
 export const changeWorkMaterial = (materialItem) => {
     return {
         type: actionTypes.CHANGE_WORK_MATERIAL,
         materialItem
+    }
+}
+export const changeWork = (newWork) => {
+    return {
+        type: actionTypes.CHANGE_WORK,
+        newWork
     }
 }
 
@@ -116,6 +125,8 @@ export default (state = defaultState, action) => {
         case actionTypes.SAVE_WORK:
             let state1 = { ...action.work, video: [...action.work.video], material: [...action.work.material] }
             return state1;
+        case actionTypes.CHANGE_WORK:
+            return {...action.newWork}
         case actionTypes.CHANGE_WORK_MATERIAL:
             if (Array.isArray(action.materialItem)) {
                 return { ...state, material: [...action.materialItem] };
