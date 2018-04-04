@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "antd": "^2.13.13",
+    "createjs": "^1.0.1",
     "jwt-simple": "^0.5.1",
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
@@ -16,7 +17,8 @@
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "yuki-createjs": "0.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

@@ -10,6 +10,9 @@ class StageArea extends Component {
                     height: 574px;
                     width: calc(100% - 440px);
                     background: #666;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 }
                 .stage{
                     // height: 
