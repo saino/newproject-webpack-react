@@ -23,7 +23,7 @@
 
 .header {
   flex: 0 0 50px;
-  background: rgba(4, 6, 11, .2);
+  background-image: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
 }
 
 .content {
@@ -41,6 +41,7 @@
 .content .middle {
   flex: 1;
   background: rgba(29,54,57);
+  overflow: hidden;
 }
 
 .content .middle .middle-inner {
@@ -48,11 +49,18 @@
   box-sizing: border-box;
   display: flex;
   flex-flow: row nowrap;
+  flex-shrink: 1;
 }
 
 .content .middle-inner .canvas {
-  flex: 1;
-  margin: 60px 0;
+  margin: 51px 0 60px;
+  flex-shrink: 1;
+  width: 100%;
+}
+
+.content .middle-inner .mapping {
+  width: -webkit-calc(100% - 40px);
+  width: -moz-calc(100% - 40px);
 }
 
 .content .middle-inner .canvas-inner {
@@ -62,7 +70,7 @@
 }
 
 .content .middle-inner .toolbar {
-  flex-basis: 40px;
+  flex: 0 0 40px;
 }
 
 .content .right {

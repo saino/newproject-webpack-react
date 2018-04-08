@@ -13,26 +13,33 @@ export default class MaterialItem extends Component {
     uploadSituation: PropTypes.number,
     // 上传进度
     uploadingPercent: PropTypes.number,
+    // 素材id
+    materialId: PropTypes.number,
     // 素材名
     materialName: PropTypes.string,
     // 素材缩略图
-    materialThumb: PropTypes.string
-  };
-
-  // 计算上传进度
-  getUploadingPercentHandle = (percent) => {
-
+    materialThumb: PropTypes.string,
+    // 选择回调
+    onCheck: PropTypes.func
   };
 
   getChildComponent() {
     const {
       visibleUploadOrDetail,
       uploadSituation, uploadingPercent,
-      materialName, materialThumb } = this.props;
+      materialId, materialName, materialThumb,
+      onCheck
+    } = this.props;
     let childComponent = null;
 
     if (visibleUploadOrDetail < 1) {
-      childComponent = (<MaterialCardItem name={ materialName } thumb={ materialThumb } />);
+      childComponent = (
+        <MaterialCardItem
+          id={ materialId }
+          name={ materialName }
+          thumb={ materialThumb }
+          onCheck={ onCheck } />
+        );
     }
     else {
       if (uploadingPercent < 100) {

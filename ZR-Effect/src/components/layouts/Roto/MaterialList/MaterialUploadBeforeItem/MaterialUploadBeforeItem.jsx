@@ -55,7 +55,7 @@ export default class MaterialUploadedBeforeItem extends Component {
   // 上传失败
   uploadFailHandle = () => {
     const { onUploadFail } = this.props;
-    
+
     onUploadFail();
   };
 
@@ -72,8 +72,6 @@ export default class MaterialUploadedBeforeItem extends Component {
       uploadFail: this.uploadFailHandle,
       uploadError: this.uploadFailHandle
     });
-
-    console.log(fileUploadOptions, 'fup')
 
     return (
       <div className={ itemStyle[ 'wrapper' ] } style={{ cursor: 'pointer' }}>

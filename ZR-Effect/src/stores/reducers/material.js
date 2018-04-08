@@ -1,4 +1,6 @@
-const defaultState = [
+import { add, update, remove, findItem } from '../../utils/array-handle';
+
+/*const defaultState = [
     {
         "id": 52288,
         "user_id": 52938,
@@ -154,7 +156,8 @@ const defaultState = [
             "height": 32974
         }
     }
-]
+]*/
+const defaultState = [];
 
 const actionTypes = {
     "GET_MATERIAL": "GET_MATERIAL",
@@ -169,21 +172,23 @@ export const changeMaterial = (materialItems) => {
 };
 
 export default (state = defaultState, action) => {
-    switch (action.type) {
-        case actionTypes.GET_MATERIAL:
-            return state;
-        case actionTypes.CHANGE_MATERIAL:
-            if(Array.isArray(action.materialItems)){
-                return [...action.materialItems];
-            }
-            const tmpState = state.map((materialItem)=>{
-                if(materialItem.id===action.materialItems.id){
-                    return action.materialItems;
-                }
-                return materialItem;
-            })
-            return [...tmpState];
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case actionTypes.GET_MATERIAL:
+      return state;
+    case actionTypes.CHANGE_MATERIAL:
+      if(Array.isArray(action.materialItems)){
+          return [...action.materialItems];
+      }
+      const tmpState = state.map((materialItem)=>{
+          if(materialItem.id===action.materialItems.id){
+              return action.materialItems;
+          }
+          return materialItem;
+      })
+      return [...tmpState];
+    case 'UPLOAD_MATERIAL':
+      return add(state, action.material);
+    default:
+      return state;
+  }
 }

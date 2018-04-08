@@ -14,13 +14,13 @@
   line-height: 40px;
   display: flex;
   color: #c4bf97;
-  cursor: pointer;
   justify-content: space-between;
   align-items: center;
 }
 
 .material-add img {
   margin-right: 0;
+  cursor: pointer;
 }
 
 .material-list {

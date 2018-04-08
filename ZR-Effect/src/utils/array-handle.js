@@ -6,7 +6,7 @@
 function getDiff (key, value) {
   return typeof key === 'function'
     ? (item) => key(item)
-    : (item) => item[ key ] = value;
+    : (item) => item[ key ] === value;
 }
 
 function createIndexFinder (dir) {
@@ -106,10 +106,10 @@ export const equal = (target, source) => {
 };
 
 // 正序查找元素的索引
-export const findIndex = function () {};//createIndexFinder(1);
+export const findIndex = createIndexFinder(1);
 
 // 倒序查找元素的索引
-export const findLastIndex = function () {};// createIndexFinder(-1);
+export const findLastIndex = createIndexFinder(-1);
 
 // 根据条件查找元素
 export const findItem = (target, key = 'id', value) => {
@@ -126,7 +126,7 @@ export const finds = (target, key = 'id', value) =>
 export const add = (target, waitItem) => {
   const waits = waitItem instanceof Array
     ? waitItem
-    : [].slice.apply(arguments, 1);
+    : [ waitItem ];
 
   return uniq([ ...target, ...waits ]);
 };
@@ -161,6 +161,7 @@ export const update = (target, updateItem, findKey, findValue) => {
 // 删除
 export const remove = (target, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
+  target.splice(index, 1);
 
-  return [ ...target.splice(index, 1) ];
+  return [ ...target ];
 };

@@ -11,7 +11,7 @@ export default class MaterialCardItem extends Component {
 
     return (
       <div className={ itemStyle[ 'wrapper' ] }>
-        <div className={ itemStyle[ 'gc-show' ] }>
+        <div className={ `${ itemStyle[ 'gc-show' ] } ${ itemStyle[ 'up' ] }` }>
           <div>
             <Progress percent={ percent } />
           </div>

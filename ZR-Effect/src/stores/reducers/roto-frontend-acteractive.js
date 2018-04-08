@@ -27,12 +27,12 @@ export default function rotoFrontendActerActive (state = defState, action) {
       return update(state, { 'is_selected': true }, 'material_id', action.materialId);
 
     case 'CANCEL_SELECTED_ROTO_MATTERIAL':
-      return update(state, { 'is_selected': false }, 'material_id', action.materialId);
+      return state.map(item => ({ ...item, 'is_selected': false }));
 
     case 'ADD_ROTO_MATERIAL':
       const initRotoMaterial = {
         'material_id': action.materialId,
-        'is_selected': true,
+        'is_selected': false,
         'selected_frame': 0,
         'is_upload_or_detail': 0,
         'is_ai_roto': false,

@@ -20,10 +20,10 @@ export default class MaterialCardItem extends Component {
   render() {
     const { situation } = this.props;
     const isSuccess = situation < 1;
-    console.log(isSuccess, situation, 'dd');
+
     return (
       <div className={ itemStyle[ 'wrapper' ] }>
-        <div className={ itemStyle[ 'gc-show' ] }>
+        <div className={ `${ itemStyle[ 'gc-show' ] } ${ itemStyle[ 'up' ] }` }>
           <div>
             <Progress percent={ 100 } status={ isSuccess ? 'success' : 'exception' }/>
           </div>

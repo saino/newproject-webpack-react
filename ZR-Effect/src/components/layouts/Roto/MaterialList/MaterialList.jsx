@@ -1,48 +1,95 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import config from '../../../../config';
+import defferPerform from '../../../../utils/deffer-perform';
+import { uploadMaterial } from '../../../../stores/action-creators/material-creator';
+import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import materialListStyle from './material-list.css';
 import MaterialItem from './MaterialItem/MaterialItem';
 import MaterialUploadBeforeItem from './MaterialUploadBeforeItem/MaterialUploadBeforeItem';
 
 class MaterialList extends Component {
-  state = {
-    // 上传进度
-    uploadingPercent: 0,
-    // 上传结果
-    uploadSituation: 0
-  };
+  constructor(props) {
+    super(props);
 
-  // 上传中
-  fileUploadingHandle = (percent) =>
-    this.setState({ uploadingPercent: percent });
-
-  // 上传成功
-  fileUploadSuccessHandle = () =>
-    this.setState({
-      uploadingPercent: 100,
+    this.state = {
+      // 上传进度
+      uploadingPercent: 0,
+      // 上传结果
       uploadSituation: 0
-    });
+    };
 
-  // 上传失败
-  fileUploadFailHandle = () =>
-    this.setState({
-      uploadingPercent: 100,
-      uploadSituation: 1
+    // 上传中
+    this.fileUploadingHandle = (percent) =>
+      this.setState({ uploadingPercent: percent });
+
+    // 上传成功
+    this.fileUploadSuccessHandle = (resp) => {
+      this.setState({
+        uploadingPercent: 100,
+        uploadSituation: 0
+      });
+    };
+
+    // 上传失败
+    this.fileUploadFailHandle = () => {
+      this.setState({
+        uploadingPercent: 100,
+        uploadSituation: 1
+      }, () => this.uploadMaterial());
+    };
+
+    // 添加扣像素材
+    this.addRotoMaterialHandle = materialId =>
+      this.addRotoMaterial(materialId);
+  }
+
+  addRotoMaterial(materialId) {
+    const { addRotoMaterial } = this.props;
+    addRotoMaterial(materialId);
+  }
+
+  uploadMaterial(material) {
+    material || (material = {
+      "id": new Date().getTime(),
+      "user_id": 52938,
+      "type": "video",
+      "status": 22771,
+      "path": "http://ohjdda8lm.bkt.clouddn.com/course/sample1.mp4",
+      "properties": {
+          "length": 300,
+          "time": 60000,
+          "thumbnail": "http://img2.imgtn.bdimg.com/it/u=773138821,3059386791&fm=27&gp=0.jpg",
+          "width": 640,
+          "height": 480
+      }
     });
+    const { uploadMaterial } = this.props;
+    const defer = defferPerform(() => {
+      this.setState({ uploadingPercent: 0 }, () => uploadMaterial(material));
+    }, 100);
+
+    defer();
+  }
 
   getChildComponent() {
-    const { materialList } = this.props;
+    const { materialList, raf } = this.props;
+    let rotoMaterial = null;
 
-    return materialList.map(material => (
-      <div key={ material.id } className={ materialListStyle[ 'list-item' ] }>
-        <MaterialItem
-          visibleUploadOrDetail={ 0 }
-          materialName={ config.getFilenameByPath(material.path) }
-          materialThumb={ material.properties.thumbnail } />
-      </div>
-    ));
+    return materialList.map(material => {
+      return (
+        <div key={ material.id } className={ materialListStyle[ 'list-item' ] }>
+          <MaterialItem
+            visibleUploadOrDetail={ 0 }
+            materialId={ material.id }
+            materialName={ config.getFilenameByPath(material.path) }
+            materialThumb={ material.properties.thumbnail }
+            onCheck={ this.addRotoMaterialHandle }/>
+        </div>
+      );
+    });
   }
 
   getAddUploadComponent() {
@@ -60,7 +107,6 @@ class MaterialList extends Component {
     const { uploadingPercent, uploadSituation } = this.state;
 
     if (uploadingPercent > 0) {
-      
       return (
         <div className={ materialListStyle[ 'list-item' ]}>
           <MaterialItem
@@ -99,6 +145,17 @@ class MaterialList extends Component {
   }
 }
 
-const mapStateToProps = ({ material }) => ({ materialList: material });
+const mapStateToProps = ({ material, rotoFrontendActeractive }) => ({
+  materialList: material,
+  raf: rotoFrontendActeractive
+});
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      uploadMaterial,
+      addRotoMaterial
+    },
+    dispatch
+  );
 
-export default connect(mapStateToProps)(MaterialList);
+export default connect(mapStateToProps, mapDispatchToProps)(MaterialList);
