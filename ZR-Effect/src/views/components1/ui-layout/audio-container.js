@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import AudioMaterial from "./audio-material";
 import "./audio-container.css";
 import AddMaterial from "../../statics/add-material.png";
+import deleImg from "../../statics/dele.png";
 
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
@@ -129,7 +130,9 @@ class AudioContainer extends Component {
             });
         }, 200);
     }
-
+    onCloseClick = () => {
+        this.props.changeaActiveContainer("stage");
+    }
     render() {
 
         const upLoadOptions = {
@@ -158,6 +161,7 @@ class AudioContainer extends Component {
 
         return <div className="audio-container">
             <div className="title-name">我的音频</div>
+            <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
             <div className="audio-content">
 
                 <FileUpload options={upLoadOptions} className="add-action">
@@ -191,6 +195,7 @@ class AudioContainer extends Component {
                     height: 100%;
                     width: 100%;
                     background: #031016;
+                    position: relative;
                 }
                 .title-name{
                     height: 40px;
@@ -226,6 +231,17 @@ class AudioContainer extends Component {
                     top: 0;
                     left: 0;
                     color: #fff;
+                }
+                .close-container{
+                    position: absolute;
+                    color: #fff;
+                    right: 0;
+                    top: 0;
+                    height: 40px;
+                    line-height: 40px;
+                    text-align: center;
+                    width: 40px;
+                    cursor: pointer;
                 }
                 
             `}</style>

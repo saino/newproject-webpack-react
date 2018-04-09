@@ -15,6 +15,7 @@ class AlertDom extends Component {
                     justify-content: space-around;
                     display: flex;
                     align-items: center;
+                    z-index: 10;
                 }
             `}</style>
         </div>

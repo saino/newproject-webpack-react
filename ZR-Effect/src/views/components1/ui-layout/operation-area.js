@@ -41,8 +41,8 @@ class OperationArea extends Component {
             <div className="operation-icons">
                 <div><img className="operation-icon" src={CancelImg} /></div>
                 <div><img className="operation-icon" src={MoveImg} /></div>
-                <div><img className="operation-icon" src={ZoomInImg} /></div>
-                <div><img className="operation-icon" src={ZoomOutImg} /></div>
+                <div><img className="operation-icon" onClick={this.onZoomInClick} src={ZoomInImg} /></div>
+                <div><img className="operation-icon" onClick={this.onZoomOutClick} src={ZoomOutImg} /></div>
                 {/* <img className="operation-icon" src={MoveImg} />
                 <img className="operation-icon" src={ZoomInImg} />
                 <img className="operation-icon" src={ZoomOutImg} /> */}
@@ -55,6 +55,7 @@ class OperationArea extends Component {
                     background: rgba(13,29,33,1);
                     color: #fff;
                     font-size: 12px;
+                    z-index: 1;
                 }
                 .operation-btn1{
                     height: 40px;
@@ -97,6 +98,18 @@ class OperationArea extends Component {
                 
             `}</style>
         </div>
+    }
+    onZoomInClick = () => {
+        const { work1 } = this.props;
+        work1.scaleX = work1.scaleX + 0.05;
+        work1.scaleY = work1.scaleY + 0.05;
+        this.props.changeWork(work1);
+    }
+    onZoomOutClick = () => {
+        const { work1 } = this.props;
+        work1.scaleX = work1.scaleX - 0.05;
+        work1.scaleY = work1.scaleY - 0.05;
+        this.props.changeWork(work1);
     }
     renderAlert = () => {
         return <div className="alert-view-container">
@@ -254,10 +267,10 @@ class OperationArea extends Component {
         AlertView.render(this.renderAlert());
     }
     onMaterialLibClick = () => {
-        this.props.changeaActiveContainer("material");
+        this.props.changeaActiveContainer("material", ["video", "image"]);
     }
     onAudioLibClick = () => {
-        this.props.changeaActiveContainer("audio");
+        this.props.changeaActiveContainer("audio", ["video", "image"]);
     }
 }
 const mapStateToProps = ({work1}) => {

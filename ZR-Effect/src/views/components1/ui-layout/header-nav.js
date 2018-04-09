@@ -19,6 +19,8 @@ class HeaderNav extends Component {
                     width: 100%;
                     height: 50px;
                     background: rgba(13,29,33,1);
+                    position: relative;
+                    z-index: 1;
                 }
                 .nav-btn{
                     font-family: PingFangSC-Regular;

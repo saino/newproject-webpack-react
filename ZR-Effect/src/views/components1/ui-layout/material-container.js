@@ -5,6 +5,7 @@ import VideoMaterial from "./video-material";
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
 import { changeMaterial } from "../../../stores/reducers/material"
+import deleImg from "../../statics/dele.png";
 
 import "./audio-container.css";
 import AddMaterial from "../../statics/add-material1.png";
@@ -17,9 +18,9 @@ class MaterialContainer extends Component {
     }
 
     getVideoMaterial() {
-        const { material } = this.props;
+        const { material, materialContainerType } = this.props;
         return material.reduce((videoMaterial, materialItem) => {
-            if (materialItem.type === 'video' || materialItem.type === "image") {
+            if (materialContainerType.indexOf(materialItem.type)>=0) {
                 videoMaterial.push(materialItem);
             }
             return videoMaterial;
@@ -66,7 +67,6 @@ class MaterialContainer extends Component {
     }
     //上传成功
     _handleUploadSuccess = (resp) => {
-        // console.log("ddddddddddddddddd");
         this.setState({
             uploadProgress: 100,
             progressState: "success",
@@ -102,7 +102,6 @@ class MaterialContainer extends Component {
     }
     //上传失败
     _handleUploadFailed = () => {
-        // console.log("xxxxxxxxx");
         const data = {
             "id": new Date().getTime(),
             "user_id": 52938,
@@ -134,8 +133,10 @@ class MaterialContainer extends Component {
             });
         }, 200);
     }
-
-    render() {
+    onCloseClick = () => {
+        this.props.changeaActiveContainer("stage", ["video", "image"]);
+    }
+    render() { 
 
         const upLoadOptions = {
             baseUrl: `./aa/user/uploadMaterial`,
@@ -163,6 +164,7 @@ class MaterialContainer extends Component {
 
         return <div className="material-container">
             <div className="title-name">我的素材</div>
+            <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
             <div className="material-content">
                 <FileUpload options={upLoadOptions} className="add-action">
                     <div ref="chooseAndUpload">
@@ -174,7 +176,7 @@ class MaterialContainer extends Component {
 
                 {
                     this.getVideoMaterial().map((material) => {
-                        return <VideoMaterial key={material.id} model={material} />
+                        return <VideoMaterial useType={this.props.materialContainerType} key={material.id} model={material} />
                     })
                 }
                 {
@@ -186,6 +188,7 @@ class MaterialContainer extends Component {
                     height: 100%;
                     width: 100%;
                     background: #031016;
+                    position: relative;
                 }
                 .title-name{
                     height: 40px;
@@ -221,6 +224,18 @@ class MaterialContainer extends Component {
                     top: 0;
                     left: 0;
                     color: #fff;
+                }
+
+                .close-container{
+                    position: absolute;
+                    color: #fff;
+                    right: 0;
+                    top: 0;
+                    height: 40px;
+                    line-height: 40px;
+                    text-align: center;
+                    width: 40px;
+                    cursor: pointer;
                 }
                 
             `}</style>

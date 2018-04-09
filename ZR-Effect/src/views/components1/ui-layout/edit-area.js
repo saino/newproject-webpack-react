@@ -26,6 +26,7 @@ class EditArea extends Component{
                     height: 700px;
                     width: 240px;
                     background: rgba(38,66,70,1);
+                    z-index: 1;
                 }
                 .edit-title{
                     height: 40px;

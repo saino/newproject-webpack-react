@@ -13,7 +13,7 @@ class TimeArea extends Component {
                     <div className="control-play"><img src={Play} /> </div>
                     <div><img src={NextFrame} /> </div>
                 </div>
-                <div className="add-video"><img src={AddImg}/>添加视频</div>
+                <div onClick={this.onAddVideoClick} className="add-video"><img src={AddImg}/>添加视频</div>
             </div>
             <style>{`
                 .time-area{
@@ -21,6 +21,8 @@ class TimeArea extends Component {
                     width: calc(100% - 240px);
                     background: rgba(14,27,32,1);
                     margin-top: -126px;
+                    position: relative;
+                    z-index: 1;
                 }
                 .time-control{
                     width: 100%;
@@ -52,6 +54,9 @@ class TimeArea extends Component {
                 }
             `}</style>
         </div>
+    }
+    onAddVideoClick = () => {
+        this.props.changeaActiveContainer("material", ["video"]);
     }
 }
 export default TimeArea;
