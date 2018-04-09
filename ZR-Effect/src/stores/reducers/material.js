@@ -1,10 +1,12 @@
+import { add, update, remove, findItem } from '../../utils/array-handle';
+
 const defaultState = [
     {
         "id": 52288,
         "user_id": 52938,
         "type": "video",
         "status": 22771,
-        "path": "7Ak5CoLCfM",
+        "path": "7Ak5CoLCfM.mp4",
         "name": "xxx",
         "properties": {
             "length": 27145,
@@ -19,7 +21,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -33,7 +35,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -47,7 +49,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -61,7 +63,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -75,7 +77,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -89,7 +91,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -103,7 +105,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -117,7 +119,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -131,7 +133,7 @@ const defaultState = [
         "user_id": 54809,
         "type": "audio",
         "status": 96995,
-        "path": "wNnkKjpUI1",
+        "path": "wNnkKjpUI1.mp4",
         "properties": {
             "length": 26145,
             "time": 1522141027690,
@@ -145,7 +147,7 @@ const defaultState = [
         "user_id": 56241,
         "type": "image",
         "status": 30756,
-        "path": "SWvZzVquzI",
+        "path": "SWvZzVquzI.mp4",
         "properties": {
             "length": 32390,
             "time": 1522140488698,
@@ -169,21 +171,23 @@ export const changeMaterial = (materialItems) => {
 };
 
 export default (state = defaultState, action) => {
-    switch (action.type) {
-        case actionTypes.GET_MATERIAL:
-            return state;
-        case actionTypes.CHANGE_MATERIAL:
-            if(Array.isArray(action.materialItems)){
-                return [...action.materialItems];
-            }
-            const tmpState = state.map((materialItem)=>{
-                if(materialItem.id===action.materialItems.id){
-                    return action.materialItems;
-                }
-                return materialItem;
-            })
-            return [...tmpState];
-        default:
-            return state;
-    }
+  switch (action.type) {
+    case actionTypes.GET_MATERIAL:
+      return state;
+    case actionTypes.CHANGE_MATERIAL:
+      if(Array.isArray(action.materialItems)){
+          return [...action.materialItems];
+      }
+      const tmpState = state.map((materialItem)=>{
+          if(materialItem.id===action.materialItems.id){
+              return action.materialItems;
+          }
+          return materialItem;
+      })
+      return [...tmpState];
+    case 'UPLOAD_MATERIAL':
+      return add(state, action.material);
+    default:
+      return state;
+  }
 }

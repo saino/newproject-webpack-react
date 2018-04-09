@@ -1,8 +1,10 @@
 @charset "UTF-8";
 
 .header {
+  position: relative;
   height: 50px;
-  background: rgba(4, 6, 11, .2);
+  z-index: 1;
+  background-image: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
 }
 
 .footer {

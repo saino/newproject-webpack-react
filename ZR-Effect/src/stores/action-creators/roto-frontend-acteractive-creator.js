@@ -1,16 +1,15 @@
 import { post, error as fail } from '../../api/fetch';
 
-export function selectedRotoMatterial (materialId) {
+export function selectedRotoMaterial (materialId) {
   return {
     type: 'SELECTED_ROTO_MATTERIAL',
     materialId
   };
 }
 
-export function cancelSelectedRotoMatterial (materialId) {
+export function cancelSelectedRotoMaterial () {
   return {
-    type: 'CANCEL_SELECTED_ROTO_MATTERIAL',
-    materialId
+    type: 'CANCEL_SELECTED_ROTO_MATTERIAL'
   };
 }
 
@@ -30,7 +29,7 @@ export function removeRotoMaterial (materialId) {
 
 export function selectedFrame (materialId, frame) {
   return {
-    type: 'SELECTED_FRAME':
+    type: 'SELECTED_FRAME',
     materialId,
     frame
   };

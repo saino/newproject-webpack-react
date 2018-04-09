@@ -5,6 +5,7 @@
  *   material_id { Number } 素材id
  *   is_selected { Boolean } 是否选中 [ 存入数据库 ]
  *   selected_frame { Number } 选中帧
+ *   is_upload_or_detail { Number } 显示上传还是详情 ( 0-详情｜1-上传 )
  *   is_ai_roto { Boolean } 是否开始ai扣像 [ 存入数据库 ]
  *   ai_roto_percent { Number } ai扣像进度 [ 存入数据库 ]
  *   is_generate_roto_material { Boolean } 是否开始生成扣像素材 [ 存入数据库 ]
@@ -26,13 +27,14 @@ export default function rotoFrontendActerActive (state = defState, action) {
       return update(state, { 'is_selected': true }, 'material_id', action.materialId);
 
     case 'CANCEL_SELECTED_ROTO_MATTERIAL':
-      return update(state, { 'is_selected': false }, 'material_id', action.materialId);
+      return state.map(item => ({ ...item, 'is_selected': false }));
 
     case 'ADD_ROTO_MATERIAL':
       const initRotoMaterial = {
         'material_id': action.materialId,
-        'is_selected': true,
+        'is_selected': false,
         'selected_frame': 0,
+        'is_upload_or_detail': 0,
         'is_ai_roto': false,
         'ai_roto_percent': 0,
         'is_generate_roto_material': false,
@@ -151,5 +153,8 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'material_id',
         action.materialId
       );
+
+    default:
+      return state;
   }
 }

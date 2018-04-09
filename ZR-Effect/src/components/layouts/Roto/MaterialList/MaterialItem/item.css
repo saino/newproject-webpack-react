@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.wrapper .checked {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 100%;
+  background: #72d766;
+  text-align: center;
+}
+
+.wrapper .checked i {
+  font-size: 22px;
+  color: #fff;
+  margin-top: 5px;
+}
+
+.wrapper:hover {
+  box-shadow: 0 0 9px 6px rgba(255,255,255,.5);
+  border-image: linear-gradient(#ddeff1, #86a6a9, #3a666a);
+}
+
+.wrapper .gc-show {
+  flex: 1;
+}
+
+.wrapper .gc-show > div {
+  height: 100%;
+  padding: 0 8px;
+  display: flex;
+  background: rgba(3,14,21,.4);
+  color: #fff;
+}
+
+.wrapper .cd > div {
+  padding: 0;
+}
+
+.wrapper .up > div {
+  align-items: center;
+}
+
+.wrapper :global(.ant-progress-bg) {
+  height: 5px!important;
+}
+
+.wrapper .gc-show img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.wrapper .detail-show {
+  flex: 0 0 30px;
+  line-height: 30px;
+  color: #fff;
+  font-size: 12px;
+  box-sizing: border-box;
+  padding-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wrapper .gc-show .upload-before {
+  display: block;
+  text-align: center;
+  background: rgba(45,75,80,.8);
+}
+
+.wrapper .upload-before i {
+  font-size: 32px;
+  color: #fff;
+  margin-top: 32px;
+}
+
+.wrapper .upload-before span {
+  display: block;
+  margin-top: 20px;
+  color: #c4bf97;
+  font-size: 12px;
+  margin-top: 16px;
+  text-align: center;
+}

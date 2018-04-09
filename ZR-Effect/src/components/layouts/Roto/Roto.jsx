@@ -2,25 +2,40 @@ import React, { Component } from 'react';
 /* 路由跳转前验证 -- start */
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { findItem } from '../../../utils/array-handle';
 /* 路由跳转前验证 -- end */
 import rotoStyle from './roto.css';
 import Header from '../../containers/Header/Header';
+import MaterialList from './MaterialList/MaterialList';
+import RotoMaterialAdd from './RotoMaterialAdd/RotoMaterialAdd';
 import RotoMaterialList from './RotoMaterialList/RotoMaterialList';
 import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
+import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
 
 class Matting extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    // 检测是否存在该用户信息的state，用来做登录跳转
+    redirectToReferrer: false,
+    // 中间区域是显示添加扣像素材还是帧图片 0-显示帧图片 | 1-添加扣像素材
+    showAddMaterialOrFrameImg: 0
+  };
 
-    this.state = {
-      // 检测是否存在该用户信息的state
-      redirectToReferrer: false
-    };
-  }
+  openMaterialListComponent = () =>
+    this.setState({ showAddMaterialOrFrameImg: 1 });
+
+  openVisibleFrameImg = () =>
+    this.setState({ showAddMaterialOrFrameImg: 0 });
 
   render() {
-    const { redirectToReferrer } = this.state;
+    const { redirectToReferrer, showAddMaterialOrFrameImg } = this.state;
+    const { rfa } = this.props;
+    const isSelected = findItem(rfa, 'is_selected', true);
+    let show = showAddMaterialOrFrameImg;
+
+    if (rfa.length === 0 && show === 0) {
+      show = false;
+    }
 
     if (redirectToReferrer) {
       return (
@@ -38,37 +53,66 @@ class Matting extends Component {
           <div className={ rotoStyle[ 'content' ] }>
             <div className={ rotoStyle[ 'left' ] }>
               {/* 扣像素材列表 */}
-              <RotoMaterialList />
+              <RotoMaterialList
+                onOpenMaterialList={ this.openMaterialListComponent }
+                onOpenVisibleFrameImg={ this.openVisibleFrameImg } />
             </div>
             <div className={ rotoStyle[ 'middle' ] }>
               <div className={ rotoStyle[ 'middle-inner' ] }>
-                <div className={ rotoStyle[ 'canvas' ] }>
+                <div className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
                   <div className={ rotoStyle[ 'canvas-inner' ] }>
-
+                    {/* 画布还是素材列表 */}
+                    { show
+                      ? (<MaterialList />)
+                      : !rfa.length
+                        ? (<RotoMaterialAdd openMaterialList={ this.openMaterialListComponent } />)
+                        : !isSelected
+                          ? void 0
+                          :(<MaterialMappingFrameImg frame={ 1 } />)
+                    }
                   </div>
                 </div>
-                <div className={ rotoStyle[ 'toolbar' ] }>
-                  {/* 扣像工具条 */}
-                  <RotoToolbar />
-                </div>
+
+                {/* 扣像工具条 */}
+                { (show || !rfa.length)
+                  ? void 0
+                  : (
+                      <div className={ rotoStyle[ 'toolbar' ] }>
+                        <RotoToolbar />
+                      </div>
+                    )
+                }
               </div>
             </div>
-            <div className={ rotoStyle[ 'right' ] }>
-              {/* 扣像操作面板 */}
-              <RotoOperationPanel />
-            </div>
+
+            {/* 扣像操作面板 */}
+              { !rfa.length
+                ? void 0
+                : (<div className={ rotoStyle[ 'right' ] }>
+                    <RotoOperationPanel />
+                  </div>)
+              }
           </div>
-          <div className={ rotoStyle[ 'footer' ] }>
-            
-          </div>
+
+          {/* 扣像帧处理 */}
+          { (show || !rfa.length)
+            ? void 0
+            : (<div className={ rotoStyle[ 'footer' ] }></div>)
+          }
+
         </div>
       </div>
     );
 
-    return null;
   }
 }
 
-const mapStateToProps = ({ app }) => ({ token: app.token });
+const mapStateToProps = ({
+  app,
+  rotoFrontendActeractive
+}) => ({
+  token: app.token,
+  rfa: rotoFrontendActeractive
+});
 
 export default connect(mapStateToProps)(Matting);

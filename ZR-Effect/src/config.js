@@ -23,9 +23,9 @@ export default ({
   },
   // 数据请求
   api: {
-    host: '127.0.0.1',
+    host: host,
     path: '/api/1',
-    port: 3030,
+    port: port,
     timeout: 15000,
     headers: {
       'Accept': 'application/json',
@@ -39,5 +39,35 @@ export default ({
   // 对话框
   dialog: {
     width: 360
+  },
+  // 根据路径获取文件名
+  getFilenameByPath(path) {
+    let filenameExp = /([^/]*?)\.\w*?$/i;
+
+    if (path == null) {
+      return '';
+    }
+
+    return filenameExp.test(path)
+      ? RegExp.$1
+      : '';
+  },
+  fileUpload: {
+    // 配置文件上传参数
+    configureFileUpload(options) {
+      return {
+        baseUrl: '/api/1/user/uploadMaterial',
+        fileFieldName: 'file',
+        multiple: false,
+        chooseAndUpload: true,
+        wrapperDisplay: 'block',
+        accept: '*',
+        ...options
+      };
+    },
+    roto: {
+      maxSize: 1024 * 1024 * 200,
+      typeExp: /(ogg|mp4|webm)/i
+    }
   }
 });

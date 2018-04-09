@@ -20,7 +20,7 @@ export default class Banner extends Component {
             <img src={ makeTxtPNG } />
           </div>
           <div className={ bannerStyle[ 'product-entrance' ] }>
-            <Link to="/matting">智能抠像</Link>
+            <Link to="/roto">智能抠像</Link>
             <Link to="/special-effec">特效制作</Link>
           </div>
         </div>
