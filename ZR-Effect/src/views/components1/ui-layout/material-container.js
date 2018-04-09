@@ -138,32 +138,6 @@ class MaterialContainer extends Component {
         this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
     render() { 
-
-        // const upLoadOptions = {
-        //     baseUrl: `./aa/user/uploadMaterial`,
-        //     paramAddToField: {
-        //         work_id: "this.props.workId"
-        //     },
-        //     fileFieldName: "file",
-        //     multiple: false,
-        //     accept: 'video/*, image/*',
-        //     requestHeaders: {
-        //         Token: "this.props.user.token",
-        //     },
-        //     chooseAndUpload: true,
-        //     wrapperDisplay: 'block',
-        //     beforeChoose: this._handleBeforeChoose,
-        //     chooseFile: this._handleChooseFile,
-        //     beforeUpload: this._handleBeforeUpload,
-        //     uploading: this._handleUploading,
-        //     /*上传成功*/
-        //     uploadSuccess: this._handleUploadSuccess,
-        //     /*xhr失败*/
-        //     uploadFail: this._handleUploadFailed,
-        //     uploadError: this._handleUploadFailed
-        // }
-
-    // render() {
         const upLoadOptions = config.fileUpload.configureFileUpload({
           paramAddToField: {
             work_id: 'this.props.workId'
