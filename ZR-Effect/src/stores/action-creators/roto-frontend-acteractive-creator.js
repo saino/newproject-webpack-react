@@ -117,14 +117,6 @@ export function configureRotoToolType (materialId, rotoToolType) {
   };
 }
 
-export function configureRotoStageToolType (materialId, rotoStageToolType) {
-  return {
-    type: 'CONFIGURE_ROTO_STAGE_TOOL_TYPE',
-    materialId,
-    rotoStageToolType
-  };
-}
-
 export function configureZoom (materialId, zoomType, undoAction) {
   return {
     type: 'CONFIGURE_ZOOM',

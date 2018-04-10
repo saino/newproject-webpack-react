@@ -37,7 +37,7 @@ class Matting extends Component {
     this.getMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'move' ]);
 
     // 获取是否处于准备移动状态
-    this.isReadyMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'roto_stage_tool_type' ] === 1);
+    this.isReadyMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'roto_tool_type' ] === 1);
 
     this.canvasMoveStopHandle = ({ clientX, clientY, offsetX, offsetY }) => {
       const { configureMove } = this.props;

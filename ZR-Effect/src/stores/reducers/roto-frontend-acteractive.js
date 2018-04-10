@@ -13,8 +13,9 @@
  *   is_generate_png_frame { Boolean } 是否开始生成png序列帧 [ 存入数据库 ]
  *   generate_png_frame_percent { Number } 生成png序列帧进度 [ 存入数据库 ]
  *   rotoed_frames { Array } 已经本地扣像的帧集合 [ 存入数据库 ]
- *   roto_tool_type { Number } 扣像工具类别 ( 0-钢笔工具(画线状态)｜1-切换成编辑状态｜2-移动｜3-增加节点｜4-显示遮罩｜5-完成 )
- *   roto_stage_tool_type { Number } 扣像舞台工具类别 ( 0-撤销｜1-移动｜2-放大｜3-缩小 )
+ *   roto_tool_type { Number } 扣像舞台工具类别 (
+       0-撤销｜1-移动｜2-放大｜3-缩小｜4-钢笔工具｜5-切换成编辑状态｜6-移动｜7-增加节点｜8-显示遮罩｜9-完成
+    )
  *   zoom { Array } 放大缩小
  *   move { Array } 移动
  *   undo_actions { Array } 撤销操作
@@ -46,8 +47,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'is_generate_png_frame': false,
         'generate_png_frame_percent': 0,
         'rotoed_frames': [],
-        'roto_tool_type': 0,
-        'roto_stage_tool_type': 1,
+        'roto_tool_type': 1,
         'zoom': 1,
         'move': { x: 0, y: 0 },
         'undo_actions': [],
@@ -149,16 +149,8 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'CONFIGURE_ROTO_TOOL_TYPE':
       return update(
         state,
-        { 'roto_tool_type': action.rotoToolType },
-        'material_id',
-        action.materialId
-      );
-
-    case 'CONFIGURE_ROTO_STAGE_TOOL_TYPE':
-      return update(
-        state,
         {
-          'roto_stage_tool_type': action.rotoStageToolType,
+          'roto_tool_type': action.rotoToolType,
           'undo_count': 0
         },
         'material_id',
@@ -169,7 +161,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
       const { zoomType, undoAction } = action;
       const rMaterial = findItem(state, 'material_id', action.materialId);
       let zoomValue = rMaterial[ 'zoom' ] + (zoomType == 2 ? 0.25 : -0.25);
-      let undoActions = [ ...rMaterial[ 'undo_actions' ], `${ undoAction }-${ zoomValue }`];
+      let undoActions = [ ...rMaterial[ 'undo_actions' ], `${ undoAction }|${ zoomValue }`];
 
       zoomValue = zoomValue < 0.25 ? 0.25 : zoomValue;
 
@@ -178,7 +170,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         {
           'zoom': zoomValue,
           'undo_actions': undoActions,
-          'roto_stage_tool_type': zoomType,
+          'roto_tool_type': zoomType,
           'undo_count': 0
         },
         'material_id',
@@ -189,7 +181,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
       const { moveValue } = action;
       const { x, y } = moveValue;
       const rotMaterial = findItem(state, 'material_id', action.materialId);
-      let nodoActions = [ ...rotMaterial[ 'undo_actions' ], `move-${ x }-${ y }`];
+      let nodoActions = [ ...rotMaterial[ 'undo_actions' ], `move|${ x }|${ y }`];
 
       return update(
         state,
@@ -212,7 +204,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
 
       prevAction || (prevAction = '');
 
-      const [ na, value, value2 ] = prevAction.split('-');
+      const [ na, value, value2 ] = prevAction.split(/\|/g);
       let updateObj = {};
 
       if (na.indexOf('zoom') >= 0) {
@@ -233,7 +225,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
           ...updateObj,
           'undo_actions': [ ...noActions ],
           'undo_count': undoCount,
-          'roto_stage_tool_type': 0
+          'roto_tool_type': 0
         },
         'material_id',
         action.materialId
