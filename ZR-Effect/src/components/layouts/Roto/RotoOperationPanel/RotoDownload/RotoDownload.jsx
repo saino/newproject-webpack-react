@@ -1,22 +1,26 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import rotoOperationPanelStyle from '../roto-operation-panel.css';
+import { configureStartupAiRoto, configureAiRotoPercent } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import RotoAi from '../RotoAi/RotoAi';
+import rotoOperationPanelStyle from '../roto-operation-panel.css';
 import RotoedFrameList from '../RotoedFrameList/RotoedFrameList';
 
 class RotoDownload extends Component {
+  aiRotoHandle = materialId => {
+    const { configureStartupAiRoto } = this.props;
+
+    configureStartupAiRoto(materialId);
+  };
+
   render() {
     return (
-      <div className={ rotoOperationPanelStyle[ 'wrapper' ] }>
+      <div className={ rotoOperationPanelStyle[ 'wrapper-p' ] }>
         <div className={ rotoOperationPanelStyle[ 'ai-roto' ] }>
-          <RotoAi isAiRoto={ true } aiRotoPercent={ 10.2 } filename="帅的没边" />
+          <RotoAi onAiRoto={ this.aiRotoHandle } />
         </div>
         <div className={ rotoOperationPanelStyle[ 'rotoed-frame-list' ] }>
           <RotoedFrameList frameList={ [] } />
-        </div>
-        <div className={ rotoOperationPanelStyle[ 'action-type' ] }>
-          <div>生成扣像素材</div>
-          <div className={ rotoOperationPanelStyle[ 'active' ] }>生成PNG序列帧</div>
         </div>
       </div>
     );
@@ -24,5 +28,9 @@ class RotoDownload extends Component {
 }
 
 const mapStateToProps = ({ rotoFrontendActeractive }) => ({ rfa: rotoFrontendActeractive });
+const mapDispatchToProps = dispatch => bindActionCreators({
+  configureStartupAiRoto,
+  configureAiRotoPercent
+}, dispatch);
 
-export default connect(mapStateToProps)(RotoDownload);
+export default connect(mapStateToProps, mapDispatchToProps)(RotoDownload);

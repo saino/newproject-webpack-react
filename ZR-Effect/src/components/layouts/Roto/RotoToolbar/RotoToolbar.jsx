@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { message } from 'antd';
+import { findItem } from '../../../../utils/array-handle';
+import { undo, configureZoom } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
 import addPointPNG from './add-point.png';
@@ -14,7 +18,72 @@ import moveCanvasPNG from './move-canvas.png';
 import backPNG from './back.png';
 
 class RotoToolbar extends Component {
+  constructor(props) {
+    super(props);
+
+    this.backHandle = () => {
+      const { undo } = this.props;
+      const materialId = this.getMaterialId();
+      const undoCount = this.getUndoCount();
+
+      if (undoCount >= 3) {
+        message.warning('只能撤销3次');
+        return;
+      }
+
+      undo(materialId);
+    };
+
+    this.moveHandle = () => {
+      //const { onMove } = this.props;
+    };
+
+    this.zoomInHandle = () => {
+      const materialId = this.getMaterialId();
+      const { configureZoom } = this.props;
+
+      configureZoom(materialId, 2, 'zoomIn');
+    };
+
+    this.zoomOutHandle = () => {
+      const materialId = this.getMaterialId();
+      const { configureZoom } = this.props;
+
+      configureZoom(materialId, 3, 'zoomOut');
+    };
+
+    // 获取扣像舞台工具类别
+    this.getRotoStageToolType = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'roto_stage_tool_type' ]
+    );
+
+    // 获取素材id
+    this.getMaterialId = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'material_id' ]
+    );
+
+    // 获取撤销次数
+    this.getUndoCount = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'undo_count' ]
+    );
+  }
+
+  registerGetMaterialInfo(fn) {
+    return () => {
+      const { rfa } = this.props;
+      const rotoMaterial = findItem(rfa, 'is_selected', true);
+
+      if (rotoMaterial == null) {
+        return void 0;
+      }
+
+      return fn(rotoMaterial);
+    };
+  }
+
   render() {
+    const toolType = this.getRotoStageToolType();
+
     return (
       <div className={ rotoToolbarStyle[ 'wrapper' ] }>
         <div className={ rotoToolbarStyle[ 'wrapper-inner' ] }>
@@ -48,16 +117,16 @@ class RotoToolbar extends Component {
                   </li>
                 </ul>
                 <div className={ rotoToolbarStyle[ 'tool-stage-list' ] }>
-                  <li title="回退">
+                  <li onClick={ this.backHandle } title="回退" className={ toolType === 0 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ backPNG } />
                   </li>
-                  <li title="移动画布">
+                  <li onClick={ this.moveHandle } title="移动画布" className={ toolType === 1 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ moveCanvasPNG } />
                   </li>
-                  <li title="放大画布">
+                  <li onClick={ this.zoomInHandle } title="放大画布" className={ toolType === 2 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ zoomInPNG } />
                   </li>
-                  <li title="缩小画布">
+                  <li onClick={ this.zoomOutHandle } title="缩小画布" className={ toolType === 3 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ zoomOutPNG } />
                   </li>
                 </div>
@@ -70,8 +139,19 @@ class RotoToolbar extends Component {
   }
 }
 
-const mapStateToProps = ({ rotoFrontendActeractive }) => ({
-  rfa: rotoFrontendActeractive
+const mapStateToProps = ({
+  rotoFrontendActeractive,
+  material
+}) => ({
+  rfa: rotoFrontendActeractive,
+  materialList: material
 });
 
-export default connect(mapStateToProps)(RotoToolbar);
+const mapDispatchToProps = dispatch => bindActionCreators({
+    undo,
+    configureZoom
+  },
+  dispatch
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(RotoToolbar);

@@ -15,6 +15,10 @@
  *   rotoed_frames { Array } 已经本地扣像的帧集合 [ 存入数据库 ]
  *   roto_tool_type { Number } 扣像工具类别 ( 0-钢笔工具(画线状态)｜1-切换成编辑状态｜2-移动｜3-增加节点｜4-显示遮罩｜5-完成 )
  *   roto_stage_tool_type { Number } 扣像舞台工具类别 ( 0-撤销｜1-移动｜2-放大｜3-缩小 )
+ *   zoom { Array } 放大缩小
+ *   move { Array } 移动
+ *   undo_actions { Array } 撤销操作
+ *   undo_count { Number } 撤销次数
  */
 
 import { add, update, remove, findItem } from '../../utils/array-handle';
@@ -43,7 +47,11 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'generate_png_frame_percent': 0,
         'rotoed_frames': [],
         'roto_tool_type': 0,
-        'roto_stage_tool_type': 0
+        'roto_stage_tool_type': 1,
+        'zoom': 1,
+        'move': null,
+        'undo_actions': [],
+        'undo_count': 0
       };
 
       return add(state, initRotoMaterial);
@@ -57,7 +65,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'CONFIGURE_STARTUP_AI_ROTO':
       return update(
         state,
-        { 'is_ai_roto': true, 'ai_roto_percent': 0 },
+        { 'is_ai_roto': true, 'ai_roto_percent': 10.5 },
         'material_id',
         action.materialId
       );
@@ -150,6 +158,61 @@ export default function rotoFrontendActerActive (state = defState, action) {
       return update(
         state,
         { 'roto_stage_tool_type': action.rotoStageToolType },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_ZOOM':
+      const { zoomType, undoAction } = action;
+      const rMaterial = findItem(state, 'material_id', action.materialId);
+      let zoomValue = rMaterial[ 'zoom' ] + (zoomType == 2 ? 0.25 : -0.25);
+      let undoActions = [ ...rMaterial[ 'undo_actions' ], `${ undoAction }-${ zoomValue }`];
+      
+      zoomValue = zoomValue < 0.25 ? 0.25 : zoomValue;
+
+      return update(
+        state,
+        {
+          'zoom': zoomValue,
+          'undo_actions': undoActions,
+          'roto_stage_tool_type': zoomType,
+          'undo_count': 0
+        },
+        'material_id',
+        action.materialId
+      );
+
+    case 'UNDO':
+      const roMaterial = findItem(state, 'material_id', action.materialId);
+      const noActions = roMaterial[ 'undo_actions' ];
+      let undoCount = roMaterial[ 'undo_count' ];
+
+      noActions.pop();
+
+      let prevAction = noActions.slice(-1)[0];
+
+      prevAction || (prevAction = '');
+
+      const [ na, value ] = prevAction.split('-');
+      let updateObj = {};
+
+      if (na.indexOf('zoom') >= 0) {
+        updateObj[ 'zoom' ] = +value;
+      }
+      else if (na.indexOf('move') >= 0) {
+        updateObj[ 'move' ] = value;
+      }
+
+      undoCount++;
+
+      return update(
+        state,
+        {
+          ...updateObj,
+          'undo_actions': [ ...noActions ],
+          'undo_count': undoCount,
+          'roto_stage_tool_type': 0
+        },
         'material_id',
         action.materialId
       );

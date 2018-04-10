@@ -14,12 +14,35 @@ import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
 
 class Matting extends Component {
-  state = {
-    // 检测是否存在该用户信息的state，用来做登录跳转
-    redirectToReferrer: false,
-    // 中间区域是显示添加扣像素材还是帧图片 0-显示帧图片 | 1-添加扣像素材
-    showAddMaterialOrFrameImg: 0
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      // 检测是否存在该用户信息的state，用来做登录跳转
+      redirectToReferrer: false,
+      // 中间区域是显示添加扣像素材还是帧图片 0-显示帧图片 | 1-添加扣像素材
+      showAddMaterialOrFrameImg: 0
+    };
+
+    // 获取放大、缩小画布值
+    this.getZoom = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'zoom' ]);
+
+    // 获取移动画布值
+    this.getMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'move' ]);
+  }
+
+  registerGetMaterialInfo(fn) {
+    return () => {
+      const { materialList, rfa } = this.props;
+      const rotoMaterial = findItem(rfa, 'is_selected', true);
+
+      if (rotoMaterial == null) {
+        return void 0;
+      }
+
+      return fn(rotoMaterial);
+    };
+  }
 
   openMaterialListComponent = () =>
     this.setState({ showAddMaterialOrFrameImg: 1 });
@@ -31,7 +54,10 @@ class Matting extends Component {
     const { redirectToReferrer, showAddMaterialOrFrameImg } = this.state;
     const { rfa } = this.props;
     const isSelected = findItem(rfa, 'is_selected', true);
+    let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
+
+    zoomValue == null && (zoomValue = 1);
 
     if (rfa.length === 0 && show === 0) {
       show = false;
@@ -60,7 +86,7 @@ class Matting extends Component {
             <div className={ rotoStyle[ 'middle' ] }>
               <div className={ rotoStyle[ 'middle-inner' ] }>
                 <div className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
-                  <div className={ rotoStyle[ 'canvas-inner' ] }>
+                  <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
                     {/* 画布还是素材列表 */}
                     { show
                       ? (<MaterialList />)
@@ -74,7 +100,7 @@ class Matting extends Component {
                 </div>
 
                 {/* 扣像工具条 */}
-                { (show || !rfa.length)
+                { show || !rfa.length
                   ? void 0
                   : (
                       <div className={ rotoStyle[ 'toolbar' ] }>
@@ -86,7 +112,7 @@ class Matting extends Component {
             </div>
 
             {/* 扣像操作面板 */}
-              { !rfa.length
+              { show || !rfa.length
                 ? void 0
                 : (<div className={ rotoStyle[ 'right' ] }>
                     <RotoOperationPanel />
@@ -95,7 +121,7 @@ class Matting extends Component {
           </div>
 
           {/* 扣像帧处理 */}
-          { (show || !rfa.length)
+          { show || !rfa.length
             ? void 0
             : (<div className={ rotoStyle[ 'footer' ] }></div>)
           }

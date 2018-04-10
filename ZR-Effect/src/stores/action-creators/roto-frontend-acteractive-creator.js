@@ -124,3 +124,27 @@ export function configureRotoStageToolType (materialId, rotoStageToolType) {
     rotoStageToolType
   };
 }
+
+export function configureZoom (materialId, zoomType, undoAction) {
+  return {
+    type: 'CONFIGURE_ZOOM',
+    materialId,
+    zoomType,
+    undoAction
+  };
+}
+
+export function configureMove (materialId, moveValue) {
+  return {
+    type: 'CONFIGURE_MOVE',
+    materialId,
+    moveValue
+  };
+}
+
+export function undo (materialId) {
+  return {
+    type: 'UNDO',
+    materialId
+  };
+}
