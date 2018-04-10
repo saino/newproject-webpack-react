@@ -56,12 +56,16 @@
   margin: 51px 0 60px;
   flex-shrink: 1;
   width: 100%;
-  overflow: hidden;
+}
+
+.canvas-inner-w {
+  height: 100%;
 }
 
 .content .middle-inner .mapping {
   width: -webkit-calc(100% - 40px);
   width: -moz-calc(100% - 40px);
+  overflow: hidden;
 }
 
 .content .middle-inner .canvas-inner {

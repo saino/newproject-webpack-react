@@ -49,7 +49,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'roto_tool_type': 0,
         'roto_stage_tool_type': 1,
         'zoom': 1,
-        'move': null,
+        'move': { x: 0, y: 0 },
         'undo_actions': [],
         'undo_count': 0
       };
@@ -157,7 +157,10 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'CONFIGURE_ROTO_STAGE_TOOL_TYPE':
       return update(
         state,
-        { 'roto_stage_tool_type': action.rotoStageToolType },
+        {
+          'roto_stage_tool_type': action.rotoStageToolType,
+          'undo_count': 0
+        },
         'material_id',
         action.materialId
       );
@@ -167,7 +170,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
       const rMaterial = findItem(state, 'material_id', action.materialId);
       let zoomValue = rMaterial[ 'zoom' ] + (zoomType == 2 ? 0.25 : -0.25);
       let undoActions = [ ...rMaterial[ 'undo_actions' ], `${ undoAction }-${ zoomValue }`];
-      
+
       zoomValue = zoomValue < 0.25 ? 0.25 : zoomValue;
 
       return update(
@@ -177,6 +180,22 @@ export default function rotoFrontendActerActive (state = defState, action) {
           'undo_actions': undoActions,
           'roto_stage_tool_type': zoomType,
           'undo_count': 0
+        },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_MOVE':
+      const { moveValue } = action;
+      const { x, y } = moveValue;
+      const rotMaterial = findItem(state, 'material_id', action.materialId);
+      let nodoActions = [ ...rotMaterial[ 'undo_actions' ], `move-${ x }-${ y }`];
+
+      return update(
+        state,
+        {
+          'move': moveValue,
+          'undo_actions': nodoActions
         },
         'material_id',
         action.materialId
@@ -193,14 +212,17 @@ export default function rotoFrontendActerActive (state = defState, action) {
 
       prevAction || (prevAction = '');
 
-      const [ na, value ] = prevAction.split('-');
+      const [ na, value, value2 ] = prevAction.split('-');
       let updateObj = {};
 
       if (na.indexOf('zoom') >= 0) {
         updateObj[ 'zoom' ] = +value;
       }
       else if (na.indexOf('move') >= 0) {
-        updateObj[ 'move' ] = value;
+        updateObj[ 'move' ] = {
+          x: +value,
+          y: +value2
+        };
       }
 
       undoCount++;

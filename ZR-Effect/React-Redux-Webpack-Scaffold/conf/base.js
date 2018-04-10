@@ -22,6 +22,7 @@ module.exports = {
       'react-redux',
       'react-router-dom',
       'react-fileupload',
+      'react-draggable',
       'react-loadable',
       'redux',
       'redux-thunk',

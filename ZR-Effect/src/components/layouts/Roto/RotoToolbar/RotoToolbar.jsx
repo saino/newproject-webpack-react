@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import { findItem } from '../../../../utils/array-handle';
-import { undo, configureZoom } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { undo, configureZoom, configureRotoStageToolType } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
 import addPointPNG from './add-point.png';
@@ -35,7 +35,10 @@ class RotoToolbar extends Component {
     };
 
     this.moveHandle = () => {
-      //const { onMove } = this.props;
+      const { configureRotoStageToolType } = this.props;
+      const materialId = this.getMaterialId();
+
+      configureRotoStageToolType(materialId, 1);
     };
 
     this.zoomInHandle = () => {
@@ -149,7 +152,8 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     undo,
-    configureZoom
+    configureZoom,
+    configureRotoStageToolType
   },
   dispatch
 );
