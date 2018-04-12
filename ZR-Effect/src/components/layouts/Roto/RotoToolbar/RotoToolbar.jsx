@@ -34,12 +34,7 @@ class RotoToolbar extends Component {
       undo(materialId);
     };
 
-    this.moveHandle = () => {
-      const { configureRotoToolType } = this.props;
-      const materialId = this.getMaterialId();
-
-      configureRotoToolType(materialId, 1);
-    };
+    this.moveHandle = () => this.configureToolState(1);
 
     this.zoomInHandle = () => {
       const materialId = this.getMaterialId();
@@ -48,11 +43,22 @@ class RotoToolbar extends Component {
       configureZoom(materialId, 2, 'zoomIn');
     };
 
+    // 钢笔工具
+    this.penHandle = () => this.configureToolState(4);
+
     this.zoomOutHandle = () => {
       const materialId = this.getMaterialId();
       const { configureZoom } = this.props;
 
       configureZoom(materialId, 3, 'zoomOut');
+    };
+
+    // 统一设置工具状态
+    this.configureToolState = (val) => {
+      const { configureRotoToolType } = this.props;
+      const materialId = this.getMaterialId();
+
+      configureRotoToolType(materialId, val);
     };
 
     // 获取扣像舞台工具类别
@@ -100,22 +106,22 @@ class RotoToolbar extends Component {
             <div className={ rotoToolbarStyle[ 'tool-list-inner' ] }>
               <div className={ rotoToolbarStyle[ 'tool-list-detail' ] }>
                 <ul className={ rotoToolbarStyle[ 'tool-action-list' ] }>
-                  <li title="钢笔工具">
+                  <li onClick={ this.penHandle } title="钢笔工具" className={ toolType === 4 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ rotoToolPNG } />
                   </li>
-                  <li title="曲线选择">
+                  <li title="曲线选择" className={ toolType === 5 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ selectPathPNG } />
                   </li>
-                  <li title="移动曲线或点">
+                  <li title="移动曲线或点" className={ toolType === 6 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ movePointPNG } />
                   </li>
-                  <li title="增加节点">
+                  <li title="增加节点" className={ toolType === 7 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ addPointPNG } />
                   </li>
-                  <li title="显隐遮罩">
+                  <li title="显隐遮罩" className={ toolType === 8 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ visibleMaskPNG } />
                   </li>
-                  <li title="完成">
+                  <li title="完成" className={ toolType === 9 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ finishRotoPNG } />
                   </li>
                 </ul>

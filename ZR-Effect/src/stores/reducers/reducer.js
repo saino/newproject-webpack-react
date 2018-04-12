@@ -3,10 +3,12 @@ import work1 from './work';
 import app from './app';
 import material from './material';
 import rotoFrontendActeractive from './roto-frontend-acteractive';
+import roto from './roto';
 
 export default combineReducers({
   work1,
   material,
   app,
-  rotoFrontendActeractive
+  rotoFrontendActeractive,
+  roto
 });

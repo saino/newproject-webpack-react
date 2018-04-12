@@ -28,7 +28,8 @@ module.exports = {
       'redux-thunk',
       'redux-logger',
       'antd',
-      'moment'
+      'moment',
+      'snapsvg-cjs'
     ]
   },
   output: {

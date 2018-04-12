@@ -14,6 +14,7 @@ import RotoMaterialAdd from './RotoMaterialAdd/RotoMaterialAdd';
 import RotoMaterialList from './RotoMaterialList/RotoMaterialList';
 import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
+import RotoOperationBox from './RotoOperationBox/RotoOperationBox';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
 
 class Matting extends Component {
@@ -81,7 +82,11 @@ class Matting extends Component {
               ? (<RotoMaterialAdd openMaterialList={ this.openMaterialListComponent } />)
               : !isSelected
                 ? void 0
-                :(<MaterialMappingFrameImg frame={ 1 } />)
+                :(
+                  <RotoOperationBox>
+                    <MaterialMappingFrameImg frame={ 1 } />
+                  </RotoOperationBox>
+                  )
           }
         </div>
       </div>

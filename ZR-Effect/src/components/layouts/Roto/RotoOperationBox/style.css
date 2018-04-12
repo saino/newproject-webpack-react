@@ -1,0 +1,70 @@
+@charset "UTF-8";
+
+.wrapper {
+  position: relative;
+  background: transparent;
+}
+
+.wrapper-core {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: transparent;
+}
+
+.svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: transparent;
+}
+
+.drawing {
+  cursor: crosshair;
+}
+
+.outline path {
+  fill: transparent;
+  stroke: black;
+  stroke-width: 1;
+}  /* 必须是半透明才能选中 */
+
+.mask path {
+  fill: rgba(0, 0, 0, 0.3);
+  stroke-width: 0;
+}
+
+.focus path,
+path.selected {
+  stroke-width: 2;
+  stroke: lightskyblue;
+}
+
+.focus path {
+  fill: none;
+}
+
+.control path {
+  stroke: red;
+}
+
+.points circle {
+  fill: white;
+  stroke: blue;
+  stroke-width: 1;
+}
+
+.points circle.selected {
+  fill: lightskyblue;
+}
+
+.points circle.control {
+  fill: red;
+  stroke: transparent;
+}

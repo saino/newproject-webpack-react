@@ -47,7 +47,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'is_generate_png_frame': false,
         'generate_png_frame_percent': 0,
         'rotoed_frames': [],
-        'roto_tool_type': 1,
+        'roto_tool_type': 4,
         'zoom': 1,
         'move': { x: 0, y: 0 },
         'undo_actions': [],
