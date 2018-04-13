@@ -18,6 +18,7 @@ class RotoOperationBox extends Component {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
+      const rotoToolType = this.getRotoToolType();
       const pathData = this.getPathData();
       const rotoMode = this.getRotoMode();
       const rotoDrawMode = this.getRotoDrawMode();
@@ -27,8 +28,8 @@ class RotoOperationBox extends Component {
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
 
-      // 如果操作模式是钢笔工具
-      if (rotoMode === 0) {
+      // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
+      if (rotoMode === 0 && rotoToolType === 4) {
         updateObj[ 'dragging' ] = true;
 
         // 如果当前画线模式是未开始
@@ -63,6 +64,7 @@ class RotoOperationBox extends Component {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
+      const rotoToolType = this.getRotoToolType();
       const rotoMode = this.getRotoMode();
       const rotoDrawMode = this.getRotoDrawMode();
       const pathSelected = this.getRotoPathSelected();
@@ -72,7 +74,7 @@ class RotoOperationBox extends Component {
       const updateObj = {};
 
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
-      if (rotoMode === 0 && pathSelected) {
+      if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
         // 如果是mouseup后
         if (!dragging) {
           // 如果还是在未闭合时
@@ -88,15 +90,16 @@ class RotoOperationBox extends Component {
             this.configurePathDataList(updateObj[ 'path_selected' ]);
           }
         }
-      }
 
-      configure(materialId, materialFrame, updateObj);
+        configure(materialId, materialFrame, updateObj);
+      }
     };
 
     this.mouseUpHandle = (e) => {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
+      const rotoToolType = this.getRotoToolType();
       const rotoMode = this.getRotoMode();
       const rotoDrawMode = this.getRotoDrawMode();
       const pathSelected = this.getRotoPathSelected();
@@ -106,7 +109,7 @@ class RotoOperationBox extends Component {
       const updateObj = {};
 
       // 如果是按下了mousedown键后
-      if (dragging) {
+      if (dragging && rotoToolType === 4) {
         // 如果当前操作模式是钢笔工具，并且存在path，并且存在浮动'point'
         if (rotoMode === 0 && pathSelected && pathSelected.floatingPoint) {
           // 将floatingPoint添加到pathSelected里
@@ -116,15 +119,17 @@ class RotoOperationBox extends Component {
         }
         // 结束拖拽
         updateObj[ 'dragging' ] = false;
+
+        configure(materialId, materialFrame, updateObj);
       }
 
-      // 如果是闭合了
-      if (rotoDrawMode === 2) {
-        updateObj[ 'draw_mode' ] = 0;
-        updateObj[ 'path_selected' ] = false;
-      }
+      // // 如果是闭合了
+      // if (rotoDrawMode === 2) {
+      //   updateObj[ 'draw_mode' ] = 0;
+      //   updateObj[ 'path_selected' ] = false;
+      // }
 
-      configure(materialId, materialFrame, updateObj);
+
     };
 
     // 获取素材id
@@ -135,6 +140,11 @@ class RotoOperationBox extends Component {
     // 获取素材frame
     this.getMaterialFrame = this.registerGetMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'selected_frame' ]
+    );
+
+    // 获取工具条操作类别
+    this.getRotoToolType = this.registerGetMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'roto_tool_type' ]
     );
 
     // 获取素材属性

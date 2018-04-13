@@ -19,6 +19,11 @@ class SVG extends Component {
       rotoMaterial[ 'selected_frame' ]
     );
 
+    // 获取工具条操作类别
+    this.getRotoToolType = this.registerGetMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'roto_tool_type' ]
+    );
+
     // 获取'mode'操作模式
     this.getMode = this.registerGetRotoInfo(roto =>
       roto[ 'mode' ]
@@ -136,7 +141,7 @@ class SVG extends Component {
 
   render() {
     const { pointEls, pathEls, maskPathEls } = this.getPathAndPointEls();
-    const visibleDrawingClassName = this.getMode() === 0;
+    const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
 
     return (
       <svg className={ `${ style[ 'svg' ] } ${ visibleDrawingClassName ? style[ 'drawing' ]: '' }` } id="svg_app">
