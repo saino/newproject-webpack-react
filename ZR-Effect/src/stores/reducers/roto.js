@@ -8,12 +8,12 @@
  *  draw_mode { Number } 画线模式 0-未开始 | 1-未闭合 | 2-已闭合
  *  path_selected { Object } 选中的path对象
  *  dragging { Boolean } 是否是拖拽中
- *  paths { Array } path集合
- *  points { Array } point集合
+ *  path_data { Object } path信息
  *  control_points { Array } 控制controls集合
  */
 
 import { add, update, remove, findItem } from '../../utils/array-handle';
+import PathList from '../../libs/PathList';
 
 const defState = [];
 
@@ -27,10 +27,8 @@ export default function roto (state = defState, action) {
         'draw_mode': 0,
         'path_selected': null,
         'dragging': false,
-        'paths': [],
-        'focus_paths': [],
-        'points': [],
-        'control_points': []
+        'path_data': new PathList,
+        'focus_paths': []
       };
 
       return add(state, initRoto);

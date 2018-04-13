@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
-import { findItem } from '../../../../utils/array-handle';
+import { findItem, findIndex } from '../../../../utils/array-handle';
+import defferPerform from '../../../../utils/deffer-perform';
 import { undo, configureZoom, configureRotoToolType } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { configure } from '../../../../stores/action-creators/roto-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
 import addPointPNG from './add-point.png';
@@ -16,6 +18,7 @@ import zoomInPNG from './zoom-in.png';
 import zoomOutPNG from './zoom-out.png';
 import moveCanvasPNG from './move-canvas.png';
 import backPNG from './back.png';
+import Path from '../../../../libs/Path';
 
 class RotoToolbar extends Component {
   constructor(props) {
@@ -61,6 +64,33 @@ class RotoToolbar extends Component {
       configureRotoToolType(materialId, val);
     };
 
+    this.rotoCompleteHandle = () => {
+      this.defferRotoComplete();
+      this.configureToolState(9);
+    };
+
+    this.defferRotoComplete = defferPerform(() => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const rotoDrawMode = this.getRotoDrawMode();
+      const pathSelected = this.getRotoPathSelected();
+      const updateObj = {};
+
+      if (rotoDrawMode < 1) {
+        return;
+      }
+
+      pathSelected.closePath();
+
+      updateObj[ 'draw_mode' ] = 0;
+      updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+
+      this.configurePathDataList(pathSelected);
+
+      configure(materialId, materialFrame, updateObj);
+    }, 10);
+
     // 获取扣像舞台工具类别
     this.getRotoToolType = this.registerGetMaterialInfo(
       rotoMaterial => rotoMaterial[ 'roto_tool_type' ]
@@ -71,10 +101,50 @@ class RotoToolbar extends Component {
       rotoMaterial => rotoMaterial[ 'material_id' ]
     );
 
+    // 获取选中'frame'
+    this.getMaterialFrame = this.registerGetMaterialInfo(
+      rotoMateria => rotoMateria[ 'selected_frame' ]
+    );
+
     // 获取撤销次数
     this.getUndoCount = this.registerGetMaterialInfo(
       rotoMaterial => rotoMaterial[ 'undo_count' ]
     );
+
+    // 获取扣像画线模式
+    this.getRotoDrawMode = this.registerGetRotoInfo(
+      roto => roto[ 'draw_mode' ]
+    );
+
+    // 获取扣像选中的'pathSelected'
+    this.getRotoPathSelected = this.registerGetRotoInfo(
+      roto => roto[ 'path_selected' ]
+    );
+
+    // 获取扣像选中的'pathData'
+    this.getRotoPathData = this.registerGetRotoInfo(
+      roto => roto[ 'path_data' ]
+    );
+  }
+
+  // 初始化pathSelected
+  initPathSelected(pathSelected) {
+    const newPathSelected = new Path();
+
+    newPathSelected.id = pathSelected.id;
+    newPathSelected.points = [ ...pathSelected.points ];
+    newPathSelected.floatingPoint = pathSelected.floatingPoint;
+    newPathSelected.closed = pathSelected.closed;
+
+    return newPathSelected;
+  }
+
+  // 更新pathData list
+  configurePathDataList(pathSelected) {
+    const pathData = this.getRotoPathData();
+    let updateIndex = findIndex(pathData, ({ id }) => id === pathSelected.id)
+
+    pathData.list.splice(updateIndex, 1, pathSelected);
   }
 
   registerGetMaterialInfo(fn) {
@@ -87,6 +157,24 @@ class RotoToolbar extends Component {
       }
 
       return fn(rotoMaterial);
+    };
+  }
+
+  registerGetRotoInfo(fn) {
+    return () => {
+      const { rotoList } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const roto = findItem(rotoList, (item) =>
+        item[ 'material_id' ] === materialId
+          && item[ 'frame' ] === materialFrame
+      );
+
+      if (roto == null) {
+        return void 0;
+      }
+
+      return fn(roto);
     };
   }
 
@@ -121,7 +209,7 @@ class RotoToolbar extends Component {
                   <li title="显隐遮罩" className={ toolType === 8 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ visibleMaskPNG } />
                   </li>
-                  <li title="完成" className={ toolType === 9 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.rotoCompleteHandle } title="完成" className={ toolType === 9 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ finishRotoPNG } />
                   </li>
                 </ul>
@@ -150,16 +238,19 @@ class RotoToolbar extends Component {
 
 const mapStateToProps = ({
   rotoFrontendActeractive,
-  material
+  material,
+  roto
 }) => ({
   rfa: rotoFrontendActeractive,
-  materialList: material
+  materialList: material,
+  rotoList: roto
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     undo,
     configureZoom,
-    configureRotoToolType
+    configureRotoToolType,
+    configure
   },
   dispatch
 );

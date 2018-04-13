@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { configureSelectedPath, configureDrawMode, configureDragging } from '../../../../stores/action-creators/roto-creator';
-import { undo, configureZoom, configureRotoToolType } from '../../../../stores/action-creators/roto-creator';
+import { configure } from '../../../../stores/action-creators/roto-creator';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import Path from '../../../../libs/Path';
 import PathList from '../../../../libs/PathList';
@@ -15,48 +14,62 @@ class RotoOperationBox extends Component {
   constructor(props) {
     super(props);
 
-    const pathData = new PathList;
-
     this.mouseDownHandle = (e) => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const pathData = this.getPathData();
+      const rotoMode = this.getRotoMode();
+      const rotoDrawMode = this.getRotoDrawMode();
+      const pathSelected = this.getRotoPathSelected();
+      const dragging = this.getRotoDragging();
+      const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
-      const { rotoMode, pathSelected, dragging, rotoDrawMode, pathData } = this.state;
-      let updateObj = {};
+      const updateObj = {};
 
       // 如果操作模式是钢笔工具
       if (rotoMode === 0) {
-        // 是否在当前'path'进行操作，如果不存在1个'path'那么就创建'path'
-        updateObj[ 'pathSelected' ] = pathSelected || pathData.lastEmpty();
         updateObj[ 'dragging' ] = true;
 
         // 如果当前画线模式是未开始
         if (rotoDrawMode === 0) {
+          // 闭合后，画线模式就是未开始，所以需要重新创建1条新'path'
+          updateObj[ 'path_selected' ] = pathData.lastEmpty();
           // 画浮动'point'
-          updateObj[ 'pathSelected' ].floatingPoint = new Point(offX, offY);
+          updateObj[ 'path_selected' ].floatingPoint = new Point(offX, offY);
           // 画线模式为未闭合
-          updateObj[ 'rotoDrawMode' ] = 1;
+          updateObj[ 'draw_mode' ] = 1;
         }
         // 如果当前画线模式是未闭合，并且点击到初始
         else if (rotoDrawMode === 1 && pathSelected.firstPoint().isInside(offX, offY)) {
           // 当点击起始point，如果pathSelected只有1个point的时候，那么就是未闭合状态，且删除该点
           // 如果大于1个point或者本身closed为true，则是闭合状态
-          if (pathSelected.closePath()) {
-            updateObj[ 'rotoDrawMode' ] = 2;
-          } else {
-            updateObj[ 'rotoDrawMode'] = 0;
-          }
-
-          updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
-          this.configurePathDataList(pathSelected);
+          // if (pathSelected.closePath()) {
+          //   updateObj[ 'draw_mode' ] = 2;
+          // } else {
+          //   updateObj[ 'draw_mode'] = 0;
+          // }
+          //
+          // updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+          // this.configurePathDataList(pathSelected);
         }
 
-        this.setState(updateObj);
+        configure(materialId, materialFrame, updateObj);
+        //this.setState(updateObj);
       }
     };
 
     this.mouseMoveHandle = (e) => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const rotoMode = this.getRotoMode();
+      const rotoDrawMode = this.getRotoDrawMode();
+      const pathSelected = this.getRotoPathSelected();
+      const dragging = this.getRotoDragging();
+      const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
-      const { rotoMode, pathSelected, dragging, rotoDrawMode, pathData } = this.state;
-      let updateObj = {};
+      const updateObj = {};
 
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected) {
@@ -66,25 +79,31 @@ class RotoOperationBox extends Component {
           if (pathSelected.floatingPoint || rotoDrawMode === 1) {
             // 不停的画'pathSelected'的浮动'point'
             pathSelected.floatingPoint = new Point(offX, offY);
-
             // 创建浮动'point'的控制杆，因为浮动'point'在mouseup后
             pathSelected.floatingPoint.setControl(
               Point.CONTROL1,
               pathSelected.lastPoint().getOppositeControl(Point.CONTROL2)
             );
-            updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
-            this.configurePathDataList(updateObj[ 'pathSelected' ]);
+            updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+            this.configurePathDataList(updateObj[ 'path_selected' ]);
           }
         }
       }
 
-      this.setState(updateObj);
+      configure(materialId, materialFrame, updateObj);
     };
 
     this.mouseUpHandle = (e) => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const rotoMode = this.getRotoMode();
+      const rotoDrawMode = this.getRotoDrawMode();
+      const pathSelected = this.getRotoPathSelected();
+      const dragging = this.getRotoDragging();
+      const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
-      const { rotoMode, pathSelected, dragging, rotoDrawMode, pathData } = this.state;
-      let updateObj = {};
+      const updateObj = {};
 
       // 如果是按下了mousedown键后
       if (dragging) {
@@ -92,21 +111,20 @@ class RotoOperationBox extends Component {
         if (rotoMode === 0 && pathSelected && pathSelected.floatingPoint) {
           // 将floatingPoint添加到pathSelected里
           pathSelected.confirmFloating();
-          updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
-          this.configurePathDataList(updateObj[ 'pathSelected' ]);
+          updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+          this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
-
         // 结束拖拽
         updateObj[ 'dragging' ] = false;
       }
 
       // 如果是闭合了
       if (rotoDrawMode === 2) {
-        updateObj[ 'rotoDrawMode' ] = 0;
-        updateObj[ 'pathSelected' ] = false;
+        updateObj[ 'draw_mode' ] = 0;
+        updateObj[ 'path_selected' ] = false;
       }
 
-      this.setState(updateObj);
+      configure(materialId, materialFrame, updateObj);
     };
 
     // 获取素材id
@@ -115,7 +133,7 @@ class RotoOperationBox extends Component {
     );
 
     // 获取素材frame
-    this.getMaterialFrame = this.registerGetRotoInfo(rotoMaterial =>
+    this.getMaterialFrame = this.registerGetMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'selected_frame' ]
     );
 
@@ -137,7 +155,7 @@ class RotoOperationBox extends Component {
       roto[ 'draw_mode' ]
     );
 
-    // 获取扣像里选中的"path"
+    // 获取扣像里选中的'path'
     this.getRotoPathSelected = this.registerGetRotoInfo(roto =>
       roto[ 'path_selected' ]
     );
@@ -147,19 +165,15 @@ class RotoOperationBox extends Component {
       roto[ 'dragging' ]
     );
 
-    // 获取扣像里得到焦点的path
+    // 获取扣像里得到焦点的'path'
     this.getFocusPaths = this.registerGetRotoInfo(roto =>
       roto[ 'focus_paths' ]
     );
 
-    this.state = {
-      pathData,
-      rotoMode: this.getRotoMode(),
-      rotoDrawMode: this.getRotoDrawMode(),
-      pathSelected:  this.getRotoPathSelected(),
-      dragging: this.getRotoDragging(),
-      focusPaths: this.getFocusPaths()
-    };
+    // 获取'path_data'
+    this.getPathData = this.registerGetRotoInfo(roto =>
+      roto[ 'path_data' ]
+    );
   }
 
   // 初始化pathSelected
@@ -176,7 +190,7 @@ class RotoOperationBox extends Component {
 
   // 更新pathData list
   configurePathDataList(pathSelected) {
-    const { pathData } = this.state;
+    const pathData = this.getPathData();
     let updateIndex = findIndex(pathData, ({ id }) => id === pathSelected.id)
 
     pathData.list.splice(updateIndex, 1, pathSelected);
@@ -199,7 +213,11 @@ class RotoOperationBox extends Component {
     return () => {
       const { rotoList } = this.props;
       const materialId = this.getMaterialId();
-      const roto = findItem(rotoList, 'material_id', materialId);
+      const materialFrame = this.getMaterialFrame();
+      const roto = findItem(rotoList, (item) =>
+        item[ 'material_id' ] === materialId
+          && item[ 'frame' ] === materialFrame
+      );
 
       if (roto == null) {
         return void 0;
@@ -223,9 +241,12 @@ class RotoOperationBox extends Component {
 
   render() {
     const { width, height } = this.getMaterialProps();
-    const {
-      pathData, rotoMode, rotoDrawMode,
-      pathSelected, dragging, focusPaths } = this.state;
+    const pathData = this.getPathData();
+    const rotoMode = this.getRotoMode();
+    const rotoDrawMode = this.getRotoDrawMode();
+    const pathSelected = this.getRotoPathSelected();
+    const dragging = this.getRotoDragging();
+    const focusPaths = [];
 
     return (
       <div
@@ -241,7 +262,7 @@ class RotoOperationBox extends Component {
           rotoDrawMode={ rotoDrawMode }
           pathSelected={ pathSelected }
           dragging={ dragging }
-          focusPaths={ [ ...focusPaths ] } />
+          focusPaths={ focusPaths } />
 
         { this.props.children }
       </div>
@@ -259,4 +280,7 @@ const mapStateToProps = ({
   rotoList: roto
 });
 
-export default connect(mapStateToProps)(RotoOperationBox);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ configure }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(RotoOperationBox);

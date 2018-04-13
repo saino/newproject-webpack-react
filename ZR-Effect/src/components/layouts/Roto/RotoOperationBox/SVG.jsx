@@ -1,40 +1,33 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Snap from 'snapsvg-cjs';
 import { flatten, findItem } from '../../../../utils/array-handle';
 import style from './style.css';
 
 class SVG extends Component {
-  static propTypes = {
-    rotoMode: PropTypes.number,
-    rotoDrawMode: PropTypes.number,
-    pathSelected: PropTypes.object,
-    dragging: PropTypes.bool,
-    paths: PropTypes.array,
-    focusPaths: PropTypes.array
-  };
-
   constructor(props) {
     super(props);
-
-    this.state = {
-      paths: null,
-      points: null
-    };
 
     // 获取素材id
     this.getMaterialId = this.registerGetMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'material_id' ]
     );
 
-    // 获取'path'集合
-    this.getPaths = this.registerGetRotoInfo(roto => {
-      const { paths } = this.props;
+    // 获取素材Frame
+    this.getMaterialFrame = this.registerGetMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'selected_frame' ]
+    );
 
-      return [ ...roto[ 'paths' ], ...paths ];
-    });
+    // 获取'mode'操作模式
+    this.getMode = this.registerGetRotoInfo(roto =>
+      roto[ 'mode' ]
+    );
+
+    // 获取'path'集合
+    this.getPaths = this.registerGetRotoInfo(roto =>
+      roto[ 'path_data' ].list
+    );
 
     // 获取'focus_path'集合
     this.getFocusPaths = this.registerGetRotoInfo(roto => {
@@ -64,7 +57,11 @@ class SVG extends Component {
     return () => {
       const { rotoList } = this.props;
       const materialId = this.getMaterialId();
-      const roto = findItem(rotoList, 'material_id', materialId);
+      const materialFrame = this.getMaterialFrame();
+      const roto = findItem(rotoList, item =>
+        item[ 'material_id' ] === materialId
+          && item[ 'frame' ] === materialFrame
+      );
 
       return roto == null ? void 0 : fn(roto);
     };
@@ -139,9 +136,10 @@ class SVG extends Component {
 
   render() {
     const { pointEls, pathEls, maskPathEls } = this.getPathAndPointEls();
+    const visibleDrawingClassName = this.getMode() === 0;
 
     return (
-      <svg className={ style[ 'svg' ] } id="svg_app">
+      <svg className={ `${ style[ 'svg' ] } ${ visibleDrawingClassName ? style[ 'drawing' ]: '' }` } id="svg_app">
         <g className={ style[ 'outline' ] }>
           { pathEls }
         </g>

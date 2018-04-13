@@ -82,11 +82,9 @@ class Matting extends Component {
               ? (<RotoMaterialAdd openMaterialList={ this.openMaterialListComponent } />)
               : !isSelected
                 ? void 0
-                :(
-                  <RotoOperationBox>
+                :(<RotoOperationBox>
                     <MaterialMappingFrameImg frame={ 1 } />
-                  </RotoOperationBox>
-                  )
+                  </RotoOperationBox>)
           }
         </div>
       </div>
