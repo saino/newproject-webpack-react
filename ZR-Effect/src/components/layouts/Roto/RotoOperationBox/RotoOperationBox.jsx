@@ -9,7 +9,6 @@ import Path from '../../../../libs/Path';
 import PathList from '../../../../libs/PathList';
 import Point from '../../../../libs/Point';
 import style from './style.css';
-import Core from './Core';
 import SVG from './SVG';
 
 class RotoOperationBox extends Component {
