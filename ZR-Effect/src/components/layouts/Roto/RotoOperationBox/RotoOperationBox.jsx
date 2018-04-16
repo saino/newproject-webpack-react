@@ -15,6 +15,11 @@ class RotoOperationBox extends Component {
   constructor(props) {
     super(props);
 
+    // 删除'path'或'point'
+    this.removeHandle = (e) => {
+      alert(e.keyCode);
+    };
+
     this.mouseDownHandle = (e) => {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
@@ -83,6 +88,7 @@ class RotoOperationBox extends Component {
           path = findItem(pathData.list, 'id', pathId);
           //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
           this.clearPathSelected();
+          path.points = this.clearPointSelected(path.points);
           path.isSelected = true;
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
@@ -384,6 +390,15 @@ class RotoOperationBox extends Component {
         { this.props.children }
       </div>
     );
+  }
+
+  componentDidMount() {
+    // 绑定body事件，用来监听点击'backspace'键删除'path'或'point'
+    document.body.addEventListener('keyup', this.removeHandle, false)
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('keyup', this.removeHandle, false);
   }
 }
 

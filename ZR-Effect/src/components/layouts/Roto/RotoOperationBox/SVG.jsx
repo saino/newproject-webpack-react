@@ -117,7 +117,6 @@ class SVG extends Component {
       maskPathEls.push(
         <path
           id={ path.id }
-          className={ className }
           fill-rule="evenodd"
           key={ `m-${ path.id }`}
           d={ svgPathEl.node.getAttribute('d') } />

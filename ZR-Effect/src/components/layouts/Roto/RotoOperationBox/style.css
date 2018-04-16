@@ -45,7 +45,7 @@
   stroke: lightskyblue;
 }
 
-path.selected {
+:global(path.selected) {
   stroke-width: 2;
   stroke: lightskyblue;
 }
@@ -64,7 +64,7 @@ path.selected {
   stroke-width: 1;
 }
 
-.points circle.selected {
+:global(circle.selected) {
   fill: lightskyblue;
 }
 
