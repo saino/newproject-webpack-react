@@ -40,14 +40,14 @@
   stroke-width: 0;
 }
 
-:global(.focus path) {
+.focus path {
   stroke-width: 2;
   stroke: lightskyblue;
 }
 
-:global(path.selected) {
+path.selected {
   stroke-width: 2;
-  stroke: lightskyblue;  
+  stroke: lightskyblue;
 }
 
 .focus path {

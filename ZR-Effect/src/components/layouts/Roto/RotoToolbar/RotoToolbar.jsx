@@ -126,8 +126,7 @@ class RotoToolbar extends Component {
       pathSelected.closePath();
 
       updateObj[ 'draw_mode' ] = 0;
-      updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-
+      updateObj[ 'path_selected' ] = false;//this.initPathSelected(pathSelected);
       this.configurePathDataList(pathSelected);
 
       configure(materialId, materialFrame, updateObj);

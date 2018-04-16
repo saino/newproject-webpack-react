@@ -39,13 +39,6 @@ class SVG extends Component {
       roto[ 'path_data' ].list
     );
 
-    // 获取'focus_path'集合
-    this.getFocusPaths = this.registerGetRotoInfo(roto => {
-      const { focusPaths } = this.props;
-      return [];
-      //return [ ...roto[ 'focus_paths' ], ...focusPaths ];
-    });
-
     // 获取'control_point'集合
     this.getControlPoints = this.registerGetRotoInfo(roto => {
       const { controlPoints } = this.props;
@@ -84,7 +77,9 @@ class SVG extends Component {
     const paper = Snap();
     const pointEls = [];
     const maskPathEls = [];
+    const focusPathEls = [];
     let className = '';
+    let focusPath;
 
     const pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
@@ -92,7 +87,6 @@ class SVG extends Component {
 
       // 如果在编辑模式下选中了该path
       if (mode !== 0 && isCurrPath && path.isSelected) {
-        //console.log(path, 'is');
         className = 'selected';
       } else {
         className = '';
@@ -100,13 +94,24 @@ class SVG extends Component {
 
       if (isCurrPath) {
         path.points.forEach(point => {
-          pointEls.push(this.getPointEl(point));
+          pointEls.push(this.getPointEl(point, path.id));
+
+          if (point.isSelected) {
+            className = '';
+            focusPath = path.prevPointByPoint(point).generatePath(true) + point.generatePath();
+            focusPathEls.push(
+              <path
+                id={ path.id }
+                key={ path.id }
+                d={ paper.path(focusPath).node.getAttribute('d') } />
+            )
+          }
         });
 
-        if (mode == 0) {
-          // 画浮动'point'
-          pointEls.push(this.getPointEl(path.floatingPoint, true));
-        }
+        // if (mode == 0) {
+        //   // 画浮动'point'
+        //   pointEls.push(this.getPointEl(path.floatingPoint, path.id, true));
+        // }
       }
 
       maskPathEls.push(
@@ -130,24 +135,25 @@ class SVG extends Component {
     return {
       pointEls,
       pathEls,
-      maskPathEls
+      maskPathEls,
+      focusPathEls
     };
   }
 
-  getPointEl(point, isFloatingPoint) {
+  getPointEl(point, pathId, isFloatingPoint) {
     const paper = Snap();
     const svgPointEl = paper.circle(point.x, point.y, 3);
     let className = '';
     let cx, cy, r;
 
-    svgPointEl.node.point = point;
-
     if (isFloatingPoint) {
       className = 'floating';
     }
-
-    if (className !== '') {
-      svgPointEl.addClass(className);
+    else if (point.isSelected) {
+      className = 'selected';
+    }
+    else {
+      className = '';
     }
 
     cx = svgPointEl.node.getAttribute('cx');
@@ -155,12 +161,18 @@ class SVG extends Component {
     r = svgPointEl.node.getAttribute('r');
 
     return (
-      <circle key={ point.id } cx={ cx } cy={ cy } r={ r } />
+      <circle
+        key={ point.id }
+        id={ `${ pathId }-${ point.id }` }
+        className={ className }
+        cx={ cx }
+        cy={ cy }
+        r={ r } />
     );
   }
 
   render() {
-    const { pointEls, pathEls, maskPathEls } = this.getPathAndPointEls();
+    const { pointEls, pathEls, maskPathEls, focusPathEls } = this.getPathAndPointEls();
     const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
 
     return (
@@ -169,7 +181,7 @@ class SVG extends Component {
           { pathEls }
         </g>
         <g className={ style[ 'focus' ] }>
-          { this.getFocusPaths() }
+          { focusPathEls }
         </g>
         <g className={ style[ 'mask' ] }>
           { maskPathEls }

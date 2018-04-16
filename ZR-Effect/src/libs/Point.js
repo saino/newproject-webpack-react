@@ -4,6 +4,7 @@ export default class Point {
 
 	constructor(x, y, cx1, cy1, cx2, cy2){
 		this.id = +Math.random().toFixed(7);
+		this.isSelected = false;
 		this.radius = 3;
 		this.x = x;
 		this.y = y;

@@ -28,7 +28,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
-      let path;
+      let path, point, entryIds, pathId, pointId;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
       if (rotoMode === 0 && rotoToolType === 4) {
@@ -62,10 +62,25 @@ class RotoOperationBox extends Component {
       }
       // 如果操作模式是编辑，并且选中工具类别也是编辑
       else if (rotoMode === 1 && rotoToolType === 5) {
-        path = findItem(pathData.list, 'id', +e.target.getAttribute('id'));
+        entryIds = e.target.getAttribute('id')
+          ? e.target.getAttribute('id').split('-')
+          : [];
 
+        // 如果选中了点
+        if (entryIds.length > 1) {
+          pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ];
+          path = findItem(pathData.list, 'id', pathId);
+          point = findItem(path.points, 'id', pointId);
+          path.points = this.clearPointSelected(path.points);
+          point.isSelected = true;
+
+          updateObj[ 'path_selected' ] = this.initPathSelected(path);
+          this.configurePathDataList(updateObj[ 'path_selected' ]);
+        }
         // 如果选中了path
-        if (path) {
+        else if (entryIds.length === 1) {
+          pathId = +entryIds[ 0 ], pointId = void 0;
+          path = findItem(pathData.list, 'id', pathId);
           //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
           this.clearPathSelected();
           path.isSelected = true;
@@ -265,6 +280,15 @@ class RotoOperationBox extends Component {
       path.isSelected = false;
 
       return path;
+    });
+  }
+
+  // 清除path中的所有point的选中状态
+  clearPointSelected(points) {
+    return points.map(point => {
+      point.isSelected = false;
+
+      return point;
     });
   }
 
