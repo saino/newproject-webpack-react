@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { message } from 'antd';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import Path from '../../../../libs/Path';
@@ -80,7 +81,15 @@ class RotoOperationBox extends Component {
         if (updateObj[ 'path_selected' ]) {
           updateObj[ 'dragging' ] = true;
         }
-        
+
+        configure(materialId, materialFrame, updateObj);
+      }
+      // 如果操作模式是编辑，并且是移动'point'和'path'
+      else if (rotoMode === 1 && rotoToolType === 6) {
+        updateObj[ 'dragging' ] = true;
+        updateObj[ 'move_x' ] = offX;
+        updateObj[ 'move_y' ] = offY;
+
         configure(materialId, materialFrame, updateObj);
       }
     };
@@ -90,10 +99,13 @@ class RotoOperationBox extends Component {
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
+      const pathData = this.getPathData();
       const rotoMode = this.getRotoMode();
       const rotoDrawMode = this.getRotoDrawMode();
       const pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
+      const moveX = this.getMoveX();
+      const moveY = this.getMoveY();
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
@@ -117,6 +129,20 @@ class RotoOperationBox extends Component {
         }
 
         configure(materialId, materialFrame, updateObj);
+      }
+      // 如果是进行移动'path'或'point'
+      else if (rotoMode === 1 && dragging && rotoToolType === 6) {
+        // 如果选中了某'path'
+        if (pathSelected
+            && pathSelected.isSelected
+            && pathData.findInside(offX, offY, pathSelected)) {
+          pathSelected.move(offX - moveX, offY - moveY);
+
+          updateObj[ 'move_x' ] = offX;
+          updateObj[ 'move_y' ] = offY;
+
+          configure(materialId, materialFrame, updateObj);
+        }
       }
     };
 
@@ -143,6 +169,16 @@ class RotoOperationBox extends Component {
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
         // 结束拖拽
+        updateObj[ 'dragging' ] = false;
+
+        configure(materialId, materialFrame, updateObj);
+      }
+      else if (dragging && rotoToolType === 5) {
+        updateObj[ 'dragging' ] = false;
+
+        configure(materialId, materialFrame, updateObj);
+      }
+      else if (dragging && rotoToolType === 6) {
         updateObj[ 'dragging' ] = false;
 
         configure(materialId, materialFrame, updateObj);
@@ -208,6 +244,16 @@ class RotoOperationBox extends Component {
     // 获取'path_data'
     this.getPathData = this.registerGetRotoInfo(roto =>
       roto[ 'path_data' ]
+    );
+
+    // 获取'moveX'
+    this.getMoveX = this.registerGetRotoInfo(roto =>
+      roto[ 'move_x' ]
+    );
+
+    // 获取'moveY'
+    this.getMoveY = this.registerGetRotoInfo(roto =>
+      roto[ 'move_y' ]
     );
   }
 

@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom"
 class AlertDom extends Component {
     render(){
-        return <div className="alert" >
+        return <div className="alert-xxxyyy" onClick={this.onAClick}>
             {this.props.children}
             <style>{`
-                .alert{
+                .alert-xxxyyy{
                     position: absolute;
                     height: 100%;
                     width: 100%;
@@ -15,9 +15,15 @@ class AlertDom extends Component {
                     justify-content: space-around;
                     display: flex;
                     align-items: center;
+                    z-index: 10;
                 }
             `}</style>
         </div>
+    }
+    onAClick = (e) => {
+        if(e.target.getAttribute("class") === "alert-xxxyyy"){
+            this.props.removeDom();
+        }
     }
 }
 class AlertViewClass{
@@ -25,16 +31,14 @@ class AlertViewClass{
         this.domId = "alert-dom"
         let alerDom = document.createElement("DIV");
         alerDom.setAttribute("id", this.domId);
-        alerDom.onclick = () => {
-            this.remove();
-        }
+
         document.querySelector("body").appendChild(alerDom);
     }
     render(htmlDom){
-        ReactDOM.render(<AlertDom>{htmlDom}</AlertDom>, document.querySelector("#"+this.domId));
+        ReactDOM.render(<AlertDom removeDom={this.removeDom}>{htmlDom}</AlertDom>, document.querySelector("#"+this.domId));
     }
-    remove() {
-        ReactDOM.unmountComponentAtNode(document.querySelector("#"+this.domId));
+    removeDom = () => {
+        ReactDOM.render(<div><div></div></div>, document.querySelector("#" + this.domId));
     }
 }
 const AlertView = new AlertViewClass();

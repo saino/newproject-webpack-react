@@ -11,6 +11,8 @@
  *  is_entry_selected { Boolean } 是否选中'path'或'point'
  *  path_data { Object } path信息
  *  control_points { Array } 控制controls集合
+ *  move_x { Number } 移动x坐标
+ *  move_y { Number } 移动y坐标
  */
 
 import { add, update, remove, findItem } from '../../utils/array-handle';
@@ -29,7 +31,9 @@ export default function roto (state = defState, action) {
         'path_selected': null,
         'dragging': false,
         'path_data': new PathList,
-        'focus_paths': []
+        'focus_paths': [],
+        'move_x': null,
+        'move_y': null
       };
 
       return add(state, initRoto);

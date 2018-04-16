@@ -21,6 +21,7 @@ class SpecialEffec extends Component {
         super();
         this.state = {
             activeContainer: "stage",
+            materialContainerType: ["video", "image"]
         }
     }
 
@@ -38,7 +39,7 @@ class SpecialEffec extends Component {
                         <OperationArea changeaActiveContainer={this.changeaActiveContainer}></OperationArea>
                         <EditArea material={material}></EditArea>
                     </div>
-                    <TimeArea></TimeArea>
+                    <TimeArea changeaActiveContainer={this.changeaActiveContainer}></TimeArea>
                 </Container>
                 
                 {/* <div></div> */}
@@ -56,16 +57,17 @@ class SpecialEffec extends Component {
             case "stage":
                 return <StageContainer />;
             case "material":
-                return <MaterialContainer />;
+                return <MaterialContainer materialContainerType={this.state.materialContainerType} changeaActiveContainer={this.changeaActiveContainer} />;
             case "audio":
-                return <AudioContainer />;
+                return <AudioContainer changeaActiveContainer={this.changeaActiveContainer} />;
             default:
                 return <StageContainer />;
         }
     }
-    changeaActiveContainer = (containerName) => {
+    changeaActiveContainer = (containerName, containerType) => {
         this.setState({
-            activeContainer: containerName
+            activeContainer: containerName,
+            materialContainerType: containerType
         });
     }
 }

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { changeWorkMaterial } from '../../../stores/reducers/work';
+import { changeWorkMaterial, changWorkVideo } from '../../../stores/reducers/work';
 import { changeMaterial } from '../../../stores/reducers/material'
 
 import AlertView from "./alert-view";
@@ -104,39 +104,56 @@ class VideoMaterial extends Component {
         AlertView.render(<PreView model={this.props.model} />);
     }
     onUseClick = () => {
-        let materialItem = {
-            ...this.props.model,
-            materialId: this.props.model.id,
-            id: new Date().getTime(), 
-            order: 10, 
-            positionX: 0,
-            positionY: 0,
-            rotateZ: 0,
-            width: 100,
-            height: 100,
-            control: [
-                { x: "", y: "" },
-                { x: "", y: "" },
-                { x: "", y: "" },
-                { x: "", y: "" },
-            ],
-            timeEnd: {
-                hour: "",
-                minute: "",
-                second: "",
-                millisecond: "",
-            },
-            active: false,
-            timeStart: {
-                hour: "",
-                minute: "",
-                second: "",
-                millisecond: "",
+        const { useType } = this.props;
+        if(useType.indexOf("image")>=0){
+
+            let materialItem = {
+                ...this.props.model,
+                materialId: this.props.model.id,
+                id: new Date().getTime(), 
+                order: 10, 
+                positionX: 0,
+                positionY: 0,
+                rotateZ: 0,
+                width: 100,
+                height: 100,
+                control: [
+                    { x: "", y: "" },
+                    { x: "", y: "" },
+                    { x: "", y: "" },
+                    { x: "", y: "" },
+                ],
+                timeEnd: {
+                    hour: "",
+                    minute: "",
+                    second: "",
+                    millisecond: "",
+                },
+                active: false,
+                timeStart: {
+                    hour: "",
+                    minute: "",
+                    second: "",
+                    millisecond: "",
+                }
+            };
+            const {material} = this.props.work1;
+            material.push(materialItem);
+            this.props.changeWorkMaterial(material);
+            return;
+        }else{
+            let materialItem = {
+                ...this.props.model,
+                materialId: this.props.model.id,
+                id: new Date().getTime(),
+                order:10,
+
             }
-        };
-        const {material} = this.props.work1
-        material.push(materialItem);
-        this.props.changeWorkMaterial(material);
+            const { video } = this.props.work1;
+            video.push(materialItem);
+            this.props.changWorkVideo(video);
+        }
+        
     }
     onDeleClick = () => {
         const { material, model } = this.props;
@@ -162,7 +179,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
         changeMaterial: bindActionCreators(changeMaterial, dispatch),
+        changWorkVideo: bindActionCreators(changWorkVideo, dispatch)
     }
 }
-
 export default connect(mapStateToProps, mapDispatchToProps)(VideoMaterial);

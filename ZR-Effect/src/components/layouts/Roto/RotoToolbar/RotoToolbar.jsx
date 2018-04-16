@@ -39,7 +39,7 @@ class RotoToolbar extends Component {
     };
 
     // 延迟执行设置扣像操作模式为选择模式
-    this.defferSelectPath = defferPerform(() => {
+    this.defferSelectEntry = defferPerform(() => {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
@@ -48,9 +48,24 @@ class RotoToolbar extends Component {
     });
 
     // 曲线选择工具
-    this.selectPathHandle = () => {
-      this.defferSelectPath();
+    this.selectEntryHandle = () => {
+      this.defferSelectEntry();
       this.configureToolState(5);
+    };
+
+    // 延迟执行移动'point'或'point'
+    this.defferMoveEntry = defferPerform(() => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+
+      configure(materialId, materialFrame, { 'mode': 1 });
+    });
+
+    // 移动'path'或'point'
+    this.moveEntryHandle = () => {
+      this.defferMoveEntry();
+      this.configureToolState(6);
     };
 
     this.backHandle = () => {
@@ -225,10 +240,10 @@ class RotoToolbar extends Component {
                   <li onClick={ this.penHandle } title="钢笔工具" className={ toolType === 4 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ rotoToolPNG } />
                   </li>
-                  <li onClick={ this.selectPathHandle } title="曲线选择" className={ toolType === 5 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.selectEntryHandle } title="曲线选择" className={ toolType === 5 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ selectPathPNG } />
                   </li>
-                  <li title="移动曲线或点" className={ toolType === 6 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.moveEntryHandle } title="移动曲线或点" className={ toolType === 6 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ movePointPNG } />
                   </li>
                   <li title="增加节点" className={ toolType === 7 ? rotoToolbarStyle[ 'active' ] : '' }>

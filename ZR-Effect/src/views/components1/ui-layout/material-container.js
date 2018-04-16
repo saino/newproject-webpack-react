@@ -6,6 +6,8 @@ import VideoMaterial from "./video-material";
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
 import { changeMaterial } from "../../../stores/reducers/material"
+import deleImg from "../../statics/dele.png";
+
 import "./audio-container.css";
 import AddMaterial from "../../statics/add-material1.png";
 
@@ -17,9 +19,9 @@ class MaterialContainer extends Component {
     }
 
     getVideoMaterial() {
-        const { material } = this.props;
+        const { material, materialContainerType } = this.props;
         return material.reduce((videoMaterial, materialItem) => {
-            if (materialItem.type === 'video' || materialItem.type === "image") {
+            if (materialContainerType.indexOf(materialItem.type)>=0) {
                 videoMaterial.push(materialItem);
             }
             return videoMaterial;
@@ -66,7 +68,6 @@ class MaterialContainer extends Component {
     }
     //上传成功
     _handleUploadSuccess = (resp) => {
-        // console.log("ddddddddddddddddd");
         this.setState({
             uploadProgress: 100,
             progressState: "success",
@@ -102,7 +103,6 @@ class MaterialContainer extends Component {
     }
     //上传失败
     _handleUploadFailed = () => {
-        // console.log("xxxxxxxxx");
         const data = {
             "id": new Date().getTime(),
             "user_id": 52938,
@@ -134,8 +134,36 @@ class MaterialContainer extends Component {
             });
         }, 200);
     }
+    onCloseClick = () => {
+        this.props.changeaActiveContainer("stage", ["video", "image"]);
+    }
+    render() { 
 
-    render() {
+        // const upLoadOptions = {
+        //     baseUrl: `./aa/user/uploadMaterial`,
+        //     paramAddToField: {
+        //         work_id: "this.props.workId"
+        //     },
+        //     fileFieldName: "file",
+        //     multiple: false,
+        //     accept: 'video/*, image/*',
+        //     requestHeaders: {
+        //         Token: "this.props.user.token",
+        //     },
+        //     chooseAndUpload: true,
+        //     wrapperDisplay: 'block',
+        //     beforeChoose: this._handleBeforeChoose,
+        //     chooseFile: this._handleChooseFile,
+        //     beforeUpload: this._handleBeforeUpload,
+        //     uploading: this._handleUploading,
+        //     /*上传成功*/
+        //     uploadSuccess: this._handleUploadSuccess,
+        //     /*xhr失败*/
+        //     uploadFail: this._handleUploadFailed,
+        //     uploadError: this._handleUploadFailed
+        // }
+
+    // render() {
         const upLoadOptions = config.fileUpload.configureFileUpload({
           paramAddToField: {
             work_id: 'this.props.workId'
@@ -154,6 +182,7 @@ class MaterialContainer extends Component {
 
         return <div className="material-container">
             <div className="title-name">我的素材</div>
+            <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
             <div className="material-content">
                 <FileUpload options={upLoadOptions} className="add-action">
                     <div ref="chooseAndUpload">
@@ -165,7 +194,7 @@ class MaterialContainer extends Component {
 
                 {
                     this.getVideoMaterial().map((material) => {
-                        return <VideoMaterial key={material.id} model={material} />
+                        return <VideoMaterial useType={this.props.materialContainerType} key={material.id} model={material} />
                     })
                 }
                 {
@@ -177,6 +206,7 @@ class MaterialContainer extends Component {
                     height: 100%;
                     width: 100%;
                     background: #031016;
+                    position: relative;
                 }
                 .title-name{
                     height: 40px;
@@ -214,6 +244,18 @@ class MaterialContainer extends Component {
                     color: #fff;
                 }
 
+                .close-container{
+                    position: absolute;
+                    color: #fff;
+                    right: 0;
+                    top: 0;
+                    height: 40px;
+                    line-height: 40px;
+                    text-align: center;
+                    width: 40px;
+                    cursor: pointer;
+                }
+                
             `}</style>
         </div>
     }

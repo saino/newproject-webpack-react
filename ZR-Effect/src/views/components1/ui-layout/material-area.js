@@ -17,6 +17,7 @@ class MaterialArea extends Component {
                     height: 574px;
                     width: 160px;
                     background: #264246;
+                    z-index: 1;
                 }
                 .add-material{
                     height: 40px;
@@ -37,7 +38,7 @@ class MaterialArea extends Component {
     }
     addMaterialClick = () =>{
         // console.log("添加素材");
-        this.props.changeaActiveContainer("material");
+        this.props.changeaActiveContainer("material", ["video", "image"]);
     }
 }
 export default MaterialArea;

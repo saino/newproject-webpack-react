@@ -26,6 +26,7 @@ class EditArea extends Component{
                     height: 700px;
                     width: 240px;
                     background: rgba(38,66,70,1);
+                    z-index: 1;
                 }
                 .edit-title{
                     height: 40px;
@@ -93,11 +94,9 @@ class EditArea extends Component{
     }
     renderControlMaterial(){
         const currentMaterial = this.getcurrentmaterial();
-        console.log(currentMaterial);
         if (!currentMaterial || !currentMaterial.active){
             return null;
         }
-        console.log(currentMaterial);
         if (currentMaterial.type === "audio"){
             return this.audioControl();
         } else if(currentMaterial.type === "image"){
