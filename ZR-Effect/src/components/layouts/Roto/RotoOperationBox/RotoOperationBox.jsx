@@ -17,7 +17,41 @@ class RotoOperationBox extends Component {
 
     // 删除'path'或'point'
     this.removeHandle = (e) => {
-      alert(e.keyCode);
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const pathSelected = this.getRotoPathSelected();
+      const pathData = this.getPathData();
+      const rotoMode = this.getRotoMode();
+      const updateObj = {};
+      let point;
+
+      if (e.keyCode) {
+        if (rotoMode !== 0 && pathSelected) {
+          point = findItem(pathSelected.points, 'isSelected', true);
+
+          // 如果选中了'point'
+          if (point) {
+            pathSelected.removePoint(point);
+
+            // 删除完最后1个点，则删除整条'path'
+            if (pathSelected.points.length <= 1) {
+              pathData.delPath(pathSelected);
+              updateObj[ 'pathSelected' ] = false;
+            } else {
+              updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+            }
+
+          }
+          // 选中了'path'
+          else {
+            pathData.delPath(pathSelected);
+            updateObj[ 'pathSelected' ] = false;
+          }
+
+          configure(materialId, materialFrame, updateObj);
+        }
+      }
     };
 
     this.mouseDownHandle = (e) => {
@@ -70,7 +104,7 @@ class RotoOperationBox extends Component {
         entryIds = e.target.getAttribute('id')
           ? e.target.getAttribute('id').split('-')
           : [];
-
+          
         // 如果选中了点
         if (entryIds.length > 1) {
           pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ];
@@ -86,13 +120,17 @@ class RotoOperationBox extends Component {
         else if (entryIds.length === 1) {
           pathId = +entryIds[ 0 ], pointId = void 0;
           path = findItem(pathData.list, 'id', pathId);
-          //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
-          this.clearPathSelected();
-          path.points = this.clearPointSelected(path.points);
-          path.isSelected = true;
 
-          updateObj[ 'path_selected' ] = this.initPathSelected(path);
-          this.configurePathDataList(updateObj[ 'path_selected' ]);
+          // 避免没有'path'选中svg容器导致报错
+          if (path) {
+            //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
+            this.clearPathSelected();
+            path.points = this.clearPointSelected(path.points);
+            path.isSelected = true;
+
+            updateObj[ 'path_selected' ] = this.initPathSelected(path);
+            this.configurePathDataList(updateObj[ 'path_selected' ]);
+          }
         }
         // 没选中任何'path'或'point'
         else {
