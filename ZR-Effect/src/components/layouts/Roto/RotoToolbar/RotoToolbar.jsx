@@ -24,6 +24,35 @@ class RotoToolbar extends Component {
   constructor(props) {
     super(props);
 
+    // 延迟执行设置扣像操作模式为画线模式
+    this.defferRotoPen = defferPerform(() => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+
+      configure(materialId, materialFrame, { 'mode': 0 });
+    });
+    // 钢笔工具
+    this.penHandle = () => {
+      this.defferRotoPen();
+      this.configureToolState(4);
+    };
+
+    // 延迟执行设置扣像操作模式为选择模式
+    this.defferSelectPath = defferPerform(() => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+
+      configure(materialId, materialFrame, { 'mode': 1 });
+    });
+
+    // 曲线选择工具
+    this.selectPathHandle = () => {
+      this.defferSelectPath();
+      this.configureToolState(5);
+    };
+
     this.backHandle = () => {
       const { undo } = this.props;
       const materialId = this.getMaterialId();
@@ -37,7 +66,8 @@ class RotoToolbar extends Component {
       undo(materialId);
     };
 
-    this.moveHandle = () => this.configureToolState(1);
+    this.moveHandle = () =>
+      this.configureToolState(1);
 
     this.zoomInHandle = () => {
       const materialId = this.getMaterialId();
@@ -45,9 +75,6 @@ class RotoToolbar extends Component {
 
       configureZoom(materialId, 2, 'zoomIn');
     };
-
-    // 钢笔工具
-    this.penHandle = () => this.configureToolState(4);
 
     this.zoomOutHandle = () => {
       const materialId = this.getMaterialId();
@@ -132,6 +159,7 @@ class RotoToolbar extends Component {
     const newPathSelected = new Path();
 
     newPathSelected.id = pathSelected.id;
+    newPathSelected.isSelected = pathSelected.isSelected;
     newPathSelected.points = [ ...pathSelected.points ];
     newPathSelected.floatingPoint = pathSelected.floatingPoint;
     newPathSelected.closed = pathSelected.closed;
@@ -142,7 +170,7 @@ class RotoToolbar extends Component {
   // 更新pathData list
   configurePathDataList(pathSelected) {
     const pathData = this.getRotoPathData();
-    let updateIndex = findIndex(pathData, ({ id }) => id === pathSelected.id)
+    let updateIndex = findIndex(pathData.list, ({ id }) => id === pathSelected.id)
 
     pathData.list.splice(updateIndex, 1, pathSelected);
   }
@@ -197,7 +225,7 @@ class RotoToolbar extends Component {
                   <li onClick={ this.penHandle } title="钢笔工具" className={ toolType === 4 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ rotoToolPNG } />
                   </li>
-                  <li title="曲线选择" className={ toolType === 5 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.selectPathHandle } title="曲线选择" className={ toolType === 5 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ selectPathPNG } />
                   </li>
                   <li title="移动曲线或点" className={ toolType === 6 ? rotoToolbarStyle[ 'active' ] : '' }>

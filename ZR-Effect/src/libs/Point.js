@@ -3,7 +3,7 @@ export default class Point {
 	static get CONTROL2() { return 2; }	// 控制点类型2
 
 	constructor(x, y, cx1, cy1, cx2, cy2){
-		this.id = Math.random().toFixed(7);
+		this.id = +Math.random().toFixed(7);
 		this.radius = 3;
 		this.x = x;
 		this.y = y;

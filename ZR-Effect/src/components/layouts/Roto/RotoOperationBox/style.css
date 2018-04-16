@@ -40,10 +40,14 @@
   stroke-width: 0;
 }
 
-.focus path,
-path.selected {
+:global(.focus path) {
   stroke-width: 2;
   stroke: lightskyblue;
+}
+
+:global(path.selected) {
+  stroke-width: 2;
+  stroke: lightskyblue;  
 }
 
 .focus path {

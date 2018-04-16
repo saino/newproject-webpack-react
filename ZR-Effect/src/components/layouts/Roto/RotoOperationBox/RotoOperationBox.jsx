@@ -27,6 +27,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
+      let path;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
       if (rotoMode === 0 && rotoToolType === 4) {
@@ -57,6 +58,30 @@ class RotoOperationBox extends Component {
 
         configure(materialId, materialFrame, updateObj);
         //this.setState(updateObj);
+      }
+      // 如果操作模式是编辑，并且选中工具类别也是编辑
+      else if (rotoMode === 1 && rotoToolType === 5) {
+        path = findItem(pathData.list, 'id', +e.target.getAttribute('id'));
+
+        // 如果选中了path
+        if (path) {
+          //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
+          this.clearPathSelected();
+          path.isSelected = true;
+
+          updateObj[ 'path_selected' ] = this.initPathSelected(path);
+          this.configurePathDataList(updateObj[ 'path_selected' ]);
+        }
+        // 没选中任何'path'或'point'
+        else {
+          updateObj[ 'path_selected' ] = false;
+        }
+
+        if (updateObj[ 'path_selected' ]) {
+          updateObj[ 'dragging' ] = true;
+        }
+        
+        configure(materialId, materialFrame, updateObj);
       }
     };
 
@@ -186,11 +211,23 @@ class RotoOperationBox extends Component {
     );
   }
 
+  // 清除所有的path的选中状态
+  clearPathSelected() {
+    const pathData = this.getPathData();
+
+    pathData.list = pathData.list.map(path => {
+      path.isSelected = false;
+
+      return path;
+    });
+  }
+
   // 初始化pathSelected
   initPathSelected(pathSelected) {
     const newPathSelected = new Path();
 
     newPathSelected.id = pathSelected.id;
+    newPathSelected.isSelected = pathSelected.isSelected;
     newPathSelected.points = [ ...pathSelected.points ];
     newPathSelected.floatingPoint = pathSelected.floatingPoint;
     newPathSelected.closed = pathSelected.closed;
@@ -201,7 +238,7 @@ class RotoOperationBox extends Component {
   // 更新pathData list
   configurePathDataList(pathSelected) {
     const pathData = this.getPathData();
-    let updateIndex = findIndex(pathData, ({ id }) => id === pathSelected.id)
+    let updateIndex = findIndex(pathData.list, ({ id }) => id === pathSelected.id)
 
     pathData.list.splice(updateIndex, 1, pathSelected);
   }

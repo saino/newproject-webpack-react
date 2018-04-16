@@ -5,7 +5,8 @@ export default class Path {
 		this.clear();
 	}
 	clear(){
-		this.id = Math.random().toFixed(7);
+		this.id = +Math.random().toFixed(7);
+		this.isSelected = false;
 		this.points = [];
 		this.floatingPoint = false;
 		this.closed = false;

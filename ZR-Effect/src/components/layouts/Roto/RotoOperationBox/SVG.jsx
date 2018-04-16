@@ -29,6 +29,11 @@ class SVG extends Component {
       roto[ 'mode' ]
     );
 
+    // 获取选择的'path'
+    this.getPathSelected = this.registerGetRotoInfo(roto =>
+      roto[ 'path_selected' ]
+    );
+
     // 获取'path'集合
     this.getPaths = this.registerGetRotoInfo(roto =>
       roto[ 'path_data' ].list
@@ -73,23 +78,32 @@ class SVG extends Component {
   }
 
   getPathAndPointEls() {
+    const pathSelected = this.getPathSelected();
     const paths = this.getPaths();
-    const { pathSelected, rotoMode } = this.props;
+    const mode = this.getMode();
     const paper = Snap();
     const pointEls = [];
     const maskPathEls = [];
+    let className = '';
+
     const pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
       const svgPathEl = paper.path(path.svgStr());
 
-      svgPathEl.node.path = path;
+      // 如果在编辑模式下选中了该path
+      if (mode !== 0 && isCurrPath && path.isSelected) {
+        //console.log(path, 'is');
+        className = 'selected';
+      } else {
+        className = '';
+      }
 
       if (isCurrPath) {
         path.points.forEach(point => {
           pointEls.push(this.getPointEl(point));
         });
 
-        if (rotoMode == 0) {
+        if (mode == 0) {
           // 画浮动'point'
           pointEls.push(this.getPointEl(path.floatingPoint, true));
         }
@@ -97,13 +111,19 @@ class SVG extends Component {
 
       maskPathEls.push(
         <path
+          id={ path.id }
+          className={ className }
           fill-rule="evenodd"
           key={ `m-${ path.id }`}
           d={ svgPathEl.node.getAttribute('d') } />
       );
 
       return (
-        <path key={ path.id } d={ svgPathEl.node.getAttribute('d') } />
+        <path
+          key={ path.id }
+          className={ className }
+          id={ path.id }
+          d={ svgPathEl.node.getAttribute('d') } />
       );
     });
 
