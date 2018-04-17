@@ -39,6 +39,11 @@ class SVG extends Component {
       roto[ 'path_data' ].list
     );
 
+    // 获取扣像选中的'is_visible_mask'
+    this.getIsVisibleMask = this.registerGetRotoInfo(
+      roto => roto[ 'is_visible_mask' ]
+    );
+
     // 获取'control_point'集合
     this.getControlPoints = this.registerGetRotoInfo(roto => {
       const { controlPoints } = this.props;
@@ -80,7 +85,7 @@ class SVG extends Component {
     const focusPathEls = [];
     let className = '';
     let focusPath;
-    console.log(paths, 'paths');
+
     const pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
       const svgPathEl = paper.path(path.svgStr());
@@ -173,6 +178,7 @@ class SVG extends Component {
   render() {
     const { pointEls, pathEls, maskPathEls, focusPathEls } = this.getPathAndPointEls();
     const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
+    const isVisibleMask = this.getIsVisibleMask();
 
     return (
       <svg className={ `${ style[ 'svg' ] } ${ visibleDrawingClassName ? style[ 'drawing' ]: '' }` } id="svg_app">
@@ -183,7 +189,7 @@ class SVG extends Component {
           { focusPathEls }
         </g>
         <g className={ style[ 'mask' ] }>
-          { maskPathEls }
+          { isVisibleMask ? maskPathEls : void 0 }
         </g>
         <g className={ style[ 'control' ] }>
           { this.getControlPoints() }

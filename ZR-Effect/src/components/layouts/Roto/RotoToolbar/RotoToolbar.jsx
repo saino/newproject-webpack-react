@@ -78,6 +78,22 @@ class RotoToolbar extends Component {
       this.configureToolState(6);
     };
 
+    // 延迟执行显示隐藏
+    this.defferVisibleMask = () => {
+      const { configure } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      const isVisibleMask = this.getRotoIsVisibleMask();
+
+      configure(materialId, materialFrame, { 'is_visible_mask': !isVisibleMask });
+    };
+
+    // 显隐阴影
+    this.visibleMaskHandle = () => {
+      this.defferVisibleMask();
+      this.configureToolState(7);
+    }
+
     this.backHandle = () => {
       const { undo } = this.props;
       const materialId = this.getMaterialId();
@@ -187,6 +203,11 @@ class RotoToolbar extends Component {
     this.getRotoPathData = this.registerGetRotoInfo(
       roto => roto[ 'path_data' ]
     );
+
+    // 获取扣像选中的'is_visible_mask'
+    this.getRotoIsVisibleMask = this.registerGetRotoInfo(
+      roto => roto[ 'is_visible_mask' ]
+    );
   }
 
   // 初始化pathSelected
@@ -269,7 +290,7 @@ class RotoToolbar extends Component {
                   <li title="增加节点" className={ toolType === 7 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ addPointPNG } />
                   </li>
-                  <li title="显隐遮罩" className={ toolType === 8 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.visibleMaskHandle } title="显隐遮罩" className={ toolType === 8 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ visibleMaskPNG } />
                   </li>
                   <li onClick={ this.rotoCompleteHandle } title="完成" className={ toolType === 9 ? rotoToolbarStyle[ 'active' ] : '' }>

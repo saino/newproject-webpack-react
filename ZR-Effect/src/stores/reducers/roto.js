@@ -8,7 +8,7 @@
  *  draw_mode { Number } 画线模式 0-未开始 | 1-未闭合 | 2-已闭合
  *  path_selected { Object } 选中的path对象
  *  dragging { Boolean } 是否是拖拽中
- *  is_entry_selected { Boolean } 是否选中'path'或'point'
+ *  is_visible_mask { Boolean } 是否显示阴影
  *  path_data { Object } path信息
  *  control_points { Array } 控制controls集合
  *  move_x { Number } 移动x坐标
@@ -29,6 +29,7 @@ export default function roto (state = defState, action) {
         'mode': 0,
         'draw_mode': 0,
         'path_selected': null,
+        'is_visible_mask': true,
         'dragging': false,
         'path_data': new PathList,
         'focus_paths': [],
