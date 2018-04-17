@@ -80,7 +80,7 @@ class SVG extends Component {
     const focusPathEls = [];
     let className = '';
     let focusPath;
-
+    console.log(paths, 'paths');
     const pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
       const svgPathEl = paper.path(path.svgStr());

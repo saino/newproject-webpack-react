@@ -104,7 +104,7 @@ class RotoOperationBox extends Component {
         entryIds = e.target.getAttribute('id')
           ? e.target.getAttribute('id').split('-')
           : [];
-          
+
         // 如果选中了点
         if (entryIds.length > 1) {
           pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ];

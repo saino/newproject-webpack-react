@@ -43,8 +43,18 @@ class RotoToolbar extends Component {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
+      const mode = this.getRotoMode();
+      const pathSelected = this.getRotoPathSelected();
+      let updateObj = { 'mode': 1 };
 
-      configure(materialId, materialFrame, { 'mode': 1 });
+      // 从钢笔工具模式转编辑模式
+      if (mode === 0 && pathSelected) {
+        pathSelected.closePath();
+        updateObj[ 'path_selected' ] = false;
+        updateObj[ 'dragging' ] = false;
+      }
+
+      configure(materialId, materialFrame, updateObj);
     });
 
     // 曲线选择工具
@@ -117,17 +127,23 @@ class RotoToolbar extends Component {
       const materialFrame = this.getMaterialFrame();
       const rotoDrawMode = this.getRotoDrawMode();
       const pathSelected = this.getRotoPathSelected();
+      const pathData = this.getRotoPathData();
       const updateObj = {};
 
       if (rotoDrawMode < 1) {
         return;
       }
 
-      pathSelected.closePath();
+      if (pathSelected) {
+        pathSelected.closePath();
+      }
 
       updateObj[ 'draw_mode' ] = 0;
       updateObj[ 'path_selected' ] = false;//this.initPathSelected(pathSelected);
-      this.configurePathDataList(pathSelected);
+
+      if (pathSelected) {
+        this.configurePathDataList(pathSelected);
+      }
 
       configure(materialId, materialFrame, updateObj);
     }, 10);
@@ -150,6 +166,11 @@ class RotoToolbar extends Component {
     // 获取撤销次数
     this.getUndoCount = this.registerGetMaterialInfo(
       rotoMaterial => rotoMaterial[ 'undo_count' ]
+    );
+
+    // 获取扣像操作模式
+    this.getRotoMode = this.registerGetRotoInfo(
+      roto => roto[ 'mode' ]
     );
 
     // 获取扣像画线模式
