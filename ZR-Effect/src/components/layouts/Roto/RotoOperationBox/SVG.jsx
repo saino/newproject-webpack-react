@@ -9,6 +9,8 @@ class SVG extends Component {
   constructor(props) {
     super(props);
 
+    this.paper = Snap();
+
     // 获取素材id
     this.getMaterialId = this.registerGetMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'material_id' ]
@@ -79,7 +81,6 @@ class SVG extends Component {
     const pathSelected = this.getPathSelected();
     const paths = this.getPaths();
     const mode = this.getMode();
-    const paper = Snap();
     const pointEls = [];
     const maskPathEls = [];
     const focusPathEls = [];
@@ -88,7 +89,7 @@ class SVG extends Component {
 
     const pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
-      const svgPathEl = paper.path(path.svgStr());
+      const svgPathEl = this.paper.path(path.svgStr());
 
       // 如果在编辑模式下选中了该path
       if (mode !== 0 && isCurrPath && path.isSelected) {
@@ -108,7 +109,7 @@ class SVG extends Component {
               <path
                 id={ path.id }
                 key={ path.id }
-                d={ paper.path(focusPath).node.getAttribute('d') } />
+                d={ this.paper.path(focusPath).node.getAttribute('d') } />
             )
           }
         });
@@ -122,7 +123,7 @@ class SVG extends Component {
       maskPathEls.push(
         <path
           id={ path.id }
-          fill-rule="evenodd"
+          fillRule="evenodd"
           key={ `m-${ path.id }`}
           d={ svgPathEl.node.getAttribute('d') } />
       );
@@ -145,8 +146,7 @@ class SVG extends Component {
   }
 
   getPointEl(point, pathId, isFloatingPoint) {
-    const paper = Snap();
-    const svgPointEl = paper.circle(point.x, point.y, 3);
+    const svgPointEl = this.paper.circle(point.x, point.y, 3);
     let className = '';
     let cx, cy, r;
 
@@ -199,6 +199,10 @@ class SVG extends Component {
         </g>
       </svg>
     );
+  }
+
+  componentDidMount() {
+    document.body.removeChild(this.paper.node);
   }
 }
 

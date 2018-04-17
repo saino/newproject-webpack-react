@@ -417,13 +417,7 @@ class RotoOperationBox extends Component {
         onMouseMove={ this.mouseMoveHandle }
         onMouseUp={ this.mouseUpHandle }>
         {/* 显示svg的point和path */}
-        <SVG
-          paths={ [ ...pathData.list ] }
-          rotoMode={ rotoMode }
-          rotoDrawMode={ rotoDrawMode }
-          pathSelected={ pathSelected }
-          dragging={ dragging }
-          focusPaths={ focusPaths } />
+        <SVG />
 
         { this.props.children }
       </div>

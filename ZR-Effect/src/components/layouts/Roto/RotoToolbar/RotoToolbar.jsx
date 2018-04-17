@@ -91,7 +91,7 @@ class RotoToolbar extends Component {
     // 显隐阴影
     this.visibleMaskHandle = () => {
       this.defferVisibleMask();
-      this.configureToolState(7);
+      this.configureToolState(8);
     }
 
     this.backHandle = () => {
