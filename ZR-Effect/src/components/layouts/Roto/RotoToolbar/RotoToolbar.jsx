@@ -50,6 +50,7 @@ class RotoToolbar extends Component {
       // 从钢笔工具模式转编辑模式
       if (mode === 0 && pathSelected) {
         pathSelected.closePath();
+        updateObj[ 'draw_mode' ] = 0;
         updateObj[ 'path_selected' ] = false;
         updateObj[ 'dragging' ] = false;
       }
