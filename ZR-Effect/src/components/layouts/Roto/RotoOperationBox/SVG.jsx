@@ -84,6 +84,7 @@ class SVG extends Component {
     const pointEls = [];
     const maskPathEls = [];
     const focusPathEls = [];
+    const controlPathEls = [];
     let className = '';
     let focusPath;
 
@@ -114,10 +115,10 @@ class SVG extends Component {
           }
         });
 
-        // if (mode == 0) {
-        //   // 画浮动'point'
-        //   pointEls.push(this.getPointEl(path.floatingPoint, path.id, true));
-        // }
+        if (mode == 0) {
+          // 画浮动'point'
+          pointEls.push(this.getPointEl(path.floatingPoint, path.id, true));
+        }
       }
 
       maskPathEls.push(

@@ -186,6 +186,17 @@ class RotoOperationBox extends Component {
             this.configurePathDataList(updateObj[ 'path_selected' ]);
           }
         }
+        // 如果是按住鼠标不放的进行移动
+        else {
+          if (rotoDrawMode === 1) {
+            pathSelected.floatingPoint.setControl(
+              Point.CONTROL2,
+              pathSelected.floatingPoint.getOppositeControl([ offX, offY ])
+            );
+            updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+            this.configurePathDataList(updateObj[ 'path_selected' ]);
+          }
+        }
 
         configure(materialId, materialFrame, updateObj);
       }
