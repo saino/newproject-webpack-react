@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Snap from 'snapsvg-cjs';
 import { flatten, findItem } from '../../../../utils/array-handle';
 import style from './style.css';
+import Point from '../../../../libs/Point';
 
 class SVG extends Component {
   constructor(props) {
@@ -12,33 +13,37 @@ class SVG extends Component {
     this.paper = Snap();
 
     // 获取素材id
-    this.getMaterialId = this.registerGetMaterialInfo(rotoMaterial =>
-      rotoMaterial[ 'material_id' ]
+    this.getMaterialId = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'material_id' ]
     );
 
     // 获取素材Frame
-    this.getMaterialFrame = this.registerGetMaterialInfo(rotoMaterial =>
-      rotoMaterial[ 'selected_frame' ]
+    this.getMaterialFrame = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'selected_frame' ]
     );
 
     // 获取工具条操作类别
-    this.getRotoToolType = this.registerGetMaterialInfo(rotoMaterial =>
-      rotoMaterial[ 'roto_tool_type' ]
+    this.getRotoToolType = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'roto_tool_type' ]
     );
 
     // 获取'mode'操作模式
-    this.getMode = this.registerGetRotoInfo(roto =>
-      roto[ 'mode' ]
+    this.getMode = this.registerGetRotoInfo(
+      roto => roto[ 'mode' ]
     );
 
     // 获取选择的'path'
-    this.getPathSelected = this.registerGetRotoInfo(roto =>
-      roto[ 'path_selected' ]
+    this.getPathSelected = this.registerGetRotoInfo(
+      roto => roto[ 'path_selected' ]
+    );
+
+    this.getDrawMode = this.registerGetRotoInfo(
+      roto => roto[ 'draw_mode' ]
     );
 
     // 获取'path'集合
-    this.getPaths = this.registerGetRotoInfo(roto =>
-      roto[ 'path_data' ].list
+    this.getPaths = this.registerGetRotoInfo(
+      roto => roto[ 'path_data' ].list
     );
 
     // 获取扣像选中的'is_visible_mask'
@@ -46,12 +51,6 @@ class SVG extends Component {
       roto => roto[ 'is_visible_mask' ]
     );
 
-    // 获取'control_point'集合
-    this.getControlPoints = this.registerGetRotoInfo(roto => {
-      const { controlPoints } = this.props;
-
-      return [];
-    });
   }
 
   registerGetMaterialInfo(fn) {
@@ -81,12 +80,16 @@ class SVG extends Component {
     const pathSelected = this.getPathSelected();
     const paths = this.getPaths();
     const mode = this.getMode();
+    const drawMode = this.getDrawMode();
     const pointEls = [];
+    const controlPointEls = [];
     const maskPathEls = [];
     const focusPathEls = [];
     const controlPathEls = [];
+    let ctrls;
     let className = '';
     let focusPath;
+    let draggingPoint;
 
     const pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
@@ -118,6 +121,15 @@ class SVG extends Component {
         if (mode == 0) {
           // 画浮动'point'
           pointEls.push(this.getPointEl(path.floatingPoint, path.id, true));
+
+          draggingPoint = drawMode === 2
+            ? path.firstPoint()
+            : path.floatingPoint;
+
+          // 画控制点和控制线
+          ctrls = this.getControlPointAndPathEl(draggingPoint, Point.CONTROL2, draggingPoint);
+          controlPathEls.push(ctrls[ 1 ]);
+          controlPointEls.push(ctrls[ 0 ]);
         }
       }
 
@@ -140,10 +152,38 @@ class SVG extends Component {
 
     return {
       pointEls,
+      controlPointEls,
       pathEls,
       maskPathEls,
-      focusPathEls
+      focusPathEls,
+      controlPathEls
     };
+  }
+
+  getControlPointAndPathEl(point, type, linkPoint) {
+    if (!point || !point.hasControl(type)) {
+      return [];
+    }
+
+    const ctrlPoint = point.getControl(type);
+    let className = 'control';
+
+    return [
+      (
+        <circle
+          key={ point.id }
+          targetId={ point.id }
+          className={ className }
+          cx={ ctrlPoint[ 0 ] }
+          cy={ ctrlPoint[ 1 ] }
+          r={ 3 } />
+      ),
+      (
+        <path
+          key={ `ctrl-${ point.id }` }
+          d={ this.paper.path(linkPoint.generatePath(true) + 'L' + ctrlPoint[ 0 ] + ' ' + ctrlPoint[ 1 ]).node.getAttribute('d') } />
+      )
+    ];
   }
 
   getPointEl(point, pathId, isFloatingPoint) {
@@ -177,7 +217,9 @@ class SVG extends Component {
   }
 
   render() {
-    const { pointEls, pathEls, maskPathEls, focusPathEls } = this.getPathAndPointEls();
+    const {
+      pointEls, controlPointEls, pathEls,
+      maskPathEls, focusPathEls, controlPathEls } = this.getPathAndPointEls();
     const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
     const isVisibleMask = this.getIsVisibleMask();
 
@@ -193,10 +235,11 @@ class SVG extends Component {
           { isVisibleMask ? maskPathEls : void 0 }
         </g>
         <g className={ style[ 'control' ] }>
-          { this.getControlPoints() }
+          { controlPathEls }
         </g>
         <g className={ style[ 'points' ] }>
           { pointEls }
+          { controlPointEls }
         </g>
       </svg>
     );

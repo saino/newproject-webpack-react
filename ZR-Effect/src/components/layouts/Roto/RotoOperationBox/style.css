@@ -68,7 +68,7 @@
   fill: lightskyblue;
 }
 
-.points circle.control {
+:global(circle.control) {
   fill: red;
   stroke: transparent;
 }

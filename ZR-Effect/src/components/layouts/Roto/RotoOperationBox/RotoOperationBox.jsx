@@ -168,7 +168,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
-
+      console.log('11');
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
         // 如果是mouseup后
@@ -235,7 +235,9 @@ class RotoOperationBox extends Component {
         if (rotoMode === 0 && pathSelected && pathSelected.floatingPoint) {
           // 将floatingPoint添加到pathSelected里
           pathSelected.confirmFloating();
+          pathSelected.floatingPoint = new Point(offX, offY);
           updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
         // 结束拖拽
