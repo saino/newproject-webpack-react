@@ -116,15 +116,14 @@ class RotoOperationBox extends Component {
           pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
           path = findItem(pathData.list, 'id', pathId);
           point = findItem(path.points, 'id', pointId);
-          path.points = this.clearPointSelected(path.points);
-          point.isSelected = true;
+
 
           // 对point双击
           if (this.clickTimer.isOn(point)) {
             const i = pathSelected.indexOf(point);
             let next = pathSelected.nextPoint(i);
 
-            // 双击的时候，如果有控制点，就删除所有控制点
+            // 如果有控制点，就删除所有控制点
             if (point.hasControl(Point.CONTROL2) || next.hasControl(Point.CONTROL1)) {
               point.removeControl(Point.CONTROL2);
               next.removeControl(Point.CONTROL1);
@@ -140,7 +139,11 @@ class RotoOperationBox extends Component {
             }
             this.clickTimer.turnOff();
           } else {
-            this.clickTimer.turnOn(point);
+            if (e.target.getAttribute('class') !== 'control') {
+              path.points = this.clearPointSelected(path.points);
+              point.isSelected = true;
+              this.clickTimer.turnOn(point);
+            }
           }
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
@@ -198,6 +201,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
+      let entryIds, pathId, pointId, path, point;
 
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
@@ -232,17 +236,33 @@ class RotoOperationBox extends Component {
       }
       // 如果是进行移动'path'或'point'
       else if (rotoMode === 1 && dragging && rotoToolType === 6) {
-        // 如果选中了某'path'
-        if (pathSelected
-            && pathSelected.isSelected
-            && pathData.findInside(offX, offY, pathSelected)) {
-          pathSelected.move(offX - moveX, offY - moveY);
+        const point = findItem(pathSelected.points, 'isSelected', true);
 
-          updateObj[ 'move_x' ] = offX;
-          updateObj[ 'move_y' ] = offY;
-
-          configure(materialId, materialFrame, updateObj);
+        // 如果选中了点
+        if (point) {
+          console.log(point.type, 'type');
+          pathSelected.movePoint(point, offX - moveX, offY - moveY, point.type);
         }
+        // 如果选中了'path'
+        else if (pathSelected
+          && pathSelected.isSelected
+          && pathData.findInside(offX, offY, pathSelected)
+        ) {
+          pathSelected.move(offX - moveX, offY - moveY);
+        }
+
+        updateObj[ 'move_x' ] = offX;
+        updateObj[ 'move_y' ] = offY;
+
+        configure(materialId, materialFrame, updateObj);
+
+
+        // 如果选中了某'path'
+        // if (pathSelected
+        //     && pathSelected.isSelected
+        //     && pathData.findInside(offX, offY, pathSelected)) {
+        //
+        // }
       }
     };
 

@@ -108,6 +108,7 @@ class SVG extends Component {
           pointEls.push(this.getPointEl(point, path.id));
 
           if (point.isSelected) {
+            point.type = false;
             pointSelected = point;
             className = '';
             focusPath = path.prevPointByPoint(point).generatePath(true) + point.generatePath();
@@ -137,11 +138,14 @@ class SVG extends Component {
         if (pointSelected) {
           // 显示选中点的控制点和控制杆
           ctrls = path.realSelected(pointSelected, false);
+          // ctrlPoint1 = new Point(ctrls[0].x, ctrls[0].y, ctrls[0].cx1, ctrls[0].cy1, ctrls[0].cx2, ctrls[0].cy2);
+          // ctrlPoint2 = new Point(ctrls[1].x, ctrls[1].y, ctrls[1].cx1, ctrls[1].cy1, ctrls[1].cx2, ctrls[1].cy2);
+
           ctrls1 = this.getControlPointAndPathEl(path, ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ]);
           ctrls2 = this.getControlPointAndPathEl(path, ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ]);
-          controlPointEls.push(ctrls1[ 0 ], Point.CONTROL1, ctrls1[ 0 ]);
+          controlPointEls.push(ctrls1[ 0 ]);
           controlPathEls.push(ctrls1[ 1 ]);
-          controlPointEls.push(ctrls2[ 0 ], Point.CONTROL2, ctrls2[ 0 ]);
+          controlPointEls.push(ctrls2[ 0 ]);
           controlPathEls.push(ctrls2[ 1 ]);
         }
       }

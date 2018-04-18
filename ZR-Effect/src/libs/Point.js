@@ -6,6 +6,7 @@ export default class Point {
 		this.id = +Math.random().toFixed(7);
 		this.isSelected = false;
 		this.radius = 3;
+		this.type = null;
 		this.x = x;
 		this.y = y;
 		if( cx1 ){
