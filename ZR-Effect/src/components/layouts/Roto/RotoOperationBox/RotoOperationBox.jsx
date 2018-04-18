@@ -5,11 +5,12 @@ import { connect } from 'react-redux';
 import { message } from 'antd';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import { findItem, findIndex } from '../../../../utils/array-handle';
+import style from './style.css';
+import SVG from './SVG';
 import Path from '../../../../libs/Path';
 import PathList from '../../../../libs/PathList';
 import Point from '../../../../libs/Point';
-import style from './style.css';
-import SVG from './SVG';
+import ClickTimer from '../../../../libs/ClickTimer';
 
 class RotoOperationBox extends Component {
   constructor(props) {
@@ -67,6 +68,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
+      const clickTimer = new ClickTimer;
       let path, point, entryIds, pathId, pointId;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
@@ -112,6 +114,7 @@ class RotoOperationBox extends Component {
           point = findItem(path.points, 'id', pointId);
           path.points = this.clearPointSelected(path.points);
           point.isSelected = true;
+          clickTimer.turnOn(point);
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
           this.configurePathDataList(updateObj[ 'path_selected' ]);
@@ -168,7 +171,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
-      console.log('11');
+
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
         // 如果是mouseup后
