@@ -129,7 +129,7 @@ class SVG extends Component {
             : path.floatingPoint;
 
           // 画控制点和控制线
-          ctrls = this.getControlPointAndPathEl(draggingPoint, Point.CONTROL2, draggingPoint);
+          ctrls = this.getControlPointAndPathEl(path, draggingPoint, Point.CONTROL2, draggingPoint);
           controlPathEls.push(ctrls[ 1 ]);
           controlPointEls.push(ctrls[ 0 ]);
         }
@@ -137,8 +137,8 @@ class SVG extends Component {
         if (pointSelected) {
           // 显示选中点的控制点和控制杆
           ctrls = path.realSelected(pointSelected, false);
-          ctrls1 = this.getControlPointAndPathEl(ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ]);
-          ctrls2 = this.getControlPointAndPathEl(ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ]);
+          ctrls1 = this.getControlPointAndPathEl(path, ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ]);
+          ctrls2 = this.getControlPointAndPathEl(path, ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ]);
           controlPointEls.push(ctrls1[ 0 ], Point.CONTROL1, ctrls1[ 0 ]);
           controlPathEls.push(ctrls1[ 1 ]);
           controlPointEls.push(ctrls2[ 0 ], Point.CONTROL2, ctrls2[ 0 ]);
@@ -173,7 +173,7 @@ class SVG extends Component {
     };
   }
 
-  getControlPointAndPathEl(point, type, linkPoint) {
+  getControlPointAndPathEl(path, point, type, linkPoint) {
     if (!point || !point.hasControl(type)) {
       return [];
     }
@@ -185,7 +185,7 @@ class SVG extends Component {
       (
         <circle
           key={ point.id }
-          targetId={ point.id }
+          id={ `c.${ path.id }-c.${ point.id }` }
           className={ className }
           cx={ ctrlPoint[ 0 ] }
           cy={ ctrlPoint[ 1 ] }

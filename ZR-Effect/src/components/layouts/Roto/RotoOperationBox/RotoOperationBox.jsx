@@ -111,7 +111,9 @@ class RotoOperationBox extends Component {
 
         // 如果选中了点
         if (entryIds.length > 1) {
-          pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ];
+          pathId = entryIds[ 0 ], pointId = entryIds[ 1 ];
+          pathId = pathId.charAt(0) === 'c' ? +pathId.slice(2) : +pathId;
+          pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
           path = findItem(pathData.list, 'id', pathId);
           point = findItem(path.points, 'id', pointId);
           path.points = this.clearPointSelected(path.points);
