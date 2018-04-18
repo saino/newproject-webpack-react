@@ -16,6 +16,8 @@ class RotoOperationBox extends Component {
   constructor(props) {
     super(props);
 
+    this.clickTimer = new ClickTimer;
+
     // 删除'path'或'point'
     this.removeHandle = (e) => {
       const { configure } = this.props;
@@ -68,7 +70,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
-      const clickTimer = new ClickTimer;
+
       let path, point, entryIds, pathId, pointId;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
@@ -114,7 +116,30 @@ class RotoOperationBox extends Component {
           point = findItem(path.points, 'id', pointId);
           path.points = this.clearPointSelected(path.points);
           point.isSelected = true;
-          clickTimer.turnOn(point);
+
+          // 对point双击
+          if (this.clickTimer.isOn(point)) {
+            const i = pathSelected.indexOf(point);
+            let next = pathSelected.nextPoint(i);
+
+            // 双击的时候，如果有控制点，就删除所有控制点
+            if (point.hasControl(Point.CONTROL2) || next.hasControl(Point.CONTROL1)) {
+              point.removeControl(Point.CONTROL2);
+              next.removeControl(Point.CONTROL1);
+            }
+            // 没有控制点的节点就增加控制点
+            else {
+              let prev = pathSelected.prevPoint(i);
+              let vector = next.subtract(prev).normalize();
+              let ctrl1 = point.add(vector.normalize(point.subtract(prev).length() / 3));
+              let ctrl2 = point.subtract(vector.normalize(point.subtract(next).length() / 3));
+              point.setControl(Point.CONTROL2, [ ctrl2.x, ctrl2.y ]);
+              next.setControl(Point.CONTROL1, [ ctrl1.x, ctrl1.y ]);
+            }
+            this.clickTimer.turnOff();
+          } else {
+            this.clickTimer.turnOn(point);
+          }
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
           this.configurePathDataList(updateObj[ 'path_selected' ]);
