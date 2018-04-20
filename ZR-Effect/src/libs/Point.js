@@ -48,7 +48,7 @@ export default class Point {
 			default: return Number.isFinite(this.cx1) || Number.isFinite(this.cx2);
 		}
 	}
-	getOppositeControl(type){
+	getOppositeControl(type, isCtrl1){
 		let x = this.x * 2;
 		let y = this.y * 2;
 		switch( type ){
@@ -62,18 +62,32 @@ export default class Point {
 				break;
 			default:
 				if( type instanceof Array ){
-					x -= type[0];
-					y -= type[1];
+					if (isCtrl1) {
+						x -= type[ 0 ];
+						y = (y - type[1]) * 2;
+						// y = -(y - type[ 1 ]);
+					} else {
+						x -= type[0];
+						y -= type[1];
+					}
 				}
 		}
+		console.log(x, y)
 		return [x, y];
 	}
 	move(dx, dy, type){
-		if( type & Point.CONTROL1 && this.hasControl(Point.CONTROL1) ){
+		if( type & Point.CONTROL1){
+			const [ x, y ] = this.getOppositeControl(Point.CONTROL2);
+			//!isNaN(this.cx1) || (this.cx1 = )
+			//console.log(x, y, 'didi');
+			!isNaN(this.cx1) || (this.cx1 = x);
+			!isNaN(this.cy1) || (this.cy1 = y);
+
 			this.cx1 += dx;
-			this.cy1 += dy;
+			this.cy1 -= dy;
 		}
 		if( type & Point.CONTROL2 && this.hasControl(Point.CONTROL2) ){
+			console.log(2);
 			this.cx2 += dx;
 			this.cy2 += dy;
 		}

@@ -108,7 +108,6 @@ class SVG extends Component {
           pointEls.push(this.getPointEl(point, path.id));
 
           if (point.isSelected) {
-            point.type = false;
             pointSelected = point;
             className = '';
             focusPath = path.prevPointByPoint(point).generatePath(true) + point.generatePath();
@@ -140,9 +139,8 @@ class SVG extends Component {
           ctrls = path.realSelected(pointSelected, false);
           // ctrlPoint1 = new Point(ctrls[0].x, ctrls[0].y, ctrls[0].cx1, ctrls[0].cy1, ctrls[0].cx2, ctrls[0].cy2);
           // ctrlPoint2 = new Point(ctrls[1].x, ctrls[1].y, ctrls[1].cx1, ctrls[1].cy1, ctrls[1].cx2, ctrls[1].cy2);
-
-          ctrls1 = this.getControlPointAndPathEl(path, ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ]);
-          ctrls2 = this.getControlPointAndPathEl(path, ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ]);
+          ctrls1 = this.getControlPointAndPathEl(path, ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ], pointSelected.id);
+          ctrls2 = this.getControlPointAndPathEl(path, ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ], pointSelected.id);
           controlPointEls.push(ctrls1[ 0 ]);
           controlPathEls.push(ctrls1[ 1 ]);
           controlPointEls.push(ctrls2[ 0 ]);
@@ -177,7 +175,7 @@ class SVG extends Component {
     };
   }
 
-  getControlPointAndPathEl(path, point, type, linkPoint) {
+  getControlPointAndPathEl(path, point, type, linkPoint, realPointId) {
     if (!point || !point.hasControl(type)) {
       return [];
     }
@@ -189,7 +187,7 @@ class SVG extends Component {
       (
         <circle
           key={ point.id }
-          id={ `c.${ path.id }-c.${ point.id }` }
+          id={ `c.${ path.id }-c.${ point.id }-${ type }-${ realPointId }` }
           className={ className }
           cx={ ctrlPoint[ 0 ] }
           cy={ ctrlPoint[ 1 ] }

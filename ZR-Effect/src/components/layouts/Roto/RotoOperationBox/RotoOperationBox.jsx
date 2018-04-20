@@ -17,6 +17,7 @@ class RotoOperationBox extends Component {
     super(props);
 
     this.clickTimer = new ClickTimer;
+    //this.moveControl =
 
     // 删除'path'或'point'
     this.removeHandle = (e) => {
@@ -71,7 +72,7 @@ class RotoOperationBox extends Component {
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
 
-      let path, point, entryIds, pathId, pointId;
+      let path, point, entryIds, pathId, pointId, realPointId, type;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
       if (rotoMode === 0 && rotoToolType === 4) {
@@ -111,12 +112,11 @@ class RotoOperationBox extends Component {
 
         // 如果选中了点
         if (entryIds.length > 1) {
-          pathId = entryIds[ 0 ], pointId = entryIds[ 1 ];
+          pathId = entryIds[ 0 ], pointId = entryIds[ 1 ], type = entryIds[ 2 ], realPointId = entryIds[3];
           pathId = pathId.charAt(0) === 'c' ? +pathId.slice(2) : +pathId;
           pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
           path = findItem(pathData.list, 'id', pathId);
           point = findItem(path.points, 'id', pointId);
-
 
           // 对point双击
           if (this.clickTimer.isOn(point)) {
@@ -137,12 +137,17 @@ class RotoOperationBox extends Component {
               point.setControl(Point.CONTROL2, [ ctrl2.x, ctrl2.y ]);
               next.setControl(Point.CONTROL1, [ ctrl1.x, ctrl1.y ]);
             }
+
             this.clickTimer.turnOff();
           } else {
             if (e.target.getAttribute('class') !== 'control') {
               path.points = this.clearPointSelected(path.points);
               point.isSelected = true;
+              point.type = false;
               this.clickTimer.turnOn(point);
+            } else {
+              point = findItem(path.points, 'id', +realPointId);
+              point.type = +type;
             }
           }
 
@@ -201,7 +206,7 @@ class RotoOperationBox extends Component {
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
-      let entryIds, pathId, pointId, path, point;
+      let entryIds, pathId, pointId, path, point, p;
 
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
@@ -216,6 +221,16 @@ class RotoOperationBox extends Component {
               Point.CONTROL1,
               pathSelected.lastPoint().getOppositeControl(Point.CONTROL2)
             );
+
+            p = pathSelected.firstPoint();
+
+            if (pathSelected.points.length > 1 && p.isInside(offX, offY)) {
+              pathSelected.floatingPoint.setControl(
+                Point.CONTROL2,
+                p.getControl(Point.CONTROL2)
+              );
+            }
+
             updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
             this.configurePathDataList(updateObj[ 'path_selected' ]);
           }
@@ -240,7 +255,7 @@ class RotoOperationBox extends Component {
 
         // 如果选中了点
         if (point) {
-          console.log(point.type, 'type');
+          // 选中了点旁边的控制点
           pathSelected.movePoint(point, offX - moveX, offY - moveY, point.type);
         }
         // 如果选中了'path'
