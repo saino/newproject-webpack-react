@@ -243,7 +243,7 @@ class SVG extends Component {
         <g className={ style[ 'outline' ] }>
           { pathEls }
         </g>
-        <g className={ style[ 'focus' ] }>
+        <g id="roto_path_focus" className={ style[ 'focus' ] }>
           { focusPathEls }
         </g>
         <g className={ style[ 'mask' ] }>

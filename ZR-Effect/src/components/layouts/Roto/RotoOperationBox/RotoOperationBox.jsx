@@ -3,6 +3,7 @@ import { findDOMNode } from 'react-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
+import Snap from 'snapsvg-cjs';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import style from './style.css';
@@ -17,10 +18,9 @@ class RotoOperationBox extends Component {
     super(props);
 
     this.clickTimer = new ClickTimer;
-    //this.moveControl =
 
     // 删除'path'或'point'
-    this.removeHandle = (e) => {
+    this.keyupHandle = ({ keyCode }) => {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
@@ -28,9 +28,9 @@ class RotoOperationBox extends Component {
       const pathData = this.getPathData();
       const rotoMode = this.getRotoMode();
       const updateObj = {};
-      let point;
+      let point, focusEl, selectedFocusPathEl;
 
-      if (e.keyCode) {
+      if (keyCode == 8) {
         if (rotoMode !== 0 && pathSelected) {
           point = findItem(pathSelected.points, 'isSelected', true);
 
@@ -54,6 +54,34 @@ class RotoOperationBox extends Component {
           }
 
           configure(materialId, materialFrame, updateObj);
+        }
+      }
+      else if (keyCode == 220) {
+        if (pathSelected) {
+          point = findItem(pathSelected.points, 'isSelected', true);
+
+          if (point) {
+            focusEl = Snap(document.getElementById('roto_path_focus'));
+
+            if (focusEl) {
+              // 选中的'path'
+              selectedFocusPathEl = focusEl.children()[ 0 ];
+
+              if (selectedFocusPathEl) {
+                const length = selectedFocusPathEl.getTotalLength();
+      					let params = Snap.parsePathString(selectedFocusPathEl.getSubpath(0, length / 2))[1];	// 前半段
+      					const p = new Point(params[5], params[6], params[1], params[2], params[3], params[4]);
+      					params = Snap.parsePathString(selectedFocusPathEl.getSubpath(length / 2, length))[1];	// 后半段
+      					pathSelected.insertPoint(pathSelected.indexOf(point), p);
+      					point.setControl(Point.CONTROL1, [params[1], params[2]]);
+      					point.setControl(Point.CONTROL2, [params[3], params[4]]);
+
+                updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+
+                configure(materialId, materialFrame, updateObj);
+              }
+            }
+          }
         }
       }
     };
@@ -504,11 +532,11 @@ class RotoOperationBox extends Component {
 
   componentDidMount() {
     // 绑定body事件，用来监听点击'backspace'键删除'path'或'point'
-    document.body.addEventListener('keyup', this.removeHandle, false)
+    document.body.addEventListener('keyup', this.keyupHandle, false)
   }
 
   componentWillUnmount() {
-    document.body.removeEventListener('keyup', this.removeHandle, false);
+    document.body.removeEventListener('keyup', this.keyupHandle, false);
   }
 }
 
