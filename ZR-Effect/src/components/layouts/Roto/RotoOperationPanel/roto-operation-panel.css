@@ -6,8 +6,17 @@
   height: 100%;
 }
 
-.ai-roto {
-  flex: 0 0 76px;
+.wrapper-inner {
+  flex-grow: 1;
+  height: -webkit-calc(100% - 40px);
+  height: -moz-calc(100% - 40px);
+  overflow: auto;
+}
+
+.wrapper-p {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
 }
 
 .rotoed-frame-list {
@@ -27,6 +36,7 @@
   color: #c4bf97;
   font-size: 14px;
   text-align: center;
+  cursor: pointer;
 }
 
 .action-type > .active {

@@ -1,6 +1,6 @@
 import { add, update, remove, findItem } from '../../utils/array-handle';
 
-const defaultState = [
+/*const defaultState = [
     {
         "id": 52288,
         "user_id": 52938,
@@ -156,7 +156,8 @@ const defaultState = [
             "height": 32974
         }
     }
-]
+]*/
+const defaultState = [];
 
 const actionTypes = {
     "GET_MATERIAL": "GET_MATERIAL",

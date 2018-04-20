@@ -1,15 +1,44 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import style from './roto-operation-panel.css';
 import RotoDownload from './RotoDownload/RotoDownload';
+import GeneratePNGFrame from './GeneratePNGFrame/GeneratePNGFrame';
 
 class RotoOperationPanel extends Component {
+  state = {
+    // 显示 “生成扣像素材” 或 ”生成序列帧” 0-扣像素材 | 1-序列帧
+    visibleRotoOrPNG: 0
+  };
+
+  switchTypeHandle = (type) => () =>
+    this.setState({ visibleRotoOrPNG: type });
+
   render() {
+    const { visibleRotoOrPNG } = this.state;
+
     return (
-      <RotoDownload />
+      <div className={ style[ 'wrapper' ] }>
+        <div className={ style[ 'wrapper-inner' ] }>
+          { !visibleRotoOrPNG
+              ? (<RotoDownload />)
+              : (<GeneratePNGFrame />)
+          }
+        </div>
+        <div className={ style[ 'action-type' ] }>
+          <div className={ !visibleRotoOrPNG ? style[ 'active' ] : '' } onClick={ this.switchTypeHandle(0) }>生成扣像素材</div>
+          <div className={ visibleRotoOrPNG ? style[ 'active' ] : '' } onClick={ this.switchTypeHandle(1) }>生成PNG序列帧</div>
+        </div>
+      </div>
     );
   }
 }
 
-const mapStateToProps = ({ rotoFrontendActeractive }) => ({ rfa: rotoFrontendActeractive });
+const mapStateToProps = ({
+  material,
+  rotoFrontendActeractive
+}) => ({
+  materialList: material,
+  rfa: rotoFrontendActeractive
+});
 
 export default connect(mapStateToProps)(RotoOperationPanel);

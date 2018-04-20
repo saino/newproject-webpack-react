@@ -6,6 +6,7 @@ import config from '../../../../config';
 import defferPerform from '../../../../utils/deffer-perform';
 import { uploadMaterial } from '../../../../stores/action-creators/material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { addRoto } from '../../../../stores/action-creators/roto-creator';
 import materialListStyle from './material-list.css';
 import MaterialItem from './MaterialItem/MaterialItem';
 import MaterialUploadBeforeItem from './MaterialUploadBeforeItem/MaterialUploadBeforeItem';
@@ -41,14 +42,22 @@ class MaterialList extends Component {
       }, () => this.uploadMaterial());
     };
 
-    // 添加扣像素材
-    this.addRotoMaterialHandle = materialId =>
+    this.checkMaterialItemHandle = materialId => {
       this.addRotoMaterial(materialId);
+      this.addRoto(materialId);
+    };
   }
 
   addRotoMaterial(materialId) {
     const { addRotoMaterial } = this.props;
+
     addRotoMaterial(materialId);
+  }
+
+  addRoto(materialId) {
+    const { addRoto } = this.props;
+
+    addRoto(materialId, 0);
   }
 
   uploadMaterial(material) {
@@ -86,7 +95,7 @@ class MaterialList extends Component {
             materialId={ material.id }
             materialName={ config.getFilenameByPath(material.path) }
             materialThumb={ material.properties.thumbnail }
-            onCheck={ this.addRotoMaterialHandle }/>
+            onCheck={ this.checkMaterialItemHandle }/>
         </div>
       );
     });
@@ -153,7 +162,8 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       uploadMaterial,
-      addRotoMaterial
+      addRotoMaterial,
+      addRoto
     },
     dispatch
   );

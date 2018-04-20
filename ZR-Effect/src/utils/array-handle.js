@@ -134,23 +134,19 @@ export const add = (target, waitItem) => {
 // 修改, 根据key和值找到元素并修改元素，或者根据传的自定义函数修改元素
 export const update = (target, updateItem, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
-  let findItem, layerKeys, updateValue, res, temp;
+  let findItem, layerKeys, updateValue, res;
 
   if (index < 0) {
     return;
   }
 
   findItem = target[ index ];
-  layerKeys = Object.keys(updateItem)[0].split('.');
-  updateValue = updateItem[ layerKeys.join('.') ];
+  layerKeys = Object.keys(updateItem);
   res = layerKeys.reduce((fi, currKey) => {
-    temp = fi[ currKey ];
-
-    if (Object.getPrototypeOf(temp) === Object.prototype) {
-      return temp;
-    }
-
+    updateValue = updateItem[ currKey ];
     fi[ currKey ] = updateValue;
+
+    return fi;
   }, findItem);
 
   target[ index ] = { ...findItem };

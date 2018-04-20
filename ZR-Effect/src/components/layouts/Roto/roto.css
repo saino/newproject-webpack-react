@@ -58,15 +58,19 @@
   width: 100%;
 }
 
+.canvas-inner-w {
+  height: 100%;
+}
+
 .content .middle-inner .mapping {
   width: -webkit-calc(100% - 40px);
   width: -moz-calc(100% - 40px);
+  overflow: hidden;
 }
 
 .content .middle-inner .canvas-inner {
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
 .content .middle-inner .toolbar {

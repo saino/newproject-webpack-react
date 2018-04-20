@@ -62,11 +62,20 @@
   width: 100%;
   text-align: center;
   list-style: none;
+  box-sizing: border-box;
+  border: 1px solid transparent;
 }
 
 .tool-action-list li:hover,
 .tool-stage-list li:hover {
   background: #264246;
+  border-color: #288990;
+}
+
+.tool-action-list .active,
+.tool-stage-list .active {
+  background: #264246;
+  border-color: #288990;
 }
 
 .tool-action-list li img,
