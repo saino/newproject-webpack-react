@@ -134,7 +134,6 @@ class AudioContainer extends Component {
         this.props.changeaActiveContainer("stage");
     }
     render() {
-
         const upLoadOptions = {
             baseUrl: `./aa/user/uploadMaterial`,
             paramAddToField: {

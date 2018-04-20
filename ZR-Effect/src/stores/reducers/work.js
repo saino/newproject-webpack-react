@@ -6,12 +6,16 @@ const defaultState = {
     videoType: "type1",
     scaleX: 1,
     scaleY: 1,
+    
     video: [
-        { id: "video0001",duration: 5000, path: "../../statics/aaa.mp4", order: 2 },
-        { id: "video0002",duration: 4000, path: "../../statics/bbb.mp4", order: 1 }
+        { id: "video0001", duration: 9985, path: "../../statics/aaa.mp4", order: 2 },
+        { id: "video0002", duration: 60095, path: "../../statics/bbb.mp4", order: 1 }
     ],
-    duration: 9000,
-    material: [{
+    duration: 70080,
+    currentVideoTime: 0,
+    videoPlay: false,
+    material: [
+    {
         id: "material0001",
         materialId: "9995",
         type: "video",
@@ -24,17 +28,17 @@ const defaultState = {
 
         active: false,
         order: 1,
-        timeStart: {
-            hour: "",
-            minute: "",
-            second: "",
-            millisecond: "",
-        },
         timeEnd: {
-            hour: "",
-            minute: "",
-            second: "",
-            millisecond: "",
+            hour: 0,
+            minute: 1,
+            second: 10,
+            millisecond: 80,
+        },
+        timeStart : {
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
         },
         positionX: 0,
         positionY: 0,
@@ -46,29 +50,30 @@ const defaultState = {
             { x: "", y: "" },
         ],
 
-    }, {
+    }, 
+    {
         id: "material0002",
         type: "image",
         src: "",
         name: "图片素材",
         active: true,
         order: 2,
-        timeStart: {
-            hour: "",
-            minute: "",
-            second: "",
-            millisecond: "",
-        },
         timeEnd: {
-            hour: "",
-            minute: "",
-            second: "",
-            millisecond: "",
+            hour: 0,
+            minute: 0,
+            second: 6,
+            millisecond: 0,
+        },
+        timeStart: {
+            hour: 0,
+            minute: 0,
+            second: 3,
+            millisecond: 0,
         },
         width: 1000,
         height: 1000,
-        positionX: 0,
-        positionY: 0,
+        positionX: 100,
+        positionY: 100,
         rotateZ: 0,
         transform: "",
         control: [
@@ -77,27 +82,29 @@ const defaultState = {
             { x: "", y: "" },
             { x: "", y: "" },
         ],
-    }, {
-        id: "material0003",
-        type: "audio",
-        src: "",
-        name: "音频素材",
-        active: false,
-        loop: false,
-        duration: 1000,
-        timeStart: {
-            hour: "",
-            minute: "",
-            second: "",
-            millisecond: "",
-        },
-        timeEnd: {
-            hour: "",
-            minute: "",
-            second: "",
-            millisecond: "",
-        },
-    }],
+    }, 
+    // {
+    //     id: "material0003",
+    //     type: "audio",
+    //     src: "",
+    //     name: "音频素材",
+    //     active: false,
+    //     loop: false,
+    //     duration: 1000,
+    //     timeEnd: {
+    //         hour: 0,
+    //         minute: 1,
+    //         second: 10,
+    //         millisecond: 80,
+    //     },
+    //     timeStart: {
+    //         hour: 0,
+    //         minute: 0,
+    //         second: 0,
+    //         millisecond: 0,
+    //     },
+    // }
+    ],
 };
 
 const actionTypes = {
@@ -105,7 +112,15 @@ const actionTypes = {
     "SAVE_WORK": "SAVE_WORK",
     "CHANGE_WORK_MATERIAL": "CHANGE_WORK_MATERIAL",
     "CHANGE_WORK": "CHANGE_WORK",
-    "CHANGE_WORK_VIDEO": "CHANGE_WORK_VIDEO"
+    "CHANGE_WORK_VIDEO": "CHANGE_WORK_VIDEO",
+    "CHANGE_WORK_PLAY": "CHANGE_WORK_PLAY"
+}
+
+export const changVideoPlay = (isPlay) => {
+    return {
+        type: actionTypes.CHANGE_WORK_PLAY,
+        isPlay
+    }
 }
 
 export const changeWorkMaterial = (materialItem) => {
@@ -158,6 +173,9 @@ export default (state = defaultState, action) => {
                 return materialItem;
             });
             return { ...state, material: [...materialTmp] }
+        case actionTypes.CHANGE_WORK_PLAY: 
+            console.log("xxxxxxxxxxxxx");
+            return {...state, videoPlay: action.isPlay};
         case actionTypes.SET_MATERIAL_ACTIVE:
 
             return state;

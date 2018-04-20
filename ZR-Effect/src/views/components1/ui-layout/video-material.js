@@ -131,10 +131,10 @@ class VideoMaterial extends Component {
                 },
                 active: false,
                 timeStart: {
-                    hour: "",
-                    minute: "",
-                    second: "",
-                    millisecond: "",
+                    hour: 0,
+                    minute: 0,
+                    second: 0,
+                    millisecond: 0,
                 }
             };
             const {material} = this.props.work1;

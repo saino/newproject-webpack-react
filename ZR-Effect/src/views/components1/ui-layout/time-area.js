@@ -4,13 +4,17 @@ import Play from "../../statics/play.png";
 import NextFrame from "../../statics/nextframe.png";
 import AddImg from "../../statics/add.png";
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { changVideoPlay } from "../../../stores/reducers/work"
+
 class TimeArea extends Component {
     render() {
         return <div className="time-area">
             <div className="time-control">
                 <div className="control-video">
                     <div><img src={PreFrame} /> </div>
-                    <div className="control-play"><img src={Play} /> </div>
+                    <div onClick={this.onPlayClick} className="control-play"><img src={Play} /> </div>
                     <div><img src={NextFrame} /> </div>
                 </div>
                 <div onClick={this.onAddVideoClick} className="add-video"><img src={AddImg}/>添加视频</div>
@@ -55,8 +59,22 @@ class TimeArea extends Component {
             `}</style>
         </div>
     }
+    onPlayClick = () => {
+        // console.log("jjjjjjjjj");
+        this.props.changVideoPlay(!this.props.work1.videoPlay);
+    }
     onAddVideoClick = () => {
         this.props.changeaActiveContainer("material", ["video"]);
     }
 }
-export default TimeArea;
+const mapStateToProps = ({work1}) => {
+    return {
+        work1
+    };
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changVideoPlay: bindActionCreators(changVideoPlay, dispatch)
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(TimeArea);
