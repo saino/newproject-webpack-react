@@ -16,6 +16,7 @@
   color: #c4bf97;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 }
 
 .material-add img {

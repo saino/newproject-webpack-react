@@ -13,7 +13,7 @@ export default class RotoedFrameList extends Component {
     return (
       <div className={ rotoedFrameListStyle[ 'wrapper' ] }>
         <div className={ rotoedFrameListStyle[ 'wrapper-inner' ] }>
-            <label>已扣像的关键帧序列</label>
+            <label>已抠像的关键帧序列</label>
             <div className={ rotoedFrameListStyle[ 'list' ] }>
               <ul>
                 <li>

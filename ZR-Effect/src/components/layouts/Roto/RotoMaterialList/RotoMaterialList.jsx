@@ -91,9 +91,9 @@ class RotoMaterialList extends Component {
   render() {
     return (
       <div className={ rotoMaterialListStyle[ 'wrapper' ] }>
-        <div className={ rotoMaterialListStyle[ 'material-add' ] }>
-          扣像素材
-          <img src={ addMaterialPNG } onClick={ this.openMaterialListHandle } />
+        <div className={ rotoMaterialListStyle[ 'material-add' ] } onClick={ this.openMaterialListHandle }>
+          抠像素材
+          <img src={ addMaterialPNG } />
         </div>
         <div className={ rotoMaterialListStyle[ 'material-list' ] }>
           <ul className={ rotoMaterialListStyle[ 'material-list-inner' ] }>
