@@ -30,6 +30,7 @@ baseConfig.devServer = {
   historyApiFallback: true,
   contentBase: pathEnv.buildPath,
   port: 9000,
+  open: true,
   stats: { colors: true },
   proxy: {
     '/api/[0-9\.]+/.*': {
