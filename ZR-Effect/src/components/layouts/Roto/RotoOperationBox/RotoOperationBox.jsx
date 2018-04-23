@@ -119,14 +119,17 @@ class RotoOperationBox extends Component {
         else if (rotoDrawMode === 1 && pathSelected.firstPoint().isInside(offX, offY)) {
           // 当点击起始point，如果pathSelected只有1个point的时候，那么就是未闭合状态，且删除该点
           // 如果大于1个point或者本身closed为true，则是闭合状态
-          // if (pathSelected.closePath()) {
-          //   updateObj[ 'draw_mode' ] = 2;
-          // } else {
-          //   updateObj[ 'draw_mode'] = 0;
-          // }
-          //
-          // updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-          // this.configurePathDataList(pathSelected);
+          if (pathSelected) {
+            pathSelected.closePath();
+          }
+
+          updateObj[ 'draw_mode' ] = 0;
+          updateObj[ 'path_selected' ] = false;
+
+          //updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+          if (pathSelected) {
+            this.configurePathDataList(pathSelected);
+          }
         }
 
         configure(materialId, materialFrame, updateObj);
