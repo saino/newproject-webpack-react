@@ -4,7 +4,7 @@
  * state.roto.item { Object }
  *  material_id { Number } 素材id
  *  frame { Number } 帧
- *  mode { Number } 操作模式 0-钢笔工具(画线) | 1-编辑工具
+ *  mode { Number } 操作模式 0-钢笔工具(画线) | 1-编辑工具 | 2-选择工具
  *  draw_mode { Number } 画线模式 0-未开始 | 1-未闭合 | 2-已闭合
  *  path_selected { Object } 选中的path对象
  *  dragging { Boolean } 是否是拖拽中

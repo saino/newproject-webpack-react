@@ -32,25 +32,26 @@ class RotoToolbar extends Component {
 
       configure(materialId, materialFrame, { 'mode': 0 });
     });
+
     // 钢笔工具
     this.penHandle = () => {
       this.defferRotoPen();
       this.configureToolState(4);
     };
 
-    // 延迟执行设置扣像操作模式为选择模式
-    this.defferSelectEntry = defferPerform(() => {
+    // 延迟执行设置扣像操作模式为选择模式或编辑模式
+    this.defferSelectEntry = defferPerform((modeVal) => {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const mode = this.getRotoMode();
       const pathSelected = this.getRotoPathSelected();
-      let updateObj = { 'mode': 1 };
+      let updateObj = { mode: modeVal };
 
       // 从钢笔工具模式转编辑模式
       if (mode === 0 && pathSelected) {
         pathSelected.closePath();
-        
+
         updateObj[ 'draw_mode' ] = 0;
         updateObj[ 'path_selected' ] = false;
         updateObj[ 'dragging' ] = false;
@@ -61,7 +62,7 @@ class RotoToolbar extends Component {
 
     // 曲线选择工具
     this.selectEntryHandle = () => {
-      this.defferSelectEntry();
+      this.defferSelectEntry(2);
       this.configureToolState(5);
     };
 
@@ -76,8 +77,15 @@ class RotoToolbar extends Component {
 
     // 移动'path'或'point'
     this.moveEntryHandle = () => {
-      this.defferMoveEntry();
+      //this.defferMoveEntry();
+      this.defferSelectEntry(1);
       this.configureToolState(6);
+    };
+
+    // 增加'point'
+    this.addPointHandle = () => {
+      this.defferSelectEntry(1);
+      this.configureToolState(7);
     };
 
     // 延迟执行显示隐藏
@@ -92,7 +100,7 @@ class RotoToolbar extends Component {
 
     // 显隐阴影
     this.visibleMaskHandle = () => {
-      this.defferVisibleMask();
+      this.defferVisibleMask(1);
       this.configureToolState(8);
     }
 
@@ -139,6 +147,14 @@ class RotoToolbar extends Component {
       this.configureToolState(9);
     };
 
+    // 延迟将工具状态设置为选中
+    this.deferConfigureToolSelect = defferPerform(() => {
+      const { configureRotoToolType } = this.props;
+      const materialId = this.getMaterialId();
+
+      configureRotoToolType(materialId, 5);
+    });
+
     this.defferRotoComplete = defferPerform(() => {
       const { configure } = this.props;
       const materialId = this.getMaterialId();
@@ -156,6 +172,7 @@ class RotoToolbar extends Component {
         pathSelected.closePath();
       }
 
+      updateObj[ 'mode' ] = 2;
       updateObj[ 'draw_mode' ] = 0;
       updateObj[ 'path_selected' ] = false;//this.initPathSelected(pathSelected);
 
@@ -163,6 +180,7 @@ class RotoToolbar extends Component {
         this.configurePathDataList(pathSelected);
       }
 
+      this.deferConfigureToolSelect();
       configure(materialId, materialFrame, updateObj);
     }, 10);
 
@@ -289,7 +307,7 @@ class RotoToolbar extends Component {
                   <li onClick={ this.moveEntryHandle } title="移动曲线或点" className={ toolType === 6 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ movePointPNG } />
                   </li>
-                  <li title="增加节点" className={ toolType === 7 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.addPointHandle } title="增加节点" className={ toolType === 7 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ addPointPNG } />
                   </li>
                   <li onClick={ this.visibleMaskHandle } title="显隐遮罩" className={ toolType === 8 ? rotoToolbarStyle[ 'active' ] : '' }>
