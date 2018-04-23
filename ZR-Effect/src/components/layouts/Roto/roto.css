@@ -26,6 +26,11 @@
   background-image: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
 }
 
+.header-bottom-bar {
+  height: 1px;
+  background-image: linear-gradient(-90deg, rgba(255,255,255,0.00) 29%, #4E6FC1 86%, rgba(252,252,252,0.00) 100%);
+}
+
 .content {
   flex: 1;
   display: flex;
