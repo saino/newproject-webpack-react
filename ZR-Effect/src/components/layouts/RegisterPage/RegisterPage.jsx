@@ -163,7 +163,7 @@ class RegisterPage extends Component {
     return (
       <Modal
         title="注册"
-        mask={ false }
+        wrapClassName="vertical-center-modal"
         footer={ null }
         width={ 360 }
         visible={ isShow }
