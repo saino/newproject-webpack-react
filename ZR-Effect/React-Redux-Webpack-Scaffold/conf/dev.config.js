@@ -33,7 +33,7 @@ baseConfig.devServer = {
   open: true,
   stats: { colors: true },
   proxy: {
-    '/api/[0-9\.]+/.*': {
+    '/api/*': {
       target: 'http://192.168.3.116:8899',
       rewrite: true,
       secure: false,
