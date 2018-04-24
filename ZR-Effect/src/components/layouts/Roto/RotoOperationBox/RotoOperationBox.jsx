@@ -265,7 +265,7 @@ class RotoOperationBox extends Component {
                 if (focusEl) {
                 // 选中的'path'
                 selectedFocusPathEl = focusEl.children()[ 0 ];
-                console.log(selectedFocusPathEl.node.getAttribute('d'), 'ppdd');
+
                 if (selectedFocusPathEl) {
                   const length = selectedFocusPathEl.getTotalLength();
         					let params = Snap.parsePathString(selectedFocusPathEl.getSubpath(0, length / 2))[1];	// 前半段
@@ -396,10 +396,7 @@ class RotoOperationBox extends Component {
           pathSelected.movePoint(point, offX - moveX, offY - moveY, point.type);
         }
         // 如果选中了'path'
-        else if (pathSelected
-          && pathSelected.isSelected
-          && pathData.findInside(offX, offY, pathSelected)
-        ) {
+        else if (pathSelected && pathSelected.isSelected) {
           pathSelected.move(offX - moveX, offY - moveY);
         }
 
