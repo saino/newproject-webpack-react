@@ -7,15 +7,13 @@ import { changeWork } from "../../../stores/reducers/work";
 
 import aaaVideo from "../../statics/aaa.mp4";
 import bbbVideo from "../../statics/bbb.mp4";
-import cccImg from "../../statics/def-work.jpg"
-// import { createjs } from "yuki-createjs";
+import cccImg from "../../statics/def-work.jpg";
 import 'yuki-createjs'
 
 class StageContainer extends Component {
 
     constructor(){
         super();
-        console.log(this);
         this.state = {
             work: {},
             currentVideoId: "",
@@ -30,7 +28,6 @@ class StageContainer extends Component {
         this.stage = null;
         this.videoContainer = null;
         this.materialsContainer = [];
-        // this.
         this.disX = 0;
         this.disY = 0;
     }
@@ -81,12 +78,10 @@ class StageContainer extends Component {
     createAllVideoDOM = () => {
         const videos = this.getAllVideo();
         return videos.map((videoItem, index)=>{
-
             //创建 video DOM节点 并 加载video资源
             let videoItemDOM = document.createElement("VIDEO");
             videoItemDOM.onloadedmetadata = () => {
                 this.state.loadedVideoNum++;
-                console.log(videoItemDOM.duration);
                 this.state.allVideoTime = this.state.allVideoTime + videoItemDOM.duration*1000;
                 if(this.allVideoLoaded()){
 
@@ -114,12 +109,6 @@ class StageContainer extends Component {
         return this.state.allVideoDOM[this.state.currentVideoDOMIndex];
     }
     componentDidUpdate() {
-        // this.setState({
-        //     allVideoDate: this.getAllVideo(),
-        //     allVideoDOM: this.createAllVideoDOM(),
-        // });
-        // this.state.allVideoDate = this.getAllVideo();
-        // this.state.allVideoDOM = this.createAllVideoDOM();
         this.createMaterialsContainer();
         this.playVideo();
     }
@@ -155,6 +144,8 @@ class StageContainer extends Component {
             const materialImg = new createjs.Bitmap(cccImg);
             // const materialImg = new createjs.Bitmap(materialItem.path);
             materialContainer.addChild(materialImg);
+            materialContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, null, "currentTarget"));
+            materialContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, null, "currentTarget"));
             return materialContainer;
         });
     }
@@ -260,10 +251,8 @@ class StageContainer extends Component {
         for(let i=0; i<this.state.allVideoDOM.length; i++){
             preVideoPlayTime = videoPlayTime;
             videoPlayTime += this.state.allVideoDOM[i].duration;
-            // console.log(i,"llllllll", preVideoPlayTime, videoPlayTime);
             if(currentTime < videoPlayTime ){
                 //设置 当前要播放视频的索引 当前播放视频的时间 相对于总视频的播放时间
-                // console.log(i, currentTime);
                 this.setState({
                     currentVideoDOMIndex: i,
                     currentVideoDOMTime: currentTime - preVideoPlayTime,
@@ -274,13 +263,8 @@ class StageContainer extends Component {
         }
     }
     render() {
-        // console.log(this.props, "ddddd", this.state);
-        // const { work } = this.state;
-        console.log(this);
         const { work1 } = this.props;
         return <canvas style={{transform: `scale(${work1.scaleX},${work1.scaleY})`}} ref="stageCanvas" id="mycanvas" className="background-stage" width="800" height="400">
-            {/* <canvas className="canvas-stage" style={{height: 400, width: 800}}></canvas> */}
-            {/* StageContainer */}
             <style>{`
                 .background-stage{
                     // height: 100%;
