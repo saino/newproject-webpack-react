@@ -40,14 +40,13 @@ class SpecialEffec extends Component {
     }
     componentWillMount(){
         this.props.loadMaterials({
-            "types": "image|video",
+            "types": "image|video|audio",
             "page": 1,
             "perpage": 20
         });
     }
 
     render(){
-        // console.log("gggggggggg");
         const { video, material, workName } = this.props.work1;
         const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return (
