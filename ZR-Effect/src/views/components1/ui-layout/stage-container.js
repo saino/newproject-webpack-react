@@ -189,9 +189,9 @@ class StageContainer extends Component {
         });
         this.stage.update();
 
-        setTimeout(() => {
-            this.setAllVideoCurrentTime(5);
-        }, 13000);
+        // setTimeout(() => {
+        //     this.setAllVideoCurrentTime(5);
+        // }, 13000);
     }
     /**
      * 视频播放控制 播放时间控制
