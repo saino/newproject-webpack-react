@@ -37,7 +37,6 @@ class MaterialArea extends Component {
         </div>
     }
     addMaterialClick = () =>{
-        // console.log("添加素材");
         this.props.changeaActiveContainer("material", ["video", "image"]);
     }
 }
