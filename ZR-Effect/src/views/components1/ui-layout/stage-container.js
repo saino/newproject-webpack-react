@@ -18,7 +18,7 @@ class StageContainer extends Component {
             work: {},
             currentVideoId: "",
             currentVideoDOMIndex: 0,
-            currentVideoDOMTime: 0,
+            // currentVideoDOMTime: 0,
             allVideoTime: 0,
             allVideoCurentTime: 0,
             loadedVideoNum: 0,
@@ -31,11 +31,11 @@ class StageContainer extends Component {
         this.disX = 0;
         this.disY = 0;
     }
-    componentWillMount() {
-        this.setState({
-            work: {...this.props.work1}
-        });
-    }
+    // componentWillMount() {
+    //     this.setState({
+    //         work: {...this.props.work1}
+    //     });
+    // }
 
     /**
      * 
@@ -163,15 +163,16 @@ class StageContainer extends Component {
         
 
         if (this.props.work1.videoPlay) {
-            currentVideo.currentTime = this.state.currentVideoDOMTime;
+            // currentVideo.currentTime = this.state.currentVideoDOMTime;
             currentVideo.play();
         } else {
             currentVideo.pause();
-            this.state.currentVideoDOMTime = this.getCurrentVideo().currentTime;
+            // this.state.currentVideoDOMTime = this.getCurrentVideo().currentTime;
         }
     }
 
     componentDidMount() {
+        // console.log("ffffffjjjjjj");
         this.setState({
             allVideoDate: this.getAllVideo(),
             allVideoDOM: this.createAllVideoDOM(),
@@ -187,6 +188,10 @@ class StageContainer extends Component {
             this.stage.update();
         });
         this.stage.update();
+
+        setTimeout(() => {
+            this.setAllVideoCurrentTime(5);
+        }, 13000);
     }
     /**
      * 视频播放控制 播放时间控制
@@ -199,11 +204,12 @@ class StageContainer extends Component {
             if (currentVideo.currentTime === currentVideo.duration){
                 this.setState({
                     currentVideoDOMIndex: (this.state.currentVideoDOMIndex+1)%(this.state.allVideoDOM.length),
-                    currentVideoDOMTime: 0
+                    // currentVideoDOMTime: 0
                 });
             }
 
             this.state.allVideoCurentTime = this.getAllVideoCurrentTime();
+            console.log(currentVideo.currentTime, this.state.allVideoCurentTime);
         }
         this.renderMaterial();
     }
@@ -240,7 +246,7 @@ class StageContainer extends Component {
 
 
     /**
-     * 设置相对于所有总视频时长的当前播放时间
+     * 设置相对于所有总视频时长的当前播放时间 单位秒
      */
     setAllVideoCurrentTime = (currentTime) => {
 
@@ -253,9 +259,12 @@ class StageContainer extends Component {
             videoPlayTime += this.state.allVideoDOM[i].duration;
             if(currentTime < videoPlayTime ){
                 //设置 当前要播放视频的索引 当前播放视频的时间 相对于总视频的播放时间
+                this.getCurrentVideo().pause();
+                this.getCurrentVideo().currentTime = 0;
+                this.state.allVideoDOM[i].currentTime = currentTime - preVideoPlayTime;
                 this.setState({
                     currentVideoDOMIndex: i,
-                    currentVideoDOMTime: currentTime - preVideoPlayTime,
+                    // currentVideoDOMTime: currentTime - preVideoPlayTime,
                     allVideoCurentTime: currentTime
                 });
                 return;
