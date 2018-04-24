@@ -26,6 +26,11 @@
   background-image: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
 }
 
+.header-bottom-bar {
+  height: 1px;
+  background-image: linear-gradient(-90deg, rgba(255,255,255,0.00) 29%, #4E6FC1 86%, rgba(252,252,252,0.00) 100%);
+}
+
 .content {
   flex: 1;
   display: flex;
@@ -40,7 +45,7 @@
 
 .content .middle {
   flex: 1;
-  background: rgba(29,54,57);
+  background: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
   overflow: hidden;
 }
 
@@ -59,6 +64,7 @@
 }
 
 .canvas-inner-w {
+  position: relative;
   height: 100%;
 }
 
@@ -69,6 +75,9 @@
 }
 
 .content .middle-inner .canvas-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
   height: 100%;
 }

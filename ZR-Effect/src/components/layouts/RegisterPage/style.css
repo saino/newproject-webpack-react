@@ -112,6 +112,26 @@
   color: #fff;
 }
 
+:global(.vertical-center-modal) {
+  text-align: center;
+  white-space: nowrap;
+}
+
+:global(.vertical-center-modal:before) {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  width: 0;
+}
+
+:global(.vertical-center-modal .ant-modal) {
+  display: inline-block;
+  vertical-align: middle;
+  top: 0;
+  text-align: left;
+}
+
 .function-bar {
   margin-bottom: 15px;
   color: #fff;

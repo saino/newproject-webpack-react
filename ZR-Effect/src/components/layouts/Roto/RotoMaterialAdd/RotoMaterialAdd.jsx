@@ -14,7 +14,7 @@ export default class RotoMaterialAdd extends Component {
       <div className={ style[ 'add-btn-box' ] } onClick={ this.openMaterialListHandle }>
         <Button className={ style[ 'add-btn' ] }>
           <img src={ addMaterialPNG } />
-          <label>添加扣像素材</label>
+          <label>添加抠像素材</label>
         </Button>
       </div>
     )

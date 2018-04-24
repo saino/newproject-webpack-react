@@ -27,8 +27,8 @@ baseConfig.devtool = 'cheap-source-map';
  */
 baseConfig.module.rules.push({
  test: /\.css$/i,
- include: [ pathEnv.vendorPath, pathEnv.devPath ],
- exclude: [ pathEnv.staticPath ],
+ include: [ pathEnv.devPath ],
+ exclude: [ pathEnv.staticPath, pathEnv.vendorPath ],
  use: ExtractTextPlugin.extract({
    fallback: 'style-loader',
    use: {
@@ -39,6 +39,17 @@ baseConfig.module.rules.push({
      }
    }
  })
+});
+
+baseConfig.module.rules.push({
+  test: /\.css$/i,
+  include: [ pathEnv.vendorPath ],
+  use: ExtractTextPlugin.extract({
+    fallback: 'style-loader',
+    use: {
+      loader: 'css-loader'
+    }
+  })
 });
 
 /**

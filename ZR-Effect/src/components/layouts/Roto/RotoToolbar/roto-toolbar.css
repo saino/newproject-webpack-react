@@ -9,6 +9,8 @@
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
+  border-left: 1px solid #264246;
+  background: rgba(29,54,57,0.40);
 }
 
 .tool-save {

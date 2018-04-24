@@ -127,6 +127,7 @@ class Matting extends Component {
             {/* 头部 */}
             <Header />
           </div>
+          <div className={ rotoStyle[ 'header-bottom-bar' ] }></div>
           <div className={ rotoStyle[ 'content' ] }>
             <div className={ rotoStyle[ 'left' ] }>
               {/* 扣像素材列表 */}

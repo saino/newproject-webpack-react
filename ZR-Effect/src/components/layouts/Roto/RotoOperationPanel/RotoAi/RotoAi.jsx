@@ -62,7 +62,7 @@ class RotoAi extends Component {
       <div className={ rotoAiStyle[ 'wrapper' ] }>
         <Button className={ rotoAiStyle[ 'ai-roto' ] } disabled={ isAiRoto } onClick={ this.aiRotoHandle }>
           <img src={ startRotoPNG } />
-          <label>开始云端智能扣像</label>
+          <label>开始云端智能抠像</label>
         </Button>
         {
           isAiRoto && aiRotoPercent > 0

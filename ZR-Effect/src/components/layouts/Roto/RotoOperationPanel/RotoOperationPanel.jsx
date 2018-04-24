@@ -25,7 +25,7 @@ class RotoOperationPanel extends Component {
           }
         </div>
         <div className={ style[ 'action-type' ] }>
-          <div className={ !visibleRotoOrPNG ? style[ 'active' ] : '' } onClick={ this.switchTypeHandle(0) }>生成扣像素材</div>
+          <div className={ !visibleRotoOrPNG ? style[ 'active' ] : '' } onClick={ this.switchTypeHandle(0) }>生成抠像素材</div>
           <div className={ visibleRotoOrPNG ? style[ 'active' ] : '' } onClick={ this.switchTypeHandle(1) }>生成PNG序列帧</div>
         </div>
       </div>

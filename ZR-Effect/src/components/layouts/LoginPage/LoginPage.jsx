@@ -122,7 +122,7 @@ class LoginPage extends Component {
     return (
       <Modal
         title="登录"
-        mask={ false }
+        wrapClassName="vertical-center-modal"
         footer={ null }
         width={ 360 }
         visible={ isShow }

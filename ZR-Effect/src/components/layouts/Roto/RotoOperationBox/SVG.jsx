@@ -235,7 +235,7 @@ class SVG extends Component {
     const {
       pointEls, controlPointEls, pathEls,
       maskPathEls, focusPathEls, controlPathEls } = this.getPathAndPointEls();
-    const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
+    const visibleDrawingClassName = this.getMode() === 0;
     const isVisibleMask = this.getIsVisibleMask();
 
     return (

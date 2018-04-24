@@ -4,7 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import Snap from 'snapsvg-cjs';
+import { configureRotoToolType } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
+import defferPerform from '../../../../utils/deffer-perform';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import style from './style.css';
 import SVG from './SVG';
@@ -86,21 +88,29 @@ class RotoOperationBox extends Component {
       }
     };
 
+    // 延时执行将工具状态设为移动
+    this.defferConfigureToolTypeMove = defferPerform(() => {
+      const { configureRotoToolType } = this.props;
+      const materialId = this.getMaterialId();
+
+      configureRotoToolType(materialId, 6);
+    });
+
     this.mouseDownHandle = (e) => {
-      const { configure } = this.props;
+      const { configure, configureRotoToolType } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
       const pathData = this.getPathData();
       const rotoMode = this.getRotoMode();
       const rotoDrawMode = this.getRotoDrawMode();
-      const pathSelected = this.getRotoPathSelected();
+      let pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
       const focusPaths = [];
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
 
-      let path, point, entryIds, pathId, pointId, realPointId, type;
+      let path, point, entryIds, pathId, pointId, realPointId, type, focusEl, selectedFocusPathEl;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
       if (rotoMode === 0 && rotoToolType === 4) {
@@ -119,21 +129,24 @@ class RotoOperationBox extends Component {
         else if (rotoDrawMode === 1 && pathSelected.firstPoint().isInside(offX, offY)) {
           // 当点击起始point，如果pathSelected只有1个point的时候，那么就是未闭合状态，且删除该点
           // 如果大于1个point或者本身closed为true，则是闭合状态
-          // if (pathSelected.closePath()) {
-          //   updateObj[ 'draw_mode' ] = 2;
-          // } else {
-          //   updateObj[ 'draw_mode'] = 0;
-          // }
-          //
-          // updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-          // this.configurePathDataList(pathSelected);
+          if (pathSelected) {
+            pathSelected.closePath();
+          }
+
+          updateObj[ 'draw_mode' ] = 0;
+          updateObj[ 'path_selected' ] = false;
+
+          //updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+          if (pathSelected) {
+            this.configurePathDataList(pathSelected);
+          }
         }
 
         configure(materialId, materialFrame, updateObj);
         //this.setState(updateObj);
       }
-      // 如果操作模式是编辑，并且选中工具类别也是编辑
-      else if (rotoMode === 1 && rotoToolType === 5) {
+      // 如果操作模式是选择，并且选中工具类别也是选择
+      else if (rotoMode === 2 && rotoToolType === 5) {
         entryIds = e.target.getAttribute('id')
           ? e.target.getAttribute('id').split('-')
           : [];
@@ -187,8 +200,14 @@ class RotoOperationBox extends Component {
           pathId = +entryIds[ 0 ], pointId = void 0;
           path = findItem(pathData.list, 'id', pathId);
 
+          // 如果对'path'进行双击
+          if (path && this.clickTimer.timer && this.clickTimer.params.id === path.id) {
+            updateObj[ 'mode' ] = 1;
+
+            this.defferConfigureToolTypeMove();
+          }
           // 避免没有'path'选中svg容器导致报错
-          if (path) {
+          else if (path) {
             //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
             this.clearPathSelected();
             path.points = this.clearPointSelected(path.points);
@@ -196,6 +215,7 @@ class RotoOperationBox extends Component {
 
             updateObj[ 'path_selected' ] = this.initPathSelected(path);
             this.configurePathDataList(updateObj[ 'path_selected' ]);
+            this.clickTimer.turnOn(path);
           }
         }
         // 没选中任何'path'或'point'
@@ -211,11 +231,100 @@ class RotoOperationBox extends Component {
       }
       // 如果操作模式是编辑，并且是移动'point'和'path'
       else if (rotoMode === 1 && rotoToolType === 6) {
+        pathSelected || (pathSelected = pathData.list[ pathData.list.length - 1 ]);
+        pathSelected.isSelected = true;
+        updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
         updateObj[ 'dragging' ] = true;
         updateObj[ 'move_x' ] = offX;
         updateObj[ 'move_y' ] = offY;
 
+        this.configurePathDataList(updateObj[ 'path_selected' ]);
         configure(materialId, materialFrame, updateObj);
+      }
+      else if (rotoMode === 1 && rotoToolType === 7) {
+        entryIds = e.target.getAttribute('id')
+          ? e.target.getAttribute('id').split('-')
+          : [];
+
+        // 如果选中了点
+        if (entryIds.length > 1) {
+          pathId = entryIds[ 0 ], pointId = entryIds[ 1 ], type = entryIds[ 2 ], realPointId = entryIds[3];
+          pathId = pathId.charAt(0) === 'c' ? +pathId.slice(2) : +pathId;
+          pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
+          path = findItem(pathData.list, 'id', pathId);
+          point = findItem(path.points, 'id', pointId);
+
+          path.points = this.clearPointSelected(path.points);
+          point.isSelected = true;
+          point.type = false;
+
+          if (point) {
+              setTimeout(() => {
+                focusEl = Snap(document.getElementById('roto_path_focus'));
+
+                if (focusEl) {
+                // 选中的'path'
+                selectedFocusPathEl = focusEl.children()[ 0 ];
+
+                if (selectedFocusPathEl) {
+                  const length = selectedFocusPathEl.getTotalLength();
+        					let params = Snap.parsePathString(selectedFocusPathEl.getSubpath(0, length / 2))[1];	// 前半段
+        					const p = new Point(params[5], params[6], params[1], params[2], params[3], params[4]);
+        					params = Snap.parsePathString(selectedFocusPathEl.getSubpath(length / 2, length))[1];	// 后半段
+        					pathSelected.insertPoint(pathSelected.indexOf(point), p);
+        					point.setControl(Point.CONTROL1, [params[1], params[2]]);
+        					point.setControl(Point.CONTROL2, [params[3], params[4]]);
+
+                  updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+
+                  configure(materialId, materialFrame, updateObj);
+                }
+              }
+            }, 10);
+          }
+        }
+        // 如果选中了path
+        else if (entryIds.length === 1) {
+          pathId = +entryIds[ 0 ], pointId = void 0;
+          path = findItem(pathData.list, 'id', pathId);
+
+          if (path) {
+            //updateObj[ 'pathSelected' ] = this.initPathSelected(pathData.findInside(offX, offY, pathSelected) || path);
+            this.clearPathSelected();
+            path.points = this.clearPointSelected(path.points);
+            path.isSelected = true;
+
+            updateObj[ 'path_selected' ] = this.initPathSelected(path);
+            this.configurePathDataList(updateObj[ 'path_selected' ]);
+          }
+        }
+
+        configure(materialId, materialFrame, updateObj);
+        //console.log(pathSelected.points, 'ps');
+        // if (rotoMode !== 0 && pathSelected) {
+        //   point = findItem(pathSelected.points, 'isSelected', true);
+        //
+        //   // 如果选中了'point'
+        //   if (point) {
+        //     pathSelected.removePoint(point);
+        //
+        //     // 删除完最后1个点，则删除整条'path'
+        //     if (pathSelected.points.length <= 1) {
+        //       pathData.delPath(pathSelected);
+        //       updateObj[ 'pathSelected' ] = false;
+        //     } else {
+        //       updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+        //     }
+        //
+        //   }
+        //   // 选中了'path'
+        //   else {
+        //     pathData.delPath(pathSelected);
+        //     updateObj[ 'pathSelected' ] = false;
+        //   }
+        //
+        //   configure(materialId, materialFrame, updateObj);
+        // }
       }
     };
 
@@ -227,7 +336,7 @@ class RotoOperationBox extends Component {
       const pathData = this.getPathData();
       const rotoMode = this.getRotoMode();
       const rotoDrawMode = this.getRotoDrawMode();
-      const pathSelected = this.getRotoPathSelected();
+      let pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
       const moveX = this.getMoveX();
       const moveY = this.getMoveY();
@@ -287,10 +396,7 @@ class RotoOperationBox extends Component {
           pathSelected.movePoint(point, offX - moveX, offY - moveY, point.type);
         }
         // 如果选中了'path'
-        else if (pathSelected
-          && pathSelected.isSelected
-          && pathData.findInside(offX, offY, pathSelected)
-        ) {
+        else if (pathSelected && pathSelected.isSelected) {
           pathSelected.move(offX - moveX, offY - moveY);
         }
 
@@ -551,6 +657,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ configure }, dispatch)
+  bindActionCreators({
+    configure,
+    configureRotoToolType
+  }, dispatch
+)
 
 export default connect(mapStateToProps, mapDispatchToProps)(RotoOperationBox);
