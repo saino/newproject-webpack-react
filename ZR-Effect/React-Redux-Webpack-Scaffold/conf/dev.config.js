@@ -33,8 +33,8 @@ baseConfig.devServer = {
   open: true,
   stats: { colors: true },
   proxy: {
-    '/api/[0-9\.]+/.*': {
-      target: 'http://192.168.3.116:8888',
+    '/api/*': {
+      target: 'http://192.168.3.116:8899',
       rewrite: true,
       secure: false,
       changeOrigin: true
@@ -82,8 +82,8 @@ baseConfig.plugins.push(
   new webpack.HotModuleReplacementPlugin(),
   new webpack.NoErrorsPlugin(),
   new webpack.DefinePlugin({
-    host: JSON.stringify('127.0.0.1'),
-    port: 3030
+    host: JSON.stringify('http://192.168.3.116'),
+    port: 8899
   })
 );
 

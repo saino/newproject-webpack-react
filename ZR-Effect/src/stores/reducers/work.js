@@ -6,7 +6,9 @@ const defaultState = {
     videoType: "type1",
     scaleX: 1,
     scaleY: 1,
-    
+    props: {
+
+    },
     video: [
         { id: "video0001", duration: 9985, path: "../../statics/aaa.mp4", order: 2 },
         { id: "video0002", duration: 60095, path: "../../statics/bbb.mp4", order: 1 }
@@ -49,7 +51,6 @@ const defaultState = {
             { x: "", y: "" },
             { x: "", y: "" },
         ],
-
     }, 
     {
         id: "material0002",

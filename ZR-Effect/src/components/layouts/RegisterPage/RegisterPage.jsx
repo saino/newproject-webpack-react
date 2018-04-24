@@ -137,7 +137,7 @@ class RegisterPage extends Component {
               </span>
               <span className={ style[ 'send-verifycode-btn'] }>
                 {/* 发送验证码 */}
-                <Button loadding={ sendVerifyCode } disabled={ countdown } onClick={ this.sendVerifyCodeHandle }>{ countdown ? `还剩(${ countdown })s` : '发送验证码' }</Button>
+                <Button loading={ sendVerifyCode } disabled={ countdown } onClick={ this.sendVerifyCodeHandle }>{ countdown ? `还剩(${ countdown })s` : '发送验证码' }</Button>
               </span>
             </li>
             <li className={ style.textbox }>

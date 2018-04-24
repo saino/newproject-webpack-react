@@ -17,6 +17,9 @@ class MaterialContainer extends Component {
         uploading: false,
         uploadProgress: 0
     }
+    // componentWillMount(){
+    //     console.log()
+    // }
 
     getVideoMaterial() {
         const { material, materialContainerType } = this.props;
