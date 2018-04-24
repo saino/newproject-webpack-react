@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 // import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import HeaderNav from "./components1/ui-layout/header-nav"
+import Header from '../components/containers/Header/Header';
+
 import Container from "./components1/ui-layout/container"
 import MaterialArea from "./components1/ui-layout/material-area";
 import StageArea from "./components1/ui-layout/stage-area";
@@ -29,7 +31,13 @@ class SpecialEffec extends Component {
         const { video, material, workName } = this.props.work1;
         return (
             <div className="warp">
-                <HeaderNav/>
+                {/* <HeaderNav/> */}
+                {/* 头部导航 */}
+                <div className="header">
+                    <Header
+                        onOpenLogin={() => this.configureDialogHandle('Login', true)}
+                        onOpenRegister={() => this.configureDialogHandle('Register', true)} />
+                </div>
                 <Container>
                     <div className="container-layout"> 
                         <MaterialArea material={material} changeaActiveContainer={this.changeaActiveContainer}></MaterialArea>
@@ -47,6 +55,12 @@ class SpecialEffec extends Component {
                     .container-layout{
                         display: flex;
                         flex-wrap: wrap;
+                    }
+                    .header {
+                        position: relative;
+                        height: 50px;
+                        z-index: 1;
+                        background-image: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
                     }
                 `}</style>
             </div>
