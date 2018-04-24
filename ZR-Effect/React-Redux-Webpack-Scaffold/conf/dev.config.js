@@ -34,7 +34,7 @@ baseConfig.devServer = {
   stats: { colors: true },
   proxy: {
     '/api/[0-9\.]+/.*': {
-      target: 'http://192.168.3.116:8888',
+      target: 'http://192.168.3.116:8899',
       rewrite: true,
       secure: false,
       changeOrigin: true

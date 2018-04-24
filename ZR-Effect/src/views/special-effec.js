@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
+import LoginPage from '../components/layouts/LoginPage/LoginPage';
+import RegisterPage from '../components/layouts/RegisterPage/RegisterPage';
+
 // import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import HeaderNav from "./components1/ui-layout/header-nav"
 import Header from '../components/containers/Header/Header';
+import config from '../config';
 
 import Container from "./components1/ui-layout/container"
 import MaterialArea from "./components1/ui-layout/material-area";
@@ -23,12 +28,18 @@ class SpecialEffec extends Component {
         super();
         this.state = {
             activeContainer: "stage",
-            materialContainerType: ["video", "image"]
-        }
+            materialContainerType: ["video", "image"],
+            isShowLoginDialog: false,
+            isShowRegisterDialog: false
+        };
+
+        this.configureDialogHandle = (key, isShowDialog) =>
+            this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
 
     render(){
         const { video, material, workName } = this.props.work1;
+        const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return (
             <div className="warp">
                 {/* <HeaderNav/> */}
@@ -49,6 +60,19 @@ class SpecialEffec extends Component {
                     </div>
                     <TimeArea changeaActiveContainer={this.changeaActiveContainer}></TimeArea>
                 </Container>
+                <div className='form-panel'>
+                    {/* 登录框 */}
+                    <LoginPage
+                        isShow={isShowLoginDialog}
+                        width={config.dialog.width}
+                        onClose={() => this.configureDialogHandle('Login', false)} />
+
+                    {/* 注册框 */}
+                    <RegisterPage
+                        isShow={isShowRegisterDialog}
+                        width={config.dialog.width}
+                        onClose={() => this.configureDialogHandle('Register', false)} />
+                </div>
                 
                 {/* <div></div> */}
                 <style>{`
@@ -61,6 +85,13 @@ class SpecialEffec extends Component {
                         height: 50px;
                         z-index: 1;
                         background-image: radial-gradient(ellipse farthest-corner at 50% 1450%, #00141a, #010104);
+                    }
+                    .form-panel {
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        width: 360px;
+                        transform: translate(-50%,-50%);
                     }
                 `}</style>
             </div>
