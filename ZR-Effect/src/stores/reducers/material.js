@@ -1,4 +1,5 @@
 import { add, update, remove, findItem } from '../../utils/array-handle';
+import { post, error as fail } from '../../api/fetch';
 
 /*const defaultState = [
     {
@@ -161,7 +162,8 @@ const defaultState = [];
 
 const actionTypes = {
     "GET_MATERIAL": "GET_MATERIAL",
-    "CHANGE_MATERIAL": "CHANGE_MATERIAL"
+    "CHANGE_MATERIAL": "CHANGE_MATERIAL",
+    "LOAD_MATERIALS":　"LOAD_MATERIALS",
 }
 
 export const changeMaterial = (materialItems) => {
@@ -171,8 +173,35 @@ export const changeMaterial = (materialItems) => {
     };
 };
 
+export const loadMaterials = (body) => {
+    // console.log("aaaaaa",a);
+    // return (b) => {
+    //     console.log("bbbbbb", b);
+    //     setTimeout((d) => {
+    //         console.log("ddd", d);
+    //         const materials = {
+    //             "aa": "sb"
+    //         };
+    //         return {
+    //             type: actionTypes.LOAD_MATERIALS,
+    //             materials
+    //         };
+    //     }, 5000);
+        
+    // }
+    return (dispatch) => {
+        post("/user/getMaterials", body)
+        .then((resp)=>{
+            console.log(resp, dispatch, "ddddddddd");
+        });
+    }
+}
+
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case actionTypes.LOAD_MATERIALS:
+        console.log("eee");
+        return {...action.materials}
     case actionTypes.GET_MATERIAL:
       return state;
     case actionTypes.CHANGE_MATERIAL:

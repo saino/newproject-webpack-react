@@ -15,12 +15,13 @@ const request = (path, method, body) => {
   const isPost = method.toLowerCase() === 'post';
   const token = body.token;
   fetchHeadersConfig.Token = token;
+
   delete body.token;
 
   return fetch(
-    //`${ config.api.host }${ path }${ isPost ? '' : parseQs(body) }`,
-    `${ config.api.path }${ path }${ isPost ? '' : parseQs(body) }`,
-    {...fetchHeadersConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
+    `${ config.api.host }:${ config.api.port }${ config.api.path }${ path }${ isPost ? '' : parseQs(body) }`,
+    //`${ config.api.path }${ path }${ isPost ? '' : parseQs(body) }`,
+    { ...fetchHeadersConfig, credentials: 'include', method, body: isPost ? JSON.stringify(body) : void 0 }
   )
   .then(parseResp)
   .then(checkErrorCodeStatus);

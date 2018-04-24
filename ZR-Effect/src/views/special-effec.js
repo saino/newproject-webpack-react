@@ -22,6 +22,8 @@ import StageContainer from "./components1/ui-layout/stage-container";
 import MaterialContainer from "./components1/ui-layout/material-container";
 import AudioContainer from "./components1/ui-layout/audio-container";
 
+import { loadMaterials } from "../stores/reducers/material"
+
 class SpecialEffec extends Component {
 
     constructor(){
@@ -36,8 +38,16 @@ class SpecialEffec extends Component {
         this.configureDialogHandle = (key, isShowDialog) =>
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
+    componentWillMount(){
+        this.props.loadMaterials({
+            "types": "image|video",
+            "page": 1,
+            "perpage": 20
+        });
+    }
 
     render(){
+        // console.log("gggggggggg");
         const { video, material, workName } = this.props.work1;
         const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return (
@@ -122,5 +132,10 @@ const mapStateToProps = ({ work1 }) => {
         work1
     };
 }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        loadMaterials: bindActionCreators(loadMaterials, dispatch)
+    }
+}
 
-export default connect(mapStateToProps)(SpecialEffec);
+export default connect(mapStateToProps, mapDispatchToProps)(SpecialEffec);

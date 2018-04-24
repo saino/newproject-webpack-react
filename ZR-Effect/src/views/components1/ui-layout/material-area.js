@@ -1,9 +1,22 @@
 import React, { Component } from "react";
 import MaterialBtn from "./material-btn";
 import AddImg from "../../statics/add.png"
+
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { loadMaterials } from "../../../stores/reducers/material"
 class MaterialArea extends Component {
 
+    // componentDidUpdate() {
+        // console.log("ddddddddddd");
+        // this.props.loadMaterials({
+        //     "types": "image|video",
+        //     "page": 1,
+        //     "perpage": 20
+        // });
+    // }
     render() {
+        console.log("dddddd");
         const { material } = this.props;
         return <div className="material-area">
             <div className="add-material" onClick={this.addMaterialClick}>素材<div><img src={AddImg} /></div></div>
@@ -40,4 +53,11 @@ class MaterialArea extends Component {
         this.props.changeaActiveContainer("material", ["video", "image"]);
     }
 }
-export default MaterialArea;
+// conso
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        loadMaterials: bindActionCreators(loadMaterials, dispatch)
+    }
+}
+export default connect(null, mapDispatchToProps)(MaterialArea);
