@@ -7,6 +7,7 @@ export default class Point {
 		this.isSelected = false;
 		this.radius = 3;
 		this.type = null;
+		this.liveControlPointId = this.id;
 		this.x = x;
 		this.y = y;
 		if( cx1 ){
@@ -76,15 +77,16 @@ export default class Point {
 		return [x, y];
 	}
 	move(dx, dy, type){
-		if( type & Point.CONTROL1){
-			const [ x, y ] = this.getOppositeControl(Point.CONTROL2);
-			//!isNaN(this.cx1) || (this.cx1 = )
-			//console.log(x, y, 'didi');
-			!isNaN(this.cx1) || (this.cx1 = x);
-			!isNaN(this.cy1) || (this.cy1 = y);
-
+		if( type & Point.CONTROL1 && this.hasControl(Point.CONTROL1)){
 			this.cx1 += dx;
-			this.cy1 -= dy;
+			this.cy1 += dy;
+			// const [ x, y ] = this.getOppositeControl(Point.CONTROL2);
+			//
+			// !isNaN(this.cx1) || (this.cx1 = x);
+			// !isNaN(this.cy1) || (this.cy1 = y);
+			//
+			// this.cx1 += dx;
+			// this.cy1 -= dy;
 		}
 		if( type & Point.CONTROL2 && this.hasControl(Point.CONTROL2) ){
 			console.log(2);

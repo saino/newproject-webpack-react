@@ -135,12 +135,15 @@ class SVG extends Component {
         }
 
         if (pointSelected) {
+          pointSelected = findItem(path.points, 'id', pointSelected.liveControlPointId);
           // 显示选中点的控制点和控制杆
           ctrls = path.realSelected(pointSelected, false);
+          console.log(ctrls, pointSelected, 'ppps')
           // ctrlPoint1 = new Point(ctrls[0].x, ctrls[0].y, ctrls[0].cx1, ctrls[0].cy1, ctrls[0].cx2, ctrls[0].cy2);
           // ctrlPoint2 = new Point(ctrls[1].x, ctrls[1].y, ctrls[1].cx1, ctrls[1].cy1, ctrls[1].cx2, ctrls[1].cy2);
           ctrls1 = this.getControlPointAndPathEl(path, ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ], pointSelected.id);
           ctrls2 = this.getControlPointAndPathEl(path, ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ], pointSelected.id);
+          console.log(ctrls1, ctrls2, 'jjj')
           controlPointEls.push(ctrls1[ 0 ]);
           controlPathEls.push(ctrls1[ 1 ]);
           controlPointEls.push(ctrls2[ 0 ]);
@@ -175,7 +178,7 @@ class SVG extends Component {
     };
   }
 
-  getControlPointAndPathEl(path, point, type, linkPoint, realPointId) {
+  getControlPointAndPathEl(path, point, type, linkPoint, pointId) {
     if (!point || !point.hasControl(type)) {
       return [];
     }
@@ -187,7 +190,7 @@ class SVG extends Component {
       (
         <circle
           key={ point.id }
-          id={ `c.${ path.id }-c.${ point.id }-${ type }-${ realPointId }` }
+          id={ `${ path.id }-${ point.id }-${ pointId }` }
           className={ className }
           cx={ ctrlPoint[ 0 ] }
           cy={ ctrlPoint[ 1 ] }
