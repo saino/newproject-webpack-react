@@ -71,10 +71,12 @@ class MaterialContainer extends Component {
     }
     //上传成功
     _handleUploadSuccess = (resp) => {
+        console.log(resp);
         this.setState({
             uploadProgress: 100,
             progressState: "success",
         });
+        return;
 
         const data = {
             "id": new Date().getTime(),
@@ -105,7 +107,9 @@ class MaterialContainer extends Component {
         }, 200);
     }
     //上传失败
-    _handleUploadFailed = () => {
+    _handleUploadFailed = (resp) => {
+        console.log(resp, "dddddd");
+        return;
         const data = {
             "id": new Date().getTime(),
             "user_id": 52938,
@@ -142,9 +146,6 @@ class MaterialContainer extends Component {
     }
     render() { 
         const upLoadOptions = config.fileUpload.configureFileUpload({
-          paramAddToField: {
-            work_id: 'this.props.workId'
-          },
           accept: 'video/*, image/*',
           beforeChoose: this._handleBeforeChoose,
           chooseFile: this._handleChooseFile,

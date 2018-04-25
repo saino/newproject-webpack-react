@@ -15,7 +15,6 @@ const request = (path, method, body) => {
   const isPost = method.toLowerCase() === 'post';
   const token = body.token;
   fetchHeadersConfig.Token = token;
-
   delete body.token;
 
   return fetch(

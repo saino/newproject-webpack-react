@@ -38,7 +38,6 @@ class TimeControl extends Component{
         const maxDurationEndMinute = moment.duration(duration).minutes();
         const maxDurationEndSecond = moment.duration(duration).seconds();
         const maxDurationEndMillisecond = moment.duration(duration).milliseconds();
-        // console.log(this, timeStart, timeEnd);
         timeStart.hour = timeStart.hour || 0;
         timeStart.minute = timeStart.minute || 0;
         timeStart.second = timeStart.second || 0;
@@ -206,7 +205,6 @@ class TimeControl extends Component{
             currentMaterial.timeStart = this.getStartTime();
             currentMaterial.timeEnd = this.getEndTime();
             this.props.changeWorkMaterial(currentMaterial);
-            // console.log(this.props);
         }
     }
     getStartTime(){

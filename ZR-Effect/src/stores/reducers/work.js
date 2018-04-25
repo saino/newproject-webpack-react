@@ -175,7 +175,6 @@ export default (state = defaultState, action) => {
             });
             return { ...state, material: [...materialTmp] }
         case actionTypes.CHANGE_WORK_PLAY: 
-            console.log("xxxxxxxxxxxxx");
             return {...state, videoPlay: action.isPlay};
         case actionTypes.SET_MATERIAL_ACTIVE:
 

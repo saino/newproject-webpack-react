@@ -83,7 +83,8 @@ baseConfig.plugins.push(
   new webpack.NoErrorsPlugin(),
   new webpack.DefinePlugin({
     host: JSON.stringify('http://192.168.3.116'),
-    port: 8899
+    port: 8899,
+    path: JSON.stringify('/api/1')
   })
 );
 

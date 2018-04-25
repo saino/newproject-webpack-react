@@ -24,7 +24,7 @@ export default ({
   // 数据请求
   api: {
     host: host,
-    path: '/api/1',
+    path: path,
     port: port,
     timeout: 15000,
     headers: {
@@ -56,12 +56,13 @@ export default ({
     // 配置文件上传参数
     configureFileUpload(options) {
       return {
-        baseUrl: '/api/1/user/uploadMaterial',
+        baseUrl: `${host}:${port}${path }/user/uploadMaterial`,
         fileFieldName: 'file',
         multiple: false,
         chooseAndUpload: true,
         wrapperDisplay: 'block',
         accept: '*',
+        withCredentials: true,
         ...options
       };
     },
