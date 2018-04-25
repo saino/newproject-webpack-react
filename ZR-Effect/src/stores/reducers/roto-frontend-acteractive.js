@@ -5,6 +5,7 @@
  *   material_id { Number } 素材id
  *   is_selected { Boolean } 是否选中 [ 存入数据库 ]
  *   selected_frame { Number } 选中帧
+ *   is_visible_mask { Boolean } 是否显示阴影
  *   is_upload_or_detail { Number } 显示上传还是详情 ( 0-详情｜1-上传 )
  *   is_ai_roto { Boolean } 是否开始ai扣像 [ 存入数据库 ]
  *   ai_roto_percent { Number } ai扣像进度 [ 存入数据库 ]
@@ -152,6 +153,16 @@ export default function rotoFrontendActerActive (state = defState, action) {
         {
           'roto_tool_type': action.rotoToolType,
           'undo_count': 0
+        },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_ROTO_VISIBLE_MASK':
+      return update(
+        state,
+        {
+          'is_visible_mask': action.isVisibleMask
         },
         'material_id',
         action.materialId

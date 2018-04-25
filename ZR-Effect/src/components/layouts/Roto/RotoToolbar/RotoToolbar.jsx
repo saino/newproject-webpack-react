@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { message } from 'antd';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
-import { undo, configureZoom, configureRotoToolType } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { undo, configureZoom, configureRotoToolType, configureRotoVisibleMask } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
@@ -100,7 +100,7 @@ class RotoToolbar extends Component {
 
     // 显隐阴影
     this.visibleMaskHandle = () => {
-      this.defferVisibleMask(1);
+      this.defferVisibleMask();
       this.configureToolState(8);
     }
 
@@ -134,12 +134,21 @@ class RotoToolbar extends Component {
       configureZoom(materialId, 3, 'zoomOut');
     };
 
+    // 延迟执行设置抠像遮罩
+    this.deferVisibleMask = defferPerform((materialId, isVisibleMask) => {
+      const { configureRotoVisibleMask } = this.props;
+
+      configureRotoVisibleMask(materialId, isVisibleMask);
+    }, 10);
+
     // 统一设置工具状态
     this.configureToolState = (val) => {
       const { configureRotoToolType } = this.props;
       const materialId = this.getMaterialId();
+      const isVisibleMask = this.getRotoIsVisibleMask();
 
       configureRotoToolType(materialId, val);
+      this.deferVisibleMask(materialId, isVisibleMask);
     };
 
     this.rotoCompleteHandle = () => {
@@ -187,6 +196,11 @@ class RotoToolbar extends Component {
     // 获取扣像舞台工具类别
     this.getRotoToolType = this.registerGetMaterialInfo(
       rotoMaterial => rotoMaterial[ 'roto_tool_type' ]
+    );
+
+    // 获取是否显示遮罩
+    this.getRotoVisibleMask = this.registerGetMaterialInfo(
+      rotoMaterial => rotoMaterial[ 'is_visible_mask' ]
     );
 
     // 获取素材id
@@ -284,6 +298,7 @@ class RotoToolbar extends Component {
 
   render() {
     const toolType = this.getRotoToolType();
+    const isVisibleMask = this.getRotoVisibleMask();
 
     return (
       <div className={ rotoToolbarStyle[ 'wrapper' ] }>
@@ -310,7 +325,7 @@ class RotoToolbar extends Component {
                   <li onClick={ this.addPointHandle } title="增加节点" className={ toolType === 7 ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ addPointPNG } />
                   </li>
-                  <li onClick={ this.visibleMaskHandle } title="显隐遮罩" className={ toolType === 8 ? rotoToolbarStyle[ 'active' ] : '' }>
+                  <li onClick={ this.visibleMaskHandle } title="显隐遮罩" className={ (toolType === 8 || isVisibleMask) ? rotoToolbarStyle[ 'active' ] : '' }>
                     <img src={ visibleMaskPNG } />
                   </li>
                   <li onClick={ this.rotoCompleteHandle } title="完成" className={ toolType === 9 ? rotoToolbarStyle[ 'active' ] : '' }>
@@ -354,7 +369,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     undo,
     configureZoom,
     configureRotoToolType,
-    configure
+    configure,
+    configureRotoVisibleMask
   },
   dispatch
 );

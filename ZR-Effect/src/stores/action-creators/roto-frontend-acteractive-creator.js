@@ -117,6 +117,14 @@ export function configureRotoToolType (materialId, rotoToolType) {
   };
 }
 
+export function configureRotoVisibleMask (materialId, isVisibleMask) {
+  return {
+    type: 'CONFIGURE_ROTO_VISIBLE_MASK',
+    materialId,
+    isVisibleMask
+  };
+}
+
 export function configureZoom (materialId, zoomType, undoAction) {
   return {
     type: 'CONFIGURE_ZOOM',
