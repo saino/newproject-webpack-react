@@ -173,10 +173,6 @@ class RotoToolbar extends Component {
       const pathData = this.getRotoPathData();
       const updateObj = {};
 
-      if (rotoDrawMode < 1) {
-        return;
-      }
-
       if (pathSelected) {
         pathSelected.closePath();
       }
