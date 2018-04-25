@@ -38,6 +38,19 @@
   height: 100%;
 }
 
+.content-inner {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.content-inner .area {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 .content .left {
   flex: 0 0 160px;
   background: #6ca1a5;

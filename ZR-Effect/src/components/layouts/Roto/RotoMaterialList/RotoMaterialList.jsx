@@ -5,7 +5,7 @@ import config from '../../../../config';
 import { findItem } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
 import rotoMaterialListStyle from './roto-material-list.css';
-import { selectedRotoMaterial, cancelSelectedRotoMaterial, removeRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { cancelSelectedRotoMaterial, removeRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import addMaterialPNG from './add-material.png';
 import videoPNG from './video.png';
 import deletePNG from './delete.png';
@@ -14,26 +14,11 @@ class RotoMaterialList extends Component {
   constructor(props) {
     super(props);
 
-    // 延迟10毫秒跳转到显示帧图片组件
-    this.switchToVisibleFrameImg = defferPerform(() => {
-      const { onOpenVisibleFrameImg } = this.props;
-
-      onOpenVisibleFrameImg();
-    }, 10);
-
-    // 延迟10毫秒跳转到扣像列表组件
+    // 延迟10毫秒跳转到素材列表组件
     this.switchToMaterialList = defferPerform(() => {
       const { onOpenMaterialList } = this.props;
 
       onOpenMaterialList();
-    }, 10);
-
-    // 延迟10毫秒选中扣像素材
-    this.selectedRotoMaterial = defferPerform(materialId => {
-      const { selectedRotoMaterial } = this.props;
-
-      this.switchToVisibleFrameImg();
-      selectedRotoMaterial(materialId);
     }, 10);
 
     this.openMaterialListHandle = () => {
@@ -44,10 +29,9 @@ class RotoMaterialList extends Component {
     };
 
     this.selectedRotoMaterialHandle = (materialId) => () => {
-      const { cancelSelectedRotoMaterial } = this.props;
+      const { onSelectedRotoMaterial } = this.props;
 
-      this.selectedRotoMaterial(materialId);
-      cancelSelectedRotoMaterial();
+      onSelectedRotoMaterial(materialId);
     };
 
     this.removeRotoMaterialHandle = (materialId) => (e) => {
@@ -115,7 +99,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
-    selectedRotoMaterial,
     cancelSelectedRotoMaterial,
     removeRotoMaterial
   }, dispatch)

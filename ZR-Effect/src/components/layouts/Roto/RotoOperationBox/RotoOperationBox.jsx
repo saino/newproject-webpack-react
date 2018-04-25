@@ -110,7 +110,7 @@ class RotoOperationBox extends Component {
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
 
-      let path, point, entryIds, pathId, pointId, realPointId, type, focusEl, selectedFocusPathEl;
+      let path, point, entryIds, pathId, pointId, realPointId, type, focusEl, selectedFocusPathEl, pointSelected, pointSelectedId;
 
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
       if (rotoMode === 0 && rotoToolType === 4) {
@@ -153,9 +153,9 @@ class RotoOperationBox extends Component {
 
         // 如果选中了点
         if (entryIds.length > 1) {
-          pathId = entryIds[ 0 ], pointId = entryIds[ 1 ], type = entryIds[ 2 ], realPointId = entryIds[3];
-          pathId = pathId.charAt(0) === 'c' ? +pathId.slice(2) : +pathId;
-          pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
+          pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ], pointSelectedId = +entryIds[ 2 ], type = +entryIds[ 3 ]//, type = entryIds[ 2 ], realPointId = entryIds[3];
+          // pathId = pathId.charAt(0) === 'c' ? +pathId.slice(2) : +pathId;
+          // pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
           path = findItem(pathData.list, 'id', pathId);
           point = findItem(path.points, 'id', pointId);
 
@@ -183,13 +183,17 @@ class RotoOperationBox extends Component {
           } else {
             if (e.target.getAttribute('class') !== 'control') {
               path.points = this.clearPointSelected(path.points);
-              point.isSelected = true;
               point.type = false;
+              point.liveControlPointId = point.id;
               this.clickTimer.turnOn(point);
             } else {
-              point = findItem(path.points, 'id', +realPointId);
-              point.type = +type;
+              pointSelected = findItem(path.points, 'id', pointSelectedId);
+              path.points = this.clearPointSelected(path.points);
+              point.type = type;
+              point.liveControlPointId = pointSelected.id === point.id ? point.id : pointSelected.id;
             }
+
+            point.isSelected = true;
           }
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
@@ -326,6 +330,8 @@ class RotoOperationBox extends Component {
         //   configure(materialId, materialFrame, updateObj);
         // }
       }
+
+      this.resetEvent(e);
     };
 
     this.mouseMoveHandle = (e) => {
@@ -413,6 +419,8 @@ class RotoOperationBox extends Component {
         //
         // }
       }
+
+      this.resetEvent(e);
     };
 
     this.mouseUpHandle = (e) => {
@@ -455,6 +463,7 @@ class RotoOperationBox extends Component {
         configure(materialId, materialFrame, updateObj);
       }
 
+      this.resetEvent(e);
       // // 如果是闭合了
       // if (rotoDrawMode === 2) {
       //   updateObj[ 'draw_mode' ] = 0;

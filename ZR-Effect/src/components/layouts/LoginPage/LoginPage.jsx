@@ -93,9 +93,9 @@ class LoginPage extends Component {
             <span className={ style['left'] }>
               <Checkbox checked={ isRecordUser } onChange={ this.recordUserHandle }>记住用户名</Checkbox>
             </span>
-            <span className={ style['right'] }>
+            {/*<span className={ style['right'] }>
               立即注册
-            </span>
+            </span> */}
           </div>
 
           <div className={ style['bar-login'] }>

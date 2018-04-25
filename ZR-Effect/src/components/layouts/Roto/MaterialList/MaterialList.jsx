@@ -75,9 +75,20 @@ class MaterialList extends Component {
           "height": 480
       }
     });
-    const { uploadMaterial } = this.props;
+    const { uploadMaterial, onSelectedRotoMaterial } = this.props;
+    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId));
+    const deferCheckRotoMaterial = defferPerform(materialId => {
+      this.checkMaterialItemHandle(materialId);
+      deferSelectedRotoMaterial(materialId);
+    }, 30);
     const defer = defferPerform(() => {
-      this.setState({ uploadingPercent: 0 }, () => uploadMaterial(material));
+      this.setState({
+        uploadingPercent: 0
+      }, () => {
+        uploadMaterial(material);
+        deferCheckRotoMaterial(material[ 'id' ]);
+        deferSelectedRotoMaterial(material[ 'id' ]);
+      });
     }, 100);
 
     defer();
