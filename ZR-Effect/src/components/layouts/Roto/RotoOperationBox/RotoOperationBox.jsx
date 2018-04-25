@@ -331,6 +331,8 @@ class RotoOperationBox extends Component {
         //   configure(materialId, materialFrame, updateObj);
         // }
       }
+
+      this.resetEvent(e);
     };
 
     this.mouseMoveHandle = (e) => {
@@ -418,6 +420,8 @@ class RotoOperationBox extends Component {
         //
         // }
       }
+
+      this.resetEvent(e);
     };
 
     this.mouseUpHandle = (e) => {
@@ -460,6 +464,7 @@ class RotoOperationBox extends Component {
         configure(materialId, materialFrame, updateObj);
       }
 
+      this.resetEvent(e);
       // // 如果是闭合了
       // if (rotoDrawMode === 2) {
       //   updateObj[ 'draw_mode' ] = 0;
