@@ -5,7 +5,8 @@ import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { findItem } from '../../../utils/array-handle';
 /* 路由跳转前验证 -- end */
-import { configureMove } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
+import defferPerform from '../../../utils/deffer-perform';
+import { configureMove, cancelSelectedRotoMaterial, selectedRotoMaterial } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
 import Draggable from 'react-draggable';
 import rotoStyle from './roto.css';
 import Header from '../../containers/Header/Header';
@@ -40,6 +41,7 @@ class Matting extends Component {
     // 获取是否处于准备移动状态
     this.isReadyMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'roto_tool_type' ] === 1);
 
+    // 移动画布
     this.canvasMoveStopHandle = ({ clientX, clientY, offsetX, offsetY }) => {
       const { configureMove } = this.props;
       const materialId = this.getMaterialId();
@@ -48,6 +50,25 @@ class Matting extends Component {
       const offY = clientY - offsetY - y;
 
       configureMove(materialId, { x: offX, y: offY });
+    };
+
+    // 延迟10毫秒跳转到显示帧图片组件
+    this.switchToVisibleFrameImg = defferPerform(() => this.openVisibleFrameImg(), 10);
+
+    // 延迟10毫秒选中扣像素材
+    this.selectedRotoMaterial = defferPerform(materialId => {
+      const { selectedRotoMaterial } = this.props;
+
+      this.switchToVisibleFrameImg();
+      selectedRotoMaterial(materialId);
+    }, 10);
+
+    // 选中抠像素材
+    this.selectedRotoMaterialHandle = (materialId) => {
+      const { cancelSelectedRotoMaterial } = this.props;
+
+      this.selectedRotoMaterial(materialId);
+      cancelSelectedRotoMaterial();
     };
   }
 
@@ -77,7 +98,7 @@ class Matting extends Component {
       <div className={ rotoStyle[ 'canvas-inner-w' ] } style={{ transform: `translate(${ moveParam.x }px, ${ moveParam.y }px` }}>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
           { show
-            ? (<MaterialList />)
+            ? (<MaterialList onSelectedRotoMaterial={ this.selectedRotoMaterialHandle } />)
             : !rfa.length
               ? (<RotoMaterialAdd openMaterialList={ this.openMaterialListComponent } />)
               : !isSelected
@@ -135,7 +156,7 @@ class Matting extends Component {
                   {/* 扣像素材列表 */}
                   <RotoMaterialList
                     onOpenMaterialList={ this.openMaterialListComponent }
-                    onOpenVisibleFrameImg={ this.openVisibleFrameImg } />
+                    onSelectedRotoMaterial={ this.selectedRotoMaterialHandle } />
                 </div>
                 <div className={ rotoStyle[ 'middle' ] }>
                   <div className={ rotoStyle[ 'middle-inner' ] }>
@@ -185,8 +206,11 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    { configureMove },
+  bindActionCreators({
+    configureMove,
+    cancelSelectedRotoMaterial,
+    selectedRotoMaterial
+  },
     dispatch
   );
 
