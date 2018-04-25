@@ -153,7 +153,7 @@ class RotoOperationBox extends Component {
 
         // 如果选中了点
         if (entryIds.length > 1) {
-          pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ], pointSelectedId = +entryIds[ 2 ]//, type = entryIds[ 2 ], realPointId = entryIds[3];
+          pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ], pointSelectedId = +entryIds[ 2 ], type = +entryIds[ 3 ]//, type = entryIds[ 2 ], realPointId = entryIds[3];
           // pathId = pathId.charAt(0) === 'c' ? +pathId.slice(2) : +pathId;
           // pointId = pointId.charAt(0) === 'c' ? +pointId.slice(2) : +pointId;
           path = findItem(pathData.list, 'id', pathId);
@@ -189,7 +189,7 @@ class RotoOperationBox extends Component {
             } else {
               pointSelected = findItem(path.points, 'id', pointSelectedId);
               path.points = this.clearPointSelected(path.points);
-              point.type = 1;
+              point.type = type;
               point.liveControlPointId = pointSelected.id === point.id ? point.id : pointSelected.id;
             }
 
@@ -198,7 +198,6 @@ class RotoOperationBox extends Component {
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
           this.configurePathDataList(updateObj[ 'path_selected' ]);
-          console.log(path.points, 'pps');
         }
         // 如果选中了path
         else if (entryIds.length === 1) {
