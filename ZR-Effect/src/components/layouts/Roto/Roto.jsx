@@ -129,31 +129,38 @@ class Matting extends Component {
           </div>
           <div className={ rotoStyle[ 'header-bottom-bar' ] }></div>
           <div className={ rotoStyle[ 'content' ] }>
-            <div className={ rotoStyle[ 'left' ] }>
-              {/* 扣像素材列表 */}
-              <RotoMaterialList
-                onOpenMaterialList={ this.openMaterialListComponent }
-                onOpenVisibleFrameImg={ this.openVisibleFrameImg } />
-            </div>
-            <div className={ rotoStyle[ 'middle' ] }>
-              <div className={ rotoStyle[ 'middle-inner' ] }>
-                <div ref={ el => this.middleEl = el } className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
-                  {/* 画布、素材列表、上传 */}
-                  { this.getMiddleComponent(rfa, show, zoomValue, isSelected) }
+            <div className={ rotoStyle[ 'content-inner' ] }>
+              <div className={ rotoStyle[ 'area' ] }>
+                <div className={ rotoStyle[ 'left' ] }>
+                  {/* 扣像素材列表 */}
+                  <RotoMaterialList
+                    onOpenMaterialList={ this.openMaterialListComponent }
+                    onOpenVisibleFrameImg={ this.openVisibleFrameImg } />
                 </div>
-
-                {/* 扣像工具条 */}
-                { show || !rfa.length
-                  ? void 0
-                  : (
-                      <div className={ rotoStyle[ 'toolbar' ] }>
-                        <RotoToolbar />
-                      </div>
-                    )
-                }
+                <div className={ rotoStyle[ 'middle' ] }>
+                  <div className={ rotoStyle[ 'middle-inner' ] }>
+                    <div ref={ el => this.middleEl = el } className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
+                      {/* 画布、素材列表、上传 */}
+                      { this.getMiddleComponent(rfa, show, zoomValue, isSelected) }
+                    </div>
+                    {/* 扣像工具条 */}
+                    { show || !rfa.length
+                      ? void 0
+                      : (
+                          <div className={ rotoStyle[ 'toolbar' ] }>
+                            <RotoToolbar />
+                          </div>
+                        )
+                    }
+                  </div>
+                </div>
               </div>
+              {/* 扣像帧处理 */}
+              { show || !rfa.length
+                ? void 0
+                : (<div className={ rotoStyle[ 'footer' ] }></div>)
+              }
             </div>
-
             {/* 扣像操作面板 */}
               { show || !rfa.length
                 ? void 0
@@ -162,13 +169,6 @@ class Matting extends Component {
                   </div>)
               }
           </div>
-
-          {/* 扣像帧处理 */}
-          { show || !rfa.length
-            ? void 0
-            : (<div className={ rotoStyle[ 'footer' ] }></div>)
-          }
-
         </div>
       </div>
     );
