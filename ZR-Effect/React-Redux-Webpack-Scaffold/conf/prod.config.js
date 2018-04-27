@@ -19,7 +19,7 @@ baseConfig.output.chunkFilename = '[name].[chunkhash:6].js';
  * devtool config
  * @type { String }
  */
-baseConfig.devtool = 'cheap-eval-source-map';
+baseConfig.devtool = 'cheap-source-map';
 
 /**
  * loader config
