@@ -78,14 +78,9 @@ baseConfig.plugins.push(
   }),
   // 定义生产环境的host
   new webpack.DefinePlugin({
-<<<<<<< HEAD
-    host: JSON.stringify('192.168.3.116'),
-    port: 8888,
-    path: JSON.stringify('/api/1')
-=======
     host: JSON.stringify('http://192.168.3.116'),
+    path: JSON.stringify('/api/1'),
     port: 8899
->>>>>>> 4f860fe0cbd39f13096a4f367a4edb58600e0bbb
   })
 );
 
