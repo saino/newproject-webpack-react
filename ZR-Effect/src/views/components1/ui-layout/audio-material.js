@@ -5,9 +5,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import work, { changeWorkMaterial } from '../../../stores/reducers/work';
-import { changeMaterial } from '../../../stores/reducers/material'
+import { deleteMaterial } from '../../../stores/reducers/material'
 
-import dongfengpo from '../../statics/dongfengpo.mp3';
+// import dongfengpo from '../../statics/dongfengpo.mp3';
+import moment from "moment";
+import config from "../../../config"
 
 class AddMaterial extends Component {
     constructor(){
@@ -27,20 +29,38 @@ class AddMaterial extends Component {
             showUse: false
         });
     }
+    showTime = () => {
+        const { model } = this.props;
+        const { properties } = model;
+        if (model.type === "image") {
+            return "";
+        }
+
+        const formatTime = moment.duration(properties.duration * 1000);
+        return `${formatTime.hours() < 10 ? "0" + formatTime.hours() : formatTime.hours()} :
+                ${formatTime.minutes() < 10 ? "0" + formatTime.minutes() : formatTime.minutes()} :
+                ${formatTime.seconds() < 10 ? "0" + formatTime.seconds() : formatTime.seconds()}`;
+
+    }
     render () {
         const useClass = "audio-use " + (this.state.showUse ? "show" : "hide");
+        const { model } = this.props;
+        const { properties } = model;
         return <div className="audio-item" onMouseOver={this.onShowUse} onMouseOut={this.onHideUse}>
             <div className="audio-control">
                 <div className="audio-play" onClick={this.onAudioPlayClick}>{this.state.play ? <Icon type="pause" /> : <Icon type="caret-right" /> }</div>
                 <Progress className="audio-progress" percent={30} size="small" showInfo={false} strokeWidth={5}/>
             </div>
             <div className="name-edit" onMouseOver={this.onNameMouseOver}>
-                <div className="audio-name">音频名称{this.props.model.id}</div>
-                <div className="audio-detail">mp4 450K 12::45:36</div>
-                <audio ref="audio" style={{display:"none"}} src={dongfengpo} controls/>
+                <div className="audio-name">{model.name}</div>
+                <div className="audio-detail">{`
+                    ${properties.format} 
+                    ${Math.round(properties.filesize / 1024)}K 
+                    ${this.showTime()}
+                `}</div>
+                <audio ref="audio" style={{ display: "none" }} src={`${config.proxyTarget.host}:${config.proxyTarget.port}${model.path}`} controls/>
             </div>
             <div className={useClass}>
-                {/* <div className="use-item" onClick={this.onPreViewClick}>预览</div> */}
                 <div className="use-item" onClick={this.onUseClick}>使用</div>
                 <div className="use-item" onClick={this.onDeleClick}>删除</div>
             </div>
@@ -117,40 +137,36 @@ class AddMaterial extends Component {
     }
 
     onUseClick = () => {
-        const { model, work1 } = this.props;
+        const { model, work } = this.props;
+        const materials = work.config.materials.map((material) => {
+            material.active = false;
+            return material;
+        });
         let materialItem = {
             ...model,
             materialId: model.id,
             id: new Date().getTime(),
-            order: 10,
-
             timeEnd: {
                 hour: "",
                 minute: "",
                 second: "",
                 millisecond: "",
             },
-            active: false,
+            active: true,
             timeStart: {
-                hour: "",
-                minute: "",
-                second: "",
-                millisecond: "",
+                hour: 0,
+                minute: 0,
+                second: 0,
+                millisecond: 0,
             }
         }
-        work1.material.push(materialItem);
-        this.props.changeWorkMaterial(work1.material);
+        materials.push(materialItem);
+        this.props.changeWorkMaterial(materials);
+        this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
     onDeleClick = () => {
-        const {material, model} = this.props;
-        const temMaterial = material.reduce((temMaterial, materialItem)=>{
-            if(materialItem.id === model.id){
-                return temMaterial;
-            }
-            temMaterial.push(materialItem);
-            return temMaterial;
-        }, []);
-        this.props.changeMaterial(temMaterial);
+        const { model } = this.props;
+        this.props.deleteMaterial(model);
     }
     onAudioPlayClick = () => {
         if(this.state.play){
@@ -164,16 +180,16 @@ class AddMaterial extends Component {
     }
 }
 
-const mapStateToProps = ({ material, work1}) => {
+const mapStateToProps = ({ material, work}) => {
     return {
         material,
-        work1
+        work
     };
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch),
         changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
+        deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
     }
 }
 

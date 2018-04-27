@@ -51,6 +51,9 @@ class MaterialBtn extends Component {
                 }
                 .thum-warp{
                     display: flex;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                 }
                 .thum-icon{
                     height: 12px;
@@ -63,8 +66,8 @@ class MaterialBtn extends Component {
     onDeleMaterialClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        const {work1, model} = this.props;
-        let materials = work1.material.reduce((materials, materialItem, index)=>{
+        const {work, model} = this.props;
+        let materials = work.config.materials.reduce((materials, materialItem, index)=>{
             if(materialItem.id!==model.id){
                 materials.push(materialItem);
             }
@@ -73,21 +76,21 @@ class MaterialBtn extends Component {
         this.props.changeWorkMaterial(materials);
     }
     onMaterialClick = () => {
-        const {work1, model} = this.props;
-        var material = work1.material.map((materialItem, index)=>{
+        const {work, model} = this.props;
+        let materials = work.config.materials.map((materialItem, index)=>{
             materialItem.active = false;
             if(materialItem.id===model.id){
                 materialItem.active = true;
             }
             return materialItem;
         });
-        this.props.changeWorkMaterial(material);
+        this.props.changeWorkMaterial(materials);
     }
 }
 
-const mapStateToProps = ({work1}) => {
+const mapStateToProps = ({work}) => {
     return {
-        work1
+        work
     };
 }
 

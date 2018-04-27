@@ -5,8 +5,10 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { changeWork } from "../../../stores/reducers/work";
 
-import aaaVideo from "../../statics/aaa.mp4";
-import bbbVideo from "../../statics/bbb.mp4";
+import config from "../../../config"
+
+// import aaaVideo from "../../statics/aaa.mp4";
+// import bbbVideo from "../../statics/bbb.mp4";
 import cccImg from "../../statics/def-work.jpg";
 import 'yuki-createjs'
 
@@ -62,9 +64,9 @@ class StageContainer extends Component {
     }
 
     getAllVideo = () => {
-        const { work1 } = this.props;
-        const { video } = work1;
-        return video.sort((video1,video2)=>{
+        const { work } = this.props;
+        const { videos } = work.config;
+        return videos.sort((video1,video2)=>{
             return video1.order - video2.order
         });
     }
@@ -87,12 +89,8 @@ class StageContainer extends Component {
 
                 }
             }
-
-            if(index%2){
-                videoItemDOM.src = bbbVideo;
-            }else{
-                videoItemDOM.src = aaaVideo;
-            }
+            videoItemDOM.setAttribute("crossOrigin", "use-credentials");
+            videoItemDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${videoItem.path}`;
             return videoItemDOM
         });
     }
@@ -120,9 +118,9 @@ class StageContainer extends Component {
      * 获取作品的视频素材和音频素材
      */
     getWorkMaterials = () => {
-        const { work1 } = this.props;
-        const { material } = work1;
-        const videoAndImagMaterial = material.filter((materialItem, index) => {
+        const { work } = this.props;
+        const { materials } = work.config;
+        const videoAndImagMaterial = materials.filter((materialItem, index) => {
             materialItem.durationStart = this.getTimeDuration(materialItem.timeStart);
             materialItem.durationEnd = this.getTimeDuration(materialItem.timeEnd);
 
@@ -141,9 +139,21 @@ class StageContainer extends Component {
             const materialContainer = new createjs.Container();
             materialContainer.x = materialItem.positionX;
             materialContainer.y = materialItem.positionY;
-            const materialImg = new createjs.Bitmap(cccImg);
-            // const materialImg = new createjs.Bitmap(materialItem.path);
-            materialContainer.addChild(materialImg);
+
+            if(materialItem.type === "image"){
+                let imgDOM = document.createElement("IMG");
+                imgDOM.setAttribute("crossOrigin", "use-credentials");
+                imgDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${materialItem.path}`;
+                const materialImg = new createjs.Bitmap(imgDOM);
+                materialContainer.addChild(materialImg);
+            }else{
+                let videoDOM = document.createElement("VIDEO");
+                videoDOM.setAttribute("crossOrigin", "use-credentials");
+                videoDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${materialItem.path}`;
+                const materialImg = new createjs.Bitmap(videoDOM);
+                materialContainer.addChild(materialImg);
+            }
+
             materialContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, null, "currentTarget"));
             materialContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, null, "currentTarget"));
             return materialContainer;
@@ -154,6 +164,7 @@ class StageContainer extends Component {
         if (!currentVideo) {
             return;
         }
+        
         this.videoImg = new createjs.Bitmap(currentVideo);
         this.videoContainer.removeAllChildren();
         this.videoContainer.addChild(this.videoImg);
@@ -162,7 +173,7 @@ class StageContainer extends Component {
         this.stage.addChild(this.videoContainer);
         
 
-        if (this.props.work1.videoPlay) {
+        if (this.props.work.config.properties.videoPlay) {
             // currentVideo.currentTime = this.state.currentVideoDOMTime;
             currentVideo.play();
         } else {
@@ -197,7 +208,7 @@ class StageContainer extends Component {
      */
     videoPlaying = () => {
         //如果 视频已经全部加载完 并且 作品处于播放状态
-        if ((this.allVideoLoaded()) && (this.props.work1.videoPlay)){
+        if ((this.allVideoLoaded()) && (this.props.work.config.properties.videoPlay)){
             const currentVideo = this.getCurrentVideo();
             //若 当前视频播放完毕则设置当前视频播放索引为一个视频的索引 循环播放
             if (currentVideo.currentTime === currentVideo.duration){
@@ -270,8 +281,9 @@ class StageContainer extends Component {
         }
     }
     render() {
-        const { work1 } = this.props;
-        return <canvas style={{transform: `scale(${work1.scaleX},${work1.scaleY})`}} ref="stageCanvas" id="mycanvas" className="background-stage" width="800" height="400">
+        const { work } = this.props;
+        const { properties  } = work.config;
+        return <canvas style={{ transform: `scale(${properties.scale},${properties.scale})` }} ref="stageCanvas" id="mycanvas" className="background-stage" width={`${properties.width}`} height={`${properties.height}`}>
             <style>{`
                 .background-stage{
                     // height: 100%;
@@ -286,9 +298,9 @@ class StageContainer extends Component {
     }
 }
 
-const mapStateToProps = ({ work1 }) => {
+const mapStateToProps = ({ work }) => {
     return {
-        work1
+        work
     }
 }
 const mapDispatchToProps = (dispatch) => {

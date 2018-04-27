@@ -10,9 +10,9 @@ import { changeWorkMaterial } from '../../../stores/reducers/work'
 class EditArea extends Component{
 
     getcurrentmaterial() {
-        const { work1 } = this.props;
-        const { material } = work1;
-        const currentMaterial = material.filter(materialItem => materialItem.active)[0];
+        const { work } = this.props;
+        const { materials } = work.config;
+        const currentMaterial = materials.filter(materialItem => materialItem.active)[0];
         return currentMaterial;
     }
     render(){
@@ -107,7 +107,7 @@ class EditArea extends Component{
     }
     audioControl() {
         const currentMaterial = this.getcurrentmaterial();
-        const { duration } = this.props.work1;
+        const { duration } = this.props.work.config.properties;
         return (<div>
             <div className="audio-loop">
                 循环播放 
@@ -125,7 +125,7 @@ class EditArea extends Component{
     }
     imageControl() {
         const currentMaterial = this.getcurrentmaterial();
-        const { duration } = this.props.work1;
+        const { duration } = this.props.work.config.properties;
         return (<div>
             <div className="control">
                 <div className="input-number-warp">宽<InputNumber className="input-number" min={0} value={currentMaterial.width} onChange={this.onWorkPropChange("width")}/></div>
@@ -143,7 +143,7 @@ class EditArea extends Component{
     }
     videoControl() {
         const currentMaterial = this.getcurrentmaterial();
-        const { duration } = this.props.work1;
+        const { duration } = this.props.work.config.properties;
         return (<div>
             <div className="control">
                 <div className="input-number-warp">宽<InputNumber className="input-number" min={0} value={currentMaterial.width} onChange={this.onWorkPropChange("width")} /></div>
@@ -169,9 +169,9 @@ class EditArea extends Component{
     }
 }
 
-const mapStateToProps = ({work1}) => {
+const mapStateToProps = ({work}) => {
     return {
-        work1
+        work
     };
 }
 const mapDispatchToProps = (dispatch) => {

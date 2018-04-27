@@ -3,12 +3,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { changeWorkMaterial, changWorkVideo } from '../../../stores/reducers/work';
-import { changeMaterial } from '../../../stores/reducers/material'
+import { changeMaterial, deleteMaterial } from '../../../stores/reducers/material'
+// deleteVideoMaterial: bindActionCreators(deleteVideoMaterial, dispatch)
+// import { deleteVideoMaterial } from "../../../stores/reducers/video-mateiral"
 
 import AlertView from "./alert-view";
+import config from "../../../config"
 // import video1 from '../../statics/aaa.mp4';
 // import aaa from "../../statics/aaa.png";
 import PreView from "./pre-view"
+import moment from 'moment'
 // import {ClassNames} from "class-name"
 
 class VideoMaterial extends Component {
@@ -28,13 +32,35 @@ class VideoMaterial extends Component {
             showUse: false
         });
     }
+    showTime = () => {
+        const { model } = this.props;
+        const { properties } = model;
+        if(model.type === "image"){
+            return "";
+        }
+
+        const formatTime = moment.duration(properties.duration * 1000);
+        return `${formatTime.hours() < 10 ? "0" + formatTime.hours() : formatTime.hours()} :
+                ${formatTime.minutes() < 10 ? "0" + formatTime.minutes() : formatTime.minutes()} :
+                ${formatTime.seconds() < 10 ? "0" + formatTime.seconds() : formatTime.seconds()}`;
+
+    }
     render(){
+        const { model } = this.props;
+        const { properties } = model;
+        const formatTime = moment.duration(properties.duration*1000);
         const useClass = "video-use " + (this.state.showUse ? "show" : "hide");
         return <div className="video-item" onMouseOver={this.onShowUse} onMouseOut={this.onHideUse}>
-            <div className="video-thumb"></div>
+            <div className="video-thumb">
+                <img src={`${config.proxyTarget.host}:${config.proxyTarget.port}${config.proxyTarget.path}/materials/${model.id}/thumb.jpg`}/>
+            </div>
             <div className="name-edit" onMouseOver={this.onNameMouseOver}>
-                <div className="video-name">这里是作品名称{this.props.model.id}</div>
-                <div className="video-detail">mp4 24K 12:13:00</div>
+                <div className="video-name">{model.name}</div>
+                <div className="video-detail">{`
+                    ${properties.format} 
+                    ${Math.round(properties.filesize / 1024)}K 
+                    ${this.showTime()}
+            `}</div>
             </div>
             <div className={useClass}>
                 <div className="use-item" onClick={this.onPreViewClick}>预览</div>
@@ -105,13 +131,18 @@ class VideoMaterial extends Component {
     }
     onUseClick = () => {
         const { useType } = this.props;
+        
+        //为作品添加素材
         if(useType.indexOf("image")>=0){
-
+            const materials = this.props.work.config.materials.map((material) => {
+                material.active = false;
+                return material;
+            });
             let materialItem = {
                 ...this.props.model,
                 materialId: this.props.model.id,
                 id: new Date().getTime(), 
-                order: 10, 
+                order: materials.length+1, 
                 positionX: 0,
                 positionY: 0,
                 rotateZ: 0,
@@ -129,7 +160,7 @@ class VideoMaterial extends Component {
                     second: "",
                     millisecond: "",
                 },
-                active: false,
+                active: true,
                 timeStart: {
                     hour: 0,
                     minute: 0,
@@ -137,41 +168,32 @@ class VideoMaterial extends Component {
                     millisecond: 0,
                 }
             };
-            const {material} = this.props.work1;
-            material.push(materialItem);
-            this.props.changeWorkMaterial(material);
-            return;
-        }else{
+            
+            materials.push( materialItem );
+            this.props.changeWorkMaterial(materials);
+        }else{  //为作品添加主视频
+            const { videos } = this.props.work.config;
             let materialItem = {
                 ...this.props.model,
                 materialId: this.props.model.id,
                 id: new Date().getTime(),
-                order:10,
-
+                order: videos.length+1,
             }
-            const { video } = this.props.work1;
-            video.push(materialItem);
-            this.props.changWorkVideo(video);
+            videos.push(materialItem);
+            this.props.changWorkVideo(videos);
         }
-        
+        this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
     onDeleClick = () => {
-        const { material, model } = this.props;
-        const temMaterial = material.reduce((temMaterial, materialItem1)=>{
-            if(materialItem1.id === model.id){
-                return temMaterial;
-            }
-            temMaterial.push(materialItem1);
-            return temMaterial;
-        }, []);
-        this.props.changeMaterial(temMaterial);
+        const { model } = this.props;
+        this.props.deleteMaterial(model);
     }
 }
 
-const mapStateToProps = ({work1, material}) => {
+const mapStateToProps = ({work, material}) => {
     return {
-        work1,
-        material
+        work,
+        material,
     };
 } 
 
@@ -179,7 +201,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
         changeMaterial: bindActionCreators(changeMaterial, dispatch),
-        changWorkVideo: bindActionCreators(changWorkVideo, dispatch)
+        changWorkVideo: bindActionCreators(changWorkVideo, dispatch),
+        deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
+        // deleteVideoMaterial: bindActionCreators(deleteVideoMaterial, dispatch),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(VideoMaterial);
