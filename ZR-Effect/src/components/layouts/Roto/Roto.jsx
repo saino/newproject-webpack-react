@@ -7,6 +7,7 @@ import { findItem } from '../../../utils/array-handle';
 /* 路由跳转前验证 -- end */
 import defferPerform from '../../../utils/deffer-perform';
 import { configureMove, cancelSelectedRotoMaterial, selectedRotoMaterial } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { Icon } from 'antd';
 import Draggable from 'react-draggable';
 import rotoStyle from './roto.css';
 import Scale from '../../commons/Scale';
@@ -18,6 +19,9 @@ import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 import RotoOperationBox from './RotoOperationBox/RotoOperationBox';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
+import inputPNG from './input.png';
+import nextPNG from './next.png';
+import prevPNG from './prev.png';
 
 class Matting extends Component {
   constructor(props) {
@@ -181,8 +185,13 @@ class Matting extends Component {
               { show || !rfa.length
                 ? void 0
                 : (<div className={ rotoStyle[ 'footer' ] }>
+                    <div className={ rotoStyle[ 'frame-player' ] }>
+                      <i className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
+                      <i><Icon type="play-circle-o" style={{ fontSize: 21, color: '#fff' }} /></i>
+                      <i className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
+                    </div>
                     <Scale
-                      currTick={ 30 }
+                      currTick={ 40 }
                       maxTick={ 100 }
                       onEnd={ tick => { console.log(tick, '结束'); } }
                       onChangeTick={ tick => { console.log(tick, '改变中') } } />

@@ -109,3 +109,23 @@
   padding-left: 33px;
   background: #0e1b20;
 }
+
+.frame-player {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  height: 37px;
+}
+
+.frame-player i {
+  font-style: normal;
+  cursor: pointer;
+}
+
+.frame-player .prev {
+  margin-right: 15px;
+}
+
+.frame-player .next {
+  margin-left: 15px;
+}
