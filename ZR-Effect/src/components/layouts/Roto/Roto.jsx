@@ -66,7 +66,7 @@ class Matting extends Component {
     // 选中抠像素材
     this.selectedRotoMaterialHandle = (materialId) => {
       const { cancelSelectedRotoMaterial } = this.props;
-
+      console.log(materialId, 'mmmid');
       this.selectedRotoMaterial(materialId);
       cancelSelectedRotoMaterial();
     };

@@ -29,17 +29,17 @@ class MaterialList extends Component {
     // 上传成功
     this.fileUploadSuccessHandle = (resp) => {
       this.setState({
-        uploadingPercent: 100,
+        uploadingPercent: 101,
         uploadSituation: 0
-      });
+      }, () => this.uploadMaterial());
     };
 
     // 上传失败
     this.fileUploadFailHandle = () => {
       this.setState({
-        uploadingPercent: 100,
+        uploadingPercent: 101,
         uploadSituation: 1
-      }, () => this.uploadMaterial());
+      });
     };
 
     this.checkMaterialItemHandle = materialId => {
@@ -75,13 +75,11 @@ class MaterialList extends Component {
           "height": 480
       }
     });
+
     const { uploadMaterial, onSelectedRotoMaterial } = this.props;
-    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId));
-    const deferCheckRotoMaterial = defferPerform(materialId => {
-      this.checkMaterialItemHandle(materialId);
-      deferSelectedRotoMaterial(materialId);
-    }, 30);
-    const defer = defferPerform(() => {
+    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 50);
+    const deferCheckRotoMaterial = defferPerform(materialId => this.checkMaterialItemHandle(materialId), 30);
+    const deferUpload = defferPerform(() => {
       this.setState({
         uploadingPercent: 0
       }, () => {
@@ -91,7 +89,7 @@ class MaterialList extends Component {
       });
     }, 100);
 
-    defer();
+    deferUpload();
   }
 
   getChildComponent() {

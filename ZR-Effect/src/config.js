@@ -56,7 +56,7 @@ export default ({
     // 配置文件上传参数
     configureFileUpload(options) {
       return {
-        baseUrl: `${host}:${port}${path }/user/uploadMaterial`,
+        baseUrl: `${ host }:${ port }${ path }/user/uploadMaterial`,
         fileFieldName: 'file',
         multiple: false,
         chooseAndUpload: true,
