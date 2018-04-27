@@ -18,16 +18,16 @@ class OperationArea extends Component {
 
     constructor(){
         super();
-        this.state = {
-            videoPX: "this.props.work1.videoPX",
-            videoType: "this.props.work1.videoType"
-        }
+        // this.state = {
+        //     videoPX: "this.props.work1.videoPX",
+        //     videoType: "this.props.work1.videoType"
+        // }
     }
     componentWillMount(){
-        this.setState({
-            videoPX: this.props.work1.videoPX,
-            videoType: this.props.work1.videoType
-        });
+        // this.setState({
+        //     videoPX: this.props.work.videoPX,
+        //     videoType: this.props.work.videoType
+        // });
     }
 
     render() {
@@ -37,15 +37,11 @@ class OperationArea extends Component {
             <div className="operation-bank"></div>
             <div className="operation-btn2" onClick={this.onMaterialLibClick}>素材库</div>
             <div className="operation-btn2" onClick={this.onAudioLibClick}>音频库</div>
-            {/* <div className="operation-transform"><img src={TransformImg}/></div> */}
             <div className="operation-icons">
                 <div><img className="operation-icon" src={CancelImg} /></div>
                 <div><img className="operation-icon" src={MoveImg} /></div>
                 <div><img className="operation-icon" onClick={this.onZoomInClick} src={ZoomInImg} /></div>
                 <div><img className="operation-icon" onClick={this.onZoomOutClick} src={ZoomOutImg} /></div>
-                {/* <img className="operation-icon" src={MoveImg} />
-                <img className="operation-icon" src={ZoomInImg} />
-                <img className="operation-icon" src={ZoomOutImg} /> */}
             </div>
             <style>{`
                 .operation-area{
@@ -100,28 +96,26 @@ class OperationArea extends Component {
         </div>
     }
     onZoomInClick = () => {
-        const { work1 } = this.props;
-        work1.scaleX = work1.scaleX + 0.05;
-        work1.scaleY = work1.scaleY + 0.05;
-        this.props.changeWork(work1);
+        const { work } = this.props;
+        work.config.properties.scale += 0.05;
+        this.props.changeWork(work);
     }
     onZoomOutClick = () => {
-        const { work1 } = this.props;
-        work1.scaleX = work1.scaleX - 0.05;
-        work1.scaleY = work1.scaleY - 0.05;
-        this.props.changeWork(work1);
+        const { work } = this.props;
+        work.config.properties.scale -= 0.05;
+        this.props.changeWork(work);
     }
     renderAlert = () => {
         return <div className="alert-view-container">
             <div className="alert-view-title">视频发布为<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
             <div className="alert-view-content">
                 <div className="video-PX">
-                    <select onChange={this.onVideoPXChange} defaultValue={this.props.work1.videoPX}>
+                    <select onChange={this.onVideoPXChange} defaultValue={this.props.work.videoPX}>
                         <option value="px1">800*400</option>
                         <option value="px2">960*540</option>
                         <option value="px3">1280*720</option>
                         <option value="px4">1920*1080</option>
-                        <option value="px4">2K</option>
+                        <option value="px5">2K</option>
                     </select>
                 </div>
                 <div className="video-type">
@@ -273,9 +267,9 @@ class OperationArea extends Component {
         this.props.changeaActiveContainer("audio", ["video", "image"]);
     }
 }
-const mapStateToProps = ({work1}) => {
+const mapStateToProps = ({work}) => {
     return {
-        work1
+        work
     };
 }
 const mapDispathcToProps = (dispatch) => {

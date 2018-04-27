@@ -32,6 +32,11 @@ export default ({
       'Content-Type': 'application/json; charset=UTF-8'
     }
   },
+  proxyTarget: {
+    host: "http://192.168.3.116",
+    path: "/data",
+    port: "8899",
+  },
   // 分页
   page: {
     size: 10

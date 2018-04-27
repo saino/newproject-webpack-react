@@ -60,15 +60,15 @@ class TimeArea extends Component {
         </div>
     }
     onPlayClick = () => {
-        this.props.changVideoPlay(!this.props.work1.videoPlay);
+        this.props.changVideoPlay(!this.props.work.config.properties.videoPlay);
     }
     onAddVideoClick = () => {
         this.props.changeaActiveContainer("material", ["video"]);
     }
 }
-const mapStateToProps = ({work1}) => {
+const mapStateToProps = ({work}) => {
     return {
-        work1
+        work
     };
 }
 const mapDispatchToProps = (dispatch) => {

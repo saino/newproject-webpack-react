@@ -5,7 +5,8 @@ import config from '../../../config';
 import VideoMaterial from "./video-material";
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
-import { changeMaterial } from "../../../stores/reducers/material"
+import { changeMaterial, loadMaterials } from "../../../stores/reducers/material"
+import { loadVideoMaterials } from '../../../stores/reducers/video-mateiral'
 import deleImg from "../../statics/dele.png";
 
 import "./audio-container.css";
@@ -17,18 +18,33 @@ class MaterialContainer extends Component {
         uploading: false,
         uploadProgress: 0
     }
-    // componentWillMount(){
-    //     console.log()
-    // }
+    componentWillMount(){
+        const { pagination } = this.props;
+        if (pagination.videoLibPage === 1){
+            this.props.loadVideoMaterials({
+                "types": "video",
+                "page": pagination.videoLibPage,
+                "prepage": 20
+            });
+        }
+        if (pagination.videoAndImgLibPage === 1){
+            this.props.loadMaterials({
+                "types": "video|image",
+                "page": pagination.videoAndImgLibPage,
+                "prepage": 20
+            });
+        }
+    }
 
-    getVideoMaterial() {
-        const { material, materialContainerType } = this.props;
-        return material.reduce((videoMaterial, materialItem) => {
-            if (materialContainerType.indexOf(materialItem.type)>=0) {
-                videoMaterial.push(materialItem);
-            }
-            return videoMaterial;
-        }, []);
+    getMaterial() {
+        const { material, videoMaterial, materialContainerType } = this.props;
+        const type = materialContainerType.join("|");
+        // console.log(type, "dffffffffffffff");
+        if(type === "video"){
+            return [...videoMaterial];
+        }else{
+            return [...material.filter(materialItem=>materialItem.type!=="audio")];
+        }
     }
 
     //选择文件之前
@@ -62,44 +78,27 @@ class MaterialContainer extends Component {
 
     //上传中
     _handleUploading = (progress) => {
-        // console.log("sssssssssss");
         const progressNum = parseInt(100 * progress.loaded / progress.total);
-        // console.log(progressNum);
         this.setState({
             uploadProgress: progressNum
         });
     }
     //上传成功
     _handleUploadSuccess = (resp) => {
-        console.log(resp);
         this.setState({
             uploadProgress: 100,
             progressState: "success",
         });
-        return;
-
-        const data = {
-            "id": new Date().getTime(),
-            "user_id": 52938,
-            "type": "video",
-            "status": 22771,
-            "path": "7Ak5CoLCfM",
-            "name": "上传的",
-            "properties": {
-                "length": 27145,
-                "time": 1522141212838,
-                "thumbnail": "B3IDRgiONk",
-                "width": 30317,
-                "height": 18410
-            }
-        }
-        const { material } = this.props;
-
-        const temMaterial = material.push(data);
-        // material
-
-        this.props.changeMaterial(temMaterial);
-        // this.props.onUploadMaterial(resp.data);
+        this.props.loadMaterials({
+            "types": "image|video",
+            "page": 1,
+            "perpage": 20
+        });
+        this.props.loadVideoMaterials({
+            "types": "video",
+            "page": 1,
+            "prepage": 20
+        })
         setTimeout(() => {
             this.setState({
                 uploading: false
@@ -108,29 +107,6 @@ class MaterialContainer extends Component {
     }
     //上传失败
     _handleUploadFailed = (resp) => {
-        console.log(resp, "dddddd");
-        return;
-        const data = {
-            "id": new Date().getTime(),
-            "user_id": 52938,
-            "type": "video",
-            "status": 22771,
-            "path": "7Ak5CoLCfM",
-            "name": "上传的",
-            "properties": {
-                "length": 27145,
-                "time": 1522141212838,
-                "thumbnail": "B3IDRgiONk",
-                "width": 30317,
-                "height": 18410
-            }
-        }
-        let { material } = this.props;
-
-        const temMaterial = material.push(data);
-        // material
-
-        this.props.changeMaterial(temMaterial);
         this.setState({
             uploadProgress: 0,
             progressState: "exception"
@@ -145,19 +121,23 @@ class MaterialContainer extends Component {
         this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
     render() { 
+        const {materialContainerType } = this.props;
+        let acceptType = "video/*";
+        if(materialContainerType.indexOf("image")>=0){
+            acceptType += ", image/*";
+        }
         const upLoadOptions = config.fileUpload.configureFileUpload({
-          accept: 'video/*, image/*',
-          beforeChoose: this._handleBeforeChoose,
-          chooseFile: this._handleChooseFile,
-          beforeUpload: this._handleBeforeUpload,
-          uploading: this._handleUploading,
-          /*上传成功*/
-          uploadSuccess: this._handleUploadSuccess,
-          /*xhr失败*/
-          uploadFail: this._handleUploadFailed,
-          uploadError: this._handleUploadFailed
+            accept: acceptType,
+            beforeChoose: this._handleBeforeChoose,
+            chooseFile: this._handleChooseFile,
+            beforeUpload: this._handleBeforeUpload,
+            uploading: this._handleUploading,
+            /*上传成功*/
+            uploadSuccess: this._handleUploadSuccess,
+            /*xhr失败*/
+            uploadFail: this._handleUploadFailed,
+            uploadError: this._handleUploadFailed
         });
-
         return <div className="material-container">
             <div className="title-name">我的素材</div>
             <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
@@ -171,8 +151,8 @@ class MaterialContainer extends Component {
                 </FileUpload>
 
                 {
-                    this.getVideoMaterial().map((material) => {
-                        return <VideoMaterial useType={this.props.materialContainerType} key={material.id} model={material} />
+                    this.getMaterial().map((material) => {
+                        return <VideoMaterial changeaActiveContainer={this.props.changeaActiveContainer} useType={this.props.materialContainerType} key={material.id} model={material} />
                     })
                 }
                 {
@@ -247,15 +227,19 @@ class MaterialContainer extends Component {
     }
 }
 
-const mapStateToProps = ({ material }) => {
+const mapStateToProps = ({ material, videoMaterial, pagination }) => {
     return {
-        material
+        material,
+        videoMaterial,
+        pagination
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+        changeMaterial: bindActionCreators(changeMaterial, dispatch),
+        loadMaterials: bindActionCreators(loadMaterials, dispatch),
+        loadVideoMaterials: bindActionCreators(loadVideoMaterials,dispatch),
     };
 }
 

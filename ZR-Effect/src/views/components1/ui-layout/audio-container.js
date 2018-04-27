@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import { connect} from "react-redux"
 import { bindActionCreators } from 'redux';
+import config from '../../../config';
 import AudioMaterial from "./audio-material";
 import "./audio-container.css";
 import AddMaterial from "../../statics/add-material.png";
@@ -8,7 +9,7 @@ import deleImg from "../../statics/dele.png";
 
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
-import { changeMaterial } from "../../../stores/reducers/material"
+import { changeMaterial, loadMaterials } from "../../../stores/reducers/material"
 
 class AudioContainer extends Component {
 
@@ -16,11 +17,21 @@ class AudioContainer extends Component {
         uploading: false,
         uploadProgress: 0
     }
+    componentWillMount(){
+        const { pagination } = this.props;
+        if (pagination.audioLibPage === 1) {
+            this.props.loadMaterials({
+                "type": "audio",
+                "page": pagination.audioLibPage,
+                "prepage": 20
+            });
+        }
+    }
     getAudioMaterial(){
         const { material } = this.props;
         return material.reduce((audioMaterial, materialItem)=>{
             if(materialItem.type==='audio'){
-                audioMaterial.push(materialItem);0
+                audioMaterial.push(materialItem);
             }
             return audioMaterial;
         }, []);
@@ -65,33 +76,15 @@ class AudioContainer extends Component {
     }
     //上传成功
     _handleUploadSuccess = (resp) => {
-
-        const data = {
-            "id": new Date().getTime(),
-            "user_id": 52938,
-            "type": "audio",
-            "status": 22771,
-            "path": "7Ak5CoLCfM",
-            "name": "上传的de",
-            "properties": {
-                "length": 27145,
-                "time": 1522141212838,
-                "thumbnail": "B3IDRgiONk",
-                "width": 30317,
-                "height": 18410
-            }
-        }
-        const { material } = this.props;
-
-        const temMaterial = material.push(data);
-
-        this.props.changeMaterial(temMaterial);
-
         this.setState({
             uploadProgress: 100,
             progressState: "success",
         });
-        // this.props.onUploadMaterial(resp.data);
+        this.props.loadMaterials({
+            "type": "audio",
+            "page": this.props.pagination.audioLibPage,
+            "prepage": 20
+        });
         setTimeout(() => {
             this.setState({
                 uploading: false
@@ -99,27 +92,7 @@ class AudioContainer extends Component {
         }, 200);
     }
     //上传失败
-    _handleUploadFailed = () => {
-        const data = {
-            "id": new Date().getTime(),
-            "user_id": 52938,
-            "type": "audio",
-            "status": 22771,
-            "path": "7Ak5CoLCfM",
-            "name": "上传的de",
-            "properties": {
-                "length": 27145,
-                "time": 1522141212838,
-                "thumbnail": "B3IDRgiONk",
-                "width": 30317,
-                "height": 18410
-            }
-        }
-        const { material } = this.props;
-        
-        const temMaterial = material.push(data);
-
-        this.props.changeMaterial(temMaterial);
+    _handleUploadFailed = (resp) => {
         this.setState({
             uploadProgress: 0,
             progressState: "exception"
@@ -134,19 +107,8 @@ class AudioContainer extends Component {
         this.props.changeaActiveContainer("stage");
     }
     render() {
-        const upLoadOptions = {
-            baseUrl: `./aa/user/uploadMaterial`,
-            paramAddToField: {
-                work_id: "this.props.workId"
-            },
-            fileFieldName: "file",
-            multiple: false,
+        const upLoadOptions = config.fileUpload.configureFileUpload({
             accept: 'audio/*',
-            requestHeaders: {
-                Token: "this.props.user.token",
-            },
-            chooseAndUpload: true,
-            wrapperDisplay: 'block',
             beforeChoose: this._handleBeforeChoose,
             chooseFile: this._handleChooseFile,
             beforeUpload: this._handleBeforeUpload,
@@ -156,8 +118,8 @@ class AudioContainer extends Component {
             /*xhr失败*/
             uploadFail: this._handleUploadFailed,
             uploadError: this._handleUploadFailed
-        }
-
+        });
+        
         return <div className="audio-container">
             <div className="title-name">我的音频</div>
             <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
@@ -172,22 +134,12 @@ class AudioContainer extends Component {
                 </FileUpload>
                 {
                     this.getAudioMaterial().map((material) => {
-                        return <AudioMaterial key={material.id} model={material} />
+                        return <AudioMaterial changeaActiveContainer={this.props.changeaActiveContainer} key={material.id} model={material} />
                     })
                 }
                 {
                     this.renderProgress()
                 }
-
-                {/* <div className="audio-item add-audio" onClick={this.onAddMaterialClick}>
-                    <img src={AddMaterial}/>
-                </div>
-                {
-                    this.getAudioMaterial().map((material)=>{
-                        return <AudioMaterial key={material.id} model={material} />
-                    })
-                } */}
-                {/* <AudioMaterial/> */}
             </div>
             <style>{`
                 .audio-container{
@@ -257,15 +209,17 @@ class AudioContainer extends Component {
 
 }
 
-const mapStateToProps = ({material}) => {
+const mapStateToProps = ({ material, pagination}) => {
     return {
-        material
+        material,
+        pagination
     };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeMaterial: bindActionCreators(changeMaterial, dispatch)
+        changeMaterial: bindActionCreators(changeMaterial, dispatch),
+        loadMaterials: bindActionCreators(loadMaterials, dispatch)
     };
 }
 

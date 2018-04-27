@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import LoginPage from '../components/layouts/LoginPage/LoginPage';
 import RegisterPage from '../components/layouts/RegisterPage/RegisterPage';
 
-// import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import HeaderNav from "./components1/ui-layout/header-nav"
 import Header from '../components/containers/Header/Header';
@@ -22,7 +21,8 @@ import StageContainer from "./components1/ui-layout/stage-container";
 import MaterialContainer from "./components1/ui-layout/material-container";
 import AudioContainer from "./components1/ui-layout/audio-container";
 
-import { loadMaterials } from "../stores/reducers/material"
+// import { loadMaterials } from "../stores/reducers/material"
+import { createWork } from "../stores/reducers/work";
 
 class SpecialEffec extends Component {
 
@@ -39,15 +39,25 @@ class SpecialEffec extends Component {
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
     componentWillMount(){
-        this.props.loadMaterials({
-            "types": "image|video|audio",
-            "page": 1,
-            "perpage": 20
+        this.props.createWork({
+            name: "自定义作品",
+            config: {
+                videos: [],
+                materials: [],
+                properties: {
+                    height: "400",
+                    width: "800",
+                    scale: 1,
+                    videoPlay: false,
+                    duration: 0,
+                }
+            }
         });
     }
 
     render(){
-        const { video, material, workName } = this.props.work1;
+        const { work } = this.props;
+        const { videos, materials, properties } = work.config;
         const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return (
             <div className="warp">
@@ -60,12 +70,12 @@ class SpecialEffec extends Component {
                 </div>
                 <Container>
                     <div className="container-layout"> 
-                        <MaterialArea material={material} changeaActiveContainer={this.changeaActiveContainer}></MaterialArea>
+                        <MaterialArea materials={materials} changeaActiveContainer={this.changeaActiveContainer}></MaterialArea>
                         <StageArea>
                             {this.renderContainer()}
                         </StageArea>
                         <OperationArea changeaActiveContainer={this.changeaActiveContainer}></OperationArea>
-                        <EditArea material={material}></EditArea>
+                        <EditArea materials={materials}></EditArea>
                     </div>
                     <TimeArea changeaActiveContainer={this.changeaActiveContainer}></TimeArea>
                 </Container>
@@ -126,14 +136,15 @@ class SpecialEffec extends Component {
     }
 }
 
-const mapStateToProps = ({ work1 }) => {
+const mapStateToProps = ({ work }) => {
     return {
-        work1
+        work
     };
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        loadMaterials: bindActionCreators(loadMaterials, dispatch)
+        // loadMaterials: bindActionCreators(loadMaterials, dispatch),
+        createWork: bindActionCreators(createWork, dispatch)
     }
 }
 

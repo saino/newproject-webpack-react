@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import MaterialBtn from "./material-btn";
 import AddImg from "../../statics/add.png"
 
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { loadMaterials } from "../../../stores/reducers/material"
+// import { bindActionCreators } from 'redux';
+// import { connect } from 'react-redux';
+// import { loadMaterials } from "../../../stores/reducers/material"
 class MaterialArea extends Component {
 
     // componentDidUpdate() {
@@ -16,11 +16,11 @@ class MaterialArea extends Component {
         // });
     // }
     render() {
-        const { material } = this.props;
+        const { materials } = this.props;
         return <div className="material-area">
             <div className="add-material" onClick={this.addMaterialClick}>素材<div><img src={AddImg} /></div></div>
             {
-                material.map((model, index) => {
+                materials.map((model, index) => {
                     return <MaterialBtn key={index} model={model}/>
                 })
             }
@@ -53,9 +53,9 @@ class MaterialArea extends Component {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        loadMaterials: bindActionCreators(loadMaterials, dispatch)
-    }
-}
-export default connect(null, mapDispatchToProps)(MaterialArea);
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         loadMaterials: bindActionCreators(loadMaterials, dispatch)
+//     }
+// }
+export default MaterialArea;

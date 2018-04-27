@@ -33,12 +33,33 @@ baseConfig.devServer = {
   open: true,
   stats: { colors: true },
   proxy: {
-    '/api/*': {
-      target: 'http://192.168.3.116:8899',
-      rewrite: true,
-      secure: false,
-      changeOrigin: true
-    }
+    // "/data/materials/*": {
+    //   "target": "http://192.168.3.116:8899",
+    //   "Access-Control-Allow-Origin": "*",
+    //   "Access-Control-Allow-Methods": "GET,OPTIONS,HEAD,PUT,POST,DELETE,PATCH",
+    //   "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, X-Request-With, Cookie",
+    //   "Access-Control-Allow-Credentials": "true",
+    // },
+    
+
+    // onProxyRes: function (proxyRes, req, res) {
+    //   var cookies = proxyRes.headers['set-cookie'];
+    //   var cookieRegex = /Path=\/XXX\//i;
+    //   //修改cookie Path
+    //   console.log(proxyRes, req, res, "kkkkkkkkkkkk");
+    //   if (cookies) {
+    //     var newCookie = cookies.map(function (cookie) {
+    //       if (cookieRegex.test(cookie)) {
+    //         return cookie.replace(cookieRegex, 'Path=/');
+    //       }
+    //       return cookie;
+    //     });
+    //     //修改cookie path
+    //     delete proxyRes.headers['set-cookie'];
+    //     proxyRes.headers['set-cookie'] = newCookie;
+    //   }
+    // }
+
   }
 };
 
