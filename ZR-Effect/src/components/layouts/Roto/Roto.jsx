@@ -9,6 +9,7 @@ import defferPerform from '../../../utils/deffer-perform';
 import { configureMove, cancelSelectedRotoMaterial, selectedRotoMaterial } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
 import Draggable from 'react-draggable';
 import rotoStyle from './roto.css';
+import Scale from '../../commons/Scale';
 import Header from '../../containers/Header/Header';
 import MaterialList from './MaterialList/MaterialList';
 import RotoMaterialAdd from './RotoMaterialAdd/RotoMaterialAdd';
@@ -66,7 +67,7 @@ class Matting extends Component {
     // 选中抠像素材
     this.selectedRotoMaterialHandle = (materialId) => {
       const { cancelSelectedRotoMaterial } = this.props;
-
+      console.log(materialId, 'mmmid');
       this.selectedRotoMaterial(materialId);
       cancelSelectedRotoMaterial();
     };
@@ -179,7 +180,13 @@ class Matting extends Component {
               {/* 扣像帧处理 */}
               { show || !rfa.length
                 ? void 0
-                : (<div className={ rotoStyle[ 'footer' ] }></div>)
+                : (<div className={ rotoStyle[ 'footer' ] }>
+                    <Scale
+                      currTick={ 30 }
+                      maxTick={ 100 }
+                      onEnd={ tick => { console.log(tick, '结束'); } }
+                      onChangeTick={ tick => { console.log(tick, '改变中') } } />
+                  </div>)
               }
             </div>
             {/* 扣像操作面板 */}

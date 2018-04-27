@@ -106,5 +106,6 @@
 
 .footer {
   flex: 0 0 126px;
+  padding-left: 33px;
   background: #0e1b20;
 }

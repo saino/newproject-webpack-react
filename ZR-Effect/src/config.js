@@ -61,7 +61,7 @@ export default ({
     // 配置文件上传参数
     configureFileUpload(options) {
       return {
-        baseUrl: `${host}:${port}${path }/user/uploadMaterial`,
+        baseUrl: `${ host }:${ port }${ path }/user/uploadMaterial`,
         fileFieldName: 'file',
         multiple: false,
         chooseAndUpload: true,
@@ -75,5 +75,10 @@ export default ({
       maxSize: 1024 * 1024 * 200,
       typeExp: /(ogg|mp4|webm)/i
     }
+  },
+  tick: {
+    gyro: 5,
+    gap: 4,
+    posLeft: -3
   }
 });

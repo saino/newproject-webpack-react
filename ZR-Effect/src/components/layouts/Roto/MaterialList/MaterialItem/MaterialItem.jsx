@@ -42,7 +42,7 @@ export default class MaterialItem extends Component {
         );
     }
     else {
-      if (uploadingPercent < 100) {
+      if (uploadingPercent <= 100) {
         childComponent = (<MaterialUploadingItem percent={ uploadingPercent } />)
       } else {
         childComponent = (<MaterialUploadFinishItem situation={ uploadSituation } />);
