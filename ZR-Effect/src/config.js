@@ -70,5 +70,10 @@ export default ({
       maxSize: 1024 * 1024 * 200,
       typeExp: /(ogg|mp4|webm)/i
     }
+  },
+  tick: {
+    gyro: 5,
+    gap: 4,
+    posLeft: -3
   }
 });

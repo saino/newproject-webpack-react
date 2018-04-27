@@ -1,0 +1,65 @@
+@charset "UTF-8";
+
+/* 公共组件样式 */
+.scale-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.scale-box-inner {
+  position: absolute;
+  padding: 15px 0;
+  left: 0;
+  top: 0;
+  line-height: 1;
+}
+
+.scale-box-actual {
+  position: relative;
+  overflow-x: hidden;
+  height: 14px;
+}
+
+.scale-box-actual-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+
+.scale-box-inner i {
+  position: absolute;
+  top: 0;
+  width: 7px;
+  height: 10px;
+  cursor: pointer;
+  background-image: linear-gradient(-180deg, rgba(192,239,236,0.69) 0%, #A9F2EF 51%, rgba(221,249,252,0.32) 100%);
+}
+
+.scale-box-inner span {
+  margin-right: 4px;
+}
+
+.scale-box-inner span:last-of-type {
+  margin-right: 0;
+}
+
+.scale-bottom-bar {
+  height: 1px;
+  background-image: linear-gradient(-90deg, rgba(183,209,211,0.00) 5%, #CDF7FB 42%, rgba(161,224,230,0.00) 70%);
+}
+
+.tick {
+  display: inline-block;
+  width: 1px;
+  background: #264145;
+}
+
+.small-tick {
+  height: 4px;
+}
+
+.large-tick {
+  height: 8px;
+}
