@@ -172,7 +172,6 @@ class StageContainer extends Component {
     }
 
     componentDidMount() {
-        // console.log("ffffffjjjjjj");
         this.setState({
             allVideoDate: this.getAllVideo(),
             allVideoDOM: this.createAllVideoDOM(),
@@ -209,7 +208,6 @@ class StageContainer extends Component {
             }
 
             this.state.allVideoCurentTime = this.getAllVideoCurrentTime();
-            console.log(currentVideo.currentTime, this.state.allVideoCurentTime);
         }
         this.renderMaterial();
     }

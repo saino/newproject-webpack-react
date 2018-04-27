@@ -60,7 +60,6 @@ class TimeArea extends Component {
         </div>
     }
     onPlayClick = () => {
-        // console.log("jjjjjjjjj");
         this.props.changVideoPlay(!this.props.work1.videoPlay);
     }
     onAddVideoClick = () => {

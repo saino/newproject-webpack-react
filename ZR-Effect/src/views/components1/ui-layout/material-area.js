@@ -16,7 +16,6 @@ class MaterialArea extends Component {
         // });
     // }
     render() {
-        console.log("dddddd");
         const { material } = this.props;
         return <div className="material-area">
             <div className="add-material" onClick={this.addMaterialClick}>素材<div><img src={AddImg} /></div></div>
@@ -53,7 +52,6 @@ class MaterialArea extends Component {
         this.props.changeaActiveContainer("material", ["video", "image"]);
     }
 }
-// conso
 
 const mapDispatchToProps = (dispatch) => {
     return {
