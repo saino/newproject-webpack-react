@@ -19,7 +19,6 @@ import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 import RotoOperationBox from './RotoOperationBox/RotoOperationBox';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
-import inputPNG from './input.png';
 import nextPNG from './next.png';
 import prevPNG from './prev.png';
 
@@ -189,12 +188,40 @@ class Matting extends Component {
                       <i className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
                       <i><Icon type="play-circle-o" style={{ fontSize: 21, color: '#fff' }} /></i>
                       <i className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
+                      <label className={ rotoStyle[ 'txt' ] }>当前第</label>
+                      <input value="20"/>
+                      <label className={ rotoStyle[ 'txt' ] }>帧</label>
                     </div>
-                    <Scale
-                      currTick={ 40 }
-                      maxTick={ 100 }
-                      onEnd={ tick => { console.log(tick, '结束'); } }
-                      onChangeTick={ tick => { console.log(tick, '改变中') } } />
+                    <div className={ rotoStyle[ 'auto-scale' ] }>
+                      <Scale
+                        currTick={ 40 }
+                        maxTick={ 100 }
+                        onEnd={ tick => { console.log(tick, '结束'); } }
+                        onChangeTick={ tick => { console.log(tick, '改变中') } }>
+                        <ul className={ rotoStyle[ 'frame-img-list' ] }>
+                          <li>
+                            <b>1</b>
+                            <img src={ nextPNG } />
+                          </li>
+                          <li>
+                            <b>1</b>
+                            <img src={ nextPNG } />
+                          </li>
+                          <li>
+                            <b>1</b>
+                            <img src={ nextPNG } />
+                          </li>
+                          <li>
+                            <b>1</b>
+                            <img src={ nextPNG } />
+                          </li>
+                          <li>
+                            <b>1</b>
+                            <img src={ nextPNG } />
+                          </li>
+                        </ul>
+                      </Scale>
+                    </div>
                   </div>)
               }
             </div>

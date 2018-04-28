@@ -113,7 +113,7 @@ export default class Scale extends Component {
   }
 
   render() {
-    const { currTick } = this.props;
+    const { currTick, children } = this.props;
     const { actualWidth, parentWidth } = this.state;
     const tickPosLeft = currTick === 1 ? config.tick.posLeft : (currTick - 1) * config.tick.gyro + config.tick.posLeft;
     const defPosX = [  ]
@@ -132,6 +132,7 @@ export default class Scale extends Component {
             onStop={ this.movedTickHandle }>
             <i style={{ left: tickPosLeft }}></i>
           </Draggable>
+          { children }
         </div>
       </div>
     );

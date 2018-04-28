@@ -12,11 +12,12 @@
   left: 0;
   top: 0;
   line-height: 1;
+  padding-top: 10px;
 }
 
 .scale-box-actual {
   position: relative;
-  overflow-x: hidden;
+  overflow-x: auto;
   height: 14px;
 }
 
@@ -29,7 +30,7 @@
 
 .scale-box-inner i {
   position: absolute;
-  top: -10px;
+  top: -2px;
   width: 7px;
   height: 10px;
   cursor: pointer;
