@@ -3,13 +3,9 @@ import { findDOMNode } from 'react-dom'
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { changeWork } from "../../../stores/reducers/work";
+import { changeWork, changeWorkMaterial, changWorkVideo } from "../../../stores/reducers/work";
 
 import config from "../../../config"
-
-// import aaaVideo from "../../statics/aaa.mp4";
-// import bbbVideo from "../../statics/bbb.mp4";
-import cccImg from "../../statics/def-work.jpg";
 import 'yuki-createjs'
 
 class StageContainer extends Component {
@@ -33,11 +29,6 @@ class StageContainer extends Component {
         this.disX = 0;
         this.disY = 0;
     }
-    // componentWillMount() {
-    //     this.setState({
-    //         work: {...this.props.work1}
-    //     });
-    // }
 
     /**
      * 
@@ -45,22 +36,42 @@ class StageContainer extends Component {
      * @param {*目标} target 
      * @param {*事件} evt 
      */
-    dragMouseDown = (controlNum, target, evt) => {
+    dragMouseDown = (target, model, evt) => {
         evt.stopPropagation();
         evt.preventDefault();
         this.disX = evt.stageX - evt[target].x;
         this.disY = evt.stageY - evt[target].y;
     }
-    dragMouseMove = (controlNum, target, evt) => {
+    dragMouseMove = (target, model, evt) => {
         evt.stopPropagation();
         evt.preventDefault();
         evt[target].x = evt.stageX - this.disX;
         evt[target].y = evt.stageY - this.disY;
+        
         // if (typeof controlNum === "number") {
         //     dots[controlNum].x = evt[target].x + dotscopy[controlNum].x;
         //     dots[controlNum].y = evt[target].y + dotscopy[controlNum].y;
         //     render(transformContainer);
         // }
+    }
+    dragMouseUp = (target, model, evt) => {
+        evt.stopPropagation();
+        evt.preventDefault();
+        if(model === "video"){
+            model = this.getCurrentVideoDate();
+            model.positionY = evt[target].y;
+            model.positionX = evt[target].x;
+            this.props.changWorkVideo(model);
+        }else{
+            model.positionX = evt[target].x;
+            model.positionY = evt[target].y;
+            this.props.changeWorkMaterial(model);
+        }
+        // const { work } = this.props;
+        // const { properties } = work.config;
+        // work.config.properties.positionX = evt[target].x;
+        // work.config.properties.positionY = evt[target].y;
+        // console.log(work, "gfgfgfgfgfgfgfgfgfgfgfgfgf");
     }
 
     getAllVideo = () => {
@@ -91,7 +102,7 @@ class StageContainer extends Component {
             }
             videoItemDOM.setAttribute("crossOrigin", "use-credentials");
             videoItemDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${videoItem.path}`;
-            return videoItemDOM
+            return videoItemDOM;
         });
     }
     getAllVideoTime = () => {
@@ -105,6 +116,9 @@ class StageContainer extends Component {
     }
     getCurrentVideo = () => {
         return this.state.allVideoDOM[this.state.currentVideoDOMIndex];
+    }
+    getCurrentVideoDate = () => {
+        return this.state.allVideoDate[this.state.currentVideoDOMIndex];
     }
     componentDidUpdate() {
         this.createMaterialsContainer();
@@ -153,21 +167,25 @@ class StageContainer extends Component {
                 const materialImg = new createjs.Bitmap(videoDOM);
                 materialContainer.addChild(materialImg);
             }
-
-            materialContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, null, "currentTarget"));
-            materialContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, null, "currentTarget"));
+            materialContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", materialItem));
+            materialContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, "currentTarget", materialItem));
+            materialContainer.addEventListener("pressup", this.dragMouseUp.bind(null, "currentTarget", materialItem));
             return materialContainer;
         });
     }
     playVideo = () => {
+
         let currentVideo = this.getCurrentVideo();
+        let currentVideoDate = this.getCurrentVideoDate();
         if (!currentVideo) {
             return;
         }
-        
+        // console.log("dddddddjjjjjjjjj");
         this.videoImg = new createjs.Bitmap(currentVideo);
         this.videoContainer.removeAllChildren();
         this.videoContainer.addChild(this.videoImg);
+        this.videoContainer.x = currentVideoDate.positionX;
+        this.videoContainer.y = currentVideoDate.positionY;
 
         this.stage.removeAllChildren();
         this.stage.addChild(this.videoContainer);
@@ -189,8 +207,9 @@ class StageContainer extends Component {
         });
         this.stage = new createjs.Stage("mycanvas");
         this.videoContainer = new createjs.Container();
-        this.videoContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, null, "currentTarget"));
-        this.videoContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, null, "currentTarget"));
+        this.videoContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", "video"));
+        this.videoContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, "currentTarget", "video"));
+        this.videoContainer.addEventListener("pressup", this.dragMouseUp.bind(null, "currentTarget", "video"));
 
         createjs.Ticker.setFPS(10);
         createjs.Ticker.addEventListener("tick", ()=>{
@@ -305,7 +324,9 @@ const mapStateToProps = ({ work }) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeWork: bindActionCreators(changeWork, dispatch)
+        changeWork: bindActionCreators(changeWork, dispatch),
+        changWorkVideo: bindActionCreators(changWorkVideo, dispatch),
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch)
     }
 }
 

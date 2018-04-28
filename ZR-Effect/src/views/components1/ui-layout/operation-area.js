@@ -4,7 +4,7 @@ import PubImg from "../../statics/pub.png";
 import TransformImg from "../../statics/transform.png";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { changeWork } from "../../../stores/reducers/work"
+import { changeWork, saveWork } from "../../../stores/reducers/work"
 
 
 import CancelImg from "../../statics/cancel.png";
@@ -32,7 +32,7 @@ class OperationArea extends Component {
 
     render() {
         return <div className="operation-area">
-            <div className="operation-btn1"><img src={SaveImg} /><div>保存</div></div>
+            <div className="operation-btn1" onClick={this.onSaveClick}><img src={SaveImg} /><div>保存</div></div>
             <div className="operation-btn1" onClick={this.onPubClick}><img src={PubImg} /><div>发布</div></div>
             <div className="operation-bank"></div>
             <div className="operation-btn2" onClick={this.onMaterialLibClick}>素材库</div>
@@ -95,6 +95,10 @@ class OperationArea extends Component {
             `}</style>
         </div>
     }
+    onSaveClick = () => {
+        const { work } = this.props;
+        saveWork(work);
+    }
     onZoomInClick = () => {
         const { work } = this.props;
         work.config.properties.scale += 0.05;
@@ -110,7 +114,7 @@ class OperationArea extends Component {
             <div className="alert-view-title">视频发布为<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
             <div className="alert-view-content">
                 <div className="video-PX">
-                    <select onChange={this.onVideoPXChange} defaultValue={this.props.work.videoPX}>
+                    <select onChange={this.onVideoPXChange} defaultValue={this.props.work.config.properties.videoPX}>
                         <option value="px1">800*400</option>
                         <option value="px2">960*540</option>
                         <option value="px3">1280*720</option>
@@ -119,7 +123,7 @@ class OperationArea extends Component {
                     </select>
                 </div>
                 <div className="video-type">
-                    <select defaultValue={this.props.work1.videoType}>
+                    <select onChange={this.onVideoTypeChange} defaultValue={this.props.work.config.properties.videoType}>
                         <option value="type1">.mp4</option>
                         <option value="type2">.avi</option>
                         <option value="type3">.3gp</option>
@@ -247,9 +251,8 @@ class OperationArea extends Component {
         });
     }
     onVideoPubClick = () => {
-        console.log(this.state.videoPX, this.state.videoType);
-        const work = this.props.work1;
-        const newWork = {...work, videoPX: this.state.videoPX, videoType: this.state.videoType};
+        const work = this.props.work;
+        const newWork = {...work, config: {...work.config, properties: {...work.config.properties, videoPX: this.state.videoPX, videoType: this.state.videoType}}};
         this.props.changeWork(newWork);
         AlertView.render(this.renderPubComplete());
     }
@@ -274,7 +277,8 @@ const mapStateToProps = ({work}) => {
 }
 const mapDispathcToProps = (dispatch) => {
     return {
-        changeWork: bindActionCreators(changeWork, dispatch)
+        changeWork: bindActionCreators(changeWork, dispatch),
+        // saveWork: bindActionCreators(saveWork, dispatch)
     }
 }
 export default connect(mapStateToProps, mapDispathcToProps)(OperationArea);

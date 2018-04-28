@@ -50,6 +50,10 @@ class SpecialEffec extends Component {
                     scale: 1,
                     videoPlay: false,
                     duration: 0,
+                    positionX: 0,
+                    positionY: 0,
+                    videoPX: "px1",
+                    videoType: "type1",
                 }
             }
         });
