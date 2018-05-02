@@ -178,6 +178,8 @@ class VideoMaterial extends Component {
                 materialId: this.props.model.id,
                 id: new Date().getTime(),
                 order: videos.length+1,
+                positionX: 0,
+                positionY: 0,
             }
             videos.push(materialItem);
             this.props.changWorkVideo(videos);

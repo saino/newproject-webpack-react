@@ -120,6 +120,10 @@ const defaultState = {
             scale: 1,
             videoPlay: false,
             duration: 0,
+            positionX: 0,
+            positionY: 0,
+            videoPX: "px1",
+            videoType: "type1",
         }
     }
 }
@@ -170,6 +174,14 @@ export const changeWork = (newWork) => {
         type: actionTypes.CHANGE_WORK,
         newWork
     }
+}
+export const saveWork = (body) => {
+    // return () => {
+    return  post("/fx/saveWork", body)
+            .then((resp)=>{
+                console.log(resp,"dddddddddd");
+            });
+    // }
 }
 
 export default (state = defaultState, action) => {
