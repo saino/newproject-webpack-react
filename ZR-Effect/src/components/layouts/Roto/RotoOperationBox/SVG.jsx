@@ -183,7 +183,7 @@ class SVG extends Component {
 
     const ctrlPoint = point.getControl(type);
     let className = 'control';
-    
+
     return [
       (
         <circle
@@ -237,10 +237,16 @@ class SVG extends Component {
       pointEls, controlPointEls, pathEls,
       maskPathEls, focusPathEls, controlPathEls } = this.getPathAndPointEls();
     const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
+    const visibleMovingClassName = this.getRotoToolType() === 1;
+    const className = visibleDrawingClassName
+      ? style[ 'drawing' ]
+      : visibleMovingClassName
+        ? style[ 'moving' ]
+        : '';
     const isVisibleMask = this.getIsVisibleMask();
 
     return (
-      <svg className={ `${ style[ 'svg' ] } ${ visibleDrawingClassName ? style[ 'drawing' ]: '' }` } id="svg_app">
+      <svg className={ `${ style[ 'svg' ] } ${ className }` } id="svg_app">
         <g className={ style[ 'outline' ] }>
           { pathEls }
         </g>

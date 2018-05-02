@@ -48,8 +48,8 @@ class Matting extends Component {
       tempFrame: this.getSelectedFrame()
     };
 
-    // 获取素材的总帧数
-    this.getMaterialTotalFrame = this.registerGetMaterialInfo(material => material[ 'properties' ][ 'length' ]);
+    // 获取素材属性
+    this.getMaterialProps = this.registerGetMaterialInfo(material => material[ 'properties' ]);
 
     // 获取是否正在播放
     this.getIsPlay = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_play' ]);
@@ -163,7 +163,7 @@ class Matting extends Component {
     this.playNextFrameHandle = () => {
       const { addRoto, configureIsValidFrameError } = this.props;
       const { tempFrame } = this.state;
-      const totalFrame = this.getMaterialTotalFrame();
+      const totalFrame = this.getMaterialProps()[ 'length' ];
       const materialId = this.getMaterialId();
       const parsedFrame = isNaN(+tempFrame) ? this.getSelectedFrame() : +tempFrame;
       const currFrame = parsedFrame + 1;
@@ -195,7 +195,7 @@ class Matting extends Component {
     this.importFrameHandle = () => {
       const { addRoto, configureIsValidFrameError } = this.props;
       const { tempFrame } = this.state;
-      const totalFrame = this.getMaterialTotalFrame();
+      const totalFrame = this.getMaterialProps()[ 'length' ];
       const materialId = this.getMaterialId();
       const parsedFrame = +tempFrame;
 
@@ -298,7 +298,7 @@ class Matting extends Component {
     const moveParam = this.getMove() || {};
     const frame = this.getSelectedFrame() + 1;
     const middleCom = (
-      <div className={ rotoStyle[ 'canvas-inner-w' ] } style={{ transform: `translate(${ moveParam.x }px, ${ moveParam.y }px` }}>
+      <div className={ rotoStyle[ 'canvas-inner-w' ] }>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
           { show
             ? (<MaterialList onSelectedRotoMaterial={ this.selectedRotoMaterialHandle } />)
@@ -306,23 +306,32 @@ class Matting extends Component {
               ? (<RotoMaterialAdd openMaterialList={ this.openMaterialListComponent } />)
               : !isSelected
                 ? void 0
-                :(<RotoOperationBox>
-                    <MaterialMappingFrameImg frame={ frame } />
-                  </RotoOperationBox>)
+                : (
+                  <Draggable
+                    position={{ x: moveParam.x, y: moveParam.y }}
+                    onStop={ this.canvasMoveStopHandle }>
+                    <div style={{
+                      transform: `translate(${ moveParam.x }px, ${ moveParam.y }px`,
+                      left: '50%',
+                      top: '50%',
+                      marginLeft: -this.getMaterialProps()[ 'width' ] / 2,
+                      marginTop: -this.getMaterialProps()[ 'height' ] / 2,
+                      height: this.getMaterialProps()[ 'height' ],
+                      width: this.getMaterialProps()[ 'width' ],
+                      position: 'absolute',
+                      background: 'transparent' }}>
+                    <RotoOperationBox disabled={ this.isReadyMove() }>
+                      <MaterialMappingFrameImg frame={ frame } />
+                    </RotoOperationBox>
+                  </div>
+                  </Draggable>
+                )
           }
         </div>
       </div>
     );
 
-    return this.isReadyMove()
-      ? (
-        <Draggable
-          position={{ x: moveParam.x, y: moveParam.y }}
-          onStop={ this.canvasMoveStopHandle }>
-          { middleCom }
-        </Draggable>
-      )
-      : middleCom;
+    return middleCom;
   }
 
   componentWillReceiveProps(nextProps) {
