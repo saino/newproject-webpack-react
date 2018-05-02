@@ -11,7 +11,8 @@ import {
   cancelSelectedRotoMaterial,
   selectedRotoMaterial,
   selectedFrame,
-  configureIsValidFrameError
+  configureIsValidFrameError,
+  configureIsPlay
 } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { addRoto, configure } from '../../../stores/action-creators/roto-creator';
 import { Icon, message } from 'antd';
@@ -49,6 +50,9 @@ class Matting extends Component {
 
     // 获取素材的总帧数
     this.getMaterialTotalFrame = this.registerGetMaterialInfo(material => material[ 'properties' ][ 'length' ]);
+
+    // 获取是否正在播放
+    this.getIsPlay = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_play' ]);
 
     // 获取验证帧是否合法
     this.getIsValidFrameError = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_valid_frame_error' ]);
@@ -104,6 +108,15 @@ class Matting extends Component {
 
     // 延迟15毫秒设置frame state
     this.deferConfigureFrame = defferPerform(frame => this.setState({ tempFrame: frame }), 15);
+
+    // 播放或暂停操作
+    this.playOrPauseHandle = () => {
+      const { configureIsPlay } = this.props;
+      const isPlay = this.getIsPlay();
+      const materialId = this.getMaterialId();
+
+      configureIsPlay(materialId, !isPlay);
+    };
 
     // 播放上一帧操作
     this.playPrevFrameHandle = () => {
@@ -296,10 +309,15 @@ class Matting extends Component {
   }
 
   render() {
-    const { redirectToReferrer, showAddMaterialOrFrameImg, tempFrame } = this.state;
+    const {
+      redirectToReferrer,
+      showAddMaterialOrFrameImg,
+      tempFrame
+    } = this.state;
     const { rfa } = this.props;
     const frame = this.getSelectedFrame();
     const isValidFrameError = this.getIsValidFrameError();
+    const isPlay = this.getIsPlay();
     const isSelected = findItem(rfa, 'is_selected', true);
     let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
@@ -363,7 +381,7 @@ class Matting extends Component {
                 : (<div className={ rotoStyle[ 'footer' ] }>
                     <div className={ rotoStyle[ 'frame-player' ] }>
                       <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
-                      <i><Icon type="play-circle-o" style={{ fontSize: 21, color: '#fff' }} /></i>
+                      <i onClick={ this.playOrPauseHandle }><Icon type={ isPlay === true ? 'pause-circle-o' : 'play-circle-o' } style={{ fontSize: 21, color: '#fff' }} /></i>
                       <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
                       <label className={ rotoStyle[ 'txt' ] }>当前第</label>
                       <input
@@ -429,6 +447,7 @@ const mapDispatchToProps = dispatch =>
     selectedRotoMaterial,
     selectedFrame,
     configureIsValidFrameError,
+    configureIsPlay,
     addRoto,
     configure
   },

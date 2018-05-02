@@ -5,6 +5,7 @@
  *   material_id { Number } 素材id
  *   is_valid_frame_error { Boolean } 是否验证输入帧合法
  *   is_selected { Boolean } 是否选中 [ 存入数据库 ]
+ *   is_play { Boolean } 是否正在播放
  *   selected_frame { Number } 选中帧
  *   is_visible_mask { Boolean } 是否显示阴影
  *   is_upload_or_detail { Number } 显示上传还是详情 ( 0-详情｜1-上传 )
@@ -40,8 +41,9 @@ export default function rotoFrontendActerActive (state = defState, action) {
       const initRotoMaterial = {
         'material_id': action.materialId,
         'is_selected': false,
-        'is_valid_frame_error': true,
         'selected_frame': 0,
+        'is_valid_frame_error': true,
+        'is_play': false,
         'is_upload_or_detail': 0,
         'is_ai_roto': false,
         'ai_roto_percent': 0,
@@ -68,7 +70,15 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'CONFIGURE_IS_VALID_FRAME_ERROR':
       return update(
         state,
-        { 'is_valid_frame_error': action.isValid }, 
+        { 'is_valid_frame_error': action.isValid },
+        'material_id',
+        action.materialId
+      );
+
+    case 'CONFIGURE_IS_PLAY':
+      return update(
+        state,
+        { 'is_play': action.isPlay },
         'material_id',
         action.materialId
       );

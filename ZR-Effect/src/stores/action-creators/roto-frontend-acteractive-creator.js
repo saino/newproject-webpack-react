@@ -43,6 +43,14 @@ export function configureIsValidFrameError (materialId, isValid) {
   };
 }
 
+export function configureIsPlay (materialId, isPlay) {
+  return {
+    type: 'CONFIGURE_IS_PLAY',
+    materialId,
+    isPlay
+  };
+}
+
 export function configureStartupAiRoto (materialId) {
   return {
     type: 'CONFIGURE_STARTUP_AI_ROTO',
