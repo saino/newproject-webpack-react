@@ -222,7 +222,7 @@ class Matting extends Component {
           // 只要用户输入合法并且在限制之内，就消除红框提示
           this.deferConfigureIsValidFrameError(materialId, true);
 
-          if (!this.checkRotoFrame(tempFrame)) {
+          if (!this.checkRotoFrame(parsedFrame)) {
             // 添加当前这帧的抠像信息
             this.deferAddRoto(materialId, parsedFrame);
           }
