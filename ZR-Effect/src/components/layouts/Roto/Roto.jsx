@@ -6,8 +6,15 @@ import { connect } from 'react-redux';
 import { findItem } from '../../../utils/array-handle';
 /* 路由跳转前验证 -- end */
 import defferPerform from '../../../utils/deffer-perform';
-import { configureMove, cancelSelectedRotoMaterial, selectedRotoMaterial } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
-import { Icon } from 'antd';
+import {
+  configureMove,
+  cancelSelectedRotoMaterial,
+  selectedRotoMaterial,
+  selectedFrame,
+  configureIsValidFrameError
+} from '../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { addRoto, configure } from '../../../stores/action-creators/roto-creator';
+import { Icon, message } from 'antd';
 import Draggable from 'react-draggable';
 import rotoStyle from './roto.css';
 import Scale from '../../commons/Scale';
@@ -26,24 +33,37 @@ class Matting extends Component {
   constructor(props) {
     super(props);
 
+    // 获取当前选中哪帧
+    this.getSelectedFrame = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'selected_frame' ]);
+
     this.state = {
       // 检测是否存在该用户信息的state，用来做登录跳转
       redirectToReferrer: false,
+
       // 中间区域是显示添加扣像素材还是帧图片 0-显示帧图片 | 1-添加扣像素材
-      showAddMaterialOrFrameImg: 0
+      showAddMaterialOrFrameImg: 0,
+
+      // 临时帧，主要是为了frame input value 绑定了 store
+      tempFrame: this.getSelectedFrame()
     };
 
+    // 获取素材的总帧数
+    this.getMaterialTotalFrame = this.registerGetMaterialInfo(material => material[ 'properties' ][ 'length' ]);
+
+    // 获取验证帧是否合法
+    this.getIsValidFrameError = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_valid_frame_error' ]);
+
     // 获取放大、缩小画布值
-    this.getZoom = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'zoom' ]);
+    this.getZoom = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'zoom' ]);
 
     // 获取素材id
-    this.getMaterialId = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'material_id' ]);
+    this.getMaterialId = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'material_id' ]);
 
     // 获取移动画布值
-    this.getMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'move' ]);
+    this.getMove = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'move' ]);
 
     // 获取是否处于准备移动状态
-    this.isReadyMove = this.registerGetMaterialInfo(rotoMaterial => rotoMaterial[ 'roto_tool_type' ] === 1);
+    this.isReadyMove = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'roto_tool_type' ] === 1);
 
     // 移动画布
     this.canvasMoveStopHandle = ({ clientX, clientY, offsetX, offsetY }) => {
@@ -67,18 +87,165 @@ class Matting extends Component {
       selectedRotoMaterial(materialId);
     }, 10);
 
-    // 选中抠像素材
-    this.selectedRotoMaterialHandle = (materialId) => {
+    // 选中抠像素材操作
+    this.selectedRotoMaterialHandle = materialId => {
       const { cancelSelectedRotoMaterial } = this.props;
-      console.log(materialId, 'mmmid');
+
       this.selectedRotoMaterial(materialId);
       cancelSelectedRotoMaterial();
     };
+
+    // 延迟10毫秒设置抠像素材的选择帧
+    this.configureRotoMaterialFrame = defferPerform((materialId, frame) => {
+      const { selectedFrame } = this.props;
+
+      selectedFrame(materialId, frame);
+    }, 10);
+
+    // 延迟15毫秒设置frame state
+    this.deferConfigureFrame = defferPerform(frame => this.setState({ tempFrame: frame }), 15);
+
+    // 播放上一帧操作
+    this.playPrevFrameHandle = () => {
+      const { addRoto, configureIsValidFrameError } = this.props;
+      const { tempFrame } = this.state;
+      const materialId = this.getMaterialId();
+      const parsedFrame = isNaN(+tempFrame) ? this.getSelectedFrame() : +tempFrame;
+      const currFrame = parsedFrame - 1;
+
+      if (currFrame < 0) {
+        message.warning('不能小于最小帧');
+        configureIsValidFrameError(materialId, false);
+        this.deferConfigureFrame(0);
+
+        return;
+      }
+      else {
+        if (!this.checkRotoFrame(currFrame)) {
+          addRoto(materialId, currFrame);
+        }
+
+        // 只要用户输入合法并且在限制之内，就消除红框提示
+        configureIsValidFrameError(materialId, true);
+        // 设置当前抠像素材的帧
+        this.configureRotoMaterialFrame(materialId, currFrame);
+      }
+    };
+
+    // 播放下一帧操作
+    this.playNextFrameHandle = () => {
+      const { addRoto, configureIsValidFrameError } = this.props;
+      const { tempFrame } = this.state;
+      const totalFrame = this.getMaterialTotalFrame();
+      const materialId = this.getMaterialId();
+      const parsedFrame = isNaN(+tempFrame) ? this.getSelectedFrame() : +tempFrame;
+      const currFrame = parsedFrame + 1;
+
+      if (currFrame >= totalFrame) {
+        message.warning('不能大于最大帧');
+        configureIsValidFrameError(materialId, false);
+        this.deferConfigureFrame(totalFrame);
+
+        return;
+      }
+      else {
+        if (!this.checkRotoFrame(currFrame)) {
+          addRoto(materialId, currFrame);
+        }
+
+        // 只要用户输入合法并且在限制之内，就消除红框提示
+        configureIsValidFrameError(materialId, true);
+        // 设置当前抠像素材的帧
+        this.configureRotoMaterialFrame(materialId, currFrame);
+      }
+    };
+
+    // 输入框'change'改变帧
+    this.changeFrameHandle = ({ target }) =>
+      this.deferConfigureFrame(target.value);
+
+    // 输入框'blur'改变帧
+    this.importFrameHandle = () => {
+      const { addRoto, configureIsValidFrameError } = this.props;
+      const { tempFrame } = this.state;
+      const totalFrame = this.getMaterialTotalFrame();
+      const materialId = this.getMaterialId();
+      const parsedFrame = +tempFrame;
+
+      if (isNaN(parsedFrame)) {
+        configureIsValidFrameError(materialId, false);
+        this.deferConfigureFrame(tempFrame);
+      } else {
+        if (parsedFrame >= totalFrame) {
+          message.warning('不能大于最大帧');
+          this.deferConfigureFrame(tempFrame);
+
+          return;
+        }
+        else if (parsedFrame < 0) {
+          message.warning('不能小于最小帧');
+          this.deferConfigureFrame(tempFrame);
+
+          return;
+        }
+        else {
+          if (!this.checkRotoFrame(tempFrame)) {
+            // 添加当前这帧的抠像信息
+            addRoto(materialId, parsedFrame);
+          }
+
+          // 只要用户输入合法并且在限制之内，就消除红框提示
+          configureIsValidFrameError(materialId, true);
+
+          // 设置当前抠像素材的帧
+          this.configureRotoMaterialFrame(materialId, parsedFrame);
+        }
+      }
+    };
+
+    // 设置tick操作
+    this.configureTickHandle = tick => {
+
+    };
+
+    this.openMaterialListComponent = () =>
+      this.setState({ showAddMaterialOrFrameImg: 1 });
+
+    this.openVisibleFrameImg = () =>
+      this.setState({ showAddMaterialOrFrameImg: 0 });
+  }
+
+  // 检测抠像数据里是否存在该帧的记录
+  checkRotoFrame(frame) {
+    const { rotoList } = this.props;
+    const materialId = this.getMaterialId();
+
+    return !!findItem(rotoList,
+      roto =>
+        roto[ 'material_id' ] === materialId
+          && roto[ 'frame' ] === frame
+    );
   }
 
   registerGetMaterialInfo(fn) {
     return () => {
       const { materialList, rfa } = this.props;
+      const rotoMaterial = findItem(rfa, 'is_selected', true);
+      let material;
+
+      if (rotoMaterial == null) {
+        return void 0;
+      }
+
+      material = findItem(materialList, 'id', rotoMaterial[ 'material_id' ]);
+
+      return fn(material);
+    };
+  }
+
+  registerGetRotoActeractiveInfo(fn) {
+    return nextProps => {
+      const { rfa } = nextProps || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
 
       if (rotoMaterial == null) {
@@ -89,15 +256,9 @@ class Matting extends Component {
     };
   }
 
-  openMaterialListComponent = () =>
-    this.setState({ showAddMaterialOrFrameImg: 1 });
-
-  openVisibleFrameImg = () =>
-    this.setState({ showAddMaterialOrFrameImg: 0 });
-
   getMiddleComponent(rfa, show, zoomValue, isSelected) {
     const moveParam = this.getMove() || {};
-
+    const frame = this.getSelectedFrame() + 1;
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] } style={{ transform: `translate(${ moveParam.x }px, ${ moveParam.y }px` }}>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
@@ -108,7 +269,7 @@ class Matting extends Component {
               : !isSelected
                 ? void 0
                 :(<RotoOperationBox>
-                    <MaterialMappingFrameImg frame={ 1 } />
+                    <MaterialMappingFrameImg frame={ frame } />
                   </RotoOperationBox>)
           }
         </div>
@@ -126,9 +287,19 @@ class Matting extends Component {
       : middleCom;
   }
 
+  componentWillReceiveProps(nextProps) {
+    const frame = this.getSelectedFrame(nextProps);
+
+    if (frame != null) {
+      this.setState({ tempFrame: frame });
+    }
+  }
+
   render() {
-    const { redirectToReferrer, showAddMaterialOrFrameImg } = this.state;
+    const { redirectToReferrer, showAddMaterialOrFrameImg, tempFrame } = this.state;
     const { rfa } = this.props;
+    const frame = this.getSelectedFrame();
+    const isValidFrameError = this.getIsValidFrameError();
     const isSelected = findItem(rfa, 'is_selected', true);
     let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
@@ -157,17 +328,22 @@ class Matting extends Component {
             <div className={ rotoStyle[ 'content-inner' ] }>
               <div className={ rotoStyle[ 'area' ] }>
                 <div className={ rotoStyle[ 'left' ] }>
+
                   {/* 扣像素材列表 */}
                   <RotoMaterialList
                     onOpenMaterialList={ this.openMaterialListComponent }
                     onSelectedRotoMaterial={ this.selectedRotoMaterialHandle } />
+
                 </div>
                 <div className={ rotoStyle[ 'middle' ] }>
                   <div className={ rotoStyle[ 'middle-inner' ] }>
                     <div ref={ el => this.middleEl = el } className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
+
                       {/* 画布、素材列表、上传 */}
                       { this.getMiddleComponent(rfa, show, zoomValue, isSelected) }
+
                     </div>
+
                     {/* 扣像工具条 */}
                     { show || !rfa.length
                       ? void 0
@@ -177,6 +353,7 @@ class Matting extends Component {
                           </div>
                         )
                     }
+
                   </div>
                 </div>
               </div>
@@ -185,32 +362,23 @@ class Matting extends Component {
                 ? void 0
                 : (<div className={ rotoStyle[ 'footer' ] }>
                     <div className={ rotoStyle[ 'frame-player' ] }>
-                      <i className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
+                      <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
                       <i><Icon type="play-circle-o" style={{ fontSize: 21, color: '#fff' }} /></i>
-                      <i className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
+                      <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
                       <label className={ rotoStyle[ 'txt' ] }>当前第</label>
-                      <input value="20"/>
+                      <input
+                        value={ tempFrame }
+                        className={ isValidFrameError !== false ? void 0 : rotoStyle[ 'valid-error' ] }
+                        onChange={ this.changeFrameHandle }
+                        onBlur={ this.importFrameHandle } />
                       <label className={ rotoStyle[ 'txt' ] }>帧</label>
                     </div>
                     <div className={ rotoStyle[ 'auto-scale' ] }>
                       <Scale
-                        currTick={ 40 }
+                        currTick={ frame }
                         maxTick={ 100 }
-                        onEnd={ tick => { console.log(tick, '结束'); } }
-                        onChangeTick={ tick => { console.log(tick, '改变中') } }>
+                        onEnd={ this.configureTickHandle }>
                         <ul className={ rotoStyle[ 'frame-img-list' ] }>
-                          <li>
-                            <b>1</b>
-                            <img src={ nextPNG } />
-                          </li>
-                          <li>
-                            <b>1</b>
-                            <img src={ nextPNG } />
-                          </li>
-                          <li>
-                            <b>1</b>
-                            <img src={ nextPNG } />
-                          </li>
                           <li>
                             <b>1</b>
                             <img src={ nextPNG } />
@@ -225,6 +393,7 @@ class Matting extends Component {
                   </div>)
               }
             </div>
+
             {/* 扣像操作面板 */}
               { show || !rfa.length
                 ? void 0
@@ -232,6 +401,7 @@ class Matting extends Component {
                     <RotoOperationPanel />
                   </div>)
               }
+
           </div>
         </div>
       </div>
@@ -242,17 +412,25 @@ class Matting extends Component {
 
 const mapStateToProps = ({
   app,
-  rotoFrontendActeractive
+  material,
+  rotoFrontendActeractive,
+  roto
 }) => ({
   token: app.token,
-  rfa: rotoFrontendActeractive
+  materialList: material,
+  rfa: rotoFrontendActeractive,
+  rotoList: roto
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
     configureMove,
     cancelSelectedRotoMaterial,
-    selectedRotoMaterial
+    selectedRotoMaterial,
+    selectedFrame,
+    configureIsValidFrameError,
+    addRoto,
+    configure
   },
     dispatch
   );

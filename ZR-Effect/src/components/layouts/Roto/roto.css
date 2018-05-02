@@ -132,11 +132,19 @@
   margin: 0 10px;
   color: #fff;
   padding: 4px 10px;
-  width: 47px;
+  width: 48px;
   background: url('./input.png') no-repeat 0 0;
-  border: 0 none;
+  border: 1px solid transparent;
   text-align: center;
-  height: 20px;
+  height: 21px;
+  line-height: 21px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.frame-player .valid-error {
+  background: transparent;
+  border-color: #ff0000;
 }
 
 .frame-player .prev {
