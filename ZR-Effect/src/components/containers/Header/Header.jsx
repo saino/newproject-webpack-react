@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Avatar } from 'antd';
@@ -9,7 +9,12 @@ import logoPNG from './logo.png';
 class Header extends Component {
   static propTypes = {
     onOpenLogin: PropTypes.func,
-    onOpenRegister: PropTypes.func
+    onOpenRegister: PropTypes.func,
+    activeIndex: PropTypes.number
+  };
+
+  static defaultProps = {
+    activeIndex: 0
   };
 
   loginHandle = () => {
@@ -21,17 +26,23 @@ class Header extends Component {
   };
 
   render() {
-    const { token } = this.props;
+    const { token, activeIndex } = this.props;
     const isLogined = !!token;
 
     return (
       <div className={ headerStyle[ 'header' ] }>
         <div className={ headerStyle[ 'header-nav' ] }>
-            <Link to="/" className={ headerStyle[ 'nav-logo' ] }>
+            <NavLink to="/" className={ headerStyle[ 'nav-logo' ] }>
               <img src={ logoPNG }/>
-            </Link>
-            <Link to="/roto" className={ headerStyle[ 'nav-btn' ] }>智能抠像</Link>
-            <Link to="/special-effec" className={ headerStyle[ 'nav-btn' ] }>特效制作</Link>
+            </NavLink>
+            <NavLink to="/roto" className={ headerStyle[ 'nav-btn' ] } activeClassName={ headerStyle[ 'active' ] }>
+              智能抠像
+              <div></div>
+            </NavLink>
+            <NavLink to="/special-effec" className={ headerStyle[ 'nav-btn' ] } activeClassName={ headerStyle[ 'active' ] }>
+              特效制作
+              <div></div>
+            </NavLink>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>价格方案</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>帮助中心</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>联系我们</a>
