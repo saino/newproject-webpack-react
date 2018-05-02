@@ -100,11 +100,25 @@ class Matting extends Component {
     };
 
     // 延迟10毫秒设置抠像素材的选择帧
-    this.configureRotoMaterialFrame = defferPerform((materialId, frame) => {
+    this.deferConfigureRotoMaterialFrame = defferPerform((materialId, frame) => {
       const { selectedFrame } = this.props;
 
       selectedFrame(materialId, frame);
     }, 10);
+
+    // 延迟15毫秒设置是否合法
+    this.deferConfigureIsValidFrameError = defferPerform((materialId, isValid) => {
+      const { configureIsValidFrameError } = this.props;
+
+      configureIsValidFrameError(materialId, isValid);
+    }, 15);
+
+    // 延迟20毫秒添加抠像信息
+    this.deferAddRoto = defferPerform((materialId, frame) => {
+      const { addRoto } = this.props;
+
+      addRoto(materialId, frame);
+    }, 20);
 
     // 延迟15毫秒设置frame state
     this.deferConfigureFrame = defferPerform(frame => this.setState({ tempFrame: frame }), 15);
@@ -141,7 +155,7 @@ class Matting extends Component {
         // 只要用户输入合法并且在限制之内，就消除红框提示
         configureIsValidFrameError(materialId, true);
         // 设置当前抠像素材的帧
-        this.configureRotoMaterialFrame(materialId, currFrame);
+        this.deferConfigureRotoMaterialFrame(materialId, currFrame);
       }
     };
 
@@ -169,7 +183,7 @@ class Matting extends Component {
         // 只要用户输入合法并且在限制之内，就消除红框提示
         configureIsValidFrameError(materialId, true);
         // 设置当前抠像素材的帧
-        this.configureRotoMaterialFrame(materialId, currFrame);
+        this.deferConfigureRotoMaterialFrame(materialId, currFrame);
       }
     };
 
@@ -186,7 +200,7 @@ class Matting extends Component {
       const parsedFrame = +tempFrame;
 
       if (isNaN(parsedFrame)) {
-        configureIsValidFrameError(materialId, false);
+        this.configureIsValidFrameError(materialId, false);
         this.deferConfigureFrame(tempFrame);
       } else {
         if (parsedFrame >= totalFrame) {
@@ -202,16 +216,16 @@ class Matting extends Component {
           return;
         }
         else {
-          if (!this.checkRotoFrame(tempFrame)) {
-            // 添加当前这帧的抠像信息
-            addRoto(materialId, parsedFrame);
-          }
+          // 设置当前抠像素材的帧
+          this.deferConfigureRotoMaterialFrame(materialId, parsedFrame);
 
           // 只要用户输入合法并且在限制之内，就消除红框提示
-          configureIsValidFrameError(materialId, true);
+          this.deferConfigureIsValidFrameError(materialId, true);
 
-          // 设置当前抠像素材的帧
-          this.configureRotoMaterialFrame(materialId, parsedFrame);
+          if (!this.checkRotoFrame(tempFrame)) {
+            // 添加当前这帧的抠像信息
+            this.deferAddRoto(materialId, parsedFrame);
+          }
         }
       }
     };
