@@ -38,13 +38,14 @@ export default class Scale extends Component {
     }
   };
 
-  movedTickHandle = ({ clientX }) => {
+  movedTickHandle = ({ clientX, offsetX }) => {
     const { onEnd } = this.props;
     const tick = this.getTickByLeft(clientX);
+    const x = this.el.getBoundingClientRect().x;
 
     if (tick != null) {
       this.tempTick = tick;
-      onEnd(tick);
+      this.setState({ tempX: clientX - offsetX - x }, () => onEnd(tick));
     }
   };
 
@@ -119,7 +120,7 @@ export default class Scale extends Component {
 
   render() {
     const { currTick, children } = this.props;
-    const { actualWidth, parentWidth } = this.state;
+    const { actualWidth, parentWidth, tempX } = this.state;
     const tickPosLeft = currTick === 0 ? config.tick.posLeft : currTick * config.tick.gyro + config.tick.posLeft;
 
     return (
@@ -133,9 +134,10 @@ export default class Scale extends Component {
           </div>
           <Draggable
             axis="x"
+            position={{ x: tickPosLeft, y: 0 }}
             onDrag={ this.movingTickHandle }
             onStop={ this.movedTickHandle }>
-            <i style={{ left: tickPosLeft }}></i>
+            <i></i>
           </Draggable>
           { children }
         </div>

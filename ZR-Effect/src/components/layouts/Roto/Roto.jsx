@@ -231,8 +231,19 @@ class Matting extends Component {
     };
 
     // 设置tick操作
-    this.configureTickHandle = tick => {
+    this.configureTickHandle = currFrame => {
+      const materialId = this.getMaterialId();
 
+      // 设置当前抠像素材的帧
+      this.deferConfigureRotoMaterialFrame(materialId, currFrame);
+
+      // 只要用户输入合法并且在限制之内，就消除红框提示
+      this.deferConfigureIsValidFrameError(materialId, true);
+
+      if (!this.checkRotoFrame(currFrame)) {
+        // 添加当前这帧的抠像信息
+        this.deferAddRoto(materialId, currFrame);
+      }
     };
 
     this.openMaterialListComponent = () =>
