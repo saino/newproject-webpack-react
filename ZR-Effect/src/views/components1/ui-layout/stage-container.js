@@ -77,6 +77,7 @@ class StageContainer extends Component {
     getAllVideo = () => {
         const { work } = this.props;
         const { videos } = work.config;
+        // console.log(videos, "kkkkkkkkkkkkkkkkkgggggggggggggggggggggggg");
         return videos.sort((video1,video2)=>{
             return video1.order - video2.order
         });
@@ -97,7 +98,7 @@ class StageContainer extends Component {
                 this.state.loadedVideoNum++;
                 this.state.allVideoTime = this.state.allVideoTime + videoItemDOM.duration*1000;
                 if(this.allVideoLoaded()){
-
+                    // this.playVideo();
                 }
             }
             videoItemDOM.setAttribute("crossOrigin", "use-credentials");
@@ -121,6 +122,10 @@ class StageContainer extends Component {
         return this.state.allVideoDate[this.state.currentVideoDOMIndex];
     }
     componentDidUpdate() {
+        if(this.state.allVideoDate.length === 0){
+            this.state.allVideoDate = this.getAllVideo();
+            this.state.allVideoDOM = this.createAllVideoDOM();
+        }
         this.createMaterialsContainer();
         this.playVideo();
     }
@@ -180,7 +185,7 @@ class StageContainer extends Component {
         if (!currentVideo) {
             return;
         }
-        // console.log("dddddddjjjjjjjjj");
+
         this.videoImg = new createjs.Bitmap(currentVideo);
         this.videoContainer.removeAllChildren();
         this.videoContainer.addChild(this.videoImg);

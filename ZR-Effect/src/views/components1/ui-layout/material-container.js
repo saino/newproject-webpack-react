@@ -120,6 +120,41 @@ class MaterialContainer extends Component {
     onCloseClick = () => {
         this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
+    renderUploadProgress = () => {
+        if(!this.state.uploading){
+            return null;
+        }
+        return <div className="video-item">
+            <div className="video-upload">
+                <Progress className="audio-progress" percent={this.state.uploadProgress} size="small" showInfo={false} strokeWidth={5} />
+                {this.state.uploadProgress}%
+            </div>
+            <div className="video-upload-title">
+                正在上传......
+            </div>
+            <style>{`
+                .video-upload{
+                    height: 110px;;
+                    width: 147px;
+                    color: #fff;
+                    background: #000;
+                    text-align: center;
+                    line-height: 110px;
+                }
+                .video-upload-title{
+                    height: 44px;
+                    width: 147px;
+                    color: #fff;
+                    line-height: 44px;
+                    text-indent: 8px;
+                }
+                .audio-progress {
+                    width: 74%;
+                    margin-right: 4px;
+                }
+            `}</style>
+        </div>
+    }
     render() { 
         const {materialContainerType } = this.props;
         let acceptType = "video/*";
@@ -149,14 +184,13 @@ class MaterialContainer extends Component {
                         </div>
                     </div>
                 </FileUpload>
-
+                {
+                    this.renderUploadProgress()
+                }
                 {
                     this.getMaterial().map((material) => {
                         return <VideoMaterial changeaActiveContainer={this.props.changeaActiveContainer} useType={this.props.materialContainerType} key={material.id} model={material} />
                     })
-                }
-                {
-                    this.renderProgress()
                 }
             </div>
             <style>{`
@@ -216,14 +250,6 @@ class MaterialContainer extends Component {
                 
             `}</style>
         </div>
-    }
-    renderProgress = () => {
-        if (this.state.uploading) {
-            return <div className='upload-progress'>
-                <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
-            </div>
-        }
-        return null;
     }
 }
 

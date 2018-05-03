@@ -4,7 +4,8 @@ import PubImg from "../../statics/pub.png";
 import TransformImg from "../../statics/transform.png";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { changeWork, saveWork } from "../../../stores/reducers/work"
+import { Progress } from "antd";
+import { changeWork, saveWork, buildWork, getProgress } from "../../../stores/reducers/work"
 
 
 import CancelImg from "../../statics/cancel.png";
@@ -24,10 +25,11 @@ class OperationArea extends Component {
         // }
     }
     componentWillMount(){
-        // this.setState({
-        //     videoPX: this.props.work.videoPX,
-        //     videoType: this.props.work.videoType
-        // });
+        this.setState({
+            videoPX: this.props.work.videoPX,
+            videoType: this.props.work.videoType,
+            progress: 0
+        });
     }
 
     render() {
@@ -194,6 +196,50 @@ class OperationArea extends Component {
         </div>
     }
 
+    renderPubProgerss = () => {
+        // console.log("ddddddddddddd", this.state.progress);
+        return <div className="alert-view-container">
+            <div className="alert-view-title">发布进度<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
+            <div className="alert-view-content">
+                <Progress className="audio-progress" percent={this.state.progress} size="small" showInfo={false} strokeWidth={5} />
+            </div>
+            <style>{`
+                .alert-view-container{
+                    height: 216px;
+                    width: 360px;
+                    background: rgba(38,66,70,0.8);
+                }
+                .alert-view-title{
+                    position: relative;
+                    height: 40px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: #fff;
+                    line-height: 40px;
+                    background: rgba(58,104,108,0.4);
+                }
+                .close-alert{
+                    height: 40px;
+                    cursor: pointer;
+                    width: 40px;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                }
+                .alert-view-content{
+                    display: flex;
+                    flex-flow: row wrap;
+                    padding: 32px 60px;
+                    font-size: 14px;
+                    align-items: center;
+                    height: calc(100% - 40px);
+                    justify-content: center;
+                    color: #fff;
+                }
+            `}</style> 
+        </div>
+    }
+
     renderPubComplete = () => {
         return <div className="alert-view-container">
             <div className="alert-view-title">视频发布为<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
@@ -236,6 +282,7 @@ class OperationArea extends Component {
             `}</style>
         </div>
     }
+
     // changeWork
     onVideoPXChange = (e) => {
 
@@ -250,11 +297,38 @@ class OperationArea extends Component {
             videoType: value
         });
     }
+    _getProgress = (body) => {
+        getProgress(body, (resp)=>{
+            const progress = resp.data.progress;
+            this.state.progress = progress!=0 ? progress : this.state.progress;
+            AlertView.render(this.renderPubProgerss());
+            if(progress === 100){
+                setTimeout(() => {
+                    this.state.progress = 0;
+                    AlertView.render(this.renderPubComplete());
+                }, 800);
+            }else{
+                this._getProgress(body);
+            }
+        });
+    }
     onVideoPubClick = () => {
         const work = this.props.work;
         const newWork = {...work, config: {...work.config, properties: {...work.config.properties, videoPX: this.state.videoPX, videoType: this.state.videoType}}};
+        const options = {
+            "id": newWork.id,
+            "asTemplate": false,
+            "height": newWork.config.properties.height,
+            "width": newWork.config.properties.width
+        };
         this.props.changeWork(newWork);
-        AlertView.render(this.renderPubComplete());
+        buildWork(options, (resp)=>{
+            this._getProgress({
+                "type": "build",
+                "object_id": options.id,
+            });
+        });
+        AlertView.render(this.renderPubProgerss());
     }
 
     onAlertCloseClick(){
@@ -278,6 +352,7 @@ const mapStateToProps = ({work}) => {
 const mapDispathcToProps = (dispatch) => {
     return {
         changeWork: bindActionCreators(changeWork, dispatch),
+        buildWork: bindActionCreators(buildWork, dispatch)
         // saveWork: bindActionCreators(saveWork, dispatch)
     }
 }

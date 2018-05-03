@@ -150,6 +150,18 @@ export const createWork = (body) => {
     }
 }
 
+export const loadWork = (body) => {
+    return (dispatch) => {
+        post("/fx/loadWork", body)
+        .then((resp)=>{
+            dispatch({
+                type: actionTypes.CREATE_WORK,
+                work: resp.data
+            });
+        })
+    }
+}
+
 export const changVideoPlay = (isPlay) => {
     return {
         type: actionTypes.CHANGE_WORK_PLAY,
@@ -175,13 +187,27 @@ export const changeWork = (newWork) => {
         newWork
     }
 }
-export const saveWork = (body) => {
+export const saveWork = (body, successFUN) => {
     // return () => {
     return  post("/fx/saveWork", body)
             .then((resp)=>{
                 console.log(resp,"dddddddddd");
+                successFUN&&successFUN(resp);
             });
     // }
+}
+export const buildWork = (body, successFUN) => {
+    return post("/fx/build", body)
+            .then((resp)=>{
+                successFUN&&successFUN(resp);
+            });
+}
+
+export const getProgress = (body, successFUN) => {
+    return post("/getProgress", body)
+            .then((resp)=>{
+                successFUN&&successFUN(resp)
+            });
 }
 
 export default (state = defaultState, action) => {

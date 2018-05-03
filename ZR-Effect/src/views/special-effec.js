@@ -22,7 +22,7 @@ import MaterialContainer from "./components1/ui-layout/material-container";
 import AudioContainer from "./components1/ui-layout/audio-container";
 
 // import { loadMaterials } from "../stores/reducers/material"
-import { createWork } from "../stores/reducers/work";
+import { createWork, loadWork } from "../stores/reducers/work";
 
 class SpecialEffec extends Component {
 
@@ -39,23 +39,26 @@ class SpecialEffec extends Component {
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
     componentWillMount(){
-        this.props.createWork({
-            name: "自定义作品",
-            config: {
-                videos: [],
-                materials: [],
-                properties: {
-                    height: "400",
-                    width: "800",
-                    scale: 1,
-                    videoPlay: false,
-                    duration: 0,
-                    positionX: 0,
-                    positionY: 0,
-                    videoPX: "px1",
-                    videoType: "type1",
-                }
-            }
+        // this.props.createWork({
+        //     name: "自定义作品",
+        //     config: {
+        //         videos: [],
+        //         materials: [],
+        //         properties: {
+        //             height: "400",
+        //             width: "800",
+        //             scale: 1,
+        //             videoPlay: false,
+        //             duration: 0,
+        //             positionX: 0,
+        //             positionY: 0,
+        //             videoPX: "px1",
+        //             videoType: "type1",
+        //         }
+        //     }
+        // });
+        this.props.loadWork({
+            id: "269"
         });
     }
 
@@ -148,7 +151,8 @@ const mapStateToProps = ({ work }) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         // loadMaterials: bindActionCreators(loadMaterials, dispatch),
-        createWork: bindActionCreators(createWork, dispatch)
+        createWork: bindActionCreators(createWork, dispatch),
+        loadWork: bindActionCreators(loadWork, dispatch)
     }
 }
 
