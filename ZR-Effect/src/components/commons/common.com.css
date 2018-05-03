@@ -26,6 +26,7 @@
   left: 0;
   top: 0;
   height: 100%;
+  padding-left: 3px;
 }
 
 .scale-box-inner i {

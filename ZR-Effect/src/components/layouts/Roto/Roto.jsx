@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { findItem } from '../../../utils/array-handle';
 /* 路由跳转前验证 -- end */
 import defferPerform from '../../../utils/deffer-perform';
+import config from '../../../config';
 import {
   configureMove,
   cancelSelectedRotoMaterial,
@@ -17,6 +18,7 @@ import {
 import { addRoto, configure } from '../../../stores/action-creators/roto-creator';
 import { Icon, message } from 'antd';
 import Draggable from 'react-draggable';
+import ScrollArea from 'react-custom-scrollbars';
 import rotoStyle from './roto.css';
 import Scale from '../../commons/Scale';
 import Header from '../../containers/Header/Header';
@@ -27,6 +29,7 @@ import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 import RotoOperationBox from './RotoOperationBox/RotoOperationBox';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
+import FrameImg from './FrameImg/FrameImg';
 import nextPNG from './next.png';
 import prevPNG from './prev.png';
 
@@ -123,6 +126,32 @@ class Matting extends Component {
     // 延迟15毫秒设置frame state
     this.deferConfigureFrame = defferPerform(frame => this.setState({ tempFrame: frame }), 15);
 
+    // 延时10毫秒恒定24fps播放帧动画(更改帧)
+    this.playing = (() => {
+      let timer;
+
+      return defferPerform(() => {
+        const isPlay = this.getIsPlay();
+        const totalFrame = this.getMaterialProps()[ 'length' ];
+
+        if (isPlay) {
+          timer = setInterval(() => {
+            const { tempFrame } = this.state;
+
+            if (tempFrame + 1 >= totalFrame) {
+              clearInterval(timer);
+              return;
+            }
+
+            this.configureTickHandle(tempFrame + 1);
+
+          }, 1000 / 24);
+        } else {
+          clearInterval(timer);
+        }
+      }, 10);
+    })();
+
     // 播放或暂停操作
     this.playOrPauseHandle = () => {
       const { configureIsPlay } = this.props;
@@ -130,6 +159,7 @@ class Matting extends Component {
       const materialId = this.getMaterialId();
 
       configureIsPlay(materialId, !isPlay);
+      this.playing();
     };
 
     // 播放上一帧操作
@@ -320,10 +350,10 @@ class Matting extends Component {
                       width: this.getMaterialProps()[ 'width' ],
                       position: 'absolute',
                       background: 'transparent' }}>
-                    <RotoOperationBox disabled={ this.isReadyMove() }>
-                      <MaterialMappingFrameImg frame={ frame } />
-                    </RotoOperationBox>
-                  </div>
+                      <RotoOperationBox disabled={ this.isReadyMove() }>
+                        <MaterialMappingFrameImg frame={ frame } />
+                      </RotoOperationBox>
+                    </div>
                   </Draggable>
                 )
           }
@@ -332,6 +362,26 @@ class Matting extends Component {
     );
 
     return middleCom;
+  }
+
+  getParseFrameCom(className) {
+    const { width, iterate, gap } = config.parseFrame;
+    const totalFrame = this.getMaterialProps()[ 'length' ];
+    const coms = [];
+    const totalIterate = Math.floor(totalFrame / iterate) + 1;
+    const boxWidth = totalIterate * (width + 2) + (totalIterate - 1) * gap;
+
+    for (let frame = 1; frame <= totalFrame; frame += iterate) {
+      coms.push(
+        <li key={ `p_f_${ frame }` } onClick={ () => this.configureTickHandle(frame - 1) }><FrameImg width={ width } frame={ frame } displayFrame={ frame - 1 } /></li>
+      );
+    }
+
+    return (
+      <ul className={ className } style={{ width: boxWidth }}>
+        { coms }
+      </ul>
+    );
   }
 
   componentWillReceiveProps(nextProps) {
@@ -352,7 +402,7 @@ class Matting extends Component {
     const frame = this.getSelectedFrame();
     const isValidFrameError = this.getIsValidFrameError();
     const isPlay = this.getIsPlay();
-    const isSelected = findItem(rfa, 'is_selected', true);
+    const isSelected = !!findItem(rfa, 'is_selected', true);
     let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
 
@@ -413,35 +463,32 @@ class Matting extends Component {
               { show || !rfa.length
                 ? void 0
                 : (<div className={ rotoStyle[ 'footer' ] }>
-                    <div className={ rotoStyle[ 'frame-player' ] }>
-                      <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
-                      <i onClick={ this.playOrPauseHandle }><Icon type={ isPlay === true ? 'pause-circle-o' : 'play-circle-o' } style={{ fontSize: 21, color: '#fff' }} /></i>
-                      <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
-                      <label className={ rotoStyle[ 'txt' ] }>当前第</label>
-                      <input
-                        value={ tempFrame }
-                        className={ isValidFrameError !== false ? void 0 : rotoStyle[ 'valid-error' ] }
-                        onChange={ this.changeFrameHandle }
-                        onBlur={ this.importFrameHandle } />
-                      <label className={ rotoStyle[ 'txt' ] }>帧</label>
-                    </div>
-                    <div className={ rotoStyle[ 'auto-scale' ] }>
-                      <Scale
-                        currTick={ frame }
-                        maxTick={ 100 }
-                        onEnd={ this.configureTickHandle }>
-                        <ul className={ rotoStyle[ 'frame-img-list' ] }>
-                          <li>
-                            <b>1</b>
-                            <img src={ nextPNG } />
-                          </li>
-                          <li>
-                            <b>1</b>
-                            <img src={ nextPNG } />
-                          </li>
-                        </ul>
-                      </Scale>
-                    </div>
+                    <ScrollArea style={{ width: '100%', height: '100%' }}>
+                      <div className={ rotoStyle[ 'frame-player' ] }>
+                        <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
+                        <i onClick={ this.playOrPauseHandle }><Icon type={ isPlay === true ? 'pause-circle-o' : 'play-circle-o' } style={{ fontSize: 21, color: '#fff' }} /></i>
+                        <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
+                        <label className={ rotoStyle[ 'txt' ] }>当前第</label>
+                        <input
+                          value={ tempFrame }
+                          className={ isValidFrameError !== false ? void 0 : rotoStyle[ 'valid-error' ] }
+                          onChange={ this.changeFrameHandle }
+                          onBlur={ this.importFrameHandle } />
+                        <label className={ rotoStyle[ 'txt' ] }>帧</label>
+                      </div>
+                      <div className={ rotoStyle[ 'auto-scale' ] }>
+
+                        {/* 时间轴 */}
+                        <Scale
+                          currTick={ frame }
+                          maxTick={ 100 }
+                          onEnd={ this.configureTickHandle }>
+
+                          {/* 解帧区展示帧图片 */}
+                          { this.getParseFrameCom(rotoStyle[ 'frame-img-list' ]) }
+                        </Scale>
+                      </div>
+                    </ScrollArea>
                   </div>)
               }
             </div>
