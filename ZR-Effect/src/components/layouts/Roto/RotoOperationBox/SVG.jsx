@@ -141,9 +141,7 @@ class SVG extends Component {
           // ctrlPoint1 = new Point(ctrls[0].x, ctrls[0].y, ctrls[0].cx1, ctrls[0].cy1, ctrls[0].cx2, ctrls[0].cy2);
           // ctrlPoint2 = new Point(ctrls[1].x, ctrls[1].y, ctrls[1].cx1, ctrls[1].cy1, ctrls[1].cx2, ctrls[1].cy2);
           ctrls1 = this.getControlPointAndPathEl(path, ctrls[ 1 ], Point.CONTROL1, ctrls[ 0 ], pointSelected.id);
-          console.log(ctrls[ 1 ].id);
           ctrls2 = this.getControlPointAndPathEl(path, ctrls[ 0 ], Point.CONTROL2, ctrls[ 0 ], pointSelected.id);
-          //console.log(ctrls1, ctrls2, 'jjj')
           controlPointEls.push(ctrls1[ 0 ]);
           controlPathEls.push(ctrls1[ 1 ]);
           controlPointEls.push(ctrls2[ 0 ]);
@@ -185,7 +183,7 @@ class SVG extends Component {
 
     const ctrlPoint = point.getControl(type);
     let className = 'control';
-    console.log(ctrlPoint[1], 'cp');
+
     return [
       (
         <circle
@@ -239,10 +237,16 @@ class SVG extends Component {
       pointEls, controlPointEls, pathEls,
       maskPathEls, focusPathEls, controlPathEls } = this.getPathAndPointEls();
     const visibleDrawingClassName = this.getMode() === 0 && this.getRotoToolType() === 4;
+    const visibleMovingClassName = this.getRotoToolType() === 1;
+    const className = visibleDrawingClassName
+      ? style[ 'drawing' ]
+      : visibleMovingClassName
+        ? style[ 'moving' ]
+        : '';
     const isVisibleMask = this.getIsVisibleMask();
 
     return (
-      <svg className={ `${ style[ 'svg' ] } ${ visibleDrawingClassName ? style[ 'drawing' ]: '' }` } id="svg_app">
+      <svg className={ `${ style[ 'svg' ] } ${ className }` } id="svg_app">
         <g className={ style[ 'outline' ] }>
           { pathEls }
         </g>

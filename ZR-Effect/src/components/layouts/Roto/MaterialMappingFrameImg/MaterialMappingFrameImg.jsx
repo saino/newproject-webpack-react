@@ -17,8 +17,8 @@ class MaterialMappingFrameImg extends Component {
     this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
   };
 
-  getMsFrame(frameLength, time) {
-    const frameRate = frameLength / time;
+  getMsFrame(frameLength, duration) {
+    const frameRate = duration / frameLength;
 
     return frameRate.toFixed(3);
   }
@@ -33,8 +33,8 @@ class MaterialMappingFrameImg extends Component {
 
   setCurrTime() {
     const { frame } = this.props;
-    const { properties: { time, length } } = this.getMaterial();
-    const totalMs = this.getMsFrame(length, time) * frame;
+    const { properties: { duration, length } } = this.getMaterial();
+    const totalMs = this.getMsFrame(length, duration) * frame;
 
     this.videoEl.currentTime = totalMs;
   }

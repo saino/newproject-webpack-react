@@ -190,27 +190,27 @@ class RotoToolbar extends Component {
     }, 10);
 
     // 获取扣像舞台工具类别
-    this.getRotoToolType = this.registerGetMaterialInfo(
+    this.getRotoToolType = this.registerGetRotoActeractiveInfo(
       rotoMaterial => rotoMaterial[ 'roto_tool_type' ]
     );
 
     // 获取是否显示遮罩
-    this.getRotoVisibleMask = this.registerGetMaterialInfo(
+    this.getRotoVisibleMask = this.registerGetRotoActeractiveInfo(
       rotoMaterial => rotoMaterial[ 'is_visible_mask' ]
     );
 
     // 获取素材id
-    this.getMaterialId = this.registerGetMaterialInfo(
+    this.getMaterialId = this.registerGetRotoActeractiveInfo(
       rotoMaterial => rotoMaterial[ 'material_id' ]
     );
 
     // 获取选中'frame'
-    this.getMaterialFrame = this.registerGetMaterialInfo(
+    this.getMaterialFrame = this.registerGetRotoActeractiveInfo(
       rotoMateria => rotoMateria[ 'selected_frame' ]
     );
 
     // 获取撤销次数
-    this.getUndoCount = this.registerGetMaterialInfo(
+    this.getUndoCount = this.registerGetRotoActeractiveInfo(
       rotoMaterial => rotoMaterial[ 'undo_count' ]
     );
 
@@ -261,7 +261,7 @@ class RotoToolbar extends Component {
     pathData.list.splice(updateIndex, 1, pathSelected);
   }
 
-  registerGetMaterialInfo(fn) {
+  registerGetRotoActeractiveInfo(fn) {
     return () => {
       const { rfa } = this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);

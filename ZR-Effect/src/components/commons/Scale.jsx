@@ -13,7 +13,6 @@ export default class Scale extends Component {
   };
 
   static defaultProps = {
-    currTick: 1,
     onChangeTick: () => {},
     onEnd: () => {}
   };
@@ -39,20 +38,21 @@ export default class Scale extends Component {
     }
   };
 
-  movedTickHandle = ({ clientX }) => {
+  movedTickHandle = ({ clientX, offsetX }) => {
     const { onEnd } = this.props;
     const tick = this.getTickByLeft(clientX);
+    const x = this.el.getBoundingClientRect().x;
 
     if (tick != null) {
       this.tempTick = tick;
-      onEnd(tick);
+      this.setState({ tempX: clientX - offsetX - x }, () => onEnd(tick));
     }
   };
 
   getTickByLeft(clientX) {
     let { maxTick } = this.props;
     const offsetX = this.getTickOffsetX(clientX);
-    let tick = offsetX - config.tick.posLeft === config.tick.gap ? 1 : Math.floor((offsetX + 3.5 - config.tick.posLeft)  / config.tick.gyro);
+    let tick = offsetX === config.tick.gap ? 1 : Math.floor((offsetX + 3.5)  / config.tick.gyro);
 
     maxTick = this.getMaxTick(maxTick);
 
@@ -73,7 +73,7 @@ export default class Scale extends Component {
   getMaxTick(oldMaxTick) {
     const { actualWidth } = this.state;
 
-    return (oldMaxTick - 1) * config.tick.gyro >= actualWidth
+    return oldMaxTick * config.tick.gyro >= actualWidth
       ? oldMaxTick
       : Math.floor(actualWidth / config.tick.gyro);
   }
@@ -85,8 +85,8 @@ export default class Scale extends Component {
 
     maxTick = this.getMaxTick(maxTick);
 
-    for (i = 1; i <= maxTick; i++) {
-      className = (i === 1 || i % 5 === 0) ? commonComStyle[ 'large-tick' ] : commonComStyle[ 'small-tick' ];
+    for (i = 0; i < maxTick; i++) {
+      className = i % 5 === 0 ? commonComStyle[ 'large-tick' ] : commonComStyle[ 'small-tick' ];
 
       coms.push(
         <span key={ `t_${ i }` } className={ `${ commonComStyle[ 'tick' ] } ${ className }` }></span>
@@ -98,7 +98,7 @@ export default class Scale extends Component {
 
   configureParentWidth(width) {
     const { maxTick } = this.props;
-    const visualWidth = (maxTick - 1) * config.tick.gyro;
+    const visualWidth = maxTick * config.tick.gyro;
     let parentWidth = visualWidth > width ? visualWidth : width;
 
     this.setState({ parentWidth });
@@ -109,14 +109,19 @@ export default class Scale extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.tempTick = nextPoint.currTick;
+    if (nextProps.currTick !== this.props.currTick) {
+      this.tempTick = nextProps.currTick;
+    }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return nextProps.currTick != null;
   }
 
   render() {
     const { currTick, children } = this.props;
-    const { actualWidth, parentWidth } = this.state;
-    const tickPosLeft = currTick === 1 ? config.tick.posLeft : (currTick - 1) * config.tick.gyro + config.tick.posLeft;
-    const defPosX = [  ]
+    const { actualWidth, parentWidth, tempX } = this.state;
+    const tickPosLeft = currTick === 0 ? 0 : currTick * config.tick.gyro;
 
     return (
       <div ref={ el => this.el = el } className={ commonComStyle[ 'scale-box' ] }>
@@ -127,10 +132,12 @@ export default class Scale extends Component {
               <div className={ commonComStyle[ 'scale-bottom-bar' ] }></div>
             </div>
           </div>
-          <Draggable axis="x"
+          <Draggable
+            axis="x"
+            position={{ x: tickPosLeft, y: 0 }}
             onDrag={ this.movingTickHandle }
             onStop={ this.movedTickHandle }>
-            <i style={{ left: tickPosLeft }}></i>
+            <i></i>
           </Draggable>
           { children }
         </div>

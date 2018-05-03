@@ -16,14 +16,19 @@
   font-size: 14px;
   color: #c4bf97;
   margin-right: 24px;
-  line-height: 50px;
+  padding: 12px 0;
 }
 
-/* .nav-btn > div {
+.nav-btn > div {
   display: block;
   height: 4px;
-  background-image: linear-gradient(-90deg, rgba(255,255,255,0.00) 0%, #FFFFFF 51%, rgba(255,255,255,0.00) 100%);
-} */
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
+
+.active > div {
+  background-image: url('./active.png');
+}
 
 .nav-btn:hover {
   color: #c4bf97;
@@ -33,7 +38,7 @@
   font-size: 14px;
   color: #818b8a;
   margin-right: 24px;
-  line-height: 50px;
+  padding: 12px 0;
 }
 
 .nav-btn-disabled:hover {

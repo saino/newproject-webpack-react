@@ -78,7 +78,11 @@ export default ({
   },
   tick: {
     gyro: 5,
-    gap: 4,
-    posLeft: -3
+    gap: 4
+  },
+  parseFrame: {
+    width: 38,
+    iterate: 10,
+    gap: 15
   }
 });

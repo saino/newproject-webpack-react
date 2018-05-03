@@ -35,6 +35,22 @@ export function selectedFrame (materialId, frame) {
   };
 }
 
+export function configureIsValidFrameError (materialId, isValid) {
+  return {
+    type: 'CONFIGURE_IS_VALID_FRAME_ERROR',
+    materialId,
+    isValid
+  };
+}
+
+export function configureIsPlay (materialId, isPlay) {
+  return {
+    type: 'CONFIGURE_IS_PLAY',
+    materialId,
+    isPlay
+  };
+}
+
 export function configureStartupAiRoto (materialId) {
   return {
     type: 'CONFIGURE_STARTUP_AI_ROTO',

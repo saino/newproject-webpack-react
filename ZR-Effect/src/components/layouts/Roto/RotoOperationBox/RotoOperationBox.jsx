@@ -97,7 +97,7 @@ class RotoOperationBox extends Component {
     });
 
     this.mouseDownHandle = (e) => {
-      const { configure, configureRotoToolType } = this.props;
+      const { configure, configureRotoToolType, disabled } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
@@ -112,6 +112,7 @@ class RotoOperationBox extends Component {
 
       let path, point, entryIds, pathId, pointId, realPointId, type, focusEl, selectedFocusPathEl, pointSelected, pointSelectedId;
 
+      if (!disabled) {
       // 如果操作模式是钢笔工具并且操作条类别是钢笔工具
       if (rotoMode === 0 && rotoToolType === 4) {
         updateObj[ 'dragging' ] = true;
@@ -332,10 +333,11 @@ class RotoOperationBox extends Component {
       }
 
       this.resetEvent(e);
+    }
     };
 
     this.mouseMoveHandle = (e) => {
-      const { configure } = this.props;
+      const { configure, disabled } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
@@ -351,6 +353,7 @@ class RotoOperationBox extends Component {
       const updateObj = {};
       let entryIds, pathId, pointId, path, point, p;
 
+      if (!disabled) {
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
         // 如果是mouseup后
@@ -421,10 +424,11 @@ class RotoOperationBox extends Component {
       }
 
       this.resetEvent(e);
+    }
     };
 
     this.mouseUpHandle = (e) => {
-      const { configure } = this.props;
+      const { configure, disabled } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
@@ -436,6 +440,7 @@ class RotoOperationBox extends Component {
       const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
       const updateObj = {};
 
+      if (!disabled) {
       // 如果是按下了mousedown键后
       if (dragging && rotoToolType === 4) {
         // 如果当前操作模式是钢笔工具，并且存在path，并且存在浮动'point'
@@ -464,6 +469,7 @@ class RotoOperationBox extends Component {
       }
 
       this.resetEvent(e);
+    }
       // // 如果是闭合了
       // if (rotoDrawMode === 2) {
       //   updateObj[ 'draw_mode' ] = 0;
@@ -487,14 +493,6 @@ class RotoOperationBox extends Component {
     this.getRotoToolType = this.registerGetMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'roto_tool_type' ]
     );
-
-    // 获取素材属性
-    this.getMaterialProps = this.registerGetMaterialInfo(rotoMateria => {
-      const { materialList } = this.props;
-      const material = findItem(materialList, 'id', rotoMateria[ 'material_id' ]);
-
-      return material[ 'properties' ];
-    });
 
     // 获取扣像里操作模式
     this.getRotoMode = this.registerGetRotoInfo(roto =>
@@ -622,7 +620,6 @@ class RotoOperationBox extends Component {
   }
 
   render() {
-    const { width, height } = this.getMaterialProps();
     const pathData = this.getPathData();
     const rotoMode = this.getRotoMode();
     const rotoDrawMode = this.getRotoDrawMode();
@@ -633,12 +630,12 @@ class RotoOperationBox extends Component {
     return (
       <div
         className={ style[ 'wrapper' ] }
-        style={{ width, height }}
         onMouseDown={ this.mouseDownHandle }
         onMouseMove={ this.mouseMoveHandle }
         onMouseUp={ this.mouseUpHandle }>
+
         {/* 显示svg的point和path */}
-        <SVG />
+        { pathData ? (<SVG />) : void 0 }
 
         { this.props.children }
       </div>

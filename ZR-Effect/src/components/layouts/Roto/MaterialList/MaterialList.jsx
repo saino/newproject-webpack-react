@@ -68,8 +68,8 @@ class MaterialList extends Component {
       "status": 22771,
       "path": "http://ohjdda8lm.bkt.clouddn.com/course/sample1.mp4",
       "properties": {
-          "length": 300,
-          "time": 60000,
+          "length": 360,
+          "duration": 42,
           "thumbnail": "http://img2.imgtn.bdimg.com/it/u=773138821,3059386791&fm=27&gp=0.jpg",
           "width": 640,
           "height": 480

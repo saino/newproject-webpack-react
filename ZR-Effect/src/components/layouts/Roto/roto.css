@@ -116,7 +116,7 @@
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  flex-basis: 37px;
+  height: 37px;
 }
 
 .frame-player i {
@@ -132,11 +132,19 @@
   margin: 0 10px;
   color: #fff;
   padding: 4px 10px;
-  width: 47px;
+  width: 48px;
   background: url('./input.png') no-repeat 0 0;
-  border: 0 none;
+  border: 1px solid transparent;
   text-align: center;
-  height: 20px;
+  height: 21px;
+  line-height: 21px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.frame-player .valid-error {
+  background: transparent;
+  border-color: #ff0000;
 }
 
 .frame-player .prev {
@@ -168,10 +176,8 @@
 .frame-img-list li {
   float: left;
   position: relative;
-  width: 40px;
-  height: 40px;
   cursor: pointer;
-  margin: 10px 15px 10px 0;
+  margin: 8px 15px 8px 0;
   box-sizing: border-box;
   border: 1px solid #3a666a;
   background: #254549;
@@ -201,4 +207,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.footer > div:first-of-type > div:nth-of-type(2) {
+  background: #000!important;
+}
+
+.footer > div:first-of-type > div:nth-of-type(2) > div {
+  background: #254549!important;
 }
