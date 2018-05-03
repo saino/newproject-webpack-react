@@ -16,7 +16,8 @@ class MaterialContainer extends Component {
 
     state = {
         uploading: false,
-        uploadProgress: 0
+        uploadProgress: 0,
+        loading: false,
     }
     componentWillMount(){
         const { pagination } = this.props;
@@ -176,7 +177,7 @@ class MaterialContainer extends Component {
         return <div className="material-container">
             <div className="title-name">我的素材</div>
             <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
-            <div className="material-content">
+            <div className="material-content" onScroll={this.onScrolld}>
                 <FileUpload options={upLoadOptions} className="add-action">
                     <div ref="chooseAndUpload">
                         <div className="video-item add-video">
@@ -250,6 +251,23 @@ class MaterialContainer extends Component {
                 
             `}</style>
         </div>
+    }
+    onScrolld = (event) => {
+        const target = event.target;
+        const { offsetHeight, scrollHeight, scrollTop} = target;
+        const bottomValue = scrollHeight - scrollTop - offsetHeight;
+        if(bottomValue < 50 ) {
+            if(this.state.loading){
+                return;
+            }
+            this.state.loading = true;
+            console.log("加载中。。。")
+            setTimeout(() => {
+                console.log("加载完毕....");
+                this.state.loading = false;
+            }, 5000);
+            // console.log("jiazai");
+        }
     }
 }
 
