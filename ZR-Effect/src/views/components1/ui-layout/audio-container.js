@@ -21,7 +21,7 @@ class AudioContainer extends Component {
         const { pagination } = this.props;
         if (pagination.audioLibPage === 1) {
             this.props.loadMaterials({
-                "type": "audio",
+                "types": "audio",
                 "page": pagination.audioLibPage,
                 "prepage": 20
             });
@@ -89,7 +89,7 @@ class AudioContainer extends Component {
             this.setState({
                 uploading: false
             });
-        }, 200);
+        }, 50);
     }
     //上传失败
     _handleUploadFailed = (resp) => {
@@ -105,6 +105,32 @@ class AudioContainer extends Component {
     }
     onCloseClick = () => {
         this.props.changeaActiveContainer("stage");
+    }
+    renderUploadProgress = () => {
+        if (!this.state.uploading) {
+            return null;
+        }
+        return <div className="audio-item add-audio">
+            <div className="audio-control">
+                <Progress className="audio-progress" percent={this.state.uploadProgress} size="small" showInfo={false} strokeWidth={5} />
+                {this.state.uploadProgress}%
+            </div>
+            <div className="progress-title">上传中......</div>
+            <style>{`
+                .audio-control{
+                   color: #fff; 
+                }
+                .audio-progress{
+                    width: 80%;
+                    margin-right: 4px;
+                }
+                .progress-title{
+                    text-indent: 8px;
+                    line-height: 44px;
+                    color: #fff;
+                }
+            `}</style>
+        </div>
     }
     render() {
         const upLoadOptions = config.fileUpload.configureFileUpload({
@@ -133,13 +159,16 @@ class AudioContainer extends Component {
                     </div>
                 </FileUpload>
                 {
+                    this.renderUploadProgress()
+                }
+                {
                     this.getAudioMaterial().map((material) => {
                         return <AudioMaterial changeaActiveContainer={this.props.changeaActiveContainer} key={material.id} model={material} />
                     })
                 }
-                {
+                {/* {
                     this.renderProgress()
-                }
+                } */}
             </div>
             <style>{`
                 .audio-container{

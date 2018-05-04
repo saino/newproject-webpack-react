@@ -16,7 +16,8 @@ class MaterialContainer extends Component {
 
     state = {
         uploading: false,
-        uploadProgress: 0
+        uploadProgress: 0,
+        loading: false,
     }
     componentWillMount(){
         const { pagination } = this.props;
@@ -120,6 +121,41 @@ class MaterialContainer extends Component {
     onCloseClick = () => {
         this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
+    renderUploadProgress = () => {
+        if(!this.state.uploading){
+            return null;
+        }
+        return <div className="video-item">
+            <div className="video-upload">
+                <Progress className="audio-progress" percent={this.state.uploadProgress} size="small" showInfo={false} strokeWidth={5} />
+                {this.state.uploadProgress}%
+            </div>
+            <div className="video-upload-title">
+                正在上传......
+            </div>
+            <style>{`
+                .video-upload{
+                    height: 110px;;
+                    width: 147px;
+                    color: #fff;
+                    background: #000;
+                    text-align: center;
+                    line-height: 110px;
+                }
+                .video-upload-title{
+                    height: 44px;
+                    width: 147px;
+                    color: #fff;
+                    line-height: 44px;
+                    text-indent: 8px;
+                }
+                .audio-progress {
+                    width: 74%;
+                    margin-right: 4px;
+                }
+            `}</style>
+        </div>
+    }
     render() { 
         const {materialContainerType } = this.props;
         let acceptType = "video/*";
@@ -141,7 +177,7 @@ class MaterialContainer extends Component {
         return <div className="material-container">
             <div className="title-name">我的素材</div>
             <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
-            <div className="material-content">
+            <div className="material-content" onScroll={this.onScrolld}>
                 <FileUpload options={upLoadOptions} className="add-action">
                     <div ref="chooseAndUpload">
                         <div className="video-item add-video">
@@ -149,14 +185,13 @@ class MaterialContainer extends Component {
                         </div>
                     </div>
                 </FileUpload>
-
+                {
+                    this.renderUploadProgress()
+                }
                 {
                     this.getMaterial().map((material) => {
                         return <VideoMaterial changeaActiveContainer={this.props.changeaActiveContainer} useType={this.props.materialContainerType} key={material.id} model={material} />
                     })
-                }
-                {
-                    this.renderProgress()
                 }
             </div>
             <style>{`
@@ -217,13 +252,22 @@ class MaterialContainer extends Component {
             `}</style>
         </div>
     }
-    renderProgress = () => {
-        if (this.state.uploading) {
-            return <div className='upload-progress'>
-                <Progress type="circle" status={this.state.progressState} percent={this.state.uploadProgress} width={111} />
-            </div>
+    onScrolld = (event) => {
+        const target = event.target;
+        const { offsetHeight, scrollHeight, scrollTop} = target;
+        const bottomValue = scrollHeight - scrollTop - offsetHeight;
+        if(bottomValue < 50 ) {
+            if(this.state.loading){
+                return;
+            }
+            this.state.loading = true;
+            console.log("加载中。。。")
+            setTimeout(() => {
+                console.log("加载完毕....");
+                this.state.loading = false;
+            }, 5000);
+            // console.log("jiazai");
         }
-        return null;
     }
 }
 

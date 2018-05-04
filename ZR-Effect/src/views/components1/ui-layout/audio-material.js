@@ -16,7 +16,8 @@ class AddMaterial extends Component {
         super();
         this.state = {
             play: false,
-            showUse: false
+            showUse: false,
+            playProgress: 0,
         }
     }
     onShowUse = () => {
@@ -42,6 +43,20 @@ class AddMaterial extends Component {
                 ${formatTime.seconds() < 10 ? "0" + formatTime.seconds() : formatTime.seconds()}`;
 
     }
+    componentDidMount(){
+        this.timer = setInterval(()=>{
+            const audioComponent = this.refs.audio;
+            const progress = audioComponent.currentTime/audioComponent.duration;
+            if(progress!==this.state.playProgress){
+                this.setState({
+                    playProgress: Math.round(progress * 100)
+                });
+            }
+        }, 500);
+    }
+    componentWillUnmount(){
+        clearInterval(this.timer);
+    }
     render () {
         const useClass = "audio-use " + (this.state.showUse ? "show" : "hide");
         const { model } = this.props;
@@ -49,7 +64,7 @@ class AddMaterial extends Component {
         return <div className="audio-item" onMouseOver={this.onShowUse} onMouseOut={this.onHideUse}>
             <div className="audio-control">
                 <div className="audio-play" onClick={this.onAudioPlayClick}>{this.state.play ? <Icon type="pause" /> : <Icon type="caret-right" /> }</div>
-                <Progress className="audio-progress" percent={30} size="small" showInfo={false} strokeWidth={5}/>
+                <Progress className="audio-progress" percent={this.state.playProgress} size="small" showInfo={false} strokeWidth={5}/>
             </div>
             <div className="name-edit" onMouseOver={this.onNameMouseOver}>
                 <div className="audio-name">{model.name}</div>
@@ -65,6 +80,9 @@ class AddMaterial extends Component {
                 <div className="use-item" onClick={this.onDeleClick}>删除</div>
             </div>
             <style>{`
+                .audio-item:hover {
+                    box-shadow: 0 0 9px 6px rgba(255,255,255,0.50);
+                }
                 .audio-item{
                     width: 147px;
                     height: 70px;
@@ -169,10 +187,11 @@ class AddMaterial extends Component {
         this.props.deleteMaterial(model);
     }
     onAudioPlayClick = () => {
+        let timer = null;
         if(this.state.play){
             this.refs.audio.pause();
         }else{
-            this.refs.audio.play()
+            this.refs.audio.play();
         };
         this.setState({
             play: !this.state.play

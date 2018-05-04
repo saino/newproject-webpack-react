@@ -4,16 +4,11 @@ import { bindActionCreators } from 'redux';
 
 import { changeWorkMaterial, changWorkVideo } from '../../../stores/reducers/work';
 import { changeMaterial, deleteMaterial } from '../../../stores/reducers/material'
-// deleteVideoMaterial: bindActionCreators(deleteVideoMaterial, dispatch)
-// import { deleteVideoMaterial } from "../../../stores/reducers/video-mateiral"
 
 import AlertView from "./alert-view";
 import config from "../../../config"
-// import video1 from '../../statics/aaa.mp4';
-// import aaa from "../../statics/aaa.png";
 import PreView from "./pre-view"
 import moment from 'moment'
-// import {ClassNames} from "class-name"
 
 class VideoMaterial extends Component {
     constructor(){
@@ -74,6 +69,9 @@ class VideoMaterial extends Component {
                     width: 147px;
                     margin: 16px;
                     background: rgba(45,75,80,0.80);
+                }
+                .video-item:hover {
+                    box-shadow: 0 0 9px 6px rgba(255,255,255,0.50);
                 }
                 .video-thumb{
                     height: 110px;
@@ -205,7 +203,6 @@ const mapDispatchToProps = (dispatch) => {
         changeMaterial: bindActionCreators(changeMaterial, dispatch),
         changWorkVideo: bindActionCreators(changWorkVideo, dispatch),
         deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
-        // deleteVideoMaterial: bindActionCreators(deleteVideoMaterial, dispatch),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(VideoMaterial);
