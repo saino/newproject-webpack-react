@@ -373,7 +373,9 @@ class Matting extends Component {
 
     for (let frame = 1; frame <= totalFrame; frame += iterate) {
       coms.push(
-        <li key={ `p_f_${ frame }` } onClick={ () => this.configureTickHandle(frame - 1) }><FrameImg width={ width } frame={ frame } displayFrame={ frame - 1 } /></li>
+        <li key={ `p_f_${ frame }` } onClick={ () => this.configureTickHandle(frame - 1) }>
+          <FrameImg width={ width } frame={ frame } displayFrame={ frame - 1 } />
+        </li>
       );
     }
 
@@ -405,11 +407,13 @@ class Matting extends Component {
     const isSelected = !!findItem(rfa, 'is_selected', true);
     let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
-
+    console.log(show, rfa.length, 'xxoo');
     zoomValue == null && (zoomValue = 1);
 
-    if (rfa.length === 0 && show === 0) {
+    if (show === 0) {
       show = false;
+    } else {
+      show = true;
     }
 
     if (redirectToReferrer) {
@@ -460,7 +464,7 @@ class Matting extends Component {
                 </div>
               </div>
               {/* 扣像帧处理 */}
-              { show || !rfa.length
+              { show || !rfa.length || !isSelected
                 ? void 0
                 : (<div className={ rotoStyle[ 'footer' ] }>
                     <ScrollArea style={{ width: '100%', height: '100%' }}>
