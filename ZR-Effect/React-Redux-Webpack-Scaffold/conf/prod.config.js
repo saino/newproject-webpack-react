@@ -66,13 +66,24 @@ baseConfig.plugins.push(
   new webpack.optimize.UglifyJsPlugin({
     compress: { warnings: false }
   }),
-  // 提取entry里的公共模块
   new webpack.optimize.CommonsChunkPlugin({
-    name: 'common',
-    minChunks: function (module) {
-      return module.context && module.context.indexOf('node_modules') < 0;
-    }
-  }),
+  name: 'vendor',
+  minChunks: module => {
+    return module.resource && /node_modules/.test(module.resource)
+  }
+}),
+new webpack.optimize.CommonsChunkPlugin({
+  name: 'client',
+  async: 'chunk-vendor',
+  children: true,
+  minChunks: (module, count) => {
+    return count >= 3
+  }
+}),
+new webpack.optimize.CommonsChunkPlugin({
+  name: "runtime",
+  minChunks: Infinity
+}),
   // 定义生产环境的host
   new webpack.DefinePlugin({
     host: JSON.stringify('http://192.168.3.116'),
