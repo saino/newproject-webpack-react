@@ -74,7 +74,8 @@ baseConfig.plugins.push(
     }
   }),
   new webpack.optimize.CommonsChunkPlugin({
-    name: 'manifest'
+    name: 'manifest',
+    minChunks: Infinity
   }),
   // 定义生产环境的host
   new webpack.DefinePlugin({
