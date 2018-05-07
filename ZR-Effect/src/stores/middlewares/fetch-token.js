@@ -8,7 +8,7 @@ export default function getLocalCache ({ dispatch, getState }) {
     if (typeof action === 'function') {
       return next(action);
     }
-
-    return next({ ...action, token: get()});  
+    
+    return next({ ...action, token: get('token')});
   };
 };

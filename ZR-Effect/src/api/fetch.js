@@ -28,12 +28,12 @@ const request = (path, method, body) => {
 
 export function get (path, qs = {}) {
   return request(path, 'GET', qs)
-   .then(resp => resp);
+   .then(resp => resp[ 'data' ]);
 };
 
 export function post (path, body = {}) {
   return request(path, 'POST', body)
-   .then(resp => resp);
+   .then(resp => resp[ 'data' ]);
 };
 
 export function error (messageText, errorFunc) {

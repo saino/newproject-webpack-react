@@ -42,7 +42,7 @@ class Matting extends Component {
 
     this.state = {
       // 检测是否存在该用户信息的state，用来做登录跳转
-      redirectToReferrer: false,
+      redirectToReferrer: true,
 
       // 中间区域是显示添加扣像素材还是帧图片 0-显示帧图片 | 1-添加扣像素材
       showAddMaterialOrFrameImg: 0,

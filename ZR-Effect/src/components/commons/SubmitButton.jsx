@@ -18,9 +18,9 @@ class SubmitButton extends Component {
 
     this.submit = defferPerform(function () {
       const { onSubmit } = this.props;
-      onSubmit(this.unSubmit);
+      onSubmit(this.cancelSubmit);
     }, 0);
-    this.unSubmit = () => {
+    this.cancelSubmit = () => {
       const { fetch } = this.props;
 
       fetch(false);
