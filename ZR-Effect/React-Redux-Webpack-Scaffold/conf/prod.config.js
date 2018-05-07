@@ -77,7 +77,7 @@ new webpack.optimize.CommonsChunkPlugin({
   async: 'chunk-vendor',
   children: true,
   minChunks: (module, count) => {
-    return count >= 3
+    return count >= 2
   }
 }),
 new webpack.optimize.CommonsChunkPlugin({
