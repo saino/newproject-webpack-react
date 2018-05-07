@@ -40,7 +40,6 @@ class MaterialContainer extends Component {
     getMaterial() {
         const { material, videoMaterial, materialContainerType } = this.props;
         const type = materialContainerType.join("|");
-        // console.log(type, "dffffffffffffff");
         if(type === "video"){
             return [...videoMaterial];
         }else{
@@ -50,12 +49,10 @@ class MaterialContainer extends Component {
 
     //选择文件之前
     _handleBeforeChoose = () => {
-        // console.log("before choose");
         return true;
     }
     //选择文件
     _handleChooseFile = (files) => {
-        // console.log("choose", files);
         return true;
     }
     //上传之前
@@ -99,7 +96,7 @@ class MaterialContainer extends Component {
             "types": "video",
             "page": 1,
             "prepage": 20
-        })
+        });
         setTimeout(() => {
             this.setState({
                 uploading: false
@@ -261,12 +258,7 @@ class MaterialContainer extends Component {
                 return;
             }
             this.state.loading = true;
-            console.log("加载中。。。")
-            setTimeout(() => {
-                console.log("加载完毕....");
-                this.state.loading = false;
-            }, 5000);
-            // console.log("jiazai");
+            console.log(this, this.props.useType);
         }
     }
 }

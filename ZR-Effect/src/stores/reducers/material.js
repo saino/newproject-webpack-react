@@ -41,6 +41,13 @@ export const loadMaterials = (body) => {
                 type: actionTypes.GET_MATERIAL,
                 materials: resp.data.result
             });
+
+            if(resp.data.result.length === 20){
+                // dispatch({
+                //     type: 
+                // })
+            }
+
         });
     }
 }
