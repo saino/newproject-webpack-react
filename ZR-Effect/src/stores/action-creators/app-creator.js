@@ -9,10 +9,18 @@ export function fetch (isFetch) {
 }
 
 export function recordUser (isRecordUser, phone) {
+  const username = isRecordUser ? phone : '';
+
+  // 持久化是否记录用户名
+  set('isRecordUser', isRecordUser);
+
+  // 如果是选中记录用户名，则存储用户名，否则清空
+  set('username', username);
+
   return {
     type: 'RECORD_USER',
     isRecordUser,
-    phone
+    username
   };
 }
 

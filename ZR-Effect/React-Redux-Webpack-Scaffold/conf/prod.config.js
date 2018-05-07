@@ -43,7 +43,7 @@ baseConfig.module.rules.push({
 
 baseConfig.module.rules.push({
   test: /\.css$/i,
-  include: [ pathEnv.vendorPath ],
+  include: [ pathEnv.staticPath, pathEnv.vendorPath ],
   use: ExtractTextPlugin.extract({
     fallback: 'style-loader',
     use: {

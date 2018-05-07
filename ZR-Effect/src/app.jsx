@@ -7,6 +7,7 @@ import { render } from 'react-dom';
 import createRouter from './route';
 import createStore from './stores/store';
 import 'antd/dist/antd.css';
+import '../static/reset.css';
 
 // 创建store
 const store = createStore();

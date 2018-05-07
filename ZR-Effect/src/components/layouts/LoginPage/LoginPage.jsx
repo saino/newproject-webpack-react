@@ -21,7 +21,7 @@ class LoginPage extends Component {
     super(props);
 
     this.state = {
-      phone: props.token,
+      phone: props.phone,
       password: ''
     };
     // 登录前处理（一般是前端验证）
@@ -60,7 +60,7 @@ class LoginPage extends Component {
       const { login, isRecordUser } = this.props;
       const { phone, password } = this.state;
 
-      login(phone, password, token => {
+      login(phone, password, () => {
         this.loginAfterHandle(cancelLoginHandle);
       }, () => this.loginAfterHandle(cancelLoginHandle));
     };
@@ -116,7 +116,10 @@ class LoginPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.isShow) {
-      this.setState({ password: '' });
+      this.setState({
+        password: '',
+        phone: nextProps.phone
+      });
     }
   }
 
@@ -138,7 +141,7 @@ class LoginPage extends Component {
 }
 
 const mapStateToProps = ({ app }) => ({
-  token: app.token == null ? '' : app.token,
+  phone: app.username,
   isRecordUser: app.isRecordUser
 });
 

@@ -68,7 +68,7 @@ baseConfig.devServer = {
  */
 baseConfig.module.rules.push({
   test: /\.css$/i,
-  include: pathEnv.vendorPath,
+  include: [ pathEnv.staticPath, pathEnv.vendorPath ],
   use: [
     {
       loader: 'style-loader'
