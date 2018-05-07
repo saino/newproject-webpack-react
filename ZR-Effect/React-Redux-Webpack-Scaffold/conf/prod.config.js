@@ -73,9 +73,6 @@ baseConfig.plugins.push(
       return module.context && module.context.indexOf('node_modules') < 0;
     }
   }),
-  new webpack.optimize.CommonsChunkPlugin({
-    name: 'runtime'
-  }),
   // 定义生产环境的host
   new webpack.DefinePlugin({
     host: JSON.stringify('http://192.168.3.116'),
