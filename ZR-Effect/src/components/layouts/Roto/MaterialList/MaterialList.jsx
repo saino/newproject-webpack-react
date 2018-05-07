@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import config from '../../../../config';
 import defferPerform from '../../../../utils/deffer-perform';
+import { normalize } from '../../../../service/format';
 import { uploadMaterial } from '../../../../stores/action-creators/material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
@@ -31,7 +32,7 @@ class MaterialList extends Component {
       this.setState({
         uploadingPercent: 101,
         uploadSituation: 0
-      }, () => this.uploadMaterial());
+      }, () => this.uploadMaterial(resp[ 'data' ]));
     };
 
     // 上传失败
@@ -61,19 +62,10 @@ class MaterialList extends Component {
   }
 
   uploadMaterial(material) {
-    material || (material = {
-      "id": new Date().getTime(),
-      "user_id": 52938,
-      "type": "video",
-      "status": 22771,
-      "path": "http://ohjdda8lm.bkt.clouddn.com/course/sample1.mp4",
-      "properties": {
-          "length": 360,
-          "duration": 42,
-          "thumbnail": "http://img2.imgtn.bdimg.com/it/u=773138821,3059386791&fm=27&gp=0.jpg",
-          "width": 640,
-          "height": 480
-      }
+    material = normalize(material, material => {
+      const materialUpdated = { ...material, id: +material.id, path: `${ config.fileUpload.host }:${ config.fileUpload.port }${ material.path }` };
+
+      return materialUpdated;
     });
 
     const { uploadMaterial, onSelectedRotoMaterial } = this.props;
@@ -103,7 +95,6 @@ class MaterialList extends Component {
             visibleUploadOrDetail={ 0 }
             materialId={ material.id }
             materialName={ config.getFilenameByPath(material.path) }
-            materialThumb={ material.properties.thumbnail }
             onCheck={ this.checkMaterialItemHandle }/>
         </div>
       );

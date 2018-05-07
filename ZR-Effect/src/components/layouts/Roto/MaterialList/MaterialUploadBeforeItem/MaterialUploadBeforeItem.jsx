@@ -46,10 +46,10 @@ export default class MaterialUploadedBeforeItem extends Component {
   };
 
   // 上传成功
-  uploadSuccessHandle = () => {
+  uploadSuccessHandle = resp => {
     const { onUploadSuccess } = this.props;
 
-    onUploadSuccess();
+    onUploadSuccess(resp);
   };
 
   // 上传失败

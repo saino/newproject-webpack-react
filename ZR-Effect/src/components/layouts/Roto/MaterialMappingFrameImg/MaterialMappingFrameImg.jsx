@@ -45,7 +45,7 @@ class MaterialMappingFrameImg extends Component {
     return (
       <div className={ style[ 'wrapper' ] }>
         <canvas ref={ el => this.canvasEl = el } width={ width } height={ height }></canvas>
-        <video src={ path } ref={ el => this.videoEl = el } crossOrigin="Anonymous" style={{ display: 'none' }}></video>
+        <video src={ path } ref={ el => this.videoEl = el } crossOrigin="use-credentials" style={{ display: 'none' }}></video>
       </div>
     );
   }

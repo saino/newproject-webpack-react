@@ -112,6 +112,11 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(pathEnv.env)
+    }),
+
+    new webpack.DefinePlugin({
+      fileUploadHost: JSON.stringify('http://192.168.3.116'),
+      fileUploadPort: 8899
     })
   ]
 };

@@ -47,7 +47,7 @@ export default ({
   },
   // 根据路径获取文件名
   getFilenameByPath(path) {
-    let filenameExp = /([^/]*?)\.\w*?$/i;
+    let filenameExp = /([^/]*?)\.[mp4|webm].?/i;
 
     if (path == null) {
       return '';
@@ -58,6 +58,8 @@ export default ({
       : '';
   },
   fileUpload: {
+    host: fileUploadHost,
+    port: fileUploadPort,
     // 配置文件上传参数
     configureFileUpload(options) {
       return {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from '../../../../../config';
 import materialItemStyle from './item.css';
 import MaterialCardItem from './MaterialCardItem';
 import MaterialUploadFinishItem from './MaterialUploadFinishItem';
@@ -17,8 +18,6 @@ export default class MaterialItem extends Component {
     materialId: PropTypes.number,
     // 素材名
     materialName: PropTypes.string,
-    // 素材缩略图
-    materialThumb: PropTypes.string,
     // 选择回调
     onCheck: PropTypes.func
   };
@@ -30,6 +29,7 @@ export default class MaterialItem extends Component {
       materialId, materialName, materialThumb,
       onCheck
     } = this.props;
+    const thumb = `${ config.fileUpload.host }:${ config.fileUpload.port }/data/materials/${ materialId }/thumb.jpg`;
     let childComponent = null;
 
     if (visibleUploadOrDetail < 1) {
@@ -37,7 +37,7 @@ export default class MaterialItem extends Component {
         <MaterialCardItem
           id={ materialId }
           name={ materialName }
-          thumb={ materialThumb }
+          thumb={ thumb }
           onCheck={ onCheck } />
         );
     }
