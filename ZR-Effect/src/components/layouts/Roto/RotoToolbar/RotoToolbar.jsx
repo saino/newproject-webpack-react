@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 import { message } from 'antd';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
-import { undo, configureZoom, configureRotoToolType, configureRotoVisibleMask } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import {
+  undo, configureZoom, addRotoedFrame,
+  configureRotoToolType, configureRotoVisibleMask
+} from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
@@ -41,7 +44,7 @@ class RotoToolbar extends Component {
 
     // 延迟执行设置扣像操作模式为选择模式或编辑模式
     this.defferSelectEntry = defferPerform((modeVal) => {
-      const { configure } = this.props;
+      const { configure, addRotoedFrame } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const mode = this.getRotoMode();
@@ -55,6 +58,9 @@ class RotoToolbar extends Component {
         updateObj[ 'draw_mode' ] = 0;
         updateObj[ 'path_selected' ] = false;
         updateObj[ 'dragging' ] = false;
+
+        // 添加本地抠像
+        addRotoedFrame(materialId, materialFrame);
       }
 
       configure(materialId, materialFrame, updateObj);
@@ -77,7 +83,6 @@ class RotoToolbar extends Component {
 
     // 移动'path'或'point'
     this.moveEntryHandle = () => {
-      //this.defferMoveEntry();
       this.defferSelectEntry(1);
       this.configureToolState(6);
     };
@@ -152,12 +157,19 @@ class RotoToolbar extends Component {
     };
 
     this.rotoCompleteHandle = () => {
+      const { addRotoedFrame } = this.props;
+      const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
+      
       this.defferRotoComplete();
       this.configureToolState(9);
+
+      // 添加本地抠像
+      addRotoedFrame(materialId, materialFrame);
     };
 
     // 延迟将工具状态设置为选中
-    this.deferConfigureToolSelect = defferPerform(() => {
+    this.deferConfigureMoveToolSelect = defferPerform(() => {
       const { configureRotoToolType } = this.props;
       const materialId = this.getMaterialId();
 
@@ -185,7 +197,7 @@ class RotoToolbar extends Component {
         this.configurePathDataList(pathSelected);
       }
 
-      this.deferConfigureToolSelect();
+      this.deferConfigureMoveToolSelect();
       configure(materialId, materialFrame, updateObj);
     }, 10);
 
@@ -366,7 +378,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     configureZoom,
     configureRotoToolType,
     configure,
-    configureRotoVisibleMask
+    configureRotoVisibleMask,
+    addRotoedFrame
   },
   dispatch
 );

@@ -43,8 +43,7 @@
 .wrapper .list li {
   float: left;
   position: relative;
-  width: 40px;
-  height: 40px;
+  line-height: 0;
   margin-bottom: 18px;
   margin-right: 16px;
   cursor: pointer;

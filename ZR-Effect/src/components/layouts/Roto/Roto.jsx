@@ -407,7 +407,7 @@ class Matting extends Component {
     const isSelected = !!findItem(rfa, 'is_selected', true);
     let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
-    console.log(show, rfa.length, 'xxoo');
+
     zoomValue == null && (zoomValue = 1);
 
     if (show === 0) {
@@ -498,7 +498,7 @@ class Matting extends Component {
             </div>
 
             {/* 扣像操作面板 */}
-              { show || !rfa.length
+              { show || !rfa.length || !isSelected
                 ? void 0
                 : (<div className={ rotoStyle[ 'right' ] }>
                     <RotoOperationPanel />

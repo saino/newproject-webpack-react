@@ -40,7 +40,7 @@ baseConfig.devServer = {
     //   "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, X-Request-With, Cookie",
     //   "Access-Control-Allow-Credentials": "true",
     // },
-    
+
 
     // onProxyRes: function (proxyRes, req, res) {
     //   var cookies = proxyRes.headers['set-cookie'];

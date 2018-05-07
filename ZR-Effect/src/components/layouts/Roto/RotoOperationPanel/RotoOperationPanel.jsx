@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import style from './roto-operation-panel.css';
 import RotoDownload from './RotoDownload/RotoDownload';
-import GeneratePNGFrame from './GeneratePNGFrame/GeneratePNGFrame';
 
 class RotoOperationPanel extends Component {
   state = {
@@ -19,10 +18,7 @@ class RotoOperationPanel extends Component {
     return (
       <div className={ style[ 'wrapper' ] }>
         <div className={ style[ 'wrapper-inner' ] }>
-          { !visibleRotoOrPNG
-              ? (<RotoDownload />)
-              : (<GeneratePNGFrame />)
-          }
+          <RotoDownload />
         </div>
         <div className={ style[ 'action-type' ] }>
           <div className={ !visibleRotoOrPNG ? style[ 'active' ] : '' } onClick={ this.switchTypeHandle(0) }>下载抠像素材</div>
