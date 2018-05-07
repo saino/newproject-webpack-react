@@ -63,9 +63,9 @@ baseConfig.plugins.push(
     filename: 'static/css/[name].[hash:3].css'
   }),
   // 压缩、混淆
-  new webpack.optimize.UglifyJsPlugin({
-    compress: { warnings: false }
-  }),
+  // new webpack.optimize.UglifyJsPlugin({
+  //   compress: { warnings: false }
+  // }),
   new webpack.optimize.CommonsChunkPlugin({
   name: 'vendor',
   minChunks: module => {
