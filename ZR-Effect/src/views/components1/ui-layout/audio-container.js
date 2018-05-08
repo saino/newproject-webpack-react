@@ -10,12 +10,14 @@ import deleImg from "../../statics/dele.png";
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
 import { changeMaterial, loadMaterials } from "../../../stores/reducers/material"
+import { setAudioLibPage } from "../../../stores/reducers/pagination";
 
 class AudioContainer extends Component {
-
+    bottomValueBUF = -1;
     state = {
         uploading: false,
-        uploadProgress: 0
+        uploadProgress: 0,
+        loading: false,
     }
     componentWillMount(){
         const { pagination } = this.props;
@@ -149,7 +151,7 @@ class AudioContainer extends Component {
         return <div className="audio-container">
             <div className="title-name">我的音频</div>
             <div className="close-container" onClick={this.onCloseClick}><img src={deleImg}></img></div>
-            <div className="audio-content">
+            <div className="audio-content" onScroll={this.onScrolld}>
 
                 <FileUpload options={upLoadOptions} className="add-action">
                     <div ref="chooseAndUpload">
@@ -227,6 +229,39 @@ class AudioContainer extends Component {
             `}</style>
         </div>
     }
+    onScrolld = (event) => {
+        const target = event.target;
+        const { offsetHeight, scrollHeight, scrollTop } = target;
+        const bottomValue = scrollHeight - scrollTop - offsetHeight;
+        //如果是向下滑动则不处理
+        console.log(this.bottomValueBUF, bottomValue, "kkkkkkkkkkk");
+        if (this.bottomValueBUF !== -1 && this.bottomValueBUF <= bottomValue) {
+            this.bottomValueBUF = bottomValue;
+            return;
+        }
+        this.bottomValueBUF = bottomValue;
+        if (bottomValue < 50 && !this.state.loading){
+            this.state.loading = true;
+            const types = "audio";
+            const pageNum = this.props.pagination.audioLibPage + 1;
+            this.props.loadMaterials({
+                "types": types,
+                "page": pageNum,
+                "prepage": config.page.size
+            }, (resp) => {
+                setTimeout(() => {
+                    this.setState({
+                        loading: false
+                    });
+                }, 500);
+                const materials = resp.data.result;
+                if (materials.length === config.page.size) {
+                    this.props.setAudioLibPage(pageNum);
+                }
+            });
+        }
+
+    }
     renderProgress = () => {
         if (this.state.uploading) {
             return <div className='upload-progress'>
@@ -248,7 +283,8 @@ const mapStateToProps = ({ material, pagination}) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         changeMaterial: bindActionCreators(changeMaterial, dispatch),
-        loadMaterials: bindActionCreators(loadMaterials, dispatch)
+        loadMaterials: bindActionCreators(loadMaterials, dispatch),
+        setAudioLibPage: bindActionCreators(setAudioLibPage, dispatch),
     };
 }
 

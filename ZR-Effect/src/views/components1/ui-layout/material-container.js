@@ -5,14 +5,16 @@ import config from '../../../config';
 import VideoMaterial from "./video-material";
 import { message, Progress } from "antd";
 import FileUpload from 'react-fileupload';
-import { changeMaterial, loadMaterials } from "../../../stores/reducers/material"
-import { loadVideoMaterials } from '../../../stores/reducers/video-mateiral'
+import { changeMaterial, loadMaterials, loadFirstMaterials } from "../../../stores/reducers/material"
+import { loadVideoMaterials, loadFirstVideoMaterials } from '../../../stores/reducers/video-mateiral'
+import { setVideoAndImgLibPage, setVideoLibPage } from "../../../stores/reducers/pagination"
 import deleImg from "../../statics/dele.png";
 
 import "./audio-container.css";
 import AddMaterial from "../../statics/add-material1.png";
 
 class MaterialContainer extends Component {
+    bottomValueBUF = -1;
 
     state = {
         uploading: false,
@@ -22,17 +24,17 @@ class MaterialContainer extends Component {
     componentWillMount(){
         const { pagination } = this.props;
         if (pagination.videoLibPage === 1){
-            this.props.loadVideoMaterials({
+            this.props.loadFirstVideoMaterials({
                 "types": "video",
                 "page": pagination.videoLibPage,
-                "prepage": 20
+                "prepage": config.page.size
             });
         }
         if (pagination.videoAndImgLibPage === 1){
-            this.props.loadMaterials({
+            this.props.loadFirstMaterials({
                 "types": "video|image",
                 "page": pagination.videoAndImgLibPage,
-                "prepage": 20
+                "prepage": config.page.size
             });
         }
     }
@@ -87,15 +89,15 @@ class MaterialContainer extends Component {
             uploadProgress: 100,
             progressState: "success",
         });
-        this.props.loadMaterials({
+        this.props.loadFirstMaterials({
             "types": "image|video",
             "page": 1,
-            "perpage": 20
+            "perpage": config.page.size
         });
-        this.props.loadVideoMaterials({
+        this.props.loadFirstVideoMaterials({
             "types": "video",
             "page": 1,
-            "prepage": 20
+            "prepage": config.page.size
         });
         setTimeout(() => {
             this.setState({
@@ -253,12 +255,51 @@ class MaterialContainer extends Component {
         const target = event.target;
         const { offsetHeight, scrollHeight, scrollTop} = target;
         const bottomValue = scrollHeight - scrollTop - offsetHeight;
-        if(bottomValue < 50 ) {
-            if(this.state.loading){
-                return;
-            }
+        //如果是向下滑动则不处理
+        if(this.bottomValueBUF!==-1&&this.bottomValueBUF<=bottomValue){
+            this.bottomValueBUF = bottomValue;
+            return ;
+        }
+        this.bottomValueBUF = bottomValue;
+        //如何滑到底部并且不再加载中则加载下一页
+        if(bottomValue<50 && !this.state.loading) {
             this.state.loading = true;
-            console.log(this, this.props.useType);
+            const types = this.props.materialContainerType.join("|");
+            const pageNum = types === "video" ? this.props.pagination.audioLibPage + 1 : this.props.pagination.videoAndImgLibPage + 1;
+            if(types === "video"){
+                this.props.loadVideoMaterials({
+                    "types": types,
+                    "page": pageNum,
+                    "prepage": config.page.size
+                }, (resp) => {
+                    setTimeout(() => {
+                        this.setState({
+                            loading: false
+                        });
+                    }, 500);
+                    const materials = resp.data.result;
+                    if (materials.length === config.page.size) {
+                        this.props.setVideoLibPage(pageNum);
+                    }
+                });
+            } else{
+                this.props.loadMaterials({
+                    "types": types,
+                    "page": pageNum,
+                    "prepage": config.page.size
+                }, (resp) => {
+                    setTimeout(() => {
+                        this.setState({
+                            loading: false
+                        });
+                    }, 500);
+                    const materials = resp.data.result;
+                    if (materials.length === config.page.size) {
+                        this.props.setVideoAndImgLibPage(pageNum);
+                    }
+                });
+            }
+            
         }
     }
 }
@@ -275,7 +316,11 @@ const mapDispatchToProps = (dispatch) => {
     return {
         changeMaterial: bindActionCreators(changeMaterial, dispatch),
         loadMaterials: bindActionCreators(loadMaterials, dispatch),
-        loadVideoMaterials: bindActionCreators(loadVideoMaterials,dispatch),
+        loadFirstMaterials: bindActionCreators(loadFirstMaterials, dispatch),
+        loadVideoMaterials: bindActionCreators(loadVideoMaterials, dispatch),
+        loadFirstVideoMaterials: bindActionCreators(loadFirstVideoMaterials, dispatch),
+        setVideoAndImgLibPage: bindActionCreators(setVideoAndImgLibPage, dispatch),
+        setVideoLibPage: bindActionCreators(setVideoLibPage, dispatch)
     };
 }
 
