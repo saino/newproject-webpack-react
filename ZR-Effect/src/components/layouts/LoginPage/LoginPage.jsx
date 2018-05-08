@@ -21,7 +21,7 @@ class LoginPage extends Component {
     super(props);
 
     this.state = {
-      phone: props.token,
+      phone: props.phone,
       password: ''
     };
     // 登录前处理（一般是前端验证）
@@ -46,20 +46,23 @@ class LoginPage extends Component {
       return true;
     };
     // 登录后处理（一般是清楚登录中状态，记录到本地存储，延时跳转）
-    this.loginAfterHandle = defferPerform((token, isRecordUser, unLoginHandle) => {
-      // 将token和是否记住用户记录到localstorage中
-      set('token', token);
-      set('isRecordUser', isRecordUser);
-      unLoginHandle();
+    this.loginAfterHandle = defferPerform(cancelLoginHandle => {
+      const { onClose } = this.props;
+
+      // 取消登录状态
+      cancelLoginHandle();
+
+      // 关闭登录对话框
+      onClose();
     }, 10);
     // 登录
-    this.loginHandle = (unLoginHandle) => {
+    this.loginHandle = (cancelLoginHandle) => {
       const { login, isRecordUser } = this.props;
       const { phone, password } = this.state;
 
-      login(phone, password, (token) => {
-        this.loginAfterHandle(token, isRecordUser, unLoginHandle);
-      }, unLoginHandle);
+      login(phone, password, () => {
+        this.loginAfterHandle(cancelLoginHandle);
+      }, () => this.loginAfterHandle(cancelLoginHandle));
     };
     // 手机号和密码改变
     this.changeFieldHandle = (name) => (e) => {
@@ -68,8 +71,9 @@ class LoginPage extends Component {
     // 记住用户
     this.recordUserHandle = ({ target }) => {
       const { recordUser } = this.props;
+      const { phone } = this.state;
 
-      recordUser(target.checked);
+      recordUser(target.checked, phone);
     };
   }
 
@@ -112,7 +116,10 @@ class LoginPage extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.isShow) {
-      this.setState({ password: '' });
+      this.setState({
+        password: '',
+        phone: nextProps.phone
+      });
     }
   }
 
@@ -134,7 +141,7 @@ class LoginPage extends Component {
 }
 
 const mapStateToProps = ({ app }) => ({
-  token: app.token == null ? '' : app.token,
+  phone: app.username,
   isRecordUser: app.isRecordUser
 });
 

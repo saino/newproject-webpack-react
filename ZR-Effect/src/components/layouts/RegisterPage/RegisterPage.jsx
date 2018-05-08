@@ -65,19 +65,20 @@ class RegisterPage extends Component {
       return true;
     };
     // 注册后处理（一般是清除注册中状态，记录到本地存储，延时跳转）
-    this.registerAfterHandle = defferPerform((token, unRegisterHandle) => {
-      // 将token记到localstorage中
-      set('token', token);
-      unRegisterHandle();
+    this.registerAfterHandle = defferPerform(cancelRegisterHandle => {
+      const { onClose } = this.props;
+
+      onClose();
+      cancelRegisterHandle();
     }, 10);
     // 注册
-    this.registerHandle = (unRegisterHandle) => {
+    this.registerHandle = (cancelRegisterHandle) => {
       const { register, isRecordUser } = this.props;
       const { phone, password, verifyCode } = this.state;
 
-      register(phone, password, verifyCode, (token) => {
-        this.registerAfterHandle(token, unRegisterHandle);
-      }, unRegisterHandle);
+      register(phone, password, verifyCode, () => {
+        this.registerAfterHandle(cancelRegisterHandle);
+      }, () => this.registerAfterHandle(cancelRegisterHandle));
     };
     // 发送验证码
     this.sendVerifyCodeHandle = () => {
@@ -129,11 +130,11 @@ class RegisterPage extends Component {
               <Input value={ phone } onChange={ this.changeFieldHandle('phone') } className={ style[ 'textbox-input' ] } placeholder="请输入手机号" />
             </li>
             <li className={ style.textbox }>
-              <Input value={ password } onChange={ this.changeFieldHandle('password') } className={ style[ 'textbox-input' ] } placeholder="请输入新密码" />
+              <Input value={ password } type="password" onChange={ this.changeFieldHandle('password') } className={ style[ 'textbox-input' ] } placeholder="请输入新密码" />
             </li>
             <li className={ style.textbox }>
               <span className={ style.verifyCode }>
-                <Input value={ confirmPassword } onChange={ this.changeFieldHandle('confirmPassword') } className={ style[ 'textbox-input' ] } placeholder="请重复输入新密码" />
+                <Input value={ confirmPassword } type="password" onChange={ this.changeFieldHandle('confirmPassword') } className={ style[ 'textbox-input' ] } placeholder="请重复输入新密码" />
               </span>
               <span className={ style[ 'send-verifycode-btn'] }>
                 {/* 发送验证码 */}

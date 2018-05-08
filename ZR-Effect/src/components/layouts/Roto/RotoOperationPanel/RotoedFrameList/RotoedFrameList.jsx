@@ -1,13 +1,66 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import rotoedFrameListStyle from './rotoed-frame-list.css';
+import { findItem } from '../../../../../utils/array-handle';
+import config from '../../../../../config';
+import { selectedFrame } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
 // 测试的图片关键帧图片模块
 import testPNG from '../RotoAi/start-roto.png';
+import FrameImg from '../../FrameImg/FrameImg';
 
-export default class RotoedFrameList extends Component {
-  static propTypes = {
-    frameList: PropTypes.array
+class RotoedFrameList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.getMaterialId = this.registerGetRotoActeractiveInfo(
+      rotoMaterial => rotoMaterial[ 'material_id' ]
+    );
+    this.getRotoedFrames = this.registerGetRotoActeractiveInfo(
+      rotoMaterial => rotoMaterial[ 'rotoed_frames' ]
+    );
+  }
+
+  selectedFrameHandle = (frame) => () => {
+    const { selectedFrame } = this.props;
+    const materialId = this.getMaterialId();
+
+    selectedFrame(materialId, frame);
   };
+
+  getParseFrameCom() {
+    const coms = [];
+    const rotoedFrames = this.getRotoedFrames();
+    let frame;
+
+    for (let i = 0; i < rotoedFrames.length; i++) {
+      frame = rotoedFrames[ i ];
+
+      coms.push(
+        <li key={ `p_f_${ i }` } onClick={ this.selectedFrameHandle(frame) }>
+          <FrameImg width={ config.parseFrame.width } frame={ frame + 1 } displayFrame={ frame } />
+        </li>
+      );
+    }
+
+    return (
+      <ul>{ coms }</ul>
+    );
+  }
+
+  registerGetRotoActeractiveInfo(fn) {
+    return () => {
+      const { rfa } = this.props;
+      const rotoMaterial = findItem(rfa, 'is_selected', true);
+
+      if (rotoMaterial == null) {
+        return void 0;
+      }
+
+      return fn(rotoMaterial);
+    };
+  }
 
   render() {
     return (
@@ -15,35 +68,22 @@ export default class RotoedFrameList extends Component {
         <div className={ rotoedFrameListStyle[ 'wrapper-inner' ] }>
             <label>已抠像的关键帧序列</label>
             <div className={ rotoedFrameListStyle[ 'list' ] }>
-              <ul>
-                <li>
-                  <i>1</i>
-                  <img src={ testPNG } />
-                </li>
-                <li>
-                  <i>2</i>
-                  <img src={ testPNG } />
-                </li>
-                <li>
-                  <i>3</i>
-                  <img src={ testPNG } />
-                </li>
-                <li>
-                  <i>4</i>
-                  <img src={ testPNG } />
-                </li>
-                <li>
-                  <i>5</i>
-                  <img src={ testPNG } />
-                </li>
-                <li>
-                  <i>6</i>
-                  <img src={ testPNG } />
-                </li>
-              </ul>
+              { this.getParseFrameCom() }
             </div>
         </div>
       </div>
     );
   }
 }
+
+const mapStateToProps = ({
+  material,
+  rotoFrontendActeractive
+}) => ({
+  materialList: material,
+  rfa: rotoFrontendActeractive,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({ selectedFrame }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(RotoedFrameList);

@@ -27,8 +27,7 @@ export default class HomePage extends Component {
     const { isShowLoginDialog, isShowRegisterDialog } = this.state;
 
     return (
-
-        <div className={ style[ 'home-wrapper' ] }>
+        <div>
           {/* 头部导航 */}
           <div className={ style[ 'header' ] }>
             <Header

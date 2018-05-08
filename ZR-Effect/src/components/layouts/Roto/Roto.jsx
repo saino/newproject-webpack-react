@@ -41,9 +41,6 @@ class Matting extends Component {
     this.getSelectedFrame = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'selected_frame' ]);
 
     this.state = {
-      // 检测是否存在该用户信息的state，用来做登录跳转
-      redirectToReferrer: false,
-
       // 中间区域是显示添加扣像素材还是帧图片 0-显示帧图片 | 1-添加扣像素材
       showAddMaterialOrFrameImg: 0,
 
@@ -395,19 +392,15 @@ class Matting extends Component {
   }
 
   render() {
-    const {
-      redirectToReferrer,
-      showAddMaterialOrFrameImg,
-      tempFrame
-    } = this.state;
-    const { rfa } = this.props;
+    const { showAddMaterialOrFrameImg, tempFrame } = this.state;
+    const { rfa, token } = this.props;
     const frame = this.getSelectedFrame();
     const isValidFrameError = this.getIsValidFrameError();
     const isPlay = this.getIsPlay();
     const isSelected = !!findItem(rfa, 'is_selected', true);
     let zoomValue = this.getZoom();
     let show = showAddMaterialOrFrameImg;
-    console.log(show, rfa.length, 'xxoo');
+
     zoomValue == null && (zoomValue = 1);
 
     if (show === 0) {
@@ -416,7 +409,7 @@ class Matting extends Component {
       show = true;
     }
 
-    if (redirectToReferrer) {
+    if (token == null) {
       return (
         <Redirect to="/" />
       );
@@ -498,7 +491,7 @@ class Matting extends Component {
             </div>
 
             {/* 扣像操作面板 */}
-              { show || !rfa.length
+              { show || !rfa.length || !isSelected
                 ? void 0
                 : (<div className={ rotoStyle[ 'right' ] }>
                     <RotoOperationPanel />

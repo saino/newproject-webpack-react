@@ -18,3 +18,7 @@
   width: 360px;
   transform: translate(-50%,-50%);
 }
+
+:global(.ant-modal-content) {
+  background: transparent;
+}

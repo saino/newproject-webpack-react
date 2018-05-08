@@ -1,14 +1,18 @@
 export function get (key) {
-  let token;
+  let val;
 
   if (localStorage) {
-    token = localStorage.getItem(key);
+    val = localStorage.getItem(key);
 
-    if (token == null) {
+    if (val == 'null' || val == 'undefined') {
       return void 0;
     }
 
-    return token;
+    if (val == '') {
+      return '';
+    }
+
+    return JSON.parse(val);
   }
 
   return void 0;
@@ -16,7 +20,7 @@ export function get (key) {
 
 export function set (key, val) {
   if (localStorage) {
-    localStorage.setItem(key, val);
+    localStorage.setItem(key, JSON.stringify(val));
   }
 }
 

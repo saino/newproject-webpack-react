@@ -1,5 +1,5 @@
 import { post, error as fail } from '../../api/fetch';
-import { set } from '../../utils/configure-auth';
+import { get, set } from '../../utils/configure-auth';
 
 export function fetch (isFetch) {
   return {
@@ -8,10 +8,19 @@ export function fetch (isFetch) {
   };
 }
 
-export function recordUser (isRecordUser) {
+export function recordUser (isRecordUser, phone) {
+  const username = isRecordUser ? phone : '';
+
+  // 持久化是否记录用户名
+  set('isRecordUser', isRecordUser);
+
+  // 如果是选中记录用户名，则存储用户名，否则清空
+  set('username', username);
+
   return {
     type: 'RECORD_USER',
-    isRecordUser
+    isRecordUser,
+    username
   };
 }
 
@@ -34,9 +43,11 @@ export function login (phone, password, successFunc, errorFunc) {
   return function (dispatch) {
     post('/auth/login', { phone, password })
       .then(resp => {
+        set('token', resp || '123');
+
         dispatch({
           type: 'LOGIN',
-          token: resp
+          token: resp || '123'
         });
 
         successFunc(resp);
@@ -49,13 +60,15 @@ export function register (phone, password, verifyCode, successFunc, errorFunc) {
   return function (dispatch) {
     post('/auth/register', { phone, password, verifyCode })
       .then(resp => {
+        set('token', resp);
+
         dispatch({
           type: 'REGISTER',
-          token: resp
+          token: resp || '123'
         });
 
         successFunc(resp);
       })
-      .catch((error) => fail(error.message, errorFunc))
+      .catch(error => fail(error.message, errorFunc))
   };
 }

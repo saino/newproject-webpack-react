@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import Snap from 'snapsvg-cjs';
-import { configureRotoToolType } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { configureRotoToolType, addRotoedFrame } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import defferPerform from '../../../../utils/deffer-perform';
 import { findItem, findIndex } from '../../../../utils/array-handle';
@@ -97,7 +97,7 @@ class RotoOperationBox extends Component {
     });
 
     this.mouseDownHandle = (e) => {
-      const { configure, configureRotoToolType, disabled } = this.props;
+      const { configure, configureRotoToolType, addRotoedFrame, disabled } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
@@ -131,7 +131,11 @@ class RotoOperationBox extends Component {
           // 当点击起始point，如果pathSelected只有1个point的时候，那么就是未闭合状态，且删除该点
           // 如果大于1个point或者本身closed为true，则是闭合状态
           if (pathSelected) {
-            pathSelected.closePath();
+            if (pathSelected.closePath()) {
+
+              // 添加本地抠像
+              addRotoedFrame(materialId, materialFrame);
+            }
           }
 
           updateObj[ 'draw_mode' ] = 0;
@@ -664,6 +668,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
+    addRotoedFrame,
     configure,
     configureRotoToolType
   }, dispatch

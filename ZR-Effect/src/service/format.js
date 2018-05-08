@@ -17,3 +17,7 @@ export function parseQs (qs) {
 
   return res;
 }
+
+export function normalize (resp, fn) {
+  return fn(resp);
+}

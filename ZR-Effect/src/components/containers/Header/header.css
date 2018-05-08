@@ -62,7 +62,7 @@
 .user-control-bar {
   position: absolute;
   right: 32px;
-  top: 14px;
+  top: 10px;
 }
 
 .user-img {
@@ -71,6 +71,8 @@
 }
 
 .user-auth {
+  position: relative;
+  top: 4px;
   font-size: 14px;
 }
 

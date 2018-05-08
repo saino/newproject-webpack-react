@@ -61,7 +61,7 @@ class RotoMaterialList extends Component {
             <div className={ rotoMaterialListStyle[ 'thum-icon' ] }>
               <img src={ videoPNG } />
             </div>
-            { config.getFilenameByPath(material.path) }
+            { material.name }
           </div>
           <div onClick={ this.removeRotoMaterialHandle(materialId) }>
             <img src={ deletePNG } />
