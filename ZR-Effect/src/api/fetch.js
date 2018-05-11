@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import config from '../config';
 import { parseResp, parseQs } from '../service/format';
+import { get as getToken } from '../utils/configure-auth';
 
 const fetchHeadersConfig = { ...config.api.headers };
 
@@ -32,7 +33,7 @@ export function get (path, qs = {}) {
 };
 
 export function post (path, body = {}) {
-  return request(path, 'POST', body)
+  return request(path, 'POST', { ...body, token: getToken('token') })
    .then(resp => resp[ 'data' ]);
 };
 

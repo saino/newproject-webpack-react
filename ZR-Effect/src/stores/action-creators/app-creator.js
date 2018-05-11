@@ -43,11 +43,11 @@ export function login (phone, password, successFunc, errorFunc) {
   return function (dispatch) {
     post('/auth/login', { phone, password })
       .then(resp => {
-        set('token', resp || '123');
+        set('token', resp[ 'token' ]);
 
         dispatch({
           type: 'LOGIN',
-          token: resp || '123'
+          token: resp[ 'token' ]
         });
 
         successFunc(resp);
