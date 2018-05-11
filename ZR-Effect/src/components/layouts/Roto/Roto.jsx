@@ -227,7 +227,7 @@ class Matting extends Component {
       const parsedFrame = +tempFrame;
 
       if (isNaN(parsedFrame)) {
-        this.configureIsValidFrameError(materialId, false);
+        configureIsValidFrameError(materialId, false);
         this.deferConfigureFrame(tempFrame);
       } else {
         if (parsedFrame >= totalFrame) {
