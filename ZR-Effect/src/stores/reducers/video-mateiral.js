@@ -15,7 +15,7 @@ export const loadVideoMaterials = (body, successFUN) => {
         .then((resp) => {
             dispatch({
                 type: actionTypes.GET_VIDEO_MATERIAL,
-                materials: resp.data.result
+                materials: resp.result
             });
             successFUN&&successFUN(resp);
         });
@@ -26,9 +26,11 @@ export const loadFirstVideoMaterials = (body, successFUN) => {
     return (dispatch) => {
         post("/user/getMaterials", body)
         .then((resp)=>{
+            // console.log(resp, "ddddddddddddddddddddd", resp.data);
+            // console.log(resp.data.result, "dddddddddjjjjjjjjjjjjjjjj");
             dispatch({
                 type: actionTypes.GET_VIDEO_MATERIAL_BEFORE,
-                materials: resp.data.result
+                materials: resp.result
             });
             successFUN&&successFUN(resp);
         });

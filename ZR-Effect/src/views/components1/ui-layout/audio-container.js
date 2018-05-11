@@ -234,7 +234,6 @@ class AudioContainer extends Component {
         const { offsetHeight, scrollHeight, scrollTop } = target;
         const bottomValue = scrollHeight - scrollTop - offsetHeight;
         //如果是向下滑动则不处理
-        console.log(this.bottomValueBUF, bottomValue, "kkkkkkkkkkk");
         if (this.bottomValueBUF !== -1 && this.bottomValueBUF <= bottomValue) {
             this.bottomValueBUF = bottomValue;
             return;
@@ -254,7 +253,7 @@ class AudioContainer extends Component {
                         loading: false
                     });
                 }, 500);
-                const materials = resp.data.result;
+                const materials = resp.result;
                 if (materials.length === config.page.size) {
                     this.props.setAudioLibPage(pageNum);
                 }

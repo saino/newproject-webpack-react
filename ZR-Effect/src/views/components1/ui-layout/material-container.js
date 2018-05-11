@@ -277,7 +277,7 @@ class MaterialContainer extends Component {
                             loading: false
                         });
                     }, 500);
-                    const materials = resp.data.result;
+                    const materials = resp.result;
                     if (materials.length === config.page.size) {
                         this.props.setVideoLibPage(pageNum);
                     }
@@ -293,7 +293,7 @@ class MaterialContainer extends Component {
                             loading: false
                         });
                     }, 500);
-                    const materials = resp.data.result;
+                    const materials = resp.result;
                     if (materials.length === config.page.size) {
                         this.props.setVideoAndImgLibPage(pageNum);
                     }

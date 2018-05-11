@@ -41,7 +41,7 @@ export const loadMaterials = (body, successFUN) => {
         .then((resp)=>{
             dispatch({
                 type: actionTypes.GET_MATERIAL,
-                materials: resp.data.result
+                materials: resp.result
             });
             successFUN && successFUN(resp);
         });
@@ -53,7 +53,7 @@ export const loadFirstMaterials = (body, successFUN) => {
         .then((resp)=>{
             dispatch({
                 type: actionTypes.GET_MATERIAL_BEFORE,
-                materials: resp.data.result
+                materials: resp.result
             });
             successFUN&&successFUN(resp);
         });

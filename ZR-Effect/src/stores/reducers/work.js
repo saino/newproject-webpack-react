@@ -1,114 +1,6 @@
 import { add, update, remove, findItem } from '../../utils/array-handle';
 import { post, error as fail } from '../../api/fetch';
 
-// const defaultState = {
-//     id: "work001",
-//     name: "作品1",
-//     videoPX: "px1",
-//     videoType: "type1",
-//     scaleX: 1,
-//     scaleY: 1,
-//     props: {
-
-//     },
-//     video: [
-//         { id: "video0001", duration: 9985, path: "../../statics/aaa.mp4", order: 2 },
-//         { id: "video0002", duration: 60095, path: "../../statics/bbb.mp4", order: 1 }
-//     ],
-//     duration: 70080,
-//     currentVideoTime: 0,
-//     videoPlay: false,
-//     material: [
-//     {
-//         id: "material0001",
-//         materialId: "9995",
-//         type: "video",
-//         path: "",
-//         name: "视频素材",
-//         width: 100,
-//         height: 100,
-//         duration: 1000,        
-//         status: 96995,
-
-//         active: false,
-//         order: 1,
-//         timeEnd: {
-//             hour: 0,
-//             minute: 1,
-//             second: 10,
-//             millisecond: 80,
-//         },
-//         timeStart : {
-//             hour: 0,
-//             minute: 0,
-//             second: 0,
-//             millisecond: 0,
-//         },
-//         positionX: 0,
-//         positionY: 0,
-//         rotateZ:0,
-//         control: [
-//             { x: "", y: "" },
-//             { x: "", y: "" },
-//             { x: "", y: "" },
-//             { x: "", y: "" },
-//         ],
-//     }, 
-//     {
-//         id: "material0002",
-//         type: "image",
-//         src: "",
-//         name: "图片素材",
-//         active: true,
-//         order: 2,
-//         timeEnd: {
-//             hour: 0,
-//             minute: 0,
-//             second: 6,
-//             millisecond: 0,
-//         },
-//         timeStart: {
-//             hour: 0,
-//             minute: 0,
-//             second: 3,
-//             millisecond: 0,
-//         },
-//         width: 1000,
-//         height: 1000,
-//         positionX: 100,
-//         positionY: 100,
-//         rotateZ: 0,
-//         transform: "",
-//         control: [
-//             { x: "", y: "" },
-//             { x: "", y: "" },
-//             { x: "", y: "" },
-//             { x: "", y: "" },
-//         ],
-//     }, 
-//     // {
-//     //     id: "material0003",
-//     //     type: "audio",
-//     //     src: "",
-//     //     name: "音频素材",
-//     //     active: false,
-//     //     loop: false,
-//     //     duration: 1000,
-//     //     timeEnd: {
-//     //         hour: 0,
-//     //         minute: 1,
-//     //         second: 10,
-//     //         millisecond: 80,
-//     //     },
-//     //     timeStart: {
-//     //         hour: 0,
-//     //         minute: 0,
-//     //         second: 0,
-//     //         millisecond: 0,
-//     //     },
-//     // }
-//     ],
-// };
 const defaultState = {
     name: "自定义作品",
     config: {
@@ -144,7 +36,7 @@ export const createWork = (body) => {
         .then((resp)=>{
             dispatch({
                 type: actionTypes.CREATE_WORK,
-                work: resp.data
+                work: resp
             });
         })
     }
@@ -156,7 +48,7 @@ export const loadWork = (body) => {
         .then((resp)=>{
             dispatch({
                 type: actionTypes.CREATE_WORK,
-                work: resp.data
+                work: resp
             });
         })
     }

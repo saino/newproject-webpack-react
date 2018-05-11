@@ -299,7 +299,7 @@ class OperationArea extends Component {
     }
     _getProgress = (body) => {
         getProgress(body, (resp)=>{
-            const progress = resp.data.progress;
+            const progress = resp.progress;
             this.state.progress = progress!=0 ? progress : this.state.progress;
             AlertView.render(this.renderPubProgerss());
             if(progress === 100){
