@@ -3,25 +3,19 @@ import { post, error as fail } from '../../api/fetch';
 
 const defaultState = [];
 
-const actionTypes = {
-    "GET_MATERIAL": "GET_MATERIAL",
-    "GET_MATERIAL_BEFORE": "GET_MATERIAL_BEFORE",
-    "CHANGE_MATERIAL": "CHANGE_MATERIAL",
-    "DELETE_MATERIAL": "DELETE_MATERIAL",
-}
-
 export const changeMaterial = (materialItems) => {
     return  {
-        type: actionTypes.CHANGE_MATERIAL,
+        type: 'CHANGE_MATERIAL',
         materialItems
     };
 };
+
 export const deleteMaterial = (material, successFUN) =>{
     return (dispatch)=> {
         post("/user/deleteMaterial", {id: material.id})
         .then((resp)=>{
             dispatch({
-                type: actionTypes.DELETE_MATERIAL,
+                type: 'DELETE_MATERIAL',
                 material
             });
             successFUN&&successFUN(resp);
@@ -40,19 +34,20 @@ export const loadMaterials = (body, successFUN) => {
         post("/user/getMaterials", body)
         .then((resp)=>{
             dispatch({
-                type: actionTypes.GET_MATERIAL,
+                type: 'GET_MATERIAL',
                 materials: resp.result
             });
             successFUN && successFUN(resp);
         });
     }
 }
+
 export const loadFirstMaterials = (body, successFUN) => {
     return (dispatch) => {
         post("/user/getMaterials", body)
         .then((resp)=>{
             dispatch({
-                type: actionTypes.GET_MATERIAL_BEFORE,
+                type: 'GET_MATERIAL_BEFORE',
                 materials: resp.result
             });
             successFUN&&successFUN(resp);
@@ -60,15 +55,16 @@ export const loadFirstMaterials = (body, successFUN) => {
     }
 }
 
+
 export default (state = defaultState, action) => {
   switch (action.type) {
-    case actionTypes.GET_MATERIAL:
+    case 'GET_MATERIAL':
         return add(state, action.materials);
-    case actionTypes.GET_MATERIAL_BEFORE:
+    case 'GET_MATERIAL_BEFORE':
         return add(action.materials, state);
-    case actionTypes.DELETE_MATERIAL: 
+    case 'DELETE_MATERIAL':
         return [...state.filter(masterialItem=>masterialItem.id!=action.material.id)];
-    case actionTypes.CHANGE_MATERIAL:
+    case 'CHANGE_MATERIAL':
         if(Array.isArray(action.materialItems)){
             return [...action.materialItems];
         }
@@ -79,8 +75,6 @@ export default (state = defaultState, action) => {
             return materialItem;
       })
       return [...tmpState];
-    case 'UPLOAD_MATERIAL':
-      return add(state, action.material);
     default:
       return state;
   }

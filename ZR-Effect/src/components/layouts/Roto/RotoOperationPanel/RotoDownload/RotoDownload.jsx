@@ -17,10 +17,10 @@ class RotoDownload extends Component {
     return (
       <div className={ rotoOperationPanelStyle[ 'wrapper-p' ] }>
         <div className={ rotoOperationPanelStyle[ 'ai-roto' ] }>
-          <RotoAi onAiRoto={ this.aiRotoHandle } />
+          <RotoAi />
         </div>
         <div className={ rotoOperationPanelStyle[ 'rotoed-frame-list' ] }>
-          <RotoedFrameList frameList={ [] } />
+          <RotoedFrameList />
         </div>
       </div>
     );

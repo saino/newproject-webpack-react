@@ -91,10 +91,10 @@ class RotoMaterialList extends Component {
 
 const mapStateToProps = ({
   rotoFrontendActeractive,
-  material
+  rotoMaterial
 }) => ({
   rfa: rotoFrontendActeractive,
-  materialList: material
+  materialList: rotoMaterial.list
 });
 
 const mapDispatchToProps = dispatch =>

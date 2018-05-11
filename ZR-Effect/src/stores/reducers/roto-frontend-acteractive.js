@@ -86,7 +86,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'CONFIGURE_STARTUP_AI_ROTO':
       return update(
         state,
-        { 'is_ai_roto': true, 'ai_roto_percent': 10.5 },
+        { 'is_ai_roto': true, 'ai_roto_percent': 0 },
         'material_id',
         action.materialId
       );

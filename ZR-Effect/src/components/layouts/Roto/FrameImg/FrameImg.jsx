@@ -47,17 +47,18 @@ class FrameImg extends Component {
 
   registerGetMaterial(fn) {
     return () => {
-      const { materialList, rfa } = this.props;
+      const { materialList, materialTempList, rfa } = this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
-      let material;
+      let materialId, material;
 
       if (rotoMaterial == null) {
         return void 0;
       }
 
-      material = findItem(materialList, 'id', rotoMaterial[ 'material_id' ]);
+      materialId = rotoMaterial[ 'material_id' ];
+      material = findItem(materialList, 'id', materialId) || findItem(materialTempList, 'id', materialId);;
 
-      if (material == null || material.properties == null) {
+      if (material == null) {
         return void 0;
       }
 
@@ -123,10 +124,12 @@ class FrameImg extends Component {
 }
 
 const mapStateToProps = ({
-  material,
-  rotoFrontendActeractive
+  rotoMaterial,
+  rotoFrontendActeractive,
+  rotoMaterialTemp
 }) => ({
-  materialList: material,
+  materialList: rotoMaterial.list,
+  materialTempList: rotoMaterialTemp,
   rfa: rotoFrontendActeractive
 });
 
