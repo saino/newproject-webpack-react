@@ -128,7 +128,7 @@ export const add = (target, waitItem) => {
     ? waitItem
     : [ waitItem ];
 
-  return uniq([...waits, ...target ]);
+  return uniq([...target, ...waits ]);
 };
 
 // 修改, 根据key和值找到元素并修改元素，或者根据传的自定义函数修改元素

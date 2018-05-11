@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { changeWorkMaterial, changWorkVideo } from '../../../stores/reducers/work';
-import { changeMaterial, deleteMaterial } from '../../../stores/reducers/material'
+// import { changeMaterial,  } from '../../../stores/reducers/material'
+import { changeMaterial, loadMaterials, deleteMaterial } from "../../../stores/reducers/material"
+import { loadVideoMaterials } from '../../../stores/reducers/video-mateiral'
+import { setVideoAndImgLibPage, setVideoLibPage } from "../../../stores/reducers/pagination"
 
 import AlertView from "./alert-view";
 import config from "../../../config"
@@ -185,15 +188,31 @@ class VideoMaterial extends Component {
         this.props.changeaActiveContainer("stage", ["video", "image"]);
     }
     onDeleClick = () => {
-        const { model } = this.props;
-        this.props.deleteMaterial(model);
+        const { model, useType, pagination } = this.props;
+        this.props.deleteMaterial(model, ()=>{
+            const types = useType.join("|");
+            if (useType.indexOf("image") >= 0) {
+                this.props.loadMaterials({
+                    "types": types,
+                    "page": pagination.videoAndImgLibPage,
+                    "prepage": config.page.size,
+                });
+            } else {
+                this.props.loadVideoMaterials({
+                    "types": types,
+                    "page": pagination.videoLibPage,
+                    "prepage": config.page.size,
+                });
+            }
+        });
     }
 }
 
-const mapStateToProps = ({work, material}) => {
+const mapStateToProps = ({work, material, pagination}) => {
     return {
         work,
         material,
+        pagination,
     };
 } 
 
@@ -203,6 +222,8 @@ const mapDispatchToProps = (dispatch) => {
         changeMaterial: bindActionCreators(changeMaterial, dispatch),
         changWorkVideo: bindActionCreators(changWorkVideo, dispatch),
         deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
+        loadMaterials: bindActionCreators(loadMaterials, dispatch),
+        loadVideoMaterials: bindActionCreators(loadVideoMaterials, dispatch),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(VideoMaterial);

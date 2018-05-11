@@ -5,6 +5,7 @@ const defaultState = [];
 
 const actionTypes = {
     "GET_MATERIAL": "GET_MATERIAL",
+    "GET_MATERIAL_BEFORE": "GET_MATERIAL_BEFORE",
     "CHANGE_MATERIAL": "CHANGE_MATERIAL",
     "DELETE_MATERIAL": "DELETE_MATERIAL",
 }
@@ -15,7 +16,7 @@ export const changeMaterial = (materialItems) => {
         materialItems
     };
 };
-export const deleteMaterial = (material) =>{
+export const deleteMaterial = (material, successFUN) =>{
     return (dispatch)=> {
         post("/user/deleteMaterial", {id: material.id})
         .then((resp)=>{
@@ -23,6 +24,7 @@ export const deleteMaterial = (material) =>{
                 type: actionTypes.DELETE_MATERIAL,
                 material
             });
+            successFUN&&successFUN(resp);
         })
         .then(()=>{
             dispatch({
@@ -33,7 +35,7 @@ export const deleteMaterial = (material) =>{
     }
 }
 
-export const loadMaterials = (body) => {
+export const loadMaterials = (body, successFUN) => {
     return (dispatch) => {
         post("/user/getMaterials", body)
         .then((resp)=>{
@@ -41,6 +43,19 @@ export const loadMaterials = (body) => {
                 type: actionTypes.GET_MATERIAL,
                 materials: resp.data.result
             });
+            successFUN && successFUN(resp);
+        });
+    }
+}
+export const loadFirstMaterials = (body, successFUN) => {
+    return (dispatch) => {
+        post("/user/getMaterials", body)
+        .then((resp)=>{
+            dispatch({
+                type: actionTypes.GET_MATERIAL_BEFORE,
+                materials: resp.data.result
+            });
+            successFUN&&successFUN(resp);
         });
     }
 }
@@ -49,6 +64,8 @@ export default (state = defaultState, action) => {
   switch (action.type) {
     case actionTypes.GET_MATERIAL:
         return add(state, action.materials);
+    case actionTypes.GET_MATERIAL_BEFORE:
+        return add(action.materials, state);
     case actionTypes.DELETE_MATERIAL: 
         return [...state.filter(masterialItem=>masterialItem.id!=action.material.id)];
     case actionTypes.CHANGE_MATERIAL:

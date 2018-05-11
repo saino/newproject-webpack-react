@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import work, { changeWorkMaterial } from '../../../stores/reducers/work';
-import { deleteMaterial } from '../../../stores/reducers/material'
+import { deleteMaterial, loadMaterials } from '../../../stores/reducers/material'
 
 // import dongfengpo from '../../statics/dongfengpo.mp3';
 import moment from "moment";
@@ -184,7 +184,13 @@ class AddMaterial extends Component {
     }
     onDeleClick = () => {
         const { model } = this.props;
-        this.props.deleteMaterial(model);
+        this.props.deleteMaterial(model, ()=>{
+            this.props.loadMaterials({
+                types: "audio",
+                page: this.props.pagination.audioLibPage,
+                prepage: config.page.size
+            })
+        });
     }
     onAudioPlayClick = () => {
         let timer = null;
@@ -199,16 +205,18 @@ class AddMaterial extends Component {
     }
 }
 
-const mapStateToProps = ({ material, work}) => {
+const mapStateToProps = ({ material, work, pagination}) => {
     return {
         material,
-        work
+        work,
+        pagination,
     };
 }
 const mapDispatchToProps = (dispatch) => {
     return {
         changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
         deleteMaterial: bindActionCreators(deleteMaterial, dispatch),
+        loadMaterials: bindActionCreators(loadMaterials, dispatch),
     }
 }
 
