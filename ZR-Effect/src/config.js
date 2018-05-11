@@ -2,6 +2,8 @@
  * 全站配置文件
  */
 
+import { get as getToken } from './utils/configure-auth';
+
 export default ({
   name: '致戎特效',
   user: {
@@ -70,6 +72,9 @@ export default ({
         wrapperDisplay: 'block',
         accept: '*',
         withCredentials: true,
+        requestHeaders: {
+          Token:  getToken("token")
+        },
         ...options
       };
     },
