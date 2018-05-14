@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
 import Snap from 'snapsvg-cjs';
-import { configureRotoToolType, addRotoedFrame } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { configureRotoToolType, addRotoedFrame, removeRotoedFrame } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import defferPerform from '../../../../utils/deffer-perform';
 import { findItem, findIndex } from '../../../../utils/array-handle';
@@ -20,6 +20,18 @@ class RotoOperationBox extends Component {
     super(props);
 
     this.clickTimer = new ClickTimer;
+
+    // 延迟如果帧上没有本地修改，则在本地帧集合中删除该帧
+    this.deferRemoveRotodFrame = defferPerform(frame => {
+      const { removeRotoedFrame } = this.props;
+      const pathData = this.getPathData();
+      const materialId = this.getMaterialId();
+
+      if (!pathData.list.length) {
+        removeRotoedFrame(materialId, frame);
+      }
+
+    }, 30);
 
     // 删除'path'或'point'
     this.keyupHandle = ({ keyCode }) => {
@@ -56,6 +68,8 @@ class RotoOperationBox extends Component {
           }
 
           configure(materialId, materialFrame, updateObj);
+
+          this.deferRemoveRotodFrame(materialFrame);
         }
       }
       else if (keyCode == 220) {
@@ -669,6 +683,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
     addRotoedFrame,
+    removeRotoedFrame,
     configure,
     configureRotoToolType
   }, dispatch

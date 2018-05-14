@@ -51,10 +51,52 @@ export function configureIsPlay (materialId, isPlay) {
   };
 }
 
-export function configureStartupAiRoto (materialId) {
-  return {
-    type: 'CONFIGURE_STARTUP_AI_ROTO',
-    materialId
+export function saveRoto (materialId, frames) {
+  return dispatch => {
+    post('/roto/saveRoto', {
+      material_id: materialId,
+      config: { frames }
+    }).then(resp => dispatch({
+      type: 'SAVE_ROTO',
+      materialId,
+      aiId: resp
+    })).catch(fail);
+  };
+}
+
+export function aiRoto (materialId, aiId) {
+  return dispatch => {
+    post('/roto/aiRoto', { id: aiId })
+      .then(resp => dispatch({
+        type: 'AI_ROTO',
+        materialId
+      }))
+      .catch(fail);
+  };
+}
+
+export function configureAiRotoPercent (materialId, aiId) {
+  return dispatch => {
+    post('/getProgress', { type: 'roto', object_id: aiId })
+      .then(resp => {
+        const { progress, complete } = resp;
+
+        if (!complete) {
+          dispatch({
+            type: 'AI_ROTO_PERCENT',
+            materialId,
+            percent: progress
+          });
+        } else {
+          dispatch({
+            type: 'AI_ROTO_COMPLETE',
+            materialId,
+            percent: progress
+          })
+        }
+
+      })
+      .catch(fail);
   };
 }
 
@@ -63,20 +105,6 @@ export function configureCloseAiRoto (materialId) {
     type: 'CONFIGURE_CLOSE_AI_ROTO',
     materialId
   };
-}
-
-export function configureAiRotoPercent (materialId) {
-  return () => {
-    post('/roto/aiRoto')
-      .then(resp => {
-        console.log(resp, 'xxoo');
-      })
-  };
-  // return {
-  //   type: 'CONFIGURE_AI_ROTO_PERCENT',
-  //   materialId,
-  //   aiRotoPercent
-  // };
 }
 
 export function configureStartupGenerateRotoMaterial (materialId) {
@@ -126,6 +154,14 @@ export function configureGeneratePNGFramePercent (materialId, generatePNGFramePe
 export function addRotoedFrame (materialId, frame) {
   return {
     type: 'ADD_ROTOED_FRAME',
+    materialId,
+    frame
+  };
+}
+
+export function removeRotoedFrame (materialId, frame) {
+  return {
+    type: 'REMOVE_ROTOED_FRAME',
     materialId,
     frame
   };

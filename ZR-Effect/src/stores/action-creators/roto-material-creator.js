@@ -12,7 +12,7 @@
 //   };
 // };
 
-import { post } from '../../api/fetch';
+import { post, error as fail } from '../../api/fetch';
 
 export const getMaterialList = materialParams => {
   return (dispatch) => {
@@ -21,8 +21,18 @@ export const getMaterialList = materialParams => {
         dispatch({
           type: 'GET_MATERIALS',
           materials: resp.result,
-          page: resp.currentPage
+          page: materialParams.page
         });
       })
+      .catch(fail);
   }
 };
+
+export const removeMaterial = materialId => dispatch => {
+  post('/user/deleteMaterial', { id: materialId })
+    .then(resp => dispatch({
+      type: 'REMOVE_MATERIAL',
+      materialId
+    }))
+    .catch(fail);
+}

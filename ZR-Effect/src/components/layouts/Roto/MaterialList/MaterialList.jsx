@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import config from '../../../../config';
+import { post } from '../../../../api/fetch';
 import defferPerform from '../../../../utils/deffer-perform';
+import { findItem } from '../../../../utils/array-handle';
 import { normalize } from '../../../../service/format';
 import { addMaterialTemp } from '../../../../stores/action-creators/roto-material-temp-creator';
-import { getMaterialList } from '../../../../stores/action-creators/roto-material-creator';
+import { getMaterialList, removeMaterial } from '../../../../stores/action-creators/roto-material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { message } from 'antd';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
 import materialListStyle from './material-list.css';
 import MaterialItem from './MaterialItem/MaterialItem';
@@ -44,9 +47,23 @@ class MaterialList extends Component {
       });
     };
 
+    // 选中素材
     this.checkMaterialItemHandle = materialId => {
       this.addRotoMaterial(materialId);
       this.addRoto(materialId);
+    };
+
+    // 删除素材
+    this.removeMaterialHandle = materialId => {
+      const { removeMaterial, raf } = this.props;
+      const isLiveRotoMaterial = !!findItem(raf, 'material_id', materialId);
+
+      if (isLiveRotoMaterial) {
+        message.warning('该素材已被添加进抠像中了，不能直接删除!!!');
+        return;
+      }
+
+      removeMaterial(materialId);
     };
   }
 
@@ -65,14 +82,10 @@ class MaterialList extends Component {
   uploadMaterial(material) {
     const {
       onSelectedRotoMaterial, addMaterialTemp, getMaterialList,
-      materialList, materialPage
+      materialList, materialPage, saveRoto
     } = this.props;
     const { page, perpage } = materialPage;
     const materialId = +material[ 'id' ];
-    const deferGetMaterialList = defferPerform(
-      () => getMaterialList({ type: 'video', page, perpage}),
-      10
-    );
     const deferAddMaterialTemp = defferPerform(
       material => {
         if (materialList.length >= perpage) {
@@ -82,12 +95,12 @@ class MaterialList extends Component {
       15
     );
     const deferCheckRotoMaterial = defferPerform(materialId => this.checkMaterialItemHandle(materialId), 30);
-    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 50);
+    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 60);
     const deferUpload = defferPerform(() => {
       this.setState({
         uploadingPercent: 0
       }, () => {
-        deferGetMaterialList();
+        getMaterialList({ type: 'video', page, perpage});
         deferAddMaterialTemp(material);
         deferCheckRotoMaterial(materialId);
         deferSelectedRotoMaterial(materialId);
@@ -108,6 +121,7 @@ class MaterialList extends Component {
             visibleUploadOrDetail={ 0 }
             materialId={ material.id }
             materialName={ material.name }
+            onRemoveMaterial={ this.removeMaterialHandle }
             onCheck={ this.checkMaterialItemHandle }/>
         </div>
       );
@@ -183,6 +197,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       getMaterialList,
+      removeMaterial,
       addRotoMaterial,
       addRoto,
       addMaterialTemp

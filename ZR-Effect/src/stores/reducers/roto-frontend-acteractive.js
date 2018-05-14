@@ -9,6 +9,7 @@
  *   selected_frame { Number } 选中帧
  *   is_visible_mask { Boolean } 是否显示阴影
  *   is_upload_or_detail { Number } 显示上传还是详情 ( 0-详情｜1-上传 )
+ *   ai_id { Number } ai抠像、生成抠像素材、生成png序列帧所需要的
  *   is_ai_roto { Boolean } 是否开始ai扣像 [ 存入数据库 ]
  *   ai_roto_percent { Number } ai扣像进度 [ 存入数据库 ]
  *   is_generate_roto_material { Boolean } 是否开始生成扣像素材 [ 存入数据库 ]
@@ -25,7 +26,7 @@
  *   undo_count { Number } 撤销次数
  */
 
-import { add, update, remove, findItem } from '../../utils/array-handle';
+import { add, update, remove, findItem, findIndex } from '../../utils/array-handle';
 
 const defState = [];
 
@@ -45,6 +46,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'is_valid_frame_error': true,
         'is_play': false,
         'is_upload_or_detail': 0,
+        'ai_id': 0,
         'is_ai_roto': false,
         'ai_roto_percent': 0,
         'is_generate_roto_material': false,
@@ -83,26 +85,43 @@ export default function rotoFrontendActerActive (state = defState, action) {
         action.materialId
       );
 
-    case 'CONFIGURE_STARTUP_AI_ROTO':
+    case 'SAVE_ROTO':
       return update(
         state,
-        { 'is_ai_roto': true, 'ai_roto_percent': 0 },
+        { 'ai_id': action.aiId },
         'material_id',
         action.materialId
       );
 
-    case 'CONFIGURE_CLOSE_AI_ROTO':
+    case 'AI_ROTO':
       return update(
         state,
-        { 'is_ai_roto': false, 'ai_roto_percent': 0 },
+        {
+          'is_ai_roto': true,
+          'ai_roto_percent': 0
+        },
         'material_id',
         action.materialId
       );
 
-    case 'CONFIGURE_AI_ROTO_PERCENT':
+    case 'AI_ROTO_PERCENT':
       return update(
         state,
-        { 'ai_roto_percent': action.aiRotoPercent },
+        {
+          'is_ai_roto': true,
+          'ai_roto_percent': action.percent
+        },
+        'material_id',
+        action.materialId
+      );
+
+    case 'AI_ROTO_COMPLETE':
+      return update(
+        state,
+        {
+          'is_ai_roto': false,
+          'ai_roto_percent': action.percent
+        },
         'material_id',
         action.materialId
       );
@@ -167,6 +186,21 @@ export default function rotoFrontendActerActive (state = defState, action) {
         materialId
       );
 
+    case 'REMOVE_ROTOED_FRAME':
+      const rrMaterial = findItem(state, 'material_id', action.materialId);
+      const rotoedFramesRemovedIndex = findIndex(rrMaterial[ 'rotoed_frames' ], fra => fra === frame);
+      let rotoedFramesRemoved;
+
+      rrMaterial[ 'rotoed_frames' ].splice(rotoedFramesRemovedIndex, 1);
+      rotoedFramesRemoved = [ ...rrMaterial[ 'rotoed_frames' ] ];
+
+      return update(
+        state,
+        { 'rotoed_frames': rotoedFramesRemoved },
+        'material_id',
+        action.materialId
+      );
+
     case 'CONFIGURE_ROTO_TOOL_TYPE':
       return update(
         state,
@@ -181,9 +215,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'CONFIGURE_ROTO_VISIBLE_MASK':
       return update(
         state,
-        {
-          'is_visible_mask': action.isVisibleMask
-        },
+        { 'is_visible_mask': action.isVisibleMask },
         'material_id',
         action.materialId
       );
