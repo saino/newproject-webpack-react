@@ -9,11 +9,10 @@ const defState = {
   list: []
 };
 
-export default function rotoPagination (state = defState, action) {
+export default function rotoMaterial (state = defState, action) {
   switch (action.type) {
     case 'GET_MATERIALS':
       const pageInfo = { page: action.page, perpage: 40 };
-      console.log(action.materials, 'dt');
       const materialList = action.materials.map(material => ({
         ...material,
         id: +material.id,

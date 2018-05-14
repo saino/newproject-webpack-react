@@ -17,9 +17,9 @@ export default class MaterialCardItem extends Component {
   };
 
   checkHandle = () => {
-    const { id, onCheck } = this.props;
+    const { id, name, onCheck } = this.props;
 
-    onCheck(id);
+    onCheck(id, name);
   };
 
   showShallowAndActionHandle = () =>

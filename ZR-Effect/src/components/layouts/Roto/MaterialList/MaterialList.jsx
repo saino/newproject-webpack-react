@@ -48,8 +48,8 @@ class MaterialList extends Component {
     };
 
     // 选中素材
-    this.checkMaterialItemHandle = materialId => {
-      this.addRotoMaterial(materialId);
+    this.checkMaterialItemHandle = (materialId, materialName) => {
+      this.addRotoMaterial(materialId, materialName);
       this.addRoto(materialId);
     };
 
@@ -67,10 +67,10 @@ class MaterialList extends Component {
     };
   }
 
-  addRotoMaterial(materialId) {
+  addRotoMaterial(materialId, materialName) {
     const { addRotoMaterial } = this.props;
 
-    addRotoMaterial(materialId);
+    addRotoMaterial(materialId, materialName);
   }
 
   addRoto(materialId) {
@@ -86,6 +86,7 @@ class MaterialList extends Component {
     } = this.props;
     const { page, perpage } = materialPage;
     const materialId = +material[ 'id' ];
+    const materialName = material[ 'name' ];
     const deferAddMaterialTemp = defferPerform(
       material => {
         if (materialList.length >= perpage) {
@@ -94,7 +95,7 @@ class MaterialList extends Component {
       },
       15
     );
-    const deferCheckRotoMaterial = defferPerform(materialId => this.checkMaterialItemHandle(materialId), 30);
+    const deferCheckRotoMaterial = defferPerform((materialId, materialName) => this.checkMaterialItemHandle(materialId, materialName), 30);
     const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 60);
     const deferUpload = defferPerform(() => {
       this.setState({
@@ -102,7 +103,7 @@ class MaterialList extends Component {
       }, () => {
         getMaterialList({ type: 'video', page, perpage});
         deferAddMaterialTemp(material);
-        deferCheckRotoMaterial(materialId);
+        deferCheckRotoMaterial(materialId, materialName);
         deferSelectedRotoMaterial(materialId);
       });
     }, 100);

@@ -28,7 +28,7 @@ class Header extends Component {
   render() {
     const { token, activeIndex } = this.props;
     const isLogined = !!token;
-
+    
     return (
       <div className={ headerStyle[ 'header' ] }>
         <div className={ headerStyle[ 'header-nav' ] }>

@@ -45,12 +45,12 @@ class RotoMaterialList extends Component {
   }
 
   getMaterialComponents() {
-    const { rfa, materialList } = this.props;
-    let material, materialId;
+    const { rfa } = this.props;
+    let materialId, materialName;
 
     return rfa.map(item => {
-      material = findItem(materialList, 'id', item[ 'material_id' ]);
       materialId = item[ 'material_id' ];
+      materialName = item[ 'material_name' ];
 
       return (
         <li
@@ -61,7 +61,7 @@ class RotoMaterialList extends Component {
             <div className={ rotoMaterialListStyle[ 'thum-icon' ] }>
               <img src={ videoPNG } />
             </div>
-            { material.name }
+            { materialName }
           </div>
           <div onClick={ this.removeRotoMaterialHandle(materialId) }>
             <img src={ deletePNG } />
@@ -89,13 +89,7 @@ class RotoMaterialList extends Component {
   }
 }
 
-const mapStateToProps = ({
-  rotoFrontendActeractive,
-  rotoMaterial
-}) => ({
-  rfa: rotoFrontendActeractive,
-  materialList: rotoMaterial.list
-});
+const mapStateToProps = ({ rotoFrontendActeractive }) => ({ rfa: rotoFrontendActeractive });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({

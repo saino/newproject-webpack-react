@@ -13,10 +13,11 @@ export function cancelSelectedRotoMaterial () {
   };
 }
 
-export function addRotoMaterial (materialId) {
+export function addRotoMaterial (materialId, materialName) {
   return {
     type: 'ADD_ROTO_MATERIAL',
-    materialId
+    materialId,
+    materialName
   };
 }
 
@@ -85,13 +86,13 @@ export function configureAiRotoPercent (materialId, aiId) {
           dispatch({
             type: 'AI_ROTO_PERCENT',
             materialId,
-            percent: progress
+            percent: parseFloat(progress)
           });
         } else {
           dispatch({
             type: 'AI_ROTO_COMPLETE',
             materialId,
-            percent: progress
+            percent: parseFloat(progress)
           })
         }
 

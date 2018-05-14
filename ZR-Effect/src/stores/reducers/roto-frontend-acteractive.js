@@ -41,6 +41,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'ADD_ROTO_MATERIAL':
       const initRotoMaterial = {
         'material_id': action.materialId,
+        'material_name': action.materialName,
         'is_selected': false,
         'selected_frame': 0,
         'is_valid_frame_error': true,
