@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import MaterialBtn from "./material-btn";
-import AddImg from "../../statics/add.png"
+import AddImg from "../../statics/add.png";
+import DragList from 'react-draggable-list'
 
 // import { bindActionCreators } from 'redux';
 // import { connect } from 'react-redux';
