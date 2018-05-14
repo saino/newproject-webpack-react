@@ -484,17 +484,17 @@ class RotoOperationBox extends Component {
     };
 
     // 获取素材id
-    this.getMaterialId = this.registerGetMaterialInfo(rotoMaterial =>
+    this.getMaterialId = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'material_id' ]
     );
 
     // 获取素材frame
-    this.getMaterialFrame = this.registerGetMaterialInfo(rotoMaterial =>
+    this.getMaterialFrame = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'selected_frame' ]
     );
 
     // 获取工具条操作类别
-    this.getRotoToolType = this.registerGetMaterialInfo(rotoMaterial =>
+    this.getRotoToolType = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'roto_tool_type' ]
     );
 
@@ -580,7 +580,7 @@ class RotoOperationBox extends Component {
     pathData.list.splice(updateIndex, 1, pathSelected);
   }
 
-  registerGetMaterialInfo(fn) {
+  registerGetRotoMaterialInfo(fn) {
     return () => {
       const { rfa } = this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
@@ -657,11 +657,11 @@ class RotoOperationBox extends Component {
 }
 
 const mapStateToProps = ({
-  material,
+  rotoMaterial,
   rotoFrontendActeractive,
   roto
 }) => ({
-  materialList: material,
+  materialList: rotoMaterial.list,
   rfa: rotoFrontendActeractive,
   rotoList: roto
 });

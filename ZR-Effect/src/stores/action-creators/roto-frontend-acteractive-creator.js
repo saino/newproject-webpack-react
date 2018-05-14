@@ -65,12 +65,18 @@ export function configureCloseAiRoto (materialId) {
   };
 }
 
-export function configureAiRotoPercent (materialId, aiRotoPercent) {
-  return {
-    type: 'CONFIGURE_AI_ROTO_PERCENT',
-    materialId,
-    aiRotoPercent
+export function configureAiRotoPercent (materialId) {
+  return () => {
+    post('/roto/aiRoto')
+      .then(resp => {
+        console.log(resp, 'xxoo');
+      })
   };
+  // return {
+  //   type: 'CONFIGURE_AI_ROTO_PERCENT',
+  //   materialId,
+  //   aiRotoPercent
+  // };
 }
 
 export function configureStartupGenerateRotoMaterial (materialId) {

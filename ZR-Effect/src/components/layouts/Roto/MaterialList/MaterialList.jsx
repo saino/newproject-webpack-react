@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import config from '../../../../config';
 import defferPerform from '../../../../utils/deffer-perform';
 import { normalize } from '../../../../service/format';
-import { uploadMaterial } from '../../../../stores/action-creators/material-creator';
+import { addMaterialTemp } from '../../../../stores/action-creators/roto-material-temp-creator';
+import { getMaterialList } from '../../../../stores/action-creators/roto-material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
 import materialListStyle from './material-list.css';
@@ -62,22 +63,34 @@ class MaterialList extends Component {
   }
 
   uploadMaterial(material) {
-    material = normalize(material, material => {
-      const materialUpdated = { ...material, id: +material.id, path: `${ config.fileUpload.host }:${ config.fileUpload.port }${ material.path }` };
-
-      return materialUpdated;
-    });
-
-    const { uploadMaterial, onSelectedRotoMaterial } = this.props;
-    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 50);
+    const {
+      onSelectedRotoMaterial, addMaterialTemp, getMaterialList,
+      materialList, materialPage
+    } = this.props;
+    const { page, perpage } = materialPage;
+    const materialId = +material[ 'id' ];
+    const deferGetMaterialList = defferPerform(
+      () => getMaterialList({ type: 'video', page, perpage}),
+      10
+    );
+    const deferAddMaterialTemp = defferPerform(
+      material => {
+        if (materialList.length >= perpage) {
+          addMaterialTemp(material);
+        }
+      },
+      15
+    );
     const deferCheckRotoMaterial = defferPerform(materialId => this.checkMaterialItemHandle(materialId), 30);
+    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 50);
     const deferUpload = defferPerform(() => {
       this.setState({
         uploadingPercent: 0
       }, () => {
-        uploadMaterial(material);
-        deferCheckRotoMaterial(material[ 'id' ]);
-        deferSelectedRotoMaterial(material[ 'id' ]);
+        deferGetMaterialList();
+        deferAddMaterialTemp(material);
+        deferCheckRotoMaterial(materialId);
+        deferSelectedRotoMaterial(materialId);
       });
     }, 100);
 
@@ -94,7 +107,7 @@ class MaterialList extends Component {
           <MaterialItem
             visibleUploadOrDetail={ 0 }
             materialId={ material.id }
-            materialName={ config.getFilenameByPath(material.path) }
+            materialName={ material.name }
             onCheck={ this.checkMaterialItemHandle }/>
         </div>
       );
@@ -131,7 +144,14 @@ class MaterialList extends Component {
 
   componentWillMount() {
     // 请求素材action
+    const { getMaterialList, materialPage } = this.props;
+    const { page, perpage } = materialPage;
 
+    getMaterialList({
+      type: 'video',
+      page,
+      perpage
+    });
   }
 
   render() {
@@ -154,16 +174,18 @@ class MaterialList extends Component {
   }
 }
 
-const mapStateToProps = ({ material, rotoFrontendActeractive }) => ({
-  materialList: material,
-  raf: rotoFrontendActeractive
+const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial }) => ({
+  materialList: rotoMaterial.list,
+  materialPage: rotoMaterial.pageInfo,
+  raf: rotoFrontendActeractive,
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      uploadMaterial,
+      getMaterialList,
       addRotoMaterial,
-      addRoto
+      addRoto,
+      addMaterialTemp
     },
     dispatch
   );

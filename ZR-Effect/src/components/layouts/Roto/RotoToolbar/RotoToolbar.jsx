@@ -160,7 +160,7 @@ class RotoToolbar extends Component {
       const { addRotoedFrame } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
-      
+
       this.defferRotoComplete();
       this.configureToolState(9);
 
@@ -365,11 +365,11 @@ class RotoToolbar extends Component {
 
 const mapStateToProps = ({
   rotoFrontendActeractive,
-  material,
+  rotoMaterial,
   roto
 }) => ({
   rfa: rotoFrontendActeractive,
-  materialList: material,
+  materialList: rotoMaterial.list,
   rotoList: roto
 });
 

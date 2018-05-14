@@ -13,17 +13,17 @@ class SVG extends Component {
     this.paper = Snap();
 
     // 获取素材id
-    this.getMaterialId = this.registerGetMaterialInfo(
+    this.getMaterialId = this.registerGetRotoMaterialInfo(
       rotoMaterial => rotoMaterial[ 'material_id' ]
     );
 
     // 获取素材Frame
-    this.getMaterialFrame = this.registerGetMaterialInfo(
+    this.getMaterialFrame = this.registerGetRotoMaterialInfo(
       rotoMaterial => rotoMaterial[ 'selected_frame' ]
     );
 
     // 获取工具条操作类别
-    this.getRotoToolType = this.registerGetMaterialInfo(
+    this.getRotoToolType = this.registerGetRotoMaterialInfo(
       rotoMaterial => rotoMaterial[ 'roto_tool_type' ]
     );
 
@@ -53,7 +53,7 @@ class SVG extends Component {
 
   }
 
-  registerGetMaterialInfo(fn) {
+  registerGetRotoMaterialInfo(fn) {
     return () => {
       const { rfa } = this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);

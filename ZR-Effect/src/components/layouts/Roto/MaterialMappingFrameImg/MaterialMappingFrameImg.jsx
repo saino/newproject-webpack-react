@@ -62,10 +62,10 @@ class MaterialMappingFrameImg extends Component {
 }
 
 const mapStateToProps = ({
-  material,
+  rotoMaterial,
   rotoFrontendActeractive
 }) => ({
-  materialList: material,
+  materialList: rotoMaterial.list,
   rfa: rotoFrontendActeractive
 });
 

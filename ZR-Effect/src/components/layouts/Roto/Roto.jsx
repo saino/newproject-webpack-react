@@ -227,7 +227,7 @@ class Matting extends Component {
       const parsedFrame = +tempFrame;
 
       if (isNaN(parsedFrame)) {
-        this.configureIsValidFrameError(materialId, false);
+        configureIsValidFrameError(materialId, false);
         this.deferConfigureFrame(tempFrame);
       } else {
         if (parsedFrame >= totalFrame) {
@@ -294,15 +294,16 @@ class Matting extends Component {
 
   registerGetMaterialInfo(fn) {
     return () => {
-      const { materialList, rfa } = this.props;
+      const { materialList, rfa, materialTempList } = this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
-      let material;
+      let materialId, material;
 
       if (rotoMaterial == null) {
         return void 0;
       }
 
-      material = findItem(materialList, 'id', rotoMaterial[ 'material_id' ]);
+      materialId = rotoMaterial[ 'material_id' ];
+      material = findItem(materialList, 'id', materialId) || findItem(materialTempList, 'id', materialId);
 
       return fn(material);
     };
@@ -508,12 +509,14 @@ class Matting extends Component {
 
 const mapStateToProps = ({
   app,
-  material,
   rotoFrontendActeractive,
-  roto
+  rotoMaterial,
+  roto,
+  rotoMaterialTemp
 }) => ({
   token: app.token,
-  materialList: material,
+  materialList: rotoMaterial.list,
+  materialTempList: rotoMaterialTemp,
   rfa: rotoFrontendActeractive,
   rotoList: roto
 });

@@ -13,7 +13,8 @@ export default class MaterialCardItem extends Component {
 
   checkHandle = () => {
     const { id, onCheck } = this.props;
-    onCheck(id)
+    
+    onCheck(id);
   };
 
   render() {

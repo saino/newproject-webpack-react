@@ -5,14 +5,18 @@ import material from './material';
 import videoMaterial from "./video-mateiral";
 import rotoFrontendActeractive from './roto-frontend-acteractive';
 import roto from './roto';
-import pagination from './pagination'
+import rotoMaterial from './roto-material';
+import rotoMaterialTemp from './roto-material-temp';
+import pagination from './pagination';
 
 export default combineReducers({
   work,
   material,
   videoMaterial,
   pagination,
+  rotoMaterial,
   app,
+  rotoMaterialTemp,
   rotoFrontendActeractive,
-  roto,
+  roto
 });
