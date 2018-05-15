@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import config from '../../../../config';
-import { findItem } from '../../../../utils/array-handle';
+import { findItem, findIndex } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
 import rotoMaterialListStyle from './roto-material-list.css';
 import { cancelSelectedRotoMaterial, removeRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
@@ -70,6 +70,15 @@ class RotoMaterialList extends Component {
         </li>
       )}
     );
+  }
+
+  validateIsRender(prevList, nextList) {
+    return prevList.length !== nextList.length
+      || findIndex(prevList, item => item[ 'is_selected' ] === true) !== findIndex(nextList, item => item[ 'is_selected' ] === true);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.validateIsRender(this.props.rfa, nextProps.rfa);
   }
 
   render() {
