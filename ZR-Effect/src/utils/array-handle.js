@@ -140,7 +140,7 @@ export const update = (target, updateItem, findKey, findValue) => {
     return;
   }
 
-  findItem = target[ index ];
+  findItem = { ...target[ index ] };
   layerKeys = Object.keys(updateItem);
   res = layerKeys.reduce((fi, currKey) => {
     updateValue = updateItem[ currKey ];
@@ -157,7 +157,8 @@ export const update = (target, updateItem, findKey, findValue) => {
 // 删除
 export const remove = (target, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
-  target.splice(index, 1);
+  const res = [ ...target ];
+  res.splice(index, 1);
 
-  return [ ...target ];
+  return [ ...res ];
 };
