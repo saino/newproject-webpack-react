@@ -68,15 +68,21 @@ class MaterialList extends Component {
   }
 
   addRotoMaterial(materialId, materialName) {
-    const { addRotoMaterial } = this.props;
+    const { addRotoMaterial, raf } = this.props;
 
-    addRotoMaterial(materialId, materialName);
+    // 这里不能按照数组去重冗余的方法，因为抠像素材
+    if (!findItem(raf, 'material_id', materialId)) {
+      addRotoMaterial(materialId, materialName);
+    }
   }
 
   addRoto(materialId) {
-    const { addRoto } = this.props;
+    const { addRoto, rotoList } = this.props;
 
-    addRoto(materialId, 0);
+    // 同添加抠像素材一样不能直接用基础库的去重
+    if (!findItem(rotoList, 'material_id', materialId)) {
+      addRoto(materialId, 0);  
+    }
   }
 
   uploadMaterial(material) {
@@ -189,10 +195,11 @@ class MaterialList extends Component {
   }
 }
 
-const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial }) => ({
+const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial, roto }) => ({
   materialList: rotoMaterial.list,
   materialPage: rotoMaterial.pageInfo,
   raf: rotoFrontendActeractive,
+  rotoList: roto
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(

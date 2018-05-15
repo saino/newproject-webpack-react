@@ -46,12 +46,22 @@ class RotoAi extends Component {
       rotoMaterial[ 'ai_roto_percent' ]
     );
 
+    // 获取是否开始生成抠像素材
+    this.getIsGenerateMaterial = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'is_generate_roto_material' ]
+    );
+
+    // 获取生成抠像素材进度
+    this.getGenerateMaterialPercent = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'generate_roto_material_percent' ]
+    );
+
     // 获取materialId
     this.getMaterialId = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'material_id' ]
     );
 
-    // 延迟10毫秒开启ai抠像
+    // 延迟100毫秒开启ai抠像
     this.deferAiRoto = defferPerform(materialId => {
       const { aiRoto } = this.props;
       const aiId = this.getAiId();
