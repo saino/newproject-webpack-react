@@ -83,20 +83,22 @@ class Matting extends Component {
     // 延迟10毫秒跳转到显示帧图片组件
     this.switchToVisibleFrameImg = defferPerform(() => this.openVisibleFrameImg(), 10);
 
-    // 延迟10毫秒选中扣像素材
-    this.selectedRotoMaterial = defferPerform(materialId => {
-      const { selectedRotoMaterial } = this.props;
-
-      this.switchToVisibleFrameImg();
-      selectedRotoMaterial(materialId);
-    }, 10);
+    // // 延迟10毫秒选中扣像素材
+    // this.selectedRotoMaterial = defferPerform(materialId => {
+    //   const { selectedRotoMaterial } = this.props;
+    //
+    //   this.switchToVisibleFrameImg();
+    //   selectedRotoMaterial(materialId);
+    // }, 10);
 
     // 选中抠像素材操作
     this.selectedRotoMaterialHandle = materialId => {
-      const { cancelSelectedRotoMaterial } = this.props;
+      const { cancelSelectedRotoMaterial, selectedRotoMaterial } = this.props;
 
-      this.selectedRotoMaterial(materialId);
+      //this.selectedRotoMaterial(materialId);
+      this.switchToVisibleFrameImg();
       cancelSelectedRotoMaterial();
+      selectedRotoMaterial(materialId);
     };
 
     // 延迟10毫秒设置抠像素材的选择帧
@@ -460,34 +462,7 @@ class Matting extends Component {
               {/* 扣像帧处理 */}
               { show || !rfa.length || !isSelected
                 ? void 0
-                : (<div className={ rotoStyle[ 'footer' ] }>
-                    <ScrollArea style={{ width: '100%', height: '100%' }}>
-                      <div className={ rotoStyle[ 'frame-player' ] }>
-                        <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
-                        <i onClick={ this.playOrPauseHandle }><Icon type={ isPlay === true ? 'pause-circle-o' : 'play-circle-o' } style={{ fontSize: 21, color: '#fff' }} /></i>
-                        <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
-                        <label className={ rotoStyle[ 'txt' ] }>当前第</label>
-                        <input
-                          value={ tempFrame }
-                          className={ isValidFrameError !== false ? void 0 : rotoStyle[ 'valid-error' ] }
-                          onChange={ this.changeFrameHandle }
-                          onBlur={ this.importFrameHandle } />
-                        <label className={ rotoStyle[ 'txt' ] }>帧</label>
-                      </div>
-                      <div className={ rotoStyle[ 'auto-scale' ] }>
-
-                        {/* 时间轴 */}
-                        <Scale
-                          currTick={ frame }
-                          maxTick={ 100 }
-                          onEnd={ this.configureTickHandle }>
-
-                          {/* 解帧区展示帧图片 */}
-                          { this.getParseFrameCom(rotoStyle[ 'frame-img-list' ]) }
-                        </Scale>
-                      </div>
-                    </ScrollArea>
-                  </div>)
+                : void 0
               }
             </div>
 

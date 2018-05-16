@@ -10,6 +10,11 @@
   border: 1px solid transparent;
 }
 
+.shallow {
+  box-shadow: 0 0 9px 6px rgba(255,255,255,.5);
+  border-image: linear-gradient(#ddeff1, #86a6a9, #3a666a);
+}
+
 .wrapper .checked {
   position: absolute;
   left: 50%;
@@ -26,11 +31,6 @@
   font-size: 22px;
   color: #fff;
   margin-top: 5px;
-}
-
-.wrapper:hover {
-  box-shadow: 0 0 9px 6px rgba(255,255,255,.5);
-  border-image: linear-gradient(#ddeff1, #86a6a9, #3a666a);
 }
 
 .wrapper .gc-show {
@@ -94,4 +94,22 @@
   font-size: 12px;
   margin-top: 16px;
   text-align: center;
+}
+
+.bar-remove {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+  padding: 5px;
+  box-sizing: border-box;
+  background: rgba(0,0,0,.55);
+  text-align: right;
+}
+
+.bar-remove .icon-remove {
+  color: #fff;
+  font-size: 16px;
+  margin-top: 3px;
 }

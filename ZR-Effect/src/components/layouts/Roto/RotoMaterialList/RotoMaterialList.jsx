@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import config from '../../../../config';
-import { findItem } from '../../../../utils/array-handle';
+import { findItem, findIndex } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
 import rotoMaterialListStyle from './roto-material-list.css';
 import { cancelSelectedRotoMaterial, removeRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
@@ -45,12 +45,12 @@ class RotoMaterialList extends Component {
   }
 
   getMaterialComponents() {
-    const { rfa, materialList } = this.props;
-    let material, materialId;
+    const { rfa } = this.props;
+    let materialId, materialName;
 
     return rfa.map(item => {
-      material = findItem(materialList, 'id', item[ 'material_id' ]);
       materialId = item[ 'material_id' ];
+      materialName = item[ 'material_name' ];
 
       return (
         <li
@@ -61,7 +61,7 @@ class RotoMaterialList extends Component {
             <div className={ rotoMaterialListStyle[ 'thum-icon' ] }>
               <img src={ videoPNG } />
             </div>
-            { material.name }
+            { materialName }
           </div>
           <div onClick={ this.removeRotoMaterialHandle(materialId) }>
             <img src={ deletePNG } />
@@ -70,6 +70,15 @@ class RotoMaterialList extends Component {
         </li>
       )}
     );
+  }
+
+  validateIsRender(prevList, nextList) {
+    return prevList.length !== nextList.length
+      || findIndex(prevList, item => item[ 'is_selected' ] === true) !== findIndex(nextList, item => item[ 'is_selected' ] === true);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.validateIsRender(this.props.rfa, nextProps.rfa);
   }
 
   render() {
@@ -89,13 +98,7 @@ class RotoMaterialList extends Component {
   }
 }
 
-const mapStateToProps = ({
-  rotoFrontendActeractive,
-  rotoMaterial
-}) => ({
-  rfa: rotoFrontendActeractive,
-  materialList: rotoMaterial.list
-});
+const mapStateToProps = ({ rotoFrontendActeractive }) => ({ rfa: rotoFrontendActeractive });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({

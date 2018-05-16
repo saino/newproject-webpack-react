@@ -133,31 +133,33 @@ export const add = (target, waitItem) => {
 
 // 修改, 根据key和值找到元素并修改元素，或者根据传的自定义函数修改元素
 export const update = (target, updateItem, findKey, findValue) => {
-  const index = findIndex(target, getDiff(findKey, findValue));
-  let findItem, layerKeys, updateValue, res;
+  const res = [ ...target ];
+  const index = findIndex(res, getDiff(findKey, findValue));
+  let findItem, layerKeys, updateValue, ret;
 
   if (index < 0) {
     return;
   }
 
-  findItem = target[ index ];
+  findItem = { ...res[ index ] };
   layerKeys = Object.keys(updateItem);
-  res = layerKeys.reduce((fi, currKey) => {
+  layerKeys.reduce((fi, currKey) => {
     updateValue = updateItem[ currKey ];
     fi[ currKey ] = updateValue;
 
     return fi;
   }, findItem);
 
-  target[ index ] = { ...findItem };
+  res[ index ] = { ...findItem };
 
-  return [ ...target ];
+  return [ ...res ];
 };
 
 // 删除
 export const remove = (target, findKey, findValue) => {
   const index = findIndex(target, getDiff(findKey, findValue));
-  target.splice(index, 1);
+  const res = [ ...target ];
+  res.splice(index, 1);
 
-  return [ ...target ];
+  return [ ...res ];
 };

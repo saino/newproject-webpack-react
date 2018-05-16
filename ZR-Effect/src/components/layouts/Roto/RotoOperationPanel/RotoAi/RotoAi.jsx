@@ -3,8 +3,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import config from '../../../../../config';
 import { Progress, Button } from 'antd';
-import { configureStartupAiRoto, configureAiRotoPercent } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
-import { findItem } from '../../../../../utils/array-handle';
+import { aiRoto, saveRoto, configureAiRotoPercent } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import defferPerform from '../../../../../utils/deffer-perform';
+import { finds, findItem } from '../../../../../utils/array-handle';
 import rotoAiStyle from './roto-ai.css';
 import startRotoPNG from './start-roto.png';
 
@@ -12,12 +13,22 @@ class RotoAi extends Component {
   constructor(props) {
     super(props);
 
-    // 获取扣像素材名
-    this.getFilename = this.registerGetRotoMaterialInfo(rotoMaterial => {
+    // 获取素材属性
+    this.getMaterialProps = this.registerGetRotoMaterialInfo(rotoMaterial => {
       const { materialList } = this.props;
-      const material = findItem(materialList, 'id', rotoMaterial[ 'material_id' ]);
 
-      return config.getFilenameByPath(material.path);
+      return findItem(materialList, 'id', rotoMaterial[ 'material_id' ]);
+    });
+
+    // 获取抠像数据属性
+    this.getRotoFrames = this.registerGetRotoMaterialInfo(rotoMaterial => {
+      const { rotoList } = this.props;
+      const materialId = rotoMaterial[ 'material_id' ];
+
+      return finds(
+        rotoList,
+        roto => roto[ 'material_id' ] === materialId
+      );
     });
 
     // 获取是否开始ai扣像
@@ -25,9 +36,24 @@ class RotoAi extends Component {
       rotoMaterial[ 'is_ai_roto' ]
     );
 
+    // 获取ai抠像id
+    this.getAiId = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'ai_id' ]
+    );
+
     // 获取ai扣像进度
     this.getAiPercent = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'ai_roto_percent' ]
+    );
+
+    // 获取是否开始生成抠像素材
+    this.getIsGenerateMaterial = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'is_generate_roto_material' ]
+    );
+
+    // 获取生成抠像素材进度
+    this.getGenerateMaterialPercent = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'generate_roto_material_percent' ]
     );
 
     // 获取materialId
@@ -35,12 +61,43 @@ class RotoAi extends Component {
       rotoMaterial[ 'material_id' ]
     );
 
+    // 延迟100毫秒开启ai抠像
+    this.deferAiRoto = defferPerform(materialId => {
+      const { aiRoto } = this.props;
+      const aiId = this.getAiId();
+
+      aiRoto(materialId, aiId);
+    }, 100);
+
     this.aiRotoHandle = () => {
-      const { configureStartupAiRoto } = this.props;
       const materialId = this.getMaterialId();
 
-      configureStartupAiRoto(materialId);
+      this.saveRoto();
+      this.deferAiRoto(materialId);
     }
+  }
+
+  saveRoto() {
+    const materialId = this.getMaterialId();
+    const frames = this.getRotoFrames().map(frame => {
+      return {
+        frame: frame.frame,
+        type: 'manual',
+        svg: frame[ 'path_data' ].list.map(path => ({
+          points: path.points.map(point => ({
+            x: point.x,
+            y: point.y,
+            cx1: point.cx1,
+            cy1: point.cy1,
+            cx2: point.cx2,
+            cy2: point.cy2
+          }))
+        }))
+      };
+    });
+    const { saveRoto } = this.props;
+
+    saveRoto(materialId, frames);
   }
 
   requestAiPercent(props) {
@@ -48,9 +105,10 @@ class RotoAi extends Component {
     const materialId = this.getMaterialId(props);
     const isAiRoto = this.getIsAiRoto(props);
     const aiPercent = this.getAiPercent(props);
+    const aiId = this.getAiId();
 
     if (isAiRoto && aiPercent < 100) {
-      configureAiRotoPercent();
+      configureAiRotoPercent(materialId, aiId);
     }
   }
 
@@ -76,7 +134,7 @@ class RotoAi extends Component {
   }
 
   render() {
-    const filename = this.getFilename();
+    const filename = this.getMaterialProps()[ 'name' ];
     const isAiRoto = this.getIsAiRoto();
     const aiRotoPercent = this.getAiPercent();
 
@@ -109,14 +167,17 @@ class RotoAi extends Component {
 
 const mapStateToProps = ({
   rotoMaterial,
+  roto,
   rotoFrontendActeractive
 }) => ({
   materialList: rotoMaterial.list,
+  rotoList: roto,
   rfa: rotoFrontendActeractive
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  configureStartupAiRoto,
+  aiRoto,
+  saveRoto,
   configureAiRotoPercent
 }, dispatch)
 

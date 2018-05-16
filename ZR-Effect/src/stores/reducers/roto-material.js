@@ -1,4 +1,4 @@
-import { update, findItem } from '../../utils/array-handle';
+import { update, findItem, remove } from '../../utils/array-handle';
 import config from '../../config';
 
 const defState = {
@@ -9,7 +9,7 @@ const defState = {
   list: []
 };
 
-export default function rotoPagination (state = defState, action) {
+export default function rotoMaterial (state = defState, action) {
   switch (action.type) {
     case 'GET_MATERIALS':
       const pageInfo = { page: action.page, perpage: 40 };
@@ -20,6 +20,9 @@ export default function rotoPagination (state = defState, action) {
       );
 
       return { ...state, pageInfo, list: materialList };
+
+    case 'REMOVE_MATERIAL':
+      return { ...state, list: remove(state.list, 'id', action.materialId) };
 
     default:
       return state;

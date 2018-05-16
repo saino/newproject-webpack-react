@@ -274,8 +274,8 @@ class RotoToolbar extends Component {
   }
 
   registerGetRotoActeractiveInfo(fn) {
-    return () => {
-      const { rfa } = this.props;
+    return props => {
+      const { rfa } = props || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
 
       if (rotoMaterial == null) {
@@ -302,6 +302,15 @@ class RotoToolbar extends Component {
 
       return fn(roto);
     };
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const prevToolType = this.getRotoToolType(this.props);
+    const prevIsVisibleMask = this.getRotoVisibleMask(this.props);
+    const nextToolType = this.getRotoToolType(nextProps);
+    const nextIsVisibleMask = this.getRotoVisibleMask(nextProps);
+    console.log(prevToolType, nextToolType, 'dt');
+    return prevToolType !== nextToolType || prevIsVisibleMask !== nextIsVisibleMask;
   }
 
   render() {

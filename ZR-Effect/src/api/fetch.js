@@ -38,7 +38,7 @@ export function post (path, body = {}) {
    .then(resp => resp[ 'data' ]);
 };
 
-export function error (messageText, errorFunc) {
-  message.error(messageText)
+export function error (errorMessage, errorFunc) {
+  message.error(errorMessage.message);
   errorFunc && errorFunc();
 }

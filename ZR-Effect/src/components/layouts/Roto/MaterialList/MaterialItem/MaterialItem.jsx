@@ -18,6 +18,8 @@ export default class MaterialItem extends Component {
     materialId: PropTypes.number,
     // 素材名
     materialName: PropTypes.string,
+    // 删除素材回调
+    onRemoveMaterial: PropTypes.func,
     // 选择回调
     onCheck: PropTypes.func
   };
@@ -27,7 +29,7 @@ export default class MaterialItem extends Component {
       visibleUploadOrDetail,
       uploadSituation, uploadingPercent,
       materialId, materialName, materialThumb,
-      onCheck
+      onRemoveMaterial, onCheck
     } = this.props;
     const thumb = `${ config.fileUpload.host }:${ config.fileUpload.port }/data/materials/${ materialId }/thumb.jpg`;
     let childComponent = null;
@@ -38,6 +40,7 @@ export default class MaterialItem extends Component {
           id={ materialId }
           name={ materialName }
           thumb={ thumb }
+          onRemoveMaterial={ onRemoveMaterial }
           onCheck={ onCheck } />
         );
     }

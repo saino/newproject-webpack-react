@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import config from '../../../../config';
+import { post } from '../../../../api/fetch';
 import defferPerform from '../../../../utils/deffer-perform';
+import { findItem } from '../../../../utils/array-handle';
 import { normalize } from '../../../../service/format';
 import { addMaterialTemp } from '../../../../stores/action-creators/roto-material-temp-creator';
-import { getMaterialList } from '../../../../stores/action-creators/roto-material-creator';
+import { getMaterialList, removeMaterial } from '../../../../stores/action-creators/roto-material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { message } from 'antd';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
 import materialListStyle from './material-list.css';
 import MaterialItem from './MaterialItem/MaterialItem';
@@ -44,35 +47,52 @@ class MaterialList extends Component {
       });
     };
 
-    this.checkMaterialItemHandle = materialId => {
-      this.addRotoMaterial(materialId);
+    // 选中素材
+    this.checkMaterialItemHandle = (materialId, materialName) => {
+      this.addRotoMaterial(materialId, materialName);
       this.addRoto(materialId);
+    };
+
+    // 删除素材
+    this.removeMaterialHandle = materialId => {
+      const { removeMaterial, raf } = this.props;
+      const isLiveRotoMaterial = !!findItem(raf, 'material_id', materialId);
+
+      if (isLiveRotoMaterial) {
+        message.warning('该素材已被添加进抠像中了，不能直接删除!!!');
+        return;
+      }
+
+      removeMaterial(materialId);
     };
   }
 
-  addRotoMaterial(materialId) {
-    const { addRotoMaterial } = this.props;
+  addRotoMaterial(materialId, materialName) {
+    const { addRotoMaterial, raf } = this.props;
 
-    addRotoMaterial(materialId);
+    // 这里不能按照数组去重冗余的方法，因为抠像素材
+    if (!findItem(raf, 'material_id', materialId)) {
+      addRotoMaterial(materialId, materialName);
+    }
   }
 
   addRoto(materialId) {
-    const { addRoto } = this.props;
+    const { addRoto, rotoList } = this.props;
 
-    addRoto(materialId, 0);
+    // 同添加抠像素材一样不能直接用基础库的去重
+    if (!findItem(rotoList, 'material_id', materialId)) {
+      addRoto(materialId, 0);  
+    }
   }
 
   uploadMaterial(material) {
     const {
       onSelectedRotoMaterial, addMaterialTemp, getMaterialList,
-      materialList, materialPage
+      materialList, materialPage, saveRoto
     } = this.props;
     const { page, perpage } = materialPage;
     const materialId = +material[ 'id' ];
-    const deferGetMaterialList = defferPerform(
-      () => getMaterialList({ type: 'video', page, perpage}),
-      10
-    );
+    const materialName = material[ 'name' ];
     const deferAddMaterialTemp = defferPerform(
       material => {
         if (materialList.length >= perpage) {
@@ -81,15 +101,15 @@ class MaterialList extends Component {
       },
       15
     );
-    const deferCheckRotoMaterial = defferPerform(materialId => this.checkMaterialItemHandle(materialId), 30);
-    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 50);
+    const deferCheckRotoMaterial = defferPerform((materialId, materialName) => this.checkMaterialItemHandle(materialId, materialName), 30);
+    const deferSelectedRotoMaterial = defferPerform(materialId => onSelectedRotoMaterial(materialId), 60);
     const deferUpload = defferPerform(() => {
       this.setState({
         uploadingPercent: 0
       }, () => {
-        deferGetMaterialList();
+        getMaterialList({ type: 'video', page, perpage});
         deferAddMaterialTemp(material);
-        deferCheckRotoMaterial(materialId);
+        deferCheckRotoMaterial(materialId, materialName);
         deferSelectedRotoMaterial(materialId);
       });
     }, 100);
@@ -108,6 +128,7 @@ class MaterialList extends Component {
             visibleUploadOrDetail={ 0 }
             materialId={ material.id }
             materialName={ material.name }
+            onRemoveMaterial={ this.removeMaterialHandle }
             onCheck={ this.checkMaterialItemHandle }/>
         </div>
       );
@@ -174,15 +195,17 @@ class MaterialList extends Component {
   }
 }
 
-const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial }) => ({
+const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial, roto }) => ({
   materialList: rotoMaterial.list,
   materialPage: rotoMaterial.pageInfo,
   raf: rotoFrontendActeractive,
+  rotoList: roto
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       getMaterialList,
+      removeMaterial,
       addRotoMaterial,
       addRoto,
       addMaterialTemp

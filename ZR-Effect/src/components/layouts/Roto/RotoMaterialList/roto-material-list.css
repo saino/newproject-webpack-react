@@ -26,12 +26,12 @@
 
 .material-list {
   flex: 1;
+  overflow: auto;
+  background: #264246;
 }
 
 .material-list-inner {
   width: 100%;
-  height: 100%;
-  overflow: auto;
   background: #264246;
   font-size: 12px;
 }
