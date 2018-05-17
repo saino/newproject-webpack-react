@@ -29,6 +29,7 @@ import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 import RotoOperationBox from './RotoOperationBox/RotoOperationBox';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
+import ParseFrameList from './ParseFrameList/ParseFrameList';
 import FrameImg from './FrameImg/FrameImg';
 import nextPNG from './next.png';
 import prevPNG from './prev.png';
@@ -370,25 +371,19 @@ class Matting extends Component {
     return middleCom;
   }
 
-  getParseFrameCom(className) {
+  getParseFrameCom() {
     const { width, iterate, gap } = config.parseFrame;
     const totalFrame = this.getMaterialProps()[ 'length' ];
-    const coms = [];
     const totalIterate = Math.floor(totalFrame / iterate) + 1;
     const boxWidth = totalIterate * (width + 2) + (totalIterate - 1) * gap;
 
-    for (let frame = 1; frame <= totalFrame; frame += iterate) {
-      coms.push(
-        <li key={ `p_f_${ frame }` } onClick={ () => this.configureTickHandle(frame - 1) }>
-          <FrameImg width={ width } frame={ frame } displayFrame={ frame - 1 } />
-        </li>
-      );
-    }
-
     return (
-      <ul className={ className } style={{ width: boxWidth }}>
-        { coms }
-      </ul>
+      <div className={ rotoStyle[ 'frame-img-list' ] } style={{ width: boxWidth }}>
+        <ParseFrameList
+          totalFrame={ totalFrame }
+          iterate={ iterate }
+          onClick={ frame => this.configureTickHandle(frame - 1) } />
+      </div>
     );
   }
 
@@ -468,7 +463,34 @@ class Matting extends Component {
               {/* 扣像帧处理 */}
               { show || !rfa.length || !isSelected
                 ? void 0
-                : void 0
+                : (<div className={ rotoStyle[ 'footer' ] }>
+                    <ScrollArea style={{ width: '100%', height: '100%' }}>
+                      <div className={ rotoStyle[ 'frame-player' ] }>
+                        <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
+                        <i onClick={ this.playOrPauseHandle }><Icon type={ isPlay === true ? 'pause-circle-o' : 'play-circle-o' } style={{ fontSize: 21, color: '#fff' }} /></i>
+                        <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
+                        <label className={ rotoStyle[ 'txt' ] }>当前第</label>
+                        <input
+                          value={ tempFrame }
+                          className={ isValidFrameError !== false ? void 0 : rotoStyle[ 'valid-error' ] }
+                          onChange={ this.changeFrameHandle }
+                          onBlur={ this.importFrameHandle } />
+                        <label className={ rotoStyle[ 'txt' ] }>帧</label>
+                      </div>
+                      <div className={ rotoStyle[ 'auto-scale' ] }>
+
+                        {/* 时间轴 */}
+                        <Scale
+                          currTick={ frame }
+                          maxTick={ 100 }
+                          onEnd={ this.configureTickHandle }>
+
+                          {/* 解帧区展示帧图片 */}
+                          { this.getParseFrameCom() }
+                        </Scale>
+                      </div>
+                    </ScrollArea>
+                  </div>)
               }
             </div>
 

@@ -158,7 +158,7 @@ class RotoAi extends Component {
     const filename = this.getMaterialProps()[ 'name' ];
     const isAiRoto = this.getIsAiRoto();
     const aiRotoPercent = this.getAiPercent();
-    console.log('ss');
+
     return (
       <div className={ rotoAiStyle[ 'wrapper' ] }>
         <Button className={ rotoAiStyle[ 'ai-roto' ] } disabled={ isAiRoto } onClick={ this.aiRotoHandle }>
