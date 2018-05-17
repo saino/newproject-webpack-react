@@ -373,6 +373,7 @@ class Matting extends Component {
 
   getParseFrameCom() {
     const { width, iterate, gap } = config.parseFrame;
+    const materialId = this.getMaterialId();
     const totalFrame = this.getMaterialProps()[ 'length' ];
     const totalIterate = Math.floor(totalFrame / iterate) + 1;
     const boxWidth = totalIterate * (width + 2) + (totalIterate - 1) * gap;
@@ -380,6 +381,7 @@ class Matting extends Component {
     return (
       <div className={ rotoStyle[ 'frame-img-list' ] } style={{ width: boxWidth }}>
         <ParseFrameList
+          materialId={ materialId }
           totalFrame={ totalFrame }
           iterate={ iterate }
           onClick={ frame => this.configureTickHandle(frame - 1) } />

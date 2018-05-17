@@ -105,8 +105,8 @@ class RotoAi extends Component {
     const materialId = this.getMaterialId(props);
     const isAiRoto = this.getIsAiRoto(props);
     const aiPercent = this.getAiPercent(props);
-    const aiId = this.getAiId();
-
+    const aiId = this.getAiId(props);
+    
     if (isAiRoto && aiPercent < 100) {
       setTimeout(() =>
         configureAiRotoPercent(materialId, aiId),
