@@ -12,7 +12,7 @@ class MaterialMappingFrameImg extends Component {
 
   drawToCanvasHandle = () => {
     const currTime = this.videoEl.currentTime;
-    const { properties: { width, height } } = this.getMaterial();;
+    const { properties: { width, height } } = this.getMaterial();
 
     this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
   };
@@ -23,8 +23,8 @@ class MaterialMappingFrameImg extends Component {
     return frameRate.toFixed(3);
   }
 
-  getMaterial() {
-    const { materialList, rfa } = this.props;
+  getMaterial(props) {
+    const { materialList, rfa } = props || this.props;
     const selectedRotoMaterial = findItem(rfa, 'is_selected', true);
     const material = findItem(materialList, 'id', selectedRotoMaterial[ 'material_id' ]);
 
@@ -37,6 +37,20 @@ class MaterialMappingFrameImg extends Component {
     const totalMs = this.getMsFrame(length, duration) * frame;
 
     this.videoEl.currentTime = totalMs;
+  }
+
+  // 避免不必要的渲染就是如果当前抠像素材变化或帧变化
+  validateIsResetRender(prevProps, nextProps) {
+    const prevMaterialId = this.getMaterial(prevProps)[ 'id' ];
+    const prevFrame = this.props.frame;
+    const nextMaterialId = this.getMaterial(nextProps)[ 'id' ];
+    const nextFrame = nextProps.frame;
+
+    return prevMaterialId !== nextMaterialId || prevFrame !== nextFrame;
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.validateIsResetRender(this.props, nextProps);
   }
 
   render() {
