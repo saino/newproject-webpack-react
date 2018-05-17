@@ -42,7 +42,7 @@ class MaterialMappingFrameImg extends Component {
   // 避免不必要的渲染就是如果当前抠像素材变化或帧变化
   validateIsResetRender(prevProps, nextProps) {
     const prevMaterialId = this.getMaterial(prevProps)[ 'id' ];
-    const prevFrame = this.props.frame;
+    const prevFrame = prevProps.frame;
     const nextMaterialId = this.getMaterial(nextProps)[ 'id' ];
     const nextFrame = nextProps.frame;
 
