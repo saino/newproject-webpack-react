@@ -13,7 +13,7 @@ export default class ParseFrameList extends Component {
     const { totalFrame, iterate } = this.props;
     const { width } = config.parseFrame;
     const coms = [];
-    console.log(totalFrame, iterate, 'ddd');
+
     for (let frame = 1; frame <= totalFrame; frame += iterate) {
       coms.push(
         <li key={ `p_f_${ frame }` } onClick={ this.clickHandle(frame) }>

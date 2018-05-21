@@ -52,6 +52,9 @@ class Matting extends Component {
     // 获取素材属性
     this.getMaterialProps = this.registerGetMaterialInfo(material => material[ 'properties' ]);
 
+    // 获取素材路径
+    this.getMaterialPath = this.registerGetMaterialInfo(material => material[ 'path' ]);
+
     // 获取是否正在播放
     this.getIsPlay = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_play' ]);
 
@@ -136,22 +139,59 @@ class Matting extends Component {
     this.playing = (() => {
       let timer;
 
+      // const render = (totalFrame, ms) => {
+      //   const { tempFrame } = this.state;
+      //
+      //   if (tempFrame > totalFrame) {
+      //     clearTimeout(render);
+      //     return;
+      //   }
+      //   console.log(ms, 'xx');
+      //   this.configureTickHandle(tempFrame + 1);
+      //   timer = setTimeout(() => render(totalFrame, (tempFrame + 1) * 1000 / 24), ms)
+      // };
+
       return defferPerform(() => {
         const isPlay = this.getIsPlay();
         const totalFrame = this.getMaterialProps()[ 'length' ];
+        const { tempFrame } = this.state;
+        let number = 0;
 
         if (isPlay) {
-          timer = setInterval(() => {
-            const { tempFrame } = this.state;
+          for (let i = tempFrame + 1; i <= totalFrame; i++, number++) {
+            timer = setTimeout(() => this.configureTickHandle(i), number * 200);
+          }
+          //render(totalFrame, tempFrame * 1000 / 24);
 
-            if (tempFrame + 1 >= totalFrame) {
-              clearInterval(timer);
-              return;
-            }
 
-            this.configureTickHandle(tempFrame + 1);
-
-          }, 1000 / 24);
+          // timer = setTimeout(() => {
+          //   const { tempFrame } = this.state;
+          //
+          //   if (tempFrame > totalFrame) {
+          //     clearTimeout(timer);
+          //     return;
+          //   }
+          //
+          //   setTimeout
+          // }, tempFrame * 1000 / 24);
+          // for (let i = tempFrame + 1; i <= 4; i++) {
+          //   timer = setTimeout(() => {
+          //      const { tempFrame } = this.state;
+          //      console.log(tempFrame, 'dd')
+          //      this.configureTickHandle(tempFrame + 1);
+          //   }, 1000 / 24 * i * 100);
+          // }
+          // timer = setInterval(() => {
+          //   const { tempFrame } = this.state;
+          //
+          //   if (tempFrame + 1 >= totalFrame) {
+          //     clearInterval(timer);
+          //     return;
+          //   }
+          //
+          //   this.configureTickHandle(tempFrame + 1);
+          //
+          // }, 24 / 1000 * this.state.tempFrame);
         } else {
           clearInterval(timer);
         }
@@ -374,15 +414,18 @@ class Matting extends Component {
   getParseFrameCom() {
     const { width, iterate, gap } = config.parseFrame;
     const materialId = this.getMaterialId();
-    const totalFrame = this.getMaterialProps()[ 'length' ];
-    const totalIterate = Math.floor(totalFrame / iterate) + 1;
+    const materialPath = this.getMaterialPath();
+    const { length, duration } = this.getMaterialProps();
+    const totalIterate = Math.floor(length / iterate) + 1;
     const boxWidth = totalIterate * (width + 2) + (totalIterate - 1) * gap;
 
     return (
       <div className={ rotoStyle[ 'frame-img-list' ] } style={{ width: boxWidth }}>
         <ParseFrameList
           materialId={ materialId }
-          totalFrame={ totalFrame }
+          materialPath={ materialPath }
+          totalFrame={ length }
+          frameRate={ duration / length }
           iterate={ iterate }
           onClick={ frame => this.configureTickHandle(frame - 1) } />
       </div>
