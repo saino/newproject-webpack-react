@@ -1,29 +1,28 @@
 import React, { Component } from "react";
 import MaterialBtn from "./material-btn";
-import AddImg from "../../statics/add.png"
+import AddImg from "../../statics/add.png";
+import DragList from 'react-draggable-list'
 
-// import { bindActionCreators } from 'redux';
-// import { connect } from 'react-redux';
-// import { loadMaterials } from "../../../stores/reducers/material"
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { changeWorkMaterial } from "../../../stores/reducers/work";
 class MaterialArea extends Component {
-
-    // componentDidUpdate() {
-        // console.log("ddddddddddd");
-        // this.props.loadMaterials({
-        //     "types": "image|video",
-        //     "page": 1,
-        //     "perpage": 20
-        // });
-    // }
+    onMoveEnd = (newArr, movedItem, oldIndex, newIndex) => {
+        const newWorkMaterials = newArr.map((item,index)=>{
+            item.order = index +1;
+            return item;
+        });
+        this.props.changeWorkMaterial(newWorkMaterials);
+        
+    }
     render() {
         const { materials } = this.props;
+        const list = materials.map((material, index)=>{
+            return {...material, index: index}
+        });
         return <div className="material-area">
             <div className="add-material" onClick={this.addMaterialClick}>素材<div><img src={AddImg} /></div></div>
-            {
-                materials.map((model, index) => {
-                    return <MaterialBtn key={index} model={model}/>
-                })
-            }
+            <DragList list={list} itemKey="id" template={MaterialBtn} padding={0} onMoveEnd={this.onMoveEnd} />
             <style>{`
                 .material-area{
                     height: 574px;
@@ -53,9 +52,9 @@ class MaterialArea extends Component {
     }
 }
 
-// const mapDispatchToProps = (dispatch) => {
-//     return {
-//         loadMaterials: bindActionCreators(loadMaterials, dispatch)
-//     }
-// }
-export default MaterialArea;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch)
+    }
+}
+export default connect(null, mapDispatchToProps)(MaterialArea);
