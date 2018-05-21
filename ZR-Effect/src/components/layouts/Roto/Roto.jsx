@@ -16,7 +16,7 @@ import {
   configureIsPlay
 } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { addRoto, configure } from '../../../stores/action-creators/roto-creator';
-import { Icon, message } from 'antd';
+import { Icon, Progress, message } from 'antd';
 import Draggable from 'react-draggable';
 import ScrollArea from 'react-custom-scrollbars';
 import rotoStyle from './roto.css';
@@ -54,6 +54,12 @@ class Matting extends Component {
 
     // 获取素材路径
     this.getMaterialPath = this.registerGetMaterialInfo(material => material[ 'path' ]);
+
+    // 获取是否正在解帧
+    this.getIsParseFrame = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_parse_frame' ]);
+
+    // 获取解帧进度
+    this.getParseFramePercent = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'parse_frame_percent' ]);
 
     // 获取是否正在播放
     this.getIsPlay = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_play' ]);
@@ -175,7 +181,7 @@ class Matting extends Component {
       const { configureIsPlay } = this.props;
       const isPlay = this.getIsPlay();
       const materialId = this.getMaterialId();
-      //console.log(isPlay, 'ss');
+
       configureIsPlay(materialId, !isPlay);
       this.playing.startTimer();
     };
@@ -386,7 +392,7 @@ class Matting extends Component {
     return middleCom;
   }
 
-  getParseFrameCom() {
+  getParseFrameCom(isParseFrame, percent) {
     const { width, iterate, gap } = config.parseFrame;
     const materialId = this.getMaterialId();
     const materialPath = this.getMaterialPath();
@@ -399,6 +405,8 @@ class Matting extends Component {
         <ParseFrameList
           materialId={ materialId }
           materialPath={ materialPath }
+          isParseFrame={ isParseFrame }
+          percent={ percent }
           totalFrame={ length }
           frameRate={ duration / length }
           iterate={ iterate }
@@ -416,8 +424,10 @@ class Matting extends Component {
   }
 
   render() {
-    const { showAddMaterialOrFrameImg, tempFrame } = this.state;
+    const { showAddMaterialOrFrameImg, tempFrame, visibleLoadFrame } = this.state;
     const { rfa, token } = this.props;
+    const isParseFrame = this.getIsParseFrame
+    const parseFramePercent = this.getParseFramePercent();
     const frame = this.getSelectedFrame();
     const isValidFrameError = this.getIsValidFrameError();
     const isPlay = this.getIsPlay();
@@ -441,6 +451,20 @@ class Matting extends Component {
 
     return (
       <div className={ rotoStyle[ 'wrapper' ] }>
+        {/* 解帧进度圈 */}
+        { visibleLoadFrame
+          ? (<div className={ rotoStyle[ 'parse-frame-percent-bar' ] }>
+              <div>
+                <Progress
+                  type="circle"
+                  percent={ parseFramePercent }
+                  format={ percent => `解析帧进度:${ percent }%` } />
+              </div>
+             </div>
+            )
+          : void 0
+        }
+
         <div className={ rotoStyle[ 'wrapper-inner' ] }>
           <div className={ rotoStyle[ 'header' ] }>
             {/* 头部 */}
@@ -506,7 +530,7 @@ class Matting extends Component {
                           onEnd={ this.configureTickHandle }>
 
                           {/* 解帧区展示帧图片 */}
-                          { this.getParseFrameCom() }
+                          { this.getParseFrameCom(isParseFrame, parseFramePercent) }
                         </Scale>
                       </div>
                     </ScrollArea>
@@ -530,7 +554,9 @@ class Matting extends Component {
   }
 
   componentWillUnmount() {
-    this.playing.unsetTimer();
+    if (this.getMaterialId()) {
+      this.playing.unsetTimer(this.getMaterialId());
+    }
   }
 }
 

@@ -8,7 +8,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { get, set } from '../../../../utils/configure-auth';
 import { findItem } from '../../../../utils/array-handle';
-import { addParseFrame } from '../../../../stores/action-creators/frame-parse-creator';
 import style from './frame-img.css';
 
 class FrameImg extends Component {
@@ -26,16 +25,16 @@ class FrameImg extends Component {
     };
 
     // 直接到localStorage读取素材图片base64
-    this.getMaterialBase64 = (props) => {
-      const { frame, frameParseList } = props || this.props;
-      const materialId = this.getMaterialId(props || this.props);
-
-      return findItem(
-        frameParseList,
-        frameParse =>
-          frameParse[ 'material_id' ] === materialId && frameParse[ 'frame' ] === frame
-      );
-    };
+    // this.getMaterialBase64 = (props) => {
+    //   const { frame, frameParseList } = props || this.props;
+    //   const materialId = this.getMaterialId(props || this.props);
+    //
+    //   return findItem(
+    //     frameParseList,
+    //     frameParse =>
+    //       frameParse[ 'material_id' ] === materialId && frameParse[ 'frame' ] === frame
+    //   );
+    // };
 
     // 获取素材id
     this.getMaterialId = this.registerGetMaterial(material => material[ 'id' ]);
@@ -46,15 +45,19 @@ class FrameImg extends Component {
     // 获取素材属性
     this.getMaterialProps = this.registerGetMaterial(material => material[ 'properties' ]);
 
-    // 将video的'second'绘制到canvas，形成解帧效果
-    this.drawToCanvasHandle = () => {
-      const { frame, addParseFrame } = this.props;
-      const [ width, height ] = this.getFinalSize();
-      const materialId = this.getMaterialId();
+    // 获取解帧进度
+    this.getParseFramePercent = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'parse_frame_percent' ]);
 
-      this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
-      addParseFrame(materialId, frame, this.canvasEl.toDataURL('image/jpeg'));
-    };
+
+    // 将video的'second'绘制到canvas，形成解帧效果
+    // this.drawToCanvasHandle = () => {
+    //   const { frame, addParseFrame } = this.props;
+    //   const [ width, height ] = this.getFinalSize();
+    //   const materialId = this.getMaterialId();
+    //
+    //   this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
+    //   addParseFrame(materialId, frame, this.canvasEl.toDataURL('image/jpeg'));
+    // };
 
     // 显示帧操作
     this.showFrameHandle = () =>
@@ -63,6 +66,25 @@ class FrameImg extends Component {
     // 隐藏帧操作
     this.hideFrameHandle = () =>
       this.setState({ visibleFrame: false });
+
+    this.seekedHandle = () => {
+      const { onFrameLoad } = this.props;
+
+      onFrameLoad();
+    };
+  }
+
+  registerGetRotoActeractiveInfo(fn) {
+    return () => {
+      const { rfa } = this.props;
+      const rotoMaterial = findItem(rfa, 'is_selected', true);
+
+      if (rotoMaterial == null) {
+        return void 0;
+      }
+
+      return fn(rotoMaterial);
+    };
   }
 
   registerGetMaterial(fn) {
@@ -110,8 +132,17 @@ class FrameImg extends Component {
     this.videoEl.currentTime = totalMs;
   }
 
+  shouldComponentUpdate(nextProps) {
+    const prevMaterialId = this.getMaterialId();
+    const nextMaterialId = this.getMaterialId(nextProps);
+
+    return prevMaterialId !== nextMaterialId;
+  }
+
   componentDidUpdate() {
-    if (!this.getMaterialBase64()) {
+    const parseFramePercent = this.getParseFramePercent();
+
+    if (parseFramePercent < 100) {
       this.configureVideoCurrTime();
     }
   }
@@ -121,20 +152,16 @@ class FrameImg extends Component {
     const { visibleFrame } = this.state;
     const [ width, height ] = this.getFinalSize();
     const path = this.getMaterialPath();
-    const base64Item = this.getMaterialBase64();
+    //const base64Item = this.getMaterialBase64();
 
     return (
       <div className={ style[ 'wrapper' ] } onMouseEnter={ this.showFrameHandle } onMouseLeave={ this.hideFrameHandle }>
-        {
-          base64Item
-            ? (<img src={ base64Item[ 'frame_base64' ] } width={ width } height={ height } />)
-            : (
-              <div>
-              <canvas ref={ el => this.canvasEl = el } width={ width } height={ height } style={{ display: 'none' }}></canvas>
-              <video src={ path } ref={ el => this.videoEl = el } crossOrigin="use-credentials" style={{ display: 'none' }}></video>
-              </div>
-            )
-        }
+        <video
+          ref={ el => this.videoEl = el }
+          style={{ width, height }}
+          src={ path }
+          crossOrigin="use-credentials" />
+
         { visibleFrame
           ? (
             <div className={ style[ 'wrapper-inner' ] }>
@@ -148,26 +175,25 @@ class FrameImg extends Component {
   }
 
   componentDidMount() {
-    if (!this.getMaterialBase64()) {
-      this.contextCanvas = this.canvasEl.getContext('2d');
-      this.videoEl.addEventListener('seeked', this.drawToCanvasHandle, false);
-      this.configureVideoCurrTime();
-    }
+    this.videoEl.addEventListener('seeking', this.seekedHandle, false);
+    this.configureVideoCurrTime();
+  }
+
+  componentWillUnmount() {
+    this.videoEl.removeEventListener('seeking', this.seekedHandle, false);
   }
 }
 
 const mapStateToProps = ({
   rotoMaterial,
-  frameParse,
   rotoFrontendActeractive,
   rotoMaterialTemp
 }) => ({
   materialList: rotoMaterial.list,
-  frameParseList: frameParse,
   materialTempList: rotoMaterialTemp,
   rfa: rotoFrontendActeractive
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({ addParseFrame }, dispatch);
+//const mapDispatchToProps = dispatch => bindActionCreators({ addParseFrame }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(FrameImg);
+export default connect(mapStateToProps)(FrameImg);

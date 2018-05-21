@@ -58,6 +58,7 @@ class MaterialMappingFrameImg extends Component {
       <div className={ style[ 'wrapper' ] }>
         <video
           ref={ el => this.videoEl = el }
+          style={{ width, height }}
           src={ path }
           crossOrigin="use-credentials" />
       </div>
