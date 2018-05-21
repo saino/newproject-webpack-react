@@ -7,28 +7,22 @@ import style from './material-mapping-frame-img.css';
 
 class MaterialMappingFrameImg extends Component {
   static propTypes = {
-    frame: PropTypes.number.isRequired
+    frame: PropTypes.number.isRequired,
+    isPlay: PropTypes.bool
   };
 
-  drawToCanvasHandle = () => {
-    const currTime = this.videoEl.currentTime;
-    const { properties: { width, height } } = this.getMaterial();
+  getMaterial = (props) => {
+    const { materialList, rfa } = props || this.props;
+    const selectedRotoMaterial = findItem(rfa, 'is_selected', true);
+    const material = findItem(materialList, 'id', selectedRotoMaterial[ 'material_id' ]);
 
-    this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
+    return material;
   };
 
   getMsFrame(frameLength, duration) {
     const frameRate = duration / frameLength;
 
     return frameRate.toFixed(3);
-  }
-
-  getMaterial(props) {
-    const { materialList, rfa } = props || this.props;
-    const selectedRotoMaterial = findItem(rfa, 'is_selected', true);
-    const material = findItem(materialList, 'id', selectedRotoMaterial[ 'material_id' ]);
-
-    return material;
   }
 
   setCurrTime() {
@@ -43,10 +37,14 @@ class MaterialMappingFrameImg extends Component {
   validateIsResetRender(prevProps, nextProps) {
     const prevMaterialId = this.getMaterial(prevProps)[ 'id' ];
     const prevFrame = prevProps.frame;
+    const prevIsPlay = prevProps.isPlay;
     const nextMaterialId = this.getMaterial(nextProps)[ 'id' ];
     const nextFrame = nextProps.frame;
-
-    return prevMaterialId !== nextMaterialId || prevFrame !== nextFrame;
+    const nextIsPlay = nextProps.isPlay;
+    //console.log(nextIsPlay, 'nextIsPlay')
+    return prevMaterialId !== nextMaterialId
+      || prevIsPlay !== nextIsPlay
+      || (nextIsPlay === false && prevFrame !== nextFrame);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -58,20 +56,28 @@ class MaterialMappingFrameImg extends Component {
 
     return (
       <div className={ style[ 'wrapper' ] }>
-        <canvas ref={ el => this.canvasEl = el } width={ width } height={ height }></canvas>
-        <video src={ path } ref={ el => this.videoEl = el } crossOrigin="use-credentials" style={{ display: 'none' }}></video>
+        <video
+          ref={ el => this.videoEl = el }
+          src={ path }
+          crossOrigin="use-credentials" />
       </div>
     );
   }
 
   componentDidUpdate() {
-    this.setCurrTime();
+    const { isPlay } = this.props;
+
+    if (isPlay) {
+      this.videoEl.play();
+    } else {
+      this.videoEl.pause();
+      this.setCurrTime();
+    }
   }
 
-  componentDidMount() {
-    this.contextCanvas = this.canvasEl.getContext('2d');
-    this.videoEl.addEventListener('seeked', this.drawToCanvasHandle, false);
-    this.setCurrTime();
+  componentWillUnmount() {
+    const { onClearPlayTimer } = this.props;
+    onClearPlayTimer(this.getMaterial().id);
   }
 }
 

@@ -137,65 +137,37 @@ class Matting extends Component {
 
     // 延时10毫秒恒定24fps播放帧动画(更改帧)
     this.playing = (() => {
+      const { configureIsPlay } = this.props;
+      const unsetTimer = mId => {
+        clearInterval(timer);
+        timer = null;
+        configureIsPlay(mId, false);
+      };
       let timer;
 
-      // const render = (totalFrame, ms) => {
-      //   const { tempFrame } = this.state;
-      //
-      //   if (tempFrame > totalFrame) {
-      //     clearTimeout(render);
-      //     return;
-      //   }
-      //   console.log(ms, 'xx');
-      //   this.configureTickHandle(tempFrame + 1);
-      //   timer = setTimeout(() => render(totalFrame, (tempFrame + 1) * 1000 / 24), ms)
-      // };
+      return {
+        startTimer: defferPerform(() => {
+          const isPlay = this.getIsPlay();
+          const materialId = this.getMaterialId();
+          const { length, duration } = this.getMaterialProps();
+          const ms = parseFloat((duration / length).toFixed(3)) * 1000;
+          let { tempFrame } = this.state;
 
-      return defferPerform(() => {
-        const isPlay = this.getIsPlay();
-        const totalFrame = this.getMaterialProps()[ 'length' ];
-        const { tempFrame } = this.state;
-        let number = 0;
+          if (isPlay) {
+            timer = setInterval(() => {
+              if (tempFrame >= length) {
+                unsetTimer(materialId);
+                return;
+              }
 
-        if (isPlay) {
-          for (let i = tempFrame + 1; i <= totalFrame; i++, number++) {
-            timer = setTimeout(() => this.configureTickHandle(i), number * 200);
+              this.configureTickHandle(++tempFrame);
+            }, ms);
+          } else {
+            unsetTimer(materialId);
           }
-          //render(totalFrame, tempFrame * 1000 / 24);
-
-
-          // timer = setTimeout(() => {
-          //   const { tempFrame } = this.state;
-          //
-          //   if (tempFrame > totalFrame) {
-          //     clearTimeout(timer);
-          //     return;
-          //   }
-          //
-          //   setTimeout
-          // }, tempFrame * 1000 / 24);
-          // for (let i = tempFrame + 1; i <= 4; i++) {
-          //   timer = setTimeout(() => {
-          //      const { tempFrame } = this.state;
-          //      console.log(tempFrame, 'dd')
-          //      this.configureTickHandle(tempFrame + 1);
-          //   }, 1000 / 24 * i * 100);
-          // }
-          // timer = setInterval(() => {
-          //   const { tempFrame } = this.state;
-          //
-          //   if (tempFrame + 1 >= totalFrame) {
-          //     clearInterval(timer);
-          //     return;
-          //   }
-          //
-          //   this.configureTickHandle(tempFrame + 1);
-          //
-          // }, 24 / 1000 * this.state.tempFrame);
-        } else {
-          clearInterval(timer);
-        }
-      }, 10);
+        }, 80),
+        unsetTimer
+      };
     })();
 
     // 播放或暂停操作
@@ -203,9 +175,9 @@ class Matting extends Component {
       const { configureIsPlay } = this.props;
       const isPlay = this.getIsPlay();
       const materialId = this.getMaterialId();
-
+      //console.log(isPlay, 'ss');
       configureIsPlay(materialId, !isPlay);
-      this.playing();
+      this.playing.startTimer();
     };
 
     // 播放上一帧操作
@@ -398,7 +370,10 @@ class Matting extends Component {
                       position: 'absolute',
                       background: 'transparent' }}>
                       <RotoOperationBox disabled={ this.isReadyMove() }>
-                        <MaterialMappingFrameImg frame={ frame } />
+                        <MaterialMappingFrameImg
+                          frame={ frame }
+                          isPlay={ this.getIsPlay() }
+                          onClearPlayTimer={ this.playing.unsetTimer } />
                       </RotoOperationBox>
                     </div>
                   </Draggable>
@@ -552,6 +527,10 @@ class Matting extends Component {
       </div>
     );
 
+  }
+
+  componentWillUnmount() {
+    this.playing.unsetTimer();
   }
 }
 
