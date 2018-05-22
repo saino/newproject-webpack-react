@@ -54,8 +54,8 @@ class SVG extends Component {
   }
 
   registerGetRotoMaterialInfo(fn) {
-    return () => {
-      const { rfa } = this.props;
+    return props => {
+      const { rfa } = props || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
 
       return rotoMaterial == null ? void 0 : fn(rotoMaterial);
@@ -65,8 +65,8 @@ class SVG extends Component {
   registerGetRotoInfo(fn) {
     return props => {
       const { rotoList } = props || this.props;
-      const materialId = this.getMaterialId();
-      const materialFrame = this.getMaterialFrame();
+      const materialId = this.getMaterialId(props || this.props);
+      const materialFrame = this.getMaterialFrame(props || this.props);
       const roto = findItem(rotoList, item =>
         item[ 'material_id' ] === materialId
           && item[ 'frame' ] === materialFrame

@@ -650,9 +650,7 @@ class RotoOperationBox extends Component {
     const nextMaterialId = this.getMaterialId(nextProps);
     const nextMaterialFrame = this.getMaterialFrame(nextProps);
 
-    //console.log(prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame, 'ddd');
     return prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame;
-    //console.log(prevMaterialId, nextMaterialId, 'dd');
   }
 
   shouldComponentUpdate(nextProps) {

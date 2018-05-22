@@ -65,11 +65,12 @@ export function saveRoto (materialId, frames) {
   };
 }
 
-export function aiRoto (materialId, aiId) {
+export function aiRoto (materialId, aiId, isAiRoto) {
   return dispatch => {
     post('/roto/aiRoto', { id: aiId })
       .then(resp => dispatch({
         type: 'AI_ROTO',
+        isAiRoto,
         materialId
       }))
       .catch(fail);

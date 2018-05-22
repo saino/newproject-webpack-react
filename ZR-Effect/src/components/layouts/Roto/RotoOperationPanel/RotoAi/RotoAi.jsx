@@ -4,14 +4,24 @@ import { connect } from 'react-redux';
 import config from '../../../../../config';
 import { Progress, Button } from 'antd';
 import { aiRoto, saveRoto, configureAiRotoPercent } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { post } from '../../../../../api/fetch';
 import defferPerform from '../../../../../utils/deffer-perform';
 import { finds, findItem } from '../../../../../utils/array-handle';
+import { get, set } from '../../../../../utils/configure-auth';
 import rotoAiStyle from './roto-ai.css';
 import startRotoPNG from './start-roto.png';
 
 class RotoAi extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      aiRotoPercent: void 0,
+      geRotoPercent: void 0
+    };
+
+    // 定时器
+    this.timer = null;
 
     // 获取素材属性
     this.getMaterialProps = this.registerGetRotoMaterialInfo(rotoMaterial => {
@@ -66,7 +76,7 @@ class RotoAi extends Component {
       const { aiRoto } = this.props;
       const aiId = this.getAiId();
 
-      aiRoto(materialId, aiId);
+      aiRoto(materialId, aiId, true);
     }, 100);
 
     this.aiRotoHandle = () => {
@@ -101,17 +111,30 @@ class RotoAi extends Component {
   }
 
   requestAiPercent(props, howTime = 0) {
-    const { configureAiRotoPercent } = props;
+    const { configureAiRotoPercent, aiRoto } = props;
     const materialId = this.getMaterialId(props);
     const isAiRoto = this.getIsAiRoto(props);
-    const aiPercent = this.getAiPercent(props);
     const aiId = this.getAiId(props);
-    
-    if (isAiRoto && aiPercent < 100) {
-      setTimeout(() =>
-        configureAiRotoPercent(materialId, aiId),
+    const { aiRotoPercent } = this.state;
+
+    if (isAiRoto && aiRotoPercent < 100) {
+      this.timer = setInterval(() =>
+        post('/getProgress', { type: 'roto', object_id: aiId })
+          .then(resp => {
+            const { progress, complete } = resp;
+
+            if (!complete) {
+              set(`aiRotoPercent${ this.getMaterialId() }`, parseFloat(progress))
+              this.setState({ aiRotoPercent: parseFloat(progress) });
+            } else {
+              clearInterval(this.timer);
+              set(`aiRotoPercent${ this.getMaterialId() }`, 0);
+              this.setState({ aiRotoPercent: 0 }, () => aiRoto(materialId, aiId, false));
+            }
+          }
+        ),
         howTime
-      );
+      )
     }
   }
 
@@ -129,35 +152,53 @@ class RotoAi extends Component {
   }
 
   componentWillMount() {
-    this.requestAiPercent(this.props);
+    const aiRotoPercent = get(`aiRotoPercent${ this.getMaterialId() }`);
+    const geRotoPercent = get(`geRotoPercent${ this.getMaterialId() }`);
+
+    this.setState({
+      aiRotoPercent: aiRotoPercent == null ? 0 : aiRotoPercent,
+      geRotoPercent: geRotoPercent == null ? 0 : geRotoPercent
+    }, () => this.requestAiPercent(this.props));
   }
 
   componentWillReceiveProps(nextProps) {
-    this.requestAiPercent(nextProps, 1000);
+    const prevMaterialId = this.getMaterialId(this.props);
+    const nextMaterialId = this.getMaterialId(nextProps);
+    const aiRotoPercent = get(`aiRotoPercent${ nextMaterialId }`);
+    const geRotoPercent = get(`geRotoPercent${ nextMaterialId }`);
+
+    this.setState({
+      aiRotoPercent: aiRotoPercent == null ? 0 : aiRotoPercent,
+      geRotoPercent: geRotoPercent == null ? 0 : geRotoPercent
+    }, () => {
+      if (prevMaterialId !== nextMaterialId) {
+        clearInterval(this.timer);
+      }
+      
+      this.requestAiPercent(nextProps, 1000)
+    });
   }
 
   // 抠像素材不一样，是否开始ai抠像状态不一样，抠像进度不一样
   validateIsResetRender(prevProps, nextProps) {
     const prevMaterialId = this.getMaterialId(prevProps);
     const prevIsAiRoto = this.getIsAiRoto(prevProps);
-    const prevAiPercent = this.getAiPercent(prevProps);
     const nextMaterialId = this.getMaterialId(nextProps);
     const nextIsAiRoto = this.getIsAiRoto(nextProps);
-    const nextAiPercent = this.getAiPercent(nextProps);
 
     return prevMaterialId !== nextMaterialId
-      || prevIsAiRoto !== nextIsAiRoto
-      || prevAiPercent !== nextAiPercent;
+      || prevIsAiRoto !== nextIsAiRoto;
   }
 
-  shouldComponentUpdate(nextProps) {
-    return this.validateIsResetRender(this.props, nextProps);
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.validateIsResetRender(this.props, nextProps)
+      || this.state.aiRotoPercent !== nextState.aiRotoPercent;
   }
 
   render() {
     const filename = this.getMaterialProps()[ 'name' ];
     const isAiRoto = this.getIsAiRoto();
-    const aiRotoPercent = this.getAiPercent();
+    const { aiRotoPercent } = this.state;
 
     return (
       <div className={ rotoAiStyle[ 'wrapper' ] }>
@@ -183,6 +224,11 @@ class RotoAi extends Component {
         }
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    this.timer = null;
   }
 }
 
