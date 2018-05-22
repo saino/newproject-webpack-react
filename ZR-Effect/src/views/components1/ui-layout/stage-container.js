@@ -29,6 +29,24 @@ class StageContainer extends Component {
         this.disX = 0;
         this.disY = 0;
     }
+    // componentWillUnmount(){
+    //     this.state = {
+    //         work: {},
+    //         currentVideoId: "",
+    //         currentVideoDOMIndex: 0,
+    //         // currentVideoDOMTime: 0,
+    //         allVideoTime: 0,
+    //         allVideoCurentTime: 0,
+    //         loadedVideoNum: 0,
+    //         allVideoDate: [],
+    //         allVideoDOM: [],
+    //     };
+    //     // this.stage = null;
+    //     this.videoContainer = null;
+    //     this.materialsContainer = [];
+    //     this.disX = 0;
+    //     this.disY = 0;
+    // }
 
     /**
      * 
@@ -77,7 +95,6 @@ class StageContainer extends Component {
     getAllVideo = () => {
         const { work } = this.props;
         const { videos } = work.config;
-        // console.log(videos, "kkkkkkkkkkkkkkkkkgggggggggggggggggggggggg");
         return videos.sort((video1,video2)=>{
             return video1.order - video2.order
         });
@@ -244,6 +261,7 @@ class StageContainer extends Component {
 
             this.state.allVideoCurentTime = this.getAllVideoCurrentTime();
         }
+        // console.log("xxxxxxxxxxxxx", this.getCurrentVideo().currentTime);
         this.renderMaterial();
     }
 

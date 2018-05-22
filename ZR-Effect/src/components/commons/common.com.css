@@ -17,8 +17,9 @@
 
 .scale-box-actual {
   position: relative;
-  overflow-x: auto;
+  /* overflow-x: auto; */
   height: 14px;
+  white-space: nowrap;
 }
 
 .scale-box-actual-inner {

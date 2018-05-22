@@ -16,6 +16,7 @@ const defaultState = {
             positionY: 0,
             videoPX: "px1",
             videoType: "type1",
+            currentFrameNum: 0,
         }
     }
 }
@@ -27,7 +28,8 @@ const actionTypes = {
     "CHANGE_WORK_MATERIAL": "CHANGE_WORK_MATERIAL",
     "CHANGE_WORK": "CHANGE_WORK",
     "CHANGE_WORK_VIDEO": "CHANGE_WORK_VIDEO",
-    "CHANGE_WORK_PLAY": "CHANGE_WORK_PLAY"
+    "CHANGE_WORK_PLAY": "CHANGE_WORK_PLAY",
+    "CHANGE_WORK_PROPERTIES": "CHANGE_WORK_PROPERTIES"
 }
 
 export const createWork = (body) => {
@@ -61,6 +63,13 @@ export const changVideoPlay = (isPlay) => {
     }
 }
 
+export const changeWorkProperties = (properties) => {
+    return {
+        type: actionTypes.CHANGE_WORK_PROPERTIES,
+        properties
+    }
+}
+
 export const changeWorkMaterial = (materialItem) => {
     return {
         type: actionTypes.CHANGE_WORK_MATERIAL,
@@ -83,7 +92,7 @@ export const saveWork = (body, successFUN) => {
     // return () => {
     return  post("/fx/saveWork", body)
             .then((resp)=>{
-                console.log(resp,"dddddddddd");
+                // console.log(resp,"dddddddddd");
                 successFUN&&successFUN(resp);
             });
     // }
@@ -143,6 +152,9 @@ export default (state = defaultState, action) => {
                 return materialItem;
             });
             return { ...state, config: {...state.config, materials: [...materialTmp]}}
+        
+        case actionTypes.CHANGE_WORK_PROPERTIES:
+            return {...state, config: {...state.config, properties: {...action.properties}}}
 
         case actionTypes.CHANGE_WORK_PLAY: 
             return {...state, config: {...state.config, properties: {...state.config.properties, videoPlay: action.isPlay}}};
