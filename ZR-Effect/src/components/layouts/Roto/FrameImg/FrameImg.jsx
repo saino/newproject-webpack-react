@@ -60,18 +60,12 @@ class FrameImg extends Component {
     // };
 
     // 显示帧操作
-    this.showFrameHandle = () =>
+    this.showFrameHandle = () => 
       this.setState({ visibleFrame: true });
 
     // 隐藏帧操作
     this.hideFrameHandle = () =>
       this.setState({ visibleFrame: false });
-
-    this.seekedHandle = () => {
-      const { onFrameLoad } = this.props;
-
-      onFrameLoad();
-    };
   }
 
   registerGetRotoActeractiveInfo(fn) {
@@ -132,27 +126,11 @@ class FrameImg extends Component {
     this.videoEl.currentTime = totalMs;
   }
 
-  shouldComponentUpdate(nextProps) {
-    const prevMaterialId = this.getMaterialId();
-    const nextMaterialId = this.getMaterialId(nextProps);
-
-    return prevMaterialId !== nextMaterialId;
-  }
-
-  componentDidUpdate() {
-    const parseFramePercent = this.getParseFramePercent();
-
-    if (parseFramePercent < 100) {
-      this.configureVideoCurrTime();
-    }
-  }
-
   render() {
     const { frame, displayFrame } = this.props;
     const { visibleFrame } = this.state;
     const [ width, height ] = this.getFinalSize();
     const path = this.getMaterialPath();
-    //const base64Item = this.getMaterialBase64();
 
     return (
       <div className={ style[ 'wrapper' ] } onMouseEnter={ this.showFrameHandle } onMouseLeave={ this.hideFrameHandle }>
@@ -175,12 +153,7 @@ class FrameImg extends Component {
   }
 
   componentDidMount() {
-    this.videoEl.addEventListener('seeking', this.seekedHandle, false);
     this.configureVideoCurrTime();
-  }
-
-  componentWillUnmount() {
-    this.videoEl.removeEventListener('seeking', this.seekedHandle, false);
   }
 }
 
