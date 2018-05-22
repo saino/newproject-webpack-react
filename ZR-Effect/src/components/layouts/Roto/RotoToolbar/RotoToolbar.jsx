@@ -309,7 +309,7 @@ class RotoToolbar extends Component {
     const prevIsVisibleMask = this.getRotoVisibleMask(this.props);
     const nextToolType = this.getRotoToolType(nextProps);
     const nextIsVisibleMask = this.getRotoVisibleMask(nextProps);
-    console.log(prevToolType, nextToolType, 'dt');
+
     return prevToolType !== nextToolType || prevIsVisibleMask !== nextIsVisibleMask;
   }
 

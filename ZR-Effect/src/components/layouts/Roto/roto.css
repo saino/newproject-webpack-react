@@ -14,6 +14,26 @@
   height: 100%;
 }
 
+.parse-frame-percent-bar {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.55);
+  z-index: 9999;
+}
+
+.parse-frame-percent-bar > div {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.parse-frame-percent-bar span {
+  font-size: 14px!important;
+  color: #fff;
+}
+
 .wrapper-inner {
   display: flex;
   flex-flow: column nowrap;
@@ -178,8 +198,6 @@
   position: relative;
   cursor: pointer;
   margin: 8px 15px 8px 0;
-  box-sizing: border-box;
-  border: 1px solid #3a666a;
   background: #254549;
 }
 
@@ -207,6 +225,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border: 1px solid #3a666a;
 }
 
 .footer > div:first-of-type > div:nth-of-type(2) {

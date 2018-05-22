@@ -73,7 +73,7 @@ export default class Point {
 					}
 				}
 		}
-		console.log(x, y)
+		
 		return [x, y];
 	}
 	move(dx, dy, type){

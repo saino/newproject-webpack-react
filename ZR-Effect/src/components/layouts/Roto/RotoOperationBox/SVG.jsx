@@ -63,8 +63,8 @@ class SVG extends Component {
   }
 
   registerGetRotoInfo(fn) {
-    return () => {
-      const { rotoList } = this.props;
+    return props => {
+      const { rotoList } = props || this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const roto = findItem(rotoList, item =>

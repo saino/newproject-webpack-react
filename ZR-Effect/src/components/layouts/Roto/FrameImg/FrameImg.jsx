@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { get, set } from '../../../../utils/configure-auth';
 import { findItem } from '../../../../utils/array-handle';
 import style from './frame-img.css';
 
@@ -23,18 +24,40 @@ class FrameImg extends Component {
       visibleFrame: false
     };
 
+    // 直接到localStorage读取素材图片base64
+    // this.getMaterialBase64 = (props) => {
+    //   const { frame, frameParseList } = props || this.props;
+    //   const materialId = this.getMaterialId(props || this.props);
+    //
+    //   return findItem(
+    //     frameParseList,
+    //     frameParse =>
+    //       frameParse[ 'material_id' ] === materialId && frameParse[ 'frame' ] === frame
+    //   );
+    // };
+
+    // 获取素材id
+    this.getMaterialId = this.registerGetMaterial(material => material[ 'id' ]);
+
     // 获取素材路径
     this.getMaterialPath = this.registerGetMaterial(material => material[ 'path' ]);
 
     // 获取素材属性
     this.getMaterialProps = this.registerGetMaterial(material => material[ 'properties' ]);
 
-    // 将video的'second'绘制到canvas，形成解帧效果
-    this.drawToCanvasHandle = () => {
-      const [ width, height ] = this.getFinalSize();
+    // 获取解帧进度
+    this.getParseFramePercent = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'parse_frame_percent' ]);
 
-      this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
-    };
+
+    // 将video的'second'绘制到canvas，形成解帧效果
+    // this.drawToCanvasHandle = () => {
+    //   const { frame, addParseFrame } = this.props;
+    //   const [ width, height ] = this.getFinalSize();
+    //   const materialId = this.getMaterialId();
+    //
+    //   this.contextCanvas.drawImage(this.videoEl, 0, 0, width, height);
+    //   addParseFrame(materialId, frame, this.canvasEl.toDataURL('image/jpeg'));
+    // };
 
     // 显示帧操作
     this.showFrameHandle = () =>
@@ -43,11 +66,30 @@ class FrameImg extends Component {
     // 隐藏帧操作
     this.hideFrameHandle = () =>
       this.setState({ visibleFrame: false });
+
+    this.seekedHandle = () => {
+      const { onFrameLoad } = this.props;
+
+      onFrameLoad();
+    };
+  }
+
+  registerGetRotoActeractiveInfo(fn) {
+    return () => {
+      const { rfa } = this.props;
+      const rotoMaterial = findItem(rfa, 'is_selected', true);
+
+      if (rotoMaterial == null) {
+        return void 0;
+      }
+
+      return fn(rotoMaterial);
+    };
   }
 
   registerGetMaterial(fn) {
-    return () => {
-      const { materialList, materialTempList, rfa } = this.props;
+    return props => {
+      const { materialList, materialTempList, rfa } = props || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
       let materialId, material;
 
@@ -56,7 +98,7 @@ class FrameImg extends Component {
       }
 
       materialId = rotoMaterial[ 'material_id' ];
-      material = findItem(materialList, 'id', materialId) || findItem(materialTempList, 'id', materialId);;
+      material = findItem(materialList, 'id', materialId) || findItem(materialTempList, 'id', materialId);
 
       if (material == null) {
         return void 0;
@@ -90,16 +132,36 @@ class FrameImg extends Component {
     this.videoEl.currentTime = totalMs;
   }
 
+  shouldComponentUpdate(nextProps) {
+    const prevMaterialId = this.getMaterialId();
+    const nextMaterialId = this.getMaterialId(nextProps);
+
+    return prevMaterialId !== nextMaterialId;
+  }
+
+  componentDidUpdate() {
+    const parseFramePercent = this.getParseFramePercent();
+
+    if (parseFramePercent < 100) {
+      this.configureVideoCurrTime();
+    }
+  }
+
   render() {
     const { frame, displayFrame } = this.props;
     const { visibleFrame } = this.state;
     const [ width, height ] = this.getFinalSize();
     const path = this.getMaterialPath();
+    //const base64Item = this.getMaterialBase64();
 
     return (
       <div className={ style[ 'wrapper' ] } onMouseEnter={ this.showFrameHandle } onMouseLeave={ this.hideFrameHandle }>
-        <canvas ref={ el => this.canvasEl = el } width={ width } height={ height }></canvas>
-        <video src={ path } ref={ el => this.videoEl = el } crossOrigin="use-credentials" style={{ display: 'none' }}></video>
+        <video
+          ref={ el => this.videoEl = el }
+          style={{ width, height }}
+          src={ path }
+          crossOrigin="use-credentials" />
+
         { visibleFrame
           ? (
             <div className={ style[ 'wrapper-inner' ] }>
@@ -112,14 +174,13 @@ class FrameImg extends Component {
     )
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
+    this.videoEl.addEventListener('seeking', this.seekedHandle, false);
     this.configureVideoCurrTime();
   }
 
-  componentDidMount() {
-    this.contextCanvas = this.canvasEl.getContext('2d');
-    this.videoEl.addEventListener('seeked', this.drawToCanvasHandle, false);
-    this.configureVideoCurrTime();
+  componentWillUnmount() {
+    this.videoEl.removeEventListener('seeking', this.seekedHandle, false);
   }
 }
 
@@ -132,5 +193,7 @@ const mapStateToProps = ({
   materialTempList: rotoMaterialTemp,
   rfa: rotoFrontendActeractive
 });
+
+//const mapDispatchToProps = dispatch => bindActionCreators({ addParseFrame }, dispatch);
 
 export default connect(mapStateToProps)(FrameImg);

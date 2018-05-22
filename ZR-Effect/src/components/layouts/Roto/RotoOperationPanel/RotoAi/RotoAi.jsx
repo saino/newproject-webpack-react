@@ -100,20 +100,23 @@ class RotoAi extends Component {
     saveRoto(materialId, frames);
   }
 
-  requestAiPercent(props) {
+  requestAiPercent(props, howTime = 0) {
     const { configureAiRotoPercent } = props;
     const materialId = this.getMaterialId(props);
     const isAiRoto = this.getIsAiRoto(props);
     const aiPercent = this.getAiPercent(props);
-    const aiId = this.getAiId();
-
+    const aiId = this.getAiId(props);
+    
     if (isAiRoto && aiPercent < 100) {
-      configureAiRotoPercent(materialId, aiId);
+      setTimeout(() =>
+        configureAiRotoPercent(materialId, aiId),
+        howTime
+      );
     }
   }
 
   registerGetRotoMaterialInfo(fn) {
-    return (props) => {
+    return props => {
       const { materialList, rfa } = props || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
 
@@ -130,7 +133,25 @@ class RotoAi extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.requestAiPercent(nextProps);
+    this.requestAiPercent(nextProps, 1000);
+  }
+
+  // 抠像素材不一样，是否开始ai抠像状态不一样，抠像进度不一样
+  validateIsResetRender(prevProps, nextProps) {
+    const prevMaterialId = this.getMaterialId(prevProps);
+    const prevIsAiRoto = this.getIsAiRoto(prevProps);
+    const prevAiPercent = this.getAiPercent(prevProps);
+    const nextMaterialId = this.getMaterialId(nextProps);
+    const nextIsAiRoto = this.getIsAiRoto(nextProps);
+    const nextAiPercent = this.getAiPercent(nextProps);
+
+    return prevMaterialId !== nextMaterialId
+      || prevIsAiRoto !== nextIsAiRoto
+      || prevAiPercent !== nextAiPercent;
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.validateIsResetRender(this.props, nextProps);
   }
 
   render() {

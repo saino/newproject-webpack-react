@@ -16,7 +16,7 @@ import {
   configureIsPlay
 } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { addRoto, configure } from '../../../stores/action-creators/roto-creator';
-import { Icon, message } from 'antd';
+import { Icon, Progress, message } from 'antd';
 import Draggable from 'react-draggable';
 import ScrollArea from 'react-custom-scrollbars';
 import rotoStyle from './roto.css';
@@ -29,6 +29,7 @@ import RotoToolbar from './RotoToolbar/RotoToolbar';
 import RotoOperationPanel from './RotoOperationPanel/RotoOperationPanel';
 import RotoOperationBox from './RotoOperationBox/RotoOperationBox';
 import MaterialMappingFrameImg from './MaterialMappingFrameImg/MaterialMappingFrameImg';
+import ParseFrameList from './ParseFrameList/ParseFrameList';
 import FrameImg from './FrameImg/FrameImg';
 import nextPNG from './next.png';
 import prevPNG from './prev.png';
@@ -50,6 +51,15 @@ class Matting extends Component {
 
     // 获取素材属性
     this.getMaterialProps = this.registerGetMaterialInfo(material => material[ 'properties' ]);
+
+    // 获取素材路径
+    this.getMaterialPath = this.registerGetMaterialInfo(material => material[ 'path' ]);
+
+    // 获取是否正在解帧
+    this.getIsParseFrame = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_parse_frame' ]);
+
+    // 获取解帧进度
+    this.getParseFramePercent = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'parse_frame_percent' ]);
 
     // 获取是否正在播放
     this.getIsPlay = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_play' ]);
@@ -81,7 +91,7 @@ class Matting extends Component {
     };
 
     // 延迟10毫秒跳转到显示帧图片组件
-    this.switchToVisibleFrameImg = defferPerform(() => this.openVisibleFrameImg(), 10);
+    this.switchToVisibleFrameImg = () => this.openVisibleFrameImg(); //defferPerform(() => this.openVisibleFrameImg(), 10);
 
     // // 延迟10毫秒选中扣像素材
     // this.selectedRotoMaterial = defferPerform(materialId => {
@@ -99,6 +109,12 @@ class Matting extends Component {
       this.switchToVisibleFrameImg();
       cancelSelectedRotoMaterial();
       selectedRotoMaterial(materialId);
+
+      // setTimeout(() => {
+      //
+      // }, 10);
+      //cancelSelectedRotoMaterial();
+      //selectedRotoMaterial(materialId);
     };
 
     // 延迟10毫秒设置抠像素材的选择帧
@@ -127,28 +143,37 @@ class Matting extends Component {
 
     // 延时10毫秒恒定24fps播放帧动画(更改帧)
     this.playing = (() => {
+      const { configureIsPlay } = this.props;
+      const unsetTimer = mId => {
+        clearInterval(timer);
+        timer = null;
+        configureIsPlay(mId, false);
+      };
       let timer;
 
-      return defferPerform(() => {
-        const isPlay = this.getIsPlay();
-        const totalFrame = this.getMaterialProps()[ 'length' ];
+      return {
+        startTimer: defferPerform(() => {
+          const isPlay = this.getIsPlay();
+          const materialId = this.getMaterialId();
+          const { length, duration } = this.getMaterialProps();
+          const ms = parseFloat((duration / length).toFixed(3)) * 1000;
+          let { tempFrame } = this.state;
 
-        if (isPlay) {
-          timer = setInterval(() => {
-            const { tempFrame } = this.state;
+          if (isPlay) {
+            timer = setInterval(() => {
+              if (tempFrame >= length) {
+                unsetTimer(materialId);
+                return;
+              }
 
-            if (tempFrame + 1 >= totalFrame) {
-              clearInterval(timer);
-              return;
-            }
-
-            this.configureTickHandle(tempFrame + 1);
-
-          }, 1000 / 24);
-        } else {
-          clearInterval(timer);
-        }
-      }, 10);
+              this.configureTickHandle(++tempFrame);
+            }, ms);
+          } else {
+            unsetTimer(materialId);
+          }
+        }, 80),
+        unsetTimer
+      };
     })();
 
     // 播放或暂停操作
@@ -158,7 +183,7 @@ class Matting extends Component {
       const materialId = this.getMaterialId();
 
       configureIsPlay(materialId, !isPlay);
-      this.playing();
+      this.playing.startTimer();
     };
 
     // 播放上一帧操作
@@ -351,7 +376,10 @@ class Matting extends Component {
                       position: 'absolute',
                       background: 'transparent' }}>
                       <RotoOperationBox disabled={ this.isReadyMove() }>
-                        <MaterialMappingFrameImg frame={ frame } />
+                        <MaterialMappingFrameImg
+                          frame={ frame }
+                          isPlay={ this.getIsPlay() }
+                          onClearPlayTimer={ this.playing.unsetTimer } />
                       </RotoOperationBox>
                     </div>
                   </Draggable>
@@ -364,25 +392,26 @@ class Matting extends Component {
     return middleCom;
   }
 
-  getParseFrameCom(className) {
+  getParseFrameCom(isParseFrame, percent) {
     const { width, iterate, gap } = config.parseFrame;
-    const totalFrame = this.getMaterialProps()[ 'length' ];
-    const coms = [];
-    const totalIterate = Math.floor(totalFrame / iterate) + 1;
+    const materialId = this.getMaterialId();
+    const materialPath = this.getMaterialPath();
+    const { length, duration } = this.getMaterialProps();
+    const totalIterate = Math.floor(length / iterate) + 1;
     const boxWidth = totalIterate * (width + 2) + (totalIterate - 1) * gap;
 
-    for (let frame = 1; frame <= totalFrame; frame += iterate) {
-      coms.push(
-        <li key={ `p_f_${ frame }` } onClick={ () => this.configureTickHandle(frame - 1) }>
-          <FrameImg width={ width } frame={ frame } displayFrame={ frame - 1 } />
-        </li>
-      );
-    }
-
     return (
-      <ul className={ className } style={{ width: boxWidth }}>
-        { coms }
-      </ul>
+      <div className={ rotoStyle[ 'frame-img-list' ] } style={{ width: boxWidth }}>
+        <ParseFrameList
+          materialId={ materialId }
+          materialPath={ materialPath }
+          isParseFrame={ isParseFrame }
+          percent={ percent }
+          totalFrame={ length }
+          frameRate={ duration / length }
+          iterate={ iterate }
+          onClick={ frame => this.configureTickHandle(frame - 1) } />
+      </div>
     );
   }
 
@@ -395,8 +424,10 @@ class Matting extends Component {
   }
 
   render() {
-    const { showAddMaterialOrFrameImg, tempFrame } = this.state;
+    const { showAddMaterialOrFrameImg, tempFrame, visibleLoadFrame } = this.state;
     const { rfa, token } = this.props;
+    const isParseFrame = this.getIsParseFrame
+    const parseFramePercent = this.getParseFramePercent();
     const frame = this.getSelectedFrame();
     const isValidFrameError = this.getIsValidFrameError();
     const isPlay = this.getIsPlay();
@@ -420,6 +451,20 @@ class Matting extends Component {
 
     return (
       <div className={ rotoStyle[ 'wrapper' ] }>
+        {/* 解帧进度圈 */}
+        { visibleLoadFrame
+          ? (<div className={ rotoStyle[ 'parse-frame-percent-bar' ] }>
+              <div>
+                <Progress
+                  type="circle"
+                  percent={ parseFramePercent }
+                  format={ percent => `解析帧进度:${ percent }%` } />
+              </div>
+             </div>
+            )
+          : void 0
+        }
+
         <div className={ rotoStyle[ 'wrapper-inner' ] }>
           <div className={ rotoStyle[ 'header' ] }>
             {/* 头部 */}
@@ -462,7 +507,34 @@ class Matting extends Component {
               {/* 扣像帧处理 */}
               { show || !rfa.length || !isSelected
                 ? void 0
-                : void 0
+                : (<div className={ rotoStyle[ 'footer' ] }>
+                    <ScrollArea style={{ width: '100%', height: '100%' }}>
+                      <div className={ rotoStyle[ 'frame-player' ] }>
+                        <i onClick={ this.playPrevFrameHandle } className={ rotoStyle[ 'prev' ] }><img src={ prevPNG } /></i>
+                        <i onClick={ this.playOrPauseHandle }><Icon type={ isPlay === true ? 'pause-circle-o' : 'play-circle-o' } style={{ fontSize: 21, color: '#fff' }} /></i>
+                        <i onClick={ this.playNextFrameHandle } className={ rotoStyle[ 'next' ] }><img src={ nextPNG } /></i>
+                        <label className={ rotoStyle[ 'txt' ] }>当前第</label>
+                        <input
+                          value={ tempFrame }
+                          className={ isValidFrameError !== false ? void 0 : rotoStyle[ 'valid-error' ] }
+                          onChange={ this.changeFrameHandle }
+                          onBlur={ this.importFrameHandle } />
+                        <label className={ rotoStyle[ 'txt' ] }>帧</label>
+                      </div>
+                      <div className={ rotoStyle[ 'auto-scale' ] }>
+
+                        {/* 时间轴 */}
+                        <Scale
+                          currTick={ frame }
+                          maxTick={ 100 }
+                          onEnd={ this.configureTickHandle }>
+
+                          {/* 解帧区展示帧图片 */}
+                          { this.getParseFrameCom(isParseFrame, parseFramePercent) }
+                        </Scale>
+                      </div>
+                    </ScrollArea>
+                  </div>)
               }
             </div>
 
@@ -479,6 +551,12 @@ class Matting extends Component {
       </div>
     );
 
+  }
+
+  componentWillUnmount() {
+    if (this.getMaterialId()) {
+      this.playing.unsetTimer(this.getMaterialId());
+    }
   }
 }
 

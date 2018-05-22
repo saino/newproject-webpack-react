@@ -50,8 +50,8 @@ class RotoedFrameList extends Component {
   }
 
   registerGetRotoActeractiveInfo(fn) {
-    return () => {
-      const { rfa } = this.props;
+    return props => {
+      const { rfa } = props || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
 
       if (rotoMaterial == null) {
@@ -60,6 +60,20 @@ class RotoedFrameList extends Component {
 
       return fn(rotoMaterial);
     };
+  }
+
+  // 抠像素材不一样，抠像数据里的本地帧个数不一样
+  validateIsResetRender(prevProps, nextProps) {
+    const prevMaterialId = this.getMaterialId(prevProps);
+    const prevRotoedFrames = this.getRotoedFrames(prevProps);
+    const nextMaterialId = this.getMaterialId(nextProps);
+    const nextRotoedFrames = this.getRotoedFrames(nextProps);
+
+    return prevMaterialId !== nextMaterialId || prevRotoedFrames.length !== nextRotoedFrames.length;
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.validateIsResetRender(this.props, nextProps);
   }
 
   render() {

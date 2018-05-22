@@ -146,7 +146,6 @@ class RotoOperationBox extends Component {
           // 如果大于1个point或者本身closed为true，则是闭合状态
           if (pathSelected) {
             if (pathSelected.closePath()) {
-
               // 添加本地抠像
               addRotoedFrame(materialId, materialFrame);
             }
@@ -589,14 +588,21 @@ class RotoOperationBox extends Component {
   // 更新pathData list
   configurePathDataList(pathSelected) {
     const pathData = this.getPathData();
-    let updateIndex = findIndex(pathData.list, ({ id }) => id === pathSelected.id)
+    const pathList = [ ...pathData.list ];
+    let updateIndex = findIndex(pathList, ({ id }) => id === pathSelected.id)
 
-    pathData.list.splice(updateIndex, 1, pathSelected);
+    if (pathSelected) {
+      pathList.splice(updateIndex, 1, pathSelected);
+    } else {
+      pathList.splice(updateIndex, 1);
+    }
+
+    pathData.list = pathList;
   }
 
   registerGetRotoMaterialInfo(fn) {
-    return () => {
-      const { rfa } = this.props;
+    return props => {
+      const { rfa } = props || this.props;
       const rotoMaterial = findItem(rfa, 'is_selected', true);
 
       if (rotoMaterial == null) {
@@ -635,6 +641,22 @@ class RotoOperationBox extends Component {
     const { x, y } = el.getBoundingClientRect();
 
     return { offX: clientX - x, offY: clientY - y };
+  }
+
+  // 抠像素材id不同、当前操作帧不同、抠像数据不同避免重新渲染
+  validateIsResetRender(prevProps, nextProps) {
+    const prevMaterialId = this.getMaterialId(prevProps);
+    const prevMaterialFrame = this.getMaterialFrame(prevProps);
+    const nextMaterialId = this.getMaterialId(nextProps);
+    const nextMaterialFrame = this.getMaterialFrame(nextProps);
+
+    //console.log(prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame, 'ddd');
+    return prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame;
+    //console.log(prevMaterialId, nextMaterialId, 'dd');
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return this.validateIsResetRender(this.props, nextProps);
   }
 
   render() {
