@@ -16,7 +16,7 @@ const defaultState = {
             positionY: 0,
             videoPX: "px1",
             videoType: "type1",
-            frameNum: 0,
+            currentFrameNum: 0,
         }
     }
 }
@@ -28,7 +28,8 @@ const actionTypes = {
     "CHANGE_WORK_MATERIAL": "CHANGE_WORK_MATERIAL",
     "CHANGE_WORK": "CHANGE_WORK",
     "CHANGE_WORK_VIDEO": "CHANGE_WORK_VIDEO",
-    "CHANGE_WORK_PLAY": "CHANGE_WORK_PLAY"
+    "CHANGE_WORK_PLAY": "CHANGE_WORK_PLAY",
+    "CHANGE_WORK_PROPERTIES": "CHANGE_WORK_PROPERTIES"
 }
 
 export const createWork = (body) => {
@@ -59,6 +60,13 @@ export const changVideoPlay = (isPlay) => {
     return {
         type: actionTypes.CHANGE_WORK_PLAY,
         isPlay
+    }
+}
+
+export const changeWorkProperties = (properties) => {
+    return {
+        type: actionTypes.CHANGE_WORK_PROPERTIES,
+        properties
     }
 }
 
@@ -144,6 +152,9 @@ export default (state = defaultState, action) => {
                 return materialItem;
             });
             return { ...state, config: {...state.config, materials: [...materialTmp]}}
+        
+        case actionTypes.CHANGE_WORK_PROPERTIES:
+            return {...state, config: {...state.config, properties: {...action.properties}}}
 
         case actionTypes.CHANGE_WORK_PLAY: 
             return {...state, config: {...state.config, properties: {...state.config.properties, videoPlay: action.isPlay}}};
