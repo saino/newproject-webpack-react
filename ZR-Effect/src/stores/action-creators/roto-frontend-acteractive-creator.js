@@ -77,6 +77,14 @@ export function aiRoto (materialId, aiId, isAiRoto) {
   };
 }
 
+export function updateRotoIsAiRoto (materialId, isAiRoto) {
+  return {
+    type: 'UPDATE_ROTO_IS_AI_ROTO',
+    materialId,
+    isAiRoto
+  };
+}
+
 export function configureAiRotoPercent (materialId, aiId) {
   return dispatch => {
     post('/getProgress', { type: 'roto', object_id: aiId })
@@ -109,10 +117,22 @@ export function configureCloseAiRoto (materialId) {
   };
 }
 
-export function configureStartupGenerateRotoMaterial (materialId) {
+export function geRoto (materialId, aiId) {
+  return dispatch => {
+    post('/roto/finishRoto', { id: aiId })
+      .then(resp => dispatch({
+        type: 'GE_ROTO',
+        materialId
+      }))
+      .catch(fail);
+  };
+}
+
+export function updateRotoIsGeRoto (materialId, isGeRoto) {
   return {
-    type: 'CONFIGURE_STARTUP_GENERATE_ROTO_MATERIAL',
-    materialId
+    type: 'UPDATE_ROTO_IS_GE_ROTO',
+    materialId,
+    isGeRoto
   };
 }
 

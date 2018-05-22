@@ -12,6 +12,7 @@ import { getMaterialList, removeMaterial } from '../../../../stores/action-creat
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { message } from 'antd';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
+import Scroll from '../../../../components/commons/Scroll';
 import materialListStyle from './material-list.css';
 import MaterialItem from './MaterialItem/MaterialItem';
 import MaterialUploadBeforeItem from './MaterialUploadBeforeItem/MaterialUploadBeforeItem';
@@ -81,7 +82,7 @@ class MaterialList extends Component {
 
     // 同添加抠像素材一样不能直接用基础库的去重
     if (!findItem(rotoList, 'material_id', materialId)) {
-      addRoto(materialId, 0);  
+      addRoto(materialId, 0);
     }
   }
 
@@ -180,16 +181,21 @@ class MaterialList extends Component {
 
     return (
       <div className={ materialListStyle[ 'wrapper' ] }>
-        <div className={ materialListStyle[ 'list' ] }>
-          {/* 增加上传素材项 */}
-          { this.getAddUploadComponent() }
+        <Scroll
+          onScrollToBottom={ () => { console.log('xxx'); } }
+          width="100%"
+          height="100%">
+          <div className={ materialListStyle[ 'list' ] }>
+            {/* 增加上传素材项 */}
+            { this.getAddUploadComponent() }
 
-          {/* 显示上传状态项 */}
-          { this.getUploadComponent() }
+            {/* 显示上传状态项 */}
+            { this.getUploadComponent() }
 
-          {/* 素材项 */}
-          { this.getChildComponent() }
-        </div>
+            {/* 素材项 */}
+            { this.getChildComponent() }
+          </div>
+        </Scroll>
       </div>
     );
   }

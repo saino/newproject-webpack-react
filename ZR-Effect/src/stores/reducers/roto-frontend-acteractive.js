@@ -49,7 +49,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'ai_id': 0,
         'is_ai_roto': false,
         'ai_roto_percent': void 0,
-        'is_generate_roto_material': false,
+        'is_generate_roto_material': true,
         'generate_roto_material_percent': void 0,
         'is_generate_png_frame': false,
         'generate_png_frame_percent': void 0,
@@ -136,13 +136,30 @@ export default function rotoFrontendActerActive (state = defState, action) {
         action.materialId
       );
 
-    case 'CONFIGURE_STARTUP_GENERATE_ROTO_MATERIAL':
+    case 'GE_ROTO':
       return update(
         state,
-        { 'is_generate_roto_material': true, 'generate_roto_material_percent': 0 },
+        { 'is_generate_roto_material': false },
         'material_id',
         action.materialId
       );
+
+    case 'UPDATE_ROTO_IS_GE_ROTO':
+      return update(
+        state,
+        { 'is_generate_roto_material': action.isGeRoto },
+        'material_id',
+        action.materialId
+      );
+
+    case 'UPDATE_ROTO_IS_AI_ROTO':
+      return update(
+        state,
+        { 'is_ai_roto': action.isAiRoto },
+        'material_id',
+        action.materialId
+      );
+
 
     case 'CONFIGURE_CLOSE_GENERATE_ROTO_MATERIAL':
       return update(

@@ -6,8 +6,6 @@ import rotoedFrameListStyle from './rotoed-frame-list.css';
 import { findItem } from '../../../../../utils/array-handle';
 import config from '../../../../../config';
 import { selectedFrame } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
-// 测试的图片关键帧图片模块
-import testPNG from '../RotoAi/start-roto.png';
 import FrameImg from '../../FrameImg/FrameImg';
 
 class RotoedFrameList extends Component {

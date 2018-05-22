@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import style from './roto-operation-panel.css';
-import RotoDownload from './RotoDownload/RotoDownload';
+import RotoDownload from './RotoDownload';
 
 class RotoOperationPanel extends Component {
   state = {

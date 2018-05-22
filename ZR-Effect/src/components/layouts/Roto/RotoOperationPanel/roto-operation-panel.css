@@ -17,6 +17,7 @@
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
+  overflow: hidden;
 }
 
 .rotoed-frame-list {
