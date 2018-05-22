@@ -7,7 +7,6 @@
  *   is_selected { Boolean } 是否选中 [ 存入数据库 ]
  *   is_play { Boolean } 是否正在播放
  *   is_parse_frame { Boolean } 是否开始解帧进度操作
- *   parse_frame_percent { Number } 解帧进度，用于进度条
  *   selected_frame { Number } 选中帧
  *   is_visible_mask { Boolean } 是否显示阴影
  *   is_upload_or_detail { Number } 显示上传还是详情 ( 0-详情｜1-上传 )
@@ -45,7 +44,6 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'material_id': action.materialId,
         'material_name': action.materialName,
         'is_selected': false,
-        'parse_frame_percent': 0,
         'selected_frame': 0,
         'is_valid_frame_error': true,
         'is_play': false,

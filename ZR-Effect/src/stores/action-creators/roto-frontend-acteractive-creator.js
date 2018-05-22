@@ -28,14 +28,6 @@ export function removeRotoMaterial (materialId) {
   };
 }
 
-export function configureParseFramePercent(materialId, percent) {
-  return {
-    type: 'PARSE_FRAME_PERCENT',
-    materialId,
-    percent
-  };
-}
-
 export function selectedFrame (materialId, frame) {
   return {
     type: 'SELECTED_FRAME',

@@ -424,7 +424,7 @@ class Matting extends Component {
   }
 
   render() {
-    const { showAddMaterialOrFrameImg, tempFrame, visibleLoadFrame } = this.state;
+    const { showAddMaterialOrFrameImg, tempFrame } = this.state;
     const { rfa, token } = this.props;
     const isParseFrame = this.getIsParseFrame
     const parseFramePercent = this.getParseFramePercent();
@@ -452,7 +452,7 @@ class Matting extends Component {
     return (
       <div className={ rotoStyle[ 'wrapper' ] }>
         {/* 解帧进度圈 */}
-        { visibleLoadFrame
+        {/* visibleLoadFrame
           ? (<div className={ rotoStyle[ 'parse-frame-percent-bar' ] }>
               <div>
                 <Progress
@@ -463,7 +463,7 @@ class Matting extends Component {
              </div>
             )
           : void 0
-        }
+        */}
 
         <div className={ rotoStyle[ 'wrapper-inner' ] }>
           <div className={ rotoStyle[ 'header' ] }>
