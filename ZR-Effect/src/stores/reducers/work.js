@@ -16,6 +16,7 @@ const defaultState = {
             positionY: 0,
             videoPX: "px1",
             videoType: "type1",
+            frameNum: 0,
         }
     }
 }
@@ -83,7 +84,7 @@ export const saveWork = (body, successFUN) => {
     // return () => {
     return  post("/fx/saveWork", body)
             .then((resp)=>{
-                console.log(resp,"dddddddddd");
+                // console.log(resp,"dddddddddd");
                 successFUN&&successFUN(resp);
             });
     // }

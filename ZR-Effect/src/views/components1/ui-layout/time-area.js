@@ -6,10 +6,28 @@ import AddImg from "../../statics/add.png";
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { changVideoPlay } from "../../../stores/reducers/work"
+import { changVideoPlay } from "../../../stores/reducers/work";
+import Scale from "../../../components/commons/Scale";
+
 
 class TimeArea extends Component {
+    onChangeTick = (e, f, g ,h) => {
+        // console.log(e, f, g , h, arguments, "ffffffffffffffffffffff");
+    }
+    configureTickHandle = (a, b, c, d) => {
+        // console.log(arguments, "dddddddddddddddddddddd", a ,b ,c ,d);
+    }
+    getFrameNum = () => {
+        const { work } = this.props;
+        const { videos } = work.config;
+        let frameNum = 0;
+        for(let i= 0; i<videos.length; i++){
+            frameNum += videos[i].properties.length;
+        };
+        return frameNum;
+    }
     render() {
+        console.log(this.getFrameNum());
         return <div className="time-area">
             <div className="time-control">
                 <div className="control-video">
@@ -18,6 +36,14 @@ class TimeArea extends Component {
                     <div><img src={NextFrame} /> </div>
                 </div>
                 <div onClick={this.onAddVideoClick} className="add-video"><img src={AddImg}/>添加视频</div>
+                
+            </div>
+            <div className="time-scale">
+                <Scale
+                    currTick={0}
+                    maxTick={this.getFrameNum()}
+                    onChangeTick={this.onChangeTick}
+                    onEnd={this.configureTickHandle} />
             </div>
             <style>{`
                 .time-area{
@@ -55,6 +81,9 @@ class TimeArea extends Component {
                 }
                 .add-video img{
                     margin-right: 9px;
+                }
+                .time-scale{
+                    width: 100%;
                 }
             `}</style>
         </div>

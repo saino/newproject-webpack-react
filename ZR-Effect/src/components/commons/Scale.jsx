@@ -53,7 +53,7 @@ export default class Scale extends Component {
     let { maxTick } = this.props;
     const offsetX = this.getTickOffsetX(clientX);
     let tick = offsetX === config.tick.gap ? 1 : Math.floor((offsetX + 3.5)  / config.tick.gyro);
-    console.log(tick, 'tk');
+    // console.log(tick, 'tk');
     maxTick = this.getMaxTick(maxTick);
 
     if (tick < 0) {

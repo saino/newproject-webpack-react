@@ -22,7 +22,9 @@ class MaterialArea extends Component {
         });
         return <div className="material-area">
             <div className="add-material" onClick={this.addMaterialClick}>素材<div><img src={AddImg} /></div></div>
-            <DragList list={list} itemKey="id" template={MaterialBtn} padding={0} onMoveEnd={this.onMoveEnd} />
+            <div className="drag-list">
+                <DragList list={list} itemKey="id" template={MaterialBtn} padding={0} onMoveEnd={this.onMoveEnd} />
+            </div>
             <style>{`
                 .material-area{
                     height: 574px;
@@ -43,6 +45,11 @@ class MaterialArea extends Component {
                 }
                 .add-material img{
                     margin-right: 0px;
+                }
+                .drag-list{
+                    height: 534px;
+                    overflow-x: hidden;
+                    overflow-y: auto;
                 }
             `}</style>
         </div>

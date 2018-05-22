@@ -22,7 +22,7 @@ const request = (path, method, body) => {
   return fetch(
     `${ config.api.host }:${ config.api.port }${ config.api.path }${ path }${ isPost ? '' : parseQs(body) }`,
     //`${ config.api.path }${ path }${ isPost ? '' : parseQs(body) }`,
-    { ...fetchHeadersConfig, method, body: isPost ? JSON.stringify(body) : void 0 }
+    { ...fetchHeadersConfig, credentials: "include" , method, body: isPost ? JSON.stringify(body) : void 0 }
   )
   .then(parseResp)
   .then(checkErrorCodeStatus);
