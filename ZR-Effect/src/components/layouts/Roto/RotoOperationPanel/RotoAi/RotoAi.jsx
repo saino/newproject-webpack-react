@@ -82,10 +82,13 @@ class RotoAi extends Component {
 
     this.aiRotoHandle = () => {
       const materialId = this.getMaterialId();
+      const aiId = this.getAiId();
 
-      this.saveRoto();
+      if (aiId == null) {
+        this.saveRoto();
+      }
+
       this.deferAiRoto(materialId);
-
     }
   }
 
@@ -134,6 +137,12 @@ class RotoAi extends Component {
               this.setState({ aiRotoPercent: 0 }, () => {
                 updateRotoIsAiRoto(materialId, false);
                 updateRotoIsGeRoto(materialId, true);
+
+                // 加载ai抠像
+                post('/roto/loadRoto', { id: aiId })
+                  .then(resp => {
+                    console.log(resp, '抠像好的');
+                  })
               });
             }
           }
@@ -191,7 +200,7 @@ class RotoAi extends Component {
     return (
       <div className={ rotoAiStyle[ 'wrapper' ] }>
         <Button className={ rotoAiStyle[ 'ai-roto' ] } disabled={ isAiRoto } onClick={ this.aiRotoHandle }>
-          <img src={ startRotoPNG } />
+          {/*<img src={ startRotoPNG } />*/}
           <label>开始云端智能抠像</label>
         </Button>
         {

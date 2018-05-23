@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { post, error } from '../../../../../api/fetch';
 import { finds, findItem } from '../../../../../utils/array-handle';
 import { get, set, del } from '../../../../../utils/configure-auth';
-import { geRoto, updateRotoIsGeRoto } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { geRoto, updateRotoIsGeRoto, setDl } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { Progress, Button } from 'antd';
 import rotoAiStyle from '../roto-ai.css';
 import startRotoPNG from '../start-roto.png';
@@ -48,12 +48,12 @@ class RotoGe extends Component {
   }
 
   requestGePercent(props, howTime) {
-    const { updateRotoIsGeRoto } = props;
+    const { updateRotoIsGeRoto, setDl } = props;
     const materialId = this.getMaterialId(props);
     const isGeRoto = this.getIsGenerateMaterial(props);
     const aiId = this.getAiId(props);
     const { geRotoPercent } = this.state;
-
+    console.log(isGeRoto, geRotoPercent, aiId, 'xxxx');
     if (!isGeRoto && geRotoPercent < 100 && aiId > 0) {
       this.timer = setInterval(() =>
         post('/getProgress', { type: 'export', object_id: aiId })
@@ -65,12 +65,9 @@ class RotoGe extends Component {
               this.setState({ geRotoPercent: parseFloat(progress) });
             } else {
               clearInterval(this.timer);
-              del(`geRotoPercent${ materialId }`);
-              this.setState({
-                geRotoPercent: 0
-              }, () =>
-                updateRotoIsGeRoto(materialId, false)
-              );
+              set(`geRotoPercent${ materialId }`, parseFloat(progress));
+              setDl(materialId, true);
+              this.setState({ geRotoPercent: parseFloat(progress) }, () => updateRotoIsGeRoto(materialId, false));
             }
           }
         )
@@ -97,7 +94,8 @@ class RotoGe extends Component {
 
   componentWillMount() {
     const materialId = this.getMaterialId();
-    const geRotoPercent = get(`geRotoPercent${ materialId }`) || void 0;
+    del(`geRotoPercent${ materialId }`)
+    const geRotoPercent = void 0;
 
     this.setState({
       geRotoPercent: geRotoPercent
@@ -123,14 +121,20 @@ class RotoGe extends Component {
     const materialId = this.getMaterialId(this.props);
     const isGenerateMaterial = this.getIsGenerateMaterial(this.props);
     const geRotoPercent = get(`geRotoPercent${ materialId }`) || 0;
-    console.log('update');
+
     this.setState({
-      geRotoPercent: geRotoPercent,
+      geRotoPercent
     }, () => {
       clearInterval(this.timer);
-
       this.requestGePercent(this.props, 2000);
     });
+
+    // this.setState({
+    //   geRotoPercent: geRotoPercent,
+    // }, () => {
+    //   clearInterval(this.timer);
+    //   this.requestGePercent(this.props, 2000);
+    // });
   }
 
   render() {
@@ -142,7 +146,7 @@ class RotoGe extends Component {
     return (
       <div style={{ width: '100%', overflow: 'hidden' }}>
         <Button className={ rotoAiStyle[ 'ai-roto' ] } disabled={ isDable } onClick={ this.geRotoHandle }>
-          <img src={ startRotoPNG } />
+          {/*<img src={ startRotoPNG } />*/}
           <label>开始生成抠像素材</label>
         </Button>
         {
@@ -180,7 +184,8 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   geRoto,
-  updateRotoIsGeRoto
+  updateRotoIsGeRoto,
+  setDl
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(RotoGe);

@@ -46,11 +46,12 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'is_valid_frame_error': true,
         'is_play': false,
         'is_upload_or_detail': 0,
-        'ai_id': 0,
+        'ai_id': void 0,
         'is_ai_roto': false,
         'ai_roto_percent': void 0,
         'is_generate_roto_material': false,
         'is_disabled_roto_material_btn': true,
+        'is_allow_dl': false,
         'generate_roto_material_percent': void 0,
         'is_generate_png_frame': false,
         'generate_png_frame_percent': void 0,
@@ -103,6 +104,14 @@ export default function rotoFrontendActerActive (state = defState, action) {
       return update(
         state,
         { 'ai_id': action.aiId },
+        'material_id',
+        action.materialId
+      );
+
+    case 'SET_DL':
+      return update(
+        state,
+        { 'is_allow_dl': action.allowDl },
         'material_id',
         action.materialId
       );

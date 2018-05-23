@@ -52,6 +52,14 @@ export function configureIsPlay (materialId, isPlay) {
   };
 }
 
+export function setDl (materialId, allowDl) {
+  return {
+    type: 'SET_DL',
+    materialId,
+    allowDl
+  };
+}
+
 export function saveRoto (materialId, frames) {
   return dispatch => {
     post('/roto/saveRoto', {

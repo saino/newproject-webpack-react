@@ -78,7 +78,7 @@ baseConfig.plugins.push(
   }),
   // 定义生产环境的host
   new webpack.DefinePlugin({
-    host: JSON.stringify('http://192.168.3.116'),
+    host: JSON.stringify('http://shccit.eicp.net'),
     path: JSON.stringify('/api/1'),
     port: 8899
   })
