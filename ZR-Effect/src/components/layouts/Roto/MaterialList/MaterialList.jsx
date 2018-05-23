@@ -66,6 +66,11 @@ class MaterialList extends Component {
 
       removeMaterial(materialId);
     };
+
+    // 滚动到底部拉取素材
+    this.scrollToBottomHandle = () => {
+      //this.fetchMaterialList();  
+    };
   }
 
   addRotoMaterial(materialId, materialName) {
@@ -164,7 +169,7 @@ class MaterialList extends Component {
     return null;
   }
 
-  componentWillMount() {
+  fetchMaterialList() {
     // 请求素材action
     const { getMaterialList, materialPage } = this.props;
     const { page, perpage } = materialPage;
@@ -176,13 +181,17 @@ class MaterialList extends Component {
     });
   }
 
+  componentWillMount() {
+    this.fetchMaterialList();
+  }
+
   render() {
     const { uploadingSituation } = this.state;
 
     return (
       <div className={ materialListStyle[ 'wrapper' ] }>
         <Scroll
-          onScrollToBottom={ () => { console.log('xxx'); } }
+          onScrollToBottom={ this.scrollToBottomHandle }
           width="100%"
           height="100%">
           <div className={ materialListStyle[ 'list' ] }>

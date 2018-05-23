@@ -49,7 +49,8 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'ai_id': 0,
         'is_ai_roto': false,
         'ai_roto_percent': void 0,
-        'is_generate_roto_material': true,
+        'is_generate_roto_material': false,
+        'is_disabled_roto_material_btn': true,
         'generate_roto_material_percent': void 0,
         'is_generate_png_frame': false,
         'generate_png_frame_percent': void 0,
@@ -139,7 +140,10 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'GE_ROTO':
       return update(
         state,
-        { 'is_generate_roto_material': false },
+        {
+          'is_generate_roto_material': false,
+          'is_disabled_roto_material_btn': true
+        },
         'material_id',
         action.materialId
       );
@@ -147,7 +151,10 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'UPDATE_ROTO_IS_GE_ROTO':
       return update(
         state,
-        { 'is_generate_roto_material': action.isGeRoto },
+        {
+          'is_generate_roto_material': action.isGeRoto,
+          'is_disabled_roto_material_btn': action.isDableBtn
+        },
         'material_id',
         action.materialId
       );

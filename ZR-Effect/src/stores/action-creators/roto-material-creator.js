@@ -21,7 +21,7 @@ export const getMaterialList = materialParams => {
         dispatch({
           type: 'GET_MATERIALS',
           materials: resp.result,
-          page: materialParams.page
+          page: resp.currentPage
         });
       })
       .catch(fail);

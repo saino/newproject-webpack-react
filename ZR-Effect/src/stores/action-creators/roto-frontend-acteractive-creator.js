@@ -132,7 +132,8 @@ export function updateRotoIsGeRoto (materialId, isGeRoto) {
   return {
     type: 'UPDATE_ROTO_IS_GE_ROTO',
     materialId,
-    isGeRoto
+    isGeRoto,
+    isDableBtn: !isGeRoto
   };
 }
 

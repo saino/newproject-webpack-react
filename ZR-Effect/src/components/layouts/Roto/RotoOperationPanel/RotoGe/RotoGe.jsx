@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { post } from '../../../../../api/fetch';
+import { post, error } from '../../../../../api/fetch';
 import { finds, findItem } from '../../../../../utils/array-handle';
 import { get, set } from '../../../../../utils/configure-auth';
 import { geRoto, updateRotoIsGeRoto } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
@@ -14,8 +14,7 @@ class RotoGe extends Component {
     super(props);
 
     this.state = {
-      geRotoPercent: void 0,
-      isGeRotoAction: void 0
+      geRotoPercent: void 0
     };
 
     // 定时器
@@ -30,6 +29,10 @@ class RotoGe extends Component {
       rotoMaterial[ 'is_generate_roto_material' ]
     );
 
+    this.getIsDisabledBtn = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'is_disabled_roto_material_btn' ]
+    );
+
     // 获取materialId
     this.getMaterialId = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'material_id' ]
@@ -41,11 +44,6 @@ class RotoGe extends Component {
       const aiId = this.getAiId();
 
       geRoto(materialId, aiId);
-      setTimeout(() => {
-        set(`isGeRotoAction${ materialId }`, true);
-        this.setState({ isGeRotoAction: true }, () => this.requestGePercent(this.props, 2000));
-      }, 10);
-      //this.setState({ isGeRotoAction: true }, () => geRoto(materialId, aiId));
     };
   }
 
@@ -54,9 +52,9 @@ class RotoGe extends Component {
     const materialId = this.getMaterialId(props);
     const isGeRoto = this.getIsGenerateMaterial(props);
     const aiId = this.getAiId(props);
-    const { geRotoPercent, isGeRotoAction } = this.state;
-    console.log(isGeRoto, geRotoPercent, isGeRotoAction, 'waiwang');
-    if (!isGeRoto && geRotoPercent < 100 && isGeRotoAction) {
+    const { geRotoPercent } = this.state;
+
+    if (!isGeRoto && geRotoPercent < 100) {
       this.timer = setInterval(() =>
         post('/getProgress', { type: 'export', object_id: aiId })
           .then(resp => {
@@ -67,12 +65,18 @@ class RotoGe extends Component {
               this.setState({ geRotoPercent: parseFloat(progress) });
             } else {
               clearInterval(this.timer);
-              set(`geRotoPercent${ materialId }`, parseFloat(progress));
-              set(`isGeRotoAction${ materialId }`, false);
-              this.setState({ geRotoPercent: parseFloat(progress), isGeRotoAction: false }, () => updateRotoIsGeRoto(materialId, false));
+              set(`geRotoPercent${ materialId }`, 0);
+              this.setState({
+                geRotoPercent: 0
+              }, () =>
+                updateRotoIsGeRoto(materialId, false)
+              );
             }
           }
-        ),
+        )
+        .catch(errorMessage => {
+          error(errorMessage.message, () => clearInterval(this.timer))
+        }),
         howTime
       )
     }
@@ -93,33 +97,11 @@ class RotoGe extends Component {
 
   componentWillMount() {
     const materialId = this.getMaterialId();
-    const geRotoPercent = get(`geRotoPercent${ materialId }`);
-    const isGeRotoAction = get(`isGeRotoAction${ materialId }`);
+    const geRotoPercent = get(`geRotoPercent${ materialId }`) || void 0;
 
     this.setState({
-      geRotoPercent: geRotoPercent,
-      isGeRotoAction: !!isGeRotoAction
-    }, () => this.requestGePercent(this.props));
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const prevMaterialId = this.getMaterialId(this.props);
-    const nextMaterialId = this.getMaterialId(nextProps);
-    const geRotoPercent = get(`geRotoPercent${ nextMaterialId }`);
-    const isGeRotoAction = get(`isGeRotoAction${ nextMaterialId }`);
-
-    this.setState({
-      geRotoPercent: geRotoPercent,
-      isGeRotoAction: !!isGeRotoAction
-    }, () => {
-      if (prevMaterialId !== nextMaterialId) {
-        clearInterval(this.timer);
-      }
-
-      if (this.state.isGeRotoAction) {
-        this.requestGePercent(this.props, 2000);
-      }
-    });
+      geRotoPercent: geRotoPercent
+    }, () => this.requestGePercent(this.props, 2000));
   }
 
   validateIsResetRender(prevProps, nextProps) {
@@ -137,18 +119,36 @@ class RotoGe extends Component {
       || this.state.geRotoPercent !== nextState.geRotoPercent;
   }
 
+  componentDidUpdate() {
+    const materialId = this.getMaterialId(this.props);
+    const isGenerateMaterial = this.getIsGenerateMaterial(this.props);
+    const geRotoPercent = get(`geRotoPercent${ materialId }`) || 0;
+    console.log('update');
+    this.setState({
+      geRotoPercent: geRotoPercent,
+    }, () => {
+      clearInterval(this.timer);
+
+      this.requestGePercent(this.props, 2000);
+      // if (isGenerateMaterial) {
+      //
+      // }
+    });
+  }
+
   render() {
-    const { geRotoPercent, isGeRotoAction } = this.state;
+    const { geRotoPercent } = this.state;
     const isGeRoto = this.getIsGenerateMaterial();
-    console.log('rotoge');
+    const isDable = this.getIsDisabledBtn();
+
     return (
       <div style={{ width: '100%', overflow: 'hidden' }}>
-        <Button className={ rotoAiStyle[ 'ai-roto' ] } disabled={ isGeRoto } onClick={ this.geRotoHandle }>
+        <Button className={ rotoAiStyle[ 'ai-roto' ] } disabled={ isDable } onClick={ this.geRotoHandle }>
           <img src={ startRotoPNG } />
           <label>开始生成抠像素材</label>
         </Button>
         {
-          !isGeRoto && geRotoPercent < 100 && isGeRotoAction
+          !isGeRoto && geRotoPercent < 100
             ? (
                 <div className={ rotoAiStyle[ 'roto-percent' ] }>
                   <div className={ rotoAiStyle[ 'percent-inner' ] }>
@@ -164,6 +164,11 @@ class RotoGe extends Component {
         }
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    this.timer = null;
   }
 }
 
