@@ -130,7 +130,7 @@ class RotoAi extends Component {
               this.setState({ aiRotoPercent: parseFloat(progress) });
             } else {
               clearInterval(this.timer);
-              set(`aiRotoPercent${ materialId }`, 0);
+              del(`aiRotoPercent${ materialId }`);
               this.setState({ aiRotoPercent: 0 }, () => {
                 updateRotoIsAiRoto(materialId, false);
                 updateRotoIsGeRoto(materialId, true);

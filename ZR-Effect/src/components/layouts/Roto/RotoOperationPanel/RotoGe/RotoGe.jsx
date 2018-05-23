@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { post, error } from '../../../../../api/fetch';
 import { finds, findItem } from '../../../../../utils/array-handle';
-import { get, set } from '../../../../../utils/configure-auth';
+import { get, set, del } from '../../../../../utils/configure-auth';
 import { geRoto, updateRotoIsGeRoto } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { Progress, Button } from 'antd';
 import rotoAiStyle from '../roto-ai.css';
@@ -65,7 +65,7 @@ class RotoGe extends Component {
               this.setState({ geRotoPercent: parseFloat(progress) });
             } else {
               clearInterval(this.timer);
-              set(`geRotoPercent${ materialId }`, 0);
+              del(`geRotoPercent${ materialId }`);
               this.setState({
                 geRotoPercent: 0
               }, () =>
