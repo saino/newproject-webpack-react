@@ -8,7 +8,7 @@ import defferPerform from '../../../../utils/deffer-perform';
 import { findItem } from '../../../../utils/array-handle';
 import { normalize } from '../../../../service/format';
 import { addMaterialTemp } from '../../../../stores/action-creators/roto-material-temp-creator';
-import { getMaterialList, removeMaterial, loading } from '../../../../stores/action-creators/roto-material-creator';
+import { getMaterialList, removeMaterial, loading, clearLoadInfo } from '../../../../stores/action-creators/roto-material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { message } from 'antd';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
@@ -69,10 +69,11 @@ class MaterialList extends Component {
 
     // 滚动到底部拉取素材
     this.scrollToBottomHandle = () => {
-      const { loading } = this.props;
+      const { getMaterialList, loading, materialPage, isLoading, isLoaded } = this.props;
+      const { page, perpage } = materialPage;
 
-      if (loading) {
-        this.fetchMaterialList();
+      if (!isLoaded && !isLoading) {
+        this.fetchMaterialList(page + 1);
       }
     };
   }
@@ -173,22 +174,22 @@ class MaterialList extends Component {
     return null;
   }
 
-  fetchMaterialList() {
-    // 请求素材action
+  fetchMaterialList(page) {
     const { getMaterialList, loading, materialPage } = this.props;
-    const { page, perpage } = materialPage;
+    const { perpage } = materialPage;
 
     loading();
 
     getMaterialList({
       type: 'video',
-      page: page + 1,
+      page,
       perpage
     });
   }
 
   componentWillMount() {
-    this.fetchMaterialList();
+    console.log('sss');
+    this.fetchMaterialList(1);
   }
 
   render() {
@@ -214,11 +215,17 @@ class MaterialList extends Component {
       </div>
     );
   }
+
+  componentWillUnmount() {
+    const { clearLoadInfo } = this.props;
+    clearLoadInfo();
+  }
 }
 
 const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial, roto }) => ({
   materialList: rotoMaterial.list,
-  loading: rotoMaterial.isLoading,
+  isLoading: rotoMaterial.isLoading,
+  isLoaded: rotoMaterial.isLoaded,
   materialPage: rotoMaterial.pageInfo,
   raf: rotoFrontendActeractive,
   rotoList: roto
@@ -231,6 +238,7 @@ const mapDispatchToProps = (dispatch) =>
       addRotoMaterial,
       addRoto,
       loading,
+      clearLoadInfo,
       addMaterialTemp
     },
     dispatch

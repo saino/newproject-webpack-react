@@ -18,6 +18,10 @@ export const loading = () => ({
   type: 'LOADING'
 });
 
+export const clearLoadInfo = () => ({
+  type: 'CLEAR_LOAD_INFO'
+});
+
 export const getMaterialList = materialParams => {
   return (dispatch) => {
     post("/user/getMaterials", materialParams)
@@ -25,7 +29,8 @@ export const getMaterialList = materialParams => {
         dispatch({
           type: 'GET_MATERIALS',
           materials: resp.result,
-          page: resp.currentPage
+          page: resp.currentPage,
+          isLoaded: !resp.result.length
         });
       })
       .catch(fail);
