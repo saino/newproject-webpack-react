@@ -14,6 +14,10 @@
 
 import { post, error as fail } from '../../api/fetch';
 
+export const loading = () => ({
+  type: 'LOADING'
+});
+
 export const getMaterialList = materialParams => {
   return (dispatch) => {
     post("/user/getMaterials", materialParams)

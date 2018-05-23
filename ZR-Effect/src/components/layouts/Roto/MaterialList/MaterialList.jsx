@@ -8,7 +8,7 @@ import defferPerform from '../../../../utils/deffer-perform';
 import { findItem } from '../../../../utils/array-handle';
 import { normalize } from '../../../../service/format';
 import { addMaterialTemp } from '../../../../stores/action-creators/roto-material-temp-creator';
-import { getMaterialList, removeMaterial } from '../../../../stores/action-creators/roto-material-creator';
+import { getMaterialList, removeMaterial, loading } from '../../../../stores/action-creators/roto-material-creator';
 import { addRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { message } from 'antd';
 import { addRoto } from '../../../../stores/action-creators/roto-creator';
@@ -69,7 +69,11 @@ class MaterialList extends Component {
 
     // 滚动到底部拉取素材
     this.scrollToBottomHandle = () => {
-      //this.fetchMaterialList();  
+      const { loading } = this.props;
+
+      if (loading) {
+        this.fetchMaterialList();
+      }
     };
   }
 
@@ -171,12 +175,14 @@ class MaterialList extends Component {
 
   fetchMaterialList() {
     // 请求素材action
-    const { getMaterialList, materialPage } = this.props;
+    const { getMaterialList, loading, materialPage } = this.props;
     const { page, perpage } = materialPage;
+
+    loading();
 
     getMaterialList({
       type: 'video',
-      page,
+      page: page + 1,
       perpage
     });
   }
@@ -212,6 +218,7 @@ class MaterialList extends Component {
 
 const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial, roto }) => ({
   materialList: rotoMaterial.list,
+  loading: rotoMaterial.isLoading,
   materialPage: rotoMaterial.pageInfo,
   raf: rotoFrontendActeractive,
   rotoList: roto
@@ -223,6 +230,7 @@ const mapDispatchToProps = (dispatch) =>
       removeMaterial,
       addRotoMaterial,
       addRoto,
+      loading,
       addMaterialTemp
     },
     dispatch
