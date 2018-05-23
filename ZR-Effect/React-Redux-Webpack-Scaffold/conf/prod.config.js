@@ -80,7 +80,9 @@ baseConfig.plugins.push(
   new webpack.DefinePlugin({
     host: JSON.stringify('http://shccit.eicp.net'),
     path: JSON.stringify('/api/1'),
-    port: 8899
+    port: 8899,
+    fileUploadHost: JSON.stringify('http://shccit.eicp.net'),
+    fileUploadPort: 8899
   })
 );
 

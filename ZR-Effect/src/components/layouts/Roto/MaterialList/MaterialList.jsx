@@ -215,11 +215,6 @@ class MaterialList extends Component {
       </div>
     );
   }
-
-  componentWillUnmount() {
-    const { clearLoadInfo } = this.props;
-    clearLoadInfo();
-  }
 }
 
 const mapStateToProps = ({ rotoFrontendActeractive, rotoMaterial, roto }) => ({

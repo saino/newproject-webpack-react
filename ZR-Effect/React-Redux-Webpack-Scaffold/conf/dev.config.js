@@ -105,7 +105,9 @@ baseConfig.plugins.push(
   new webpack.DefinePlugin({
     host: JSON.stringify('http://192.168.3.116'),
     port: 8899,
-    path: JSON.stringify('/api/1')
+    path: JSON.stringify('/api/1'),
+    fileUploadHost: JSON.stringify('http://192.168.3.116'),
+    fileUploadPort: 8899
   })
 );
 

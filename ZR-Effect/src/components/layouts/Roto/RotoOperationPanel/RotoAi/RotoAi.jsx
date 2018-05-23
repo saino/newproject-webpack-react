@@ -88,6 +88,7 @@ class RotoAi extends Component {
         this.saveRoto();
       }
 
+      del(`geRotoPercent${ materialId }`);
       this.deferAiRoto(materialId);
     }
   }
