@@ -41,7 +41,7 @@ class MaterialMappingFrameImg extends Component {
     const nextMaterialId = this.getMaterial(nextProps)[ 'id' ];
     const nextFrame = nextProps.frame;
     const nextIsPlay = nextProps.isPlay;
-    //console.log(nextIsPlay, 'nextIsPlay')
+
     return prevMaterialId !== nextMaterialId
       || prevIsPlay !== nextIsPlay
       || (nextIsPlay === false && prevFrame !== nextFrame);
@@ -78,7 +78,7 @@ class MaterialMappingFrameImg extends Component {
 
   componentWillUnmount() {
     const { onClearPlayTimer } = this.props;
-    console.log(this.getMaterial().id, 'mlgd');
+
     onClearPlayTimer(this.getMaterial().id);
   }
 }

@@ -188,7 +188,6 @@ class MaterialList extends Component {
   }
 
   componentWillMount() {
-    console.log('sss');
     this.fetchMaterialList(1);
   }
 

@@ -11,18 +11,14 @@ export default class ParseFrameList extends Component {
   }
 
   getFrameComs() {
-    const { totalFrame, iterate } = this.props;
+    const { totalFrame, iterate, materialId } = this.props;
     const { width } = config.parseFrame;
     const coms = [];
 
-    for (let frame = 1; frame <= totalFrame; frame += iterate) {
+    for (let frame = 0; frame < totalFrame; frame += iterate) {
       coms.push(
         <li key={ `p_f_${ frame }` } onClick={ this.clickHandle(frame) }>
-          <FrameImg
-            width={ width }
-            frame={ frame }
-            displayFrame={ frame - 1 }
-            onFrameLoad={ this.frameLoadHandle } />
+          <FrameImg materialId={ materialId } frame={ frame } />
         </li>
       );
     }

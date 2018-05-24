@@ -28,8 +28,9 @@ class RotoedFrameList extends Component {
   };
 
   getParseFrameCom() {
-    const coms = [];
     const rotoedFrames = this.getRotoedFrames();
+    const materialId = this.getMaterialId();
+    const coms = [];
     let frame;
 
     for (let i = 0; i < rotoedFrames.length; i++) {
@@ -37,7 +38,7 @@ class RotoedFrameList extends Component {
 
       coms.push(
         <li key={ `p_f_${ i }` } onClick={ this.selectedFrameHandle(frame) }>
-          <FrameImg width={ config.parseFrame.width } frame={ frame + 1 } displayFrame={ frame } />
+          <FrameImg materialId={ materialId } frame={ frame } />
         </li>
       );
     }
