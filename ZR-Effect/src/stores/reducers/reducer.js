@@ -5,6 +5,7 @@ import material from './material';
 import videoMaterial from "./video-mateiral";
 import rotoFrontendActeractive from './roto-frontend-acteractive';
 import roto from './roto';
+import rotoAi from './roto-ai';
 import rotoMaterial from './roto-material';
 import rotoMaterialTemp from './roto-material-temp';
 import pagination from './pagination';
@@ -16,6 +17,7 @@ export default combineReducers({
   pagination,
   rotoMaterial,
   app,
+  rotoAi,
   rotoMaterialTemp,
   rotoFrontendActeractive,
   roto

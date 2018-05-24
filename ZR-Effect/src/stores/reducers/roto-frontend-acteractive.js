@@ -232,10 +232,11 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'REMOVE_ROTOED_FRAME':
       const rrMaterial = findItem(state, 'material_id', action.materialId);
       const rotoedFramesRemovedIndex = findIndex(rrMaterial[ 'rotoed_frames' ], fra => fra === frame);
+      let uret = [ ...rrMaterial[ 'rotoed_frames' ] ];
       let rotoedFramesRemoved;
 
-      rrMaterial[ 'rotoed_frames' ].splice(rotoedFramesRemovedIndex, 1);
-      rotoedFramesRemoved = [ ...rrMaterial[ 'rotoed_frames' ] ];
+      uret.splice(rotoedFramesRemovedIndex, 1);
+      rotoedFramesRemoved = [ ...uret ];
 
       return update(
         state,

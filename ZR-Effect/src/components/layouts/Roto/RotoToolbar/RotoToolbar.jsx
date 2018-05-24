@@ -9,6 +9,7 @@ import {
   configureRotoToolType, configureRotoVisibleMask, saveRoto
 } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
+import { removeAiRoto } from '../../../../stores/action-creators/roto-ai-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
 import addPointPNG from './add-point.png';
@@ -157,7 +158,7 @@ class RotoToolbar extends Component {
     };
 
     this.rotoCompleteHandle = () => {
-      const { addRotoedFrame } = this.props;
+      const { addRotoedFrame, removeAiRoto } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
 
@@ -166,6 +167,9 @@ class RotoToolbar extends Component {
 
       // 添加本地抠像
       addRotoedFrame(materialId, materialFrame);
+
+      // 删除ai抠像
+      removeAiRoto(materialId, materialFrame);
     };
 
     // 延迟将工具状态设置为选中
@@ -420,6 +424,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     undo,
+    removeAiRoto,
     configureZoom,
     configureRotoToolType,
     configure,

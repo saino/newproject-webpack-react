@@ -5,6 +5,7 @@ import Snap from 'snapsvg-cjs';
 import { flatten, findItem } from '../../../../utils/array-handle';
 import style from './style.css';
 import Point from '../../../../libs/Point';
+import Path from '../../../../libs/Path';
 
 class SVG extends Component {
   constructor(props) {
@@ -46,6 +47,11 @@ class SVG extends Component {
       roto => roto[ 'path_data' ].list
     );
 
+    // 获取'ai path'集合
+    this.getAiPaths = this.registerGetAiRotoInfo(
+      rotoAi => rotoAi.svg
+    );
+
     // 获取扣像选中的'is_visible_mask'
     this.getIsVisibleMask = this.registerGetRotoInfo(
       roto => roto[ 'is_visible_mask' ]
@@ -76,6 +82,20 @@ class SVG extends Component {
     };
   }
 
+  registerGetAiRotoInfo(fn) {
+    return props => {
+      const { rotoAiList } = props || this.props;
+      const materialId = this.getMaterialId(props || this.props);
+      const materialFrame = this.getMaterialFrame(props || this.props);
+      const rotoAi = findItem(rotoAiList, item =>
+        item[ 'material_id' ] === materialId
+          && item[ 'frame' ] === materialFrame
+      );
+
+      return rotoAi == null ? void 0 : fn(rotoAi);
+    };
+  }
+
   getPathAndPointEls() {
     const pathSelected = this.getPathSelected();
     const paths = this.getPaths();
@@ -89,12 +109,44 @@ class SVG extends Component {
     let pointSelected;
     let ctrls, ctrls1, ctrls2;
     let className = '';
-    let focusPath;
-    let draggingPoint;
+    let focusPath, draggingPoint, pathEls, aiPaths, pathObj, pointObj, svgPathEl;
 
-    const pathEls = paths.map(path => {
+    if (!paths.length) {
+      !(aiPaths = this.getAiPaths()) && (aiPaths = []);
+
+      pathEls = aiPaths.map(path => {
+        pathObj = new Path();
+        pathObj.closed = path.closed;
+        pathObj.points = path.points.map(pt => {
+          pointObj = new Point(pt.x, pt.y, pt.cx1, pt.cy1, pt.cx2, pt.cy2);
+
+          return pointObj;
+        });
+        svgPathEl = this.paper.path(pathObj.svgStr());
+
+        pathObj.points.forEach(pt => pointEls.push(this.getPointEl(pt, pathObj.id)));
+
+        return (
+          <path
+            key={ pathObj.id }
+            id={ pathObj.id }
+            d={ svgPathEl.node.getAttribute('d') } />
+        );
+      });
+
+      return {
+        pointEls,
+        controlPointEls,
+        pathEls,
+        maskPathEls,
+        focusPathEls,
+        controlPathEls
+      };
+    }
+
+    pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;
-      const svgPathEl = this.paper.path(path.svgStr());
+      svgPathEl = this.paper.path(path.svgStr());
 
       // 如果在编辑模式下选中了该path
       if (mode !== 0 && isCurrPath && path.isSelected) {
@@ -244,7 +296,7 @@ class SVG extends Component {
         ? style[ 'moving' ]
         : '';
     const isVisibleMask = this.getIsVisibleMask();
-    console.log(visibleDrawingClassName, 'gggg');
+
     return (
       <svg className={ `${ style[ 'svg' ] } ${ className }` } id="svg_app">
         <g className={ style[ 'outline' ] }>
@@ -274,10 +326,12 @@ class SVG extends Component {
 
 const mapStateToProps = ({
   rotoFrontendActeractive,
-  roto
+  roto,
+  rotoAi
 }) => ({
   rfa: rotoFrontendActeractive,
-  rotoList: roto
+  rotoList: roto,
+  rotoAiList: rotoAi
 });
 
 export default connect(mapStateToProps)(SVG);

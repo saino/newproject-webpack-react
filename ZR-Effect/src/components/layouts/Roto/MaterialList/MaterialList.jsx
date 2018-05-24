@@ -118,7 +118,7 @@ class MaterialList extends Component {
       this.setState({
         uploadingPercent: 0
       }, () => {
-        getMaterialList({ type: 'video', page, perpage});
+        getMaterialList({ type: 'video', page, perpage });
         deferAddMaterialTemp(material);
         deferCheckRotoMaterial(materialId, materialName);
         deferSelectedRotoMaterial(materialId);

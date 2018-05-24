@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import config from '../../../../../config';
 import { Progress, Button } from 'antd';
 import { aiRoto, saveRoto, updateRotoIsGeRoto, updateRotoIsAiRoto } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { getAiRotos } from '../../../../../stores/action-creators/roto-ai-creator';
 import { post, error } from '../../../../../api/fetch';
 import defferPerform from '../../../../../utils/deffer-perform';
 import { finds, findItem } from '../../../../../utils/array-handle';
@@ -111,13 +112,13 @@ class RotoAi extends Component {
           }))
         }))
       };
-    });    
+    });
 
     saveRoto(materialId, frames);
   }
 
   requestAiPercent(props, howTime = 0) {
-    const { aiRoto, updateRotoIsAiRoto, updateRotoIsGeRoto } = props;
+    const { aiRoto, updateRotoIsAiRoto, updateRotoIsGeRoto, getAiRotos } = props;
     const materialId = this.getMaterialId(props);
     const isAiRoto = this.getIsAiRoto(props);
     const aiId = this.getAiId(props);
@@ -140,10 +141,7 @@ class RotoAi extends Component {
                 updateRotoIsGeRoto(materialId, true);
 
                 // 加载ai抠像
-                post('/roto/loadRoto', { id: aiId })
-                  .then(resp => {
-                    console.log(resp, '抠像好的');
-                  })
+                getAiRotos(aiId, materialId);
               });
             }
           }
@@ -254,6 +252,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   aiRoto,
+  getAiRotos,
   saveRoto,
   updateRotoIsAiRoto,
   updateRotoIsGeRoto

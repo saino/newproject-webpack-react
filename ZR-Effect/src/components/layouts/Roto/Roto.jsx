@@ -93,28 +93,13 @@ class Matting extends Component {
     // 延迟10毫秒跳转到显示帧图片组件
     this.switchToVisibleFrameImg = () => this.openVisibleFrameImg(); //defferPerform(() => this.openVisibleFrameImg(), 10);
 
-    // // 延迟10毫秒选中扣像素材
-    // this.selectedRotoMaterial = defferPerform(materialId => {
-    //   const { selectedRotoMaterial } = this.props;
-    //
-    //   this.switchToVisibleFrameImg();
-    //   selectedRotoMaterial(materialId);
-    // }, 10);
-
     // 选中抠像素材操作
     this.selectedRotoMaterialHandle = materialId => {
       const { cancelSelectedRotoMaterial, selectedRotoMaterial } = this.props;
 
-      //this.selectedRotoMaterial(materialId);
       this.switchToVisibleFrameImg();
       cancelSelectedRotoMaterial();
       selectedRotoMaterial(materialId);
-
-      // setTimeout(() => {
-      //
-      // }, 10);
-      //cancelSelectedRotoMaterial();
-      //selectedRotoMaterial(materialId);
     };
 
     // 延迟10毫秒设置抠像素材的选择帧

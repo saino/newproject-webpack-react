@@ -6,6 +6,7 @@ import { message } from 'antd';
 import Snap from 'snapsvg-cjs';
 import { configureRotoToolType, addRotoedFrame, removeRotoedFrame } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
+import { removeAiRoto } from '../../../../stores/action-creators/roto-ai-creator';
 import defferPerform from '../../../../utils/deffer-perform';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import style from './style.css';
@@ -111,7 +112,7 @@ class RotoOperationBox extends Component {
     });
 
     this.mouseDownHandle = (e) => {
-      const { configure, configureRotoToolType, addRotoedFrame, disabled } = this.props;
+      const { configure, configureRotoToolType, addRotoedFrame, removeAiRoto, disabled } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
@@ -148,6 +149,9 @@ class RotoOperationBox extends Component {
             if (pathSelected.closePath()) {
               // 添加本地抠像
               addRotoedFrame(materialId, materialFrame);
+
+              // 删除ai抠像
+              removeAiRoto(materialId, materialFrame);
             }
           }
 
@@ -691,6 +695,7 @@ const mapDispatchToProps = dispatch =>
     addRotoedFrame,
     removeRotoedFrame,
     configure,
+    removeAiRoto,
     configureRotoToolType
   }, dispatch
 )
