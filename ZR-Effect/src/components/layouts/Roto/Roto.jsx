@@ -258,17 +258,17 @@ class Matting extends Component {
 
       if (isNaN(parsedFrame)) {
         configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(tempFrame);
+        this.deferConfigureFrame(totalFrame);
       } else {
         if (parsedFrame >= totalFrame) {
           message.warning('不能大于最大帧');
-          this.deferConfigureFrame(tempFrame);
+          this.deferConfigureFrame(totalFrame);
 
           return;
         }
         else if (parsedFrame < 0) {
           message.warning('不能小于最小帧');
-          this.deferConfigureFrame(tempFrame);
+          this.deferConfigureFrame(0);
 
           return;
         }
@@ -354,7 +354,7 @@ class Matting extends Component {
 
   getMiddleComponent(rfa, show, zoomValue, isSelected) {
     const moveParam = this.getMove() || {};
-    const frame = this.getSelectedFrame() + 1;
+    const frame = this.getSelectedFrame();
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] }>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>

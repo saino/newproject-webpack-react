@@ -29,8 +29,7 @@ class MaterialMappingFrameImg extends Component {
     const { frame } = this.props;
     const { properties: { duration, length } } = this.getMaterial();
     const totalMs = this.getMsFrame(length, duration) * frame;
-    console.log(totalMs, '帧对应的秒')
-    //console.log(1000 / this.getMsFrame(length, duration), frame, 'ms');
+  
     this.videoEl.currentTime = totalMs;
   }
 
