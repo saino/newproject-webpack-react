@@ -200,7 +200,7 @@ class Matting extends Component {
       if (currFrame < 0) {
         message.warning('不能小于最小帧');
         configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(0);
+        this.deferConfigureFrame(-1);
 
         return;
       }
@@ -454,20 +454,6 @@ class Matting extends Component {
 
     return (
       <div className={ rotoStyle[ 'wrapper' ] }>
-        {/* 解帧进度圈 */}
-        {/* visibleLoadFrame
-          ? (<div className={ rotoStyle[ 'parse-frame-percent-bar' ] }>
-              <div>
-                <Progress
-                  type="circle"
-                  percent={ parseFramePercent }
-                  format={ percent => `解析帧进度:${ percent }%` } />
-              </div>
-             </div>
-            )
-          : void 0
-        */}
-
         <div className={ rotoStyle[ 'wrapper-inner' ] }>
           <div className={ rotoStyle[ 'header' ] }>
             {/* 头部 */}

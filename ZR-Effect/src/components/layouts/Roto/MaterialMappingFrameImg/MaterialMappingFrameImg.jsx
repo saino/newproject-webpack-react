@@ -53,7 +53,7 @@ class MaterialMappingFrameImg extends Component {
 
   render() {
     const { path, properties: { width, height } } = this.getMaterial();
-
+    console.log(this.props.frame, 'render')
     return (
       <div className={ style[ 'wrapper' ] }>
         <video
@@ -67,7 +67,7 @@ class MaterialMappingFrameImg extends Component {
 
   componentDidUpdate() {
     const { isPlay } = this.props;
-
+    console.log(this.props.frame, 'update')
     if (isPlay) {
       this.videoEl.play();
     } else {
