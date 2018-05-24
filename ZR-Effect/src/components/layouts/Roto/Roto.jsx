@@ -413,7 +413,7 @@ class Matting extends Component {
           totalFrame={ length }
           frameRate={ duration / length }
           iterate={ iterate }
-          onClick={ frame => this.configureTickHandle(frame - 1) } />
+          onClick={ frame => this.configureTickHandle(frame) } />
       </div>
     );
   }
