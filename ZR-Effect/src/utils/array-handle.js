@@ -163,3 +163,10 @@ export const remove = (target, findKey, findValue) => {
 
   return [ ...res ];
 };
+
+// 删除多个
+export const removeMore = (target, findKey, findValue) => {
+  const res = [ ...target ];
+  
+  return res.filter(item => item[ findKey ] !== findValue);
+};

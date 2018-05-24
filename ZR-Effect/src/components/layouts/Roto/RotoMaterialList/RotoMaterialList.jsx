@@ -6,6 +6,7 @@ import { findItem, findIndex } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
 import rotoMaterialListStyle from './roto-material-list.css';
 import { cancelSelectedRotoMaterial, removeRotoMaterial } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { removeRotos } from '../../../../stores/action-creators/roto-creator';
 import addMaterialPNG from './add-material.png';
 import videoPNG from './video.png';
 import deletePNG from './delete.png';
@@ -35,9 +36,10 @@ class RotoMaterialList extends Component {
     };
 
     this.removeRotoMaterialHandle = (materialId) => (e) => {
-      const { removeRotoMaterial } = this.props;
+      const { removeRotoMaterial, removeRotos } = this.props;
 
       removeRotoMaterial(materialId);
+      removeRotos(materialId);
 
       e.preventDefault();
       e.stopPropagation();
@@ -103,7 +105,8 @@ const mapStateToProps = ({ rotoFrontendActeractive }) => ({ rfa: rotoFrontendAct
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
     cancelSelectedRotoMaterial,
-    removeRotoMaterial
+    removeRotoMaterial,
+    removeRotos
   }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(RotoMaterialList);

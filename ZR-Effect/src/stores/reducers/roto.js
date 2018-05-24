@@ -15,7 +15,7 @@
  *  move_y { Number } 移动y坐标
  */
 
-import { add, update, remove, findItem } from '../../utils/array-handle';
+import { add, update, remove, removeMore, findItem } from '../../utils/array-handle';
 import PathList from '../../libs/PathList';
 
 const defState = [];
@@ -38,6 +38,9 @@ export default function roto (state = defState, action) {
       };
 
       return add(state, initRoto);
+
+    case 'REMOVE_ROTOS':
+      return removeMore(state, 'material_id', action.materialId);
 
     case 'CONFIGURE':
       return update(

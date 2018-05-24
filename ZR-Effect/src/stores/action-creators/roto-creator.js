@@ -6,6 +6,13 @@ export function addRoto (materialId, frame) {
   };
 }
 
+export function removeRotos (materialId) {
+  return {
+    type: 'REMOVE_ROTOS',
+    materialId
+  };
+}
+
 export function configure (materialId, frame, options) {
   return {
     type: 'CONFIGURE',

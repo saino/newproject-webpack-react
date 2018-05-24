@@ -143,11 +143,14 @@ class Matting extends Component {
 
     // 延时10毫秒恒定24fps播放帧动画(更改帧)
     this.playing = (() => {
-      const { configureIsPlay } = this.props;
+      const { configureIsPlay, rfa } = this.props;
       const unsetTimer = mId => {
+        const isSelected = !!findItem(rfa, 'is_selected', true);
+
         clearInterval(timer);
         timer = null;
-        configureIsPlay(mId, false);
+
+        isSelected && configureIsPlay(mId, false);
       };
       let timer;
 
@@ -492,7 +495,7 @@ class Matting extends Component {
                     </div>
 
                     {/* 扣像工具条 */}
-                    { show || !rfa.length
+                    {show || !rfa.length
                       ? void 0
                       : (
                           <div className={ rotoStyle[ 'toolbar' ] }>
@@ -530,7 +533,7 @@ class Matting extends Component {
                           onEnd={ this.configureTickHandle }>
 
                           {/* 解帧区展示帧图片 */}
-                          { this.getParseFrameCom(isParseFrame, parseFramePercent) }
+                          {this.getParseFrameCom(isParseFrame, parseFramePercent) }
                         </Scale>
                       </div>
                     </ScrollArea>
@@ -539,7 +542,7 @@ class Matting extends Component {
             </div>
 
             {/* 扣像操作面板 */}
-              { show || !rfa.length || !isSelected
+              {show || !rfa.length || !isSelected
                 ? void 0
                 : (<div className={ rotoStyle[ 'right' ] }>
                     <RotoOperationPanel />

@@ -94,11 +94,10 @@ class RotoGe extends Component {
 
   componentWillMount() {
     const materialId = this.getMaterialId();
-    del(`geRotoPercent${ materialId }`);
-    const geRotoPercent = void 0;
+    const geRotoPercent = get(`geRotoPercent${ materialId }`) || void 0;
 
     this.setState({
-      geRotoPercent: geRotoPercent
+      geRotoPercent
     }, () => this.requestGePercent(this.props, 2000));
   }
 

@@ -78,6 +78,7 @@ class MaterialMappingFrameImg extends Component {
 
   componentWillUnmount() {
     const { onClearPlayTimer } = this.props;
+    console.log(this.getMaterial().id, 'mlgd');
     onClearPlayTimer(this.getMaterial().id);
   }
 }
