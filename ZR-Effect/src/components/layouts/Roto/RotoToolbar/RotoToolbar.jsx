@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { message } from 'antd';
-import { findItem, findIndex } from '../../../../utils/array-handle';
+import { findItem, findIndex, finds } from '../../../../utils/array-handle';
 import defferPerform from '../../../../utils/deffer-perform';
 import {
   undo, configureZoom, addRotoedFrame,
-  configureRotoToolType, configureRotoVisibleMask
+  configureRotoToolType, configureRotoVisibleMask, saveRoto
 } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
@@ -216,6 +216,17 @@ class RotoToolbar extends Component {
       rotoMaterial => rotoMaterial[ 'material_id' ]
     );
 
+    // 获取抠像数据属性
+    this.getRotoFrames = this.registerGetRotoActeractiveInfo(rotoMaterial => {
+      const { rotoList } = this.props;
+      const materialId = rotoMaterial[ 'material_id' ];
+
+      return finds(
+        rotoList,
+        roto => roto[ 'material_id' ] === materialId
+      );
+    });
+
     // 获取选中'frame'
     this.getMaterialFrame = this.registerGetRotoActeractiveInfo(
       rotoMateria => rotoMateria[ 'selected_frame' ]
@@ -250,6 +261,31 @@ class RotoToolbar extends Component {
     this.getRotoIsVisibleMask = this.registerGetRotoInfo(
       roto => roto[ 'is_visible_mask' ]
     );
+
+    // 保存抠像
+    this.saveRotoHandle = () => {
+      const { saveRoto } = this.props;
+      const materialId = this.getMaterialId();
+      const rotoFrames = this.getRotoFrames();
+      const frames = rotoFrames.map(frame => (
+        {
+          frame: frame.frame,
+          type: 'manual',
+          svg: frame[ 'path_data' ].list.map(path => ({
+            points: path.points.map(point => ({
+              x: point.x,
+              y: point.y,
+              cx1: point.cx1,
+              cy1: point.cy1,
+              cx2: point.cx2,
+              cy2: point.cy2
+            }))
+          }))
+        }
+      ));
+
+      saveRoto(materialId, frames);
+    };
   }
 
   // 初始化pathSelected
@@ -320,7 +356,7 @@ class RotoToolbar extends Component {
     return (
       <div className={ rotoToolbarStyle[ 'wrapper' ] }>
         <div className={ rotoToolbarStyle[ 'wrapper-inner' ] }>
-          <div className={ rotoToolbarStyle[ 'tool-save' ] }>
+          <div className={ rotoToolbarStyle[ 'tool-save' ] } onClick={ this.saveRotoHandle }>
             <div className={ rotoToolbarStyle[ 'tool-save-inner' ] }>
               <img src={ savePNG } />
               <div>保存</div>
@@ -388,7 +424,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     configureRotoToolType,
     configure,
     configureRotoVisibleMask,
-    addRotoedFrame
+    addRotoedFrame,
+    saveRoto
   },
   dispatch
 );

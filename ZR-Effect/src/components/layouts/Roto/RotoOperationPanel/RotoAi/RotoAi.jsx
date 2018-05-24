@@ -94,6 +94,7 @@ class RotoAi extends Component {
   }
 
   saveRoto() {
+    const { saveRoto } = this.props;
     const materialId = this.getMaterialId();
     const frames = this.getRotoFrames().map(frame => {
       return {
@@ -110,8 +111,7 @@ class RotoAi extends Component {
           }))
         }))
       };
-    });
-    const { saveRoto } = this.props;
+    });    
 
     saveRoto(materialId, frames);
   }
