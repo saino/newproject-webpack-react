@@ -167,9 +167,6 @@ class RotoToolbar extends Component {
 
       // 添加本地抠像
       addRotoedFrame(materialId, materialFrame);
-
-      // 删除ai抠像
-      removeAiRoto(materialId, materialFrame);
     };
 
     // 延迟将工具状态设置为选中

@@ -45,7 +45,7 @@ class RotoOperationBox extends Component {
       const updateObj = {};
       let point, focusEl, selectedFocusPathEl;
 
-      if (keyCode == 8) {
+      if (keyCode == 46) {
         if (rotoMode !== 0 && pathSelected) {
           point = findItem(pathSelected.points, 'isSelected', true);
 
@@ -149,9 +149,6 @@ class RotoOperationBox extends Component {
             if (pathSelected.closePath()) {
               // 添加本地抠像
               addRotoedFrame(materialId, materialFrame);
-
-              // 删除ai抠像
-              removeAiRoto(materialId, materialFrame);
             }
           }
 
