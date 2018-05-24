@@ -643,20 +643,6 @@ class RotoOperationBox extends Component {
     return { offX: clientX - x, offY: clientY - y };
   }
 
-  // 抠像素材id不同、当前操作帧不同、抠像数据不同避免重新渲染
-  validateIsResetRender(prevProps, nextProps) {
-    const prevMaterialId = this.getMaterialId(prevProps);
-    const prevMaterialFrame = this.getMaterialFrame(prevProps);
-    const nextMaterialId = this.getMaterialId(nextProps);
-    const nextMaterialFrame = this.getMaterialFrame(nextProps);
-
-    return prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame;
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return this.validateIsResetRender(this.props, nextProps);
-  }
-
   render() {
     const pathData = this.getPathData();
     const rotoMode = this.getRotoMode();

@@ -244,7 +244,7 @@ class SVG extends Component {
         ? style[ 'moving' ]
         : '';
     const isVisibleMask = this.getIsVisibleMask();
-
+    console.log(visibleDrawingClassName, 'gggg');
     return (
       <svg className={ `${ style[ 'svg' ] } ${ className }` } id="svg_app">
         <g className={ style[ 'outline' ] }>
