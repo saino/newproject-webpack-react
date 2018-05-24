@@ -107,7 +107,8 @@ baseConfig.plugins.push(
     port: 8899,
     path: JSON.stringify('/api/1'),
     fileUploadHost: JSON.stringify('http://192.168.3.116'),
-    fileUploadPort: 8899
+    fileUploadPort: 8899,
+    env: JSON.stringify('dev')
   })
 );
 
