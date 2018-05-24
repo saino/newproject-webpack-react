@@ -22,14 +22,14 @@ class MaterialMappingFrameImg extends Component {
   getMsFrame(frameLength, duration) {
     const frameRate = duration / frameLength;
 
-    return frameRate.toFixed(3);
+    return frameRate;
   }
 
   setCurrTime() {
     const { frame } = this.props;
     const { properties: { duration, length } } = this.getMaterial();
     const totalMs = this.getMsFrame(length, duration) * frame;
-
+    //console.log(1000 / this.getMsFrame(length, duration), frame, 'ms');
     this.videoEl.currentTime = totalMs;
   }
 
@@ -53,7 +53,7 @@ class MaterialMappingFrameImg extends Component {
 
   render() {
     const { path, properties: { width, height } } = this.getMaterial();
-    console.log(this.props.frame, 'render')
+
     return (
       <div className={ style[ 'wrapper' ] }>
         <video
@@ -67,13 +67,17 @@ class MaterialMappingFrameImg extends Component {
 
   componentDidUpdate() {
     const { isPlay } = this.props;
-    console.log(this.props.frame, 'update')
+
     if (isPlay) {
       this.videoEl.play();
     } else {
       this.videoEl.pause();
       this.setCurrTime();
     }
+  }
+
+  componentDidMount() {
+    this.setCurrTime();
   }
 
   componentWillUnmount() {
