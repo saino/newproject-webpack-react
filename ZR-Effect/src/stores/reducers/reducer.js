@@ -8,12 +8,14 @@ import roto from './roto';
 import rotoMaterial from './roto-material';
 import rotoMaterialTemp from './roto-material-temp';
 import pagination from './pagination';
+import frame from './frame-num';
 
 export default combineReducers({
   work,
   material,
   videoMaterial,
   pagination,
+  frame,
   rotoMaterial,
   app,
   rotoMaterialTemp,
