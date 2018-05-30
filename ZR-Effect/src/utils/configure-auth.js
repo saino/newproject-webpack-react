@@ -24,7 +24,7 @@ export function set (key, val) {
   }
 }
 
-export function deleteToken (key) {
+export function del (key) {
   if (localStorage) {
     localStorage.removeItem(key);
   }

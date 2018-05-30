@@ -7,7 +7,6 @@
  *   is_selected { Boolean } 是否选中 [ 存入数据库 ]
  *   is_play { Boolean } 是否正在播放
  *   is_parse_frame { Boolean } 是否开始解帧进度操作
- *   parse_frame_percent { Number } 解帧进度，用于进度条
  *   selected_frame { Number } 选中帧
  *   is_visible_mask { Boolean } 是否显示阴影
  *   is_upload_or_detail { Number } 显示上传还是详情 ( 0-详情｜1-上传 )
@@ -16,8 +15,6 @@
  *   ai_roto_percent { Number } ai扣像进度 [ 存入数据库 ]
  *   is_generate_roto_material { Boolean } 是否开始生成扣像素材 [ 存入数据库 ]
  *   generate_roto_material_percent { Number } 生成扣像素材进度 [ 存入数据库 ]
- *   is_generate_png_frame { Boolean } 是否开始生成png序列帧 [ 存入数据库 ]
- *   generate_png_frame_percent { Number } 生成png序列帧进度 [ 存入数据库 ]
  *   rotoed_frames { Array } 已经本地扣像的帧集合 [ 存入数据库 ]
  *   roto_tool_type { Number } 扣像舞台工具类别 (
        0-撤销｜1-移动｜2-放大｜3-缩小｜4-钢笔工具｜5-切换成编辑状态｜6-移动｜7-增加节点｜8-显示遮罩｜9-完成
@@ -45,15 +42,16 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'material_id': action.materialId,
         'material_name': action.materialName,
         'is_selected': false,
-        'parse_frame_percent': 0,
         'selected_frame': 0,
         'is_valid_frame_error': true,
         'is_play': false,
         'is_upload_or_detail': 0,
-        'ai_id': 0,
+        'ai_id': void 0,
         'is_ai_roto': false,
         'ai_roto_percent': void 0,
         'is_generate_roto_material': false,
+        'is_disabled_roto_material_btn': true,
+        'is_allow_dl': false,
         'generate_roto_material_percent': void 0,
         'is_generate_png_frame': false,
         'generate_png_frame_percent': void 0,
@@ -110,13 +108,18 @@ export default function rotoFrontendActerActive (state = defState, action) {
         action.materialId
       );
 
+    case 'SET_DL':
+      return update(
+        state,
+        { 'is_allow_dl': action.allowDl },
+        'material_id',
+        action.materialId
+      );
+
     case 'AI_ROTO':
       return update(
         state,
-        {
-          'is_ai_roto': true,
-          'ai_roto_percent': 0
-        },
+        { 'is_ai_roto': action.isAiRoto },
         'material_id',
         action.materialId
       );
@@ -143,13 +146,36 @@ export default function rotoFrontendActerActive (state = defState, action) {
         action.materialId
       );
 
-    case 'CONFIGURE_STARTUP_GENERATE_ROTO_MATERIAL':
+    case 'GE_ROTO':
       return update(
         state,
-        { 'is_generate_roto_material': true, 'generate_roto_material_percent': 0 },
+        {
+          'is_generate_roto_material': false,
+          'is_disabled_roto_material_btn': true
+        },
         'material_id',
         action.materialId
       );
+
+    case 'UPDATE_ROTO_IS_GE_ROTO':
+      return update(
+        state,
+        {
+          'is_generate_roto_material': action.isGeRoto,
+          'is_disabled_roto_material_btn': action.isDableBtn
+        },
+        'material_id',
+        action.materialId
+      );
+
+    case 'UPDATE_ROTO_IS_AI_ROTO':
+      return update(
+        state,
+        { 'is_ai_roto': action.isAiRoto },
+        'material_id',
+        action.materialId
+      );
+
 
     case 'CONFIGURE_CLOSE_GENERATE_ROTO_MATERIAL':
       return update(
@@ -206,10 +232,11 @@ export default function rotoFrontendActerActive (state = defState, action) {
     case 'REMOVE_ROTOED_FRAME':
       const rrMaterial = findItem(state, 'material_id', action.materialId);
       const rotoedFramesRemovedIndex = findIndex(rrMaterial[ 'rotoed_frames' ], fra => fra === frame);
+      let uret = [ ...rrMaterial[ 'rotoed_frames' ] ];
       let rotoedFramesRemoved;
 
-      rrMaterial[ 'rotoed_frames' ].splice(rotoedFramesRemovedIndex, 1);
-      rotoedFramesRemoved = [ ...rrMaterial[ 'rotoed_frames' ] ];
+      uret.splice(rotoedFramesRemovedIndex, 1);
+      rotoedFramesRemoved = [ ...uret ];
 
       return update(
         state,

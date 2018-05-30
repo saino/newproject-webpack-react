@@ -93,28 +93,13 @@ class Matting extends Component {
     // 延迟10毫秒跳转到显示帧图片组件
     this.switchToVisibleFrameImg = () => this.openVisibleFrameImg(); //defferPerform(() => this.openVisibleFrameImg(), 10);
 
-    // // 延迟10毫秒选中扣像素材
-    // this.selectedRotoMaterial = defferPerform(materialId => {
-    //   const { selectedRotoMaterial } = this.props;
-    //
-    //   this.switchToVisibleFrameImg();
-    //   selectedRotoMaterial(materialId);
-    // }, 10);
-
     // 选中抠像素材操作
     this.selectedRotoMaterialHandle = materialId => {
       const { cancelSelectedRotoMaterial, selectedRotoMaterial } = this.props;
 
-      //this.selectedRotoMaterial(materialId);
       this.switchToVisibleFrameImg();
       cancelSelectedRotoMaterial();
       selectedRotoMaterial(materialId);
-
-      // setTimeout(() => {
-      //
-      // }, 10);
-      //cancelSelectedRotoMaterial();
-      //selectedRotoMaterial(materialId);
     };
 
     // 延迟10毫秒设置抠像素材的选择帧
@@ -143,11 +128,14 @@ class Matting extends Component {
 
     // 延时10毫秒恒定24fps播放帧动画(更改帧)
     this.playing = (() => {
-      const { configureIsPlay } = this.props;
+      const { configureIsPlay, rfa } = this.props;
       const unsetTimer = mId => {
+        const isSelected = !!findItem(rfa, 'is_selected', true);
+
         clearInterval(timer);
         timer = null;
-        configureIsPlay(mId, false);
+
+        isSelected && configureIsPlay(mId, false);
       };
       let timer;
 
@@ -197,7 +185,7 @@ class Matting extends Component {
       if (currFrame < 0) {
         message.warning('不能小于最小帧');
         configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(0);
+        this.deferConfigureFrame(-1);
 
         return;
       }
@@ -255,17 +243,17 @@ class Matting extends Component {
 
       if (isNaN(parsedFrame)) {
         configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(tempFrame);
+        this.deferConfigureFrame(totalFrame);
       } else {
         if (parsedFrame >= totalFrame) {
           message.warning('不能大于最大帧');
-          this.deferConfigureFrame(tempFrame);
+          this.deferConfigureFrame(totalFrame);
 
           return;
         }
         else if (parsedFrame < 0) {
           message.warning('不能小于最小帧');
-          this.deferConfigureFrame(tempFrame);
+          this.deferConfigureFrame(0);
 
           return;
         }
@@ -351,7 +339,7 @@ class Matting extends Component {
 
   getMiddleComponent(rfa, show, zoomValue, isSelected) {
     const moveParam = this.getMove() || {};
-    const frame = this.getSelectedFrame() + 1;
+    const frame = this.getSelectedFrame();
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] }>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
@@ -410,7 +398,7 @@ class Matting extends Component {
           totalFrame={ length }
           frameRate={ duration / length }
           iterate={ iterate }
-          onClick={ frame => this.configureTickHandle(frame - 1) } />
+          onClick={ frame => this.configureTickHandle(frame) } />
       </div>
     );
   }
@@ -424,7 +412,7 @@ class Matting extends Component {
   }
 
   render() {
-    const { showAddMaterialOrFrameImg, tempFrame, visibleLoadFrame } = this.state;
+    const { showAddMaterialOrFrameImg, tempFrame } = this.state;
     const { rfa, token } = this.props;
     const isParseFrame = this.getIsParseFrame
     const parseFramePercent = this.getParseFramePercent();
@@ -451,20 +439,6 @@ class Matting extends Component {
 
     return (
       <div className={ rotoStyle[ 'wrapper' ] }>
-        {/* 解帧进度圈 */}
-        { visibleLoadFrame
-          ? (<div className={ rotoStyle[ 'parse-frame-percent-bar' ] }>
-              <div>
-                <Progress
-                  type="circle"
-                  percent={ parseFramePercent }
-                  format={ percent => `解析帧进度:${ percent }%` } />
-              </div>
-             </div>
-            )
-          : void 0
-        }
-
         <div className={ rotoStyle[ 'wrapper-inner' ] }>
           <div className={ rotoStyle[ 'header' ] }>
             {/* 头部 */}
@@ -492,7 +466,7 @@ class Matting extends Component {
                     </div>
 
                     {/* 扣像工具条 */}
-                    { show || !rfa.length
+                    {show || !rfa.length
                       ? void 0
                       : (
                           <div className={ rotoStyle[ 'toolbar' ] }>
@@ -530,7 +504,7 @@ class Matting extends Component {
                           onEnd={ this.configureTickHandle }>
 
                           {/* 解帧区展示帧图片 */}
-                          { this.getParseFrameCom(isParseFrame, parseFramePercent) }
+                          {this.getParseFrameCom(isParseFrame, parseFramePercent) }
                         </Scale>
                       </div>
                     </ScrollArea>
@@ -539,7 +513,7 @@ class Matting extends Component {
             </div>
 
             {/* 扣像操作面板 */}
-              { show || !rfa.length || !isSelected
+              {show || !rfa.length || !isSelected
                 ? void 0
                 : (<div className={ rotoStyle[ 'right' ] }>
                     <RotoOperationPanel />

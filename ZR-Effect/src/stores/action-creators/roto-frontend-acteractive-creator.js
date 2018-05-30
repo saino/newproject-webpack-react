@@ -28,14 +28,6 @@ export function removeRotoMaterial (materialId) {
   };
 }
 
-export function configureParseFramePercent(materialId, percent) {
-  return {
-    type: 'PARSE_FRAME_PERCENT',
-    materialId,
-    percent
-  };
-}
-
 export function selectedFrame (materialId, frame) {
   return {
     type: 'SELECTED_FRAME',
@@ -60,6 +52,14 @@ export function configureIsPlay (materialId, isPlay) {
   };
 }
 
+export function setDl (materialId, allowDl) {
+  return {
+    type: 'SET_DL',
+    materialId,
+    allowDl
+  };
+}
+
 export function saveRoto (materialId, frames) {
   return dispatch => {
     post('/roto/saveRoto', {
@@ -73,14 +73,23 @@ export function saveRoto (materialId, frames) {
   };
 }
 
-export function aiRoto (materialId, aiId) {
+export function aiRoto (materialId, aiId, isAiRoto) {
   return dispatch => {
     post('/roto/aiRoto', { id: aiId })
       .then(resp => dispatch({
         type: 'AI_ROTO',
+        isAiRoto,
         materialId
       }))
       .catch(fail);
+  };
+}
+
+export function updateRotoIsAiRoto (materialId, isAiRoto) {
+  return {
+    type: 'UPDATE_ROTO_IS_AI_ROTO',
+    materialId,
+    isAiRoto
   };
 }
 
@@ -116,10 +125,23 @@ export function configureCloseAiRoto (materialId) {
   };
 }
 
-export function configureStartupGenerateRotoMaterial (materialId) {
+export function geRoto (materialId, aiId) {
+  return dispatch => {
+    post('/roto/finishRoto', { id: aiId })
+      .then(resp => dispatch({
+        type: 'GE_ROTO',
+        materialId
+      }))
+      .catch(fail);
+  };
+}
+
+export function updateRotoIsGeRoto (materialId, isGeRoto) {
   return {
-    type: 'CONFIGURE_STARTUP_GENERATE_ROTO_MATERIAL',
-    materialId
+    type: 'UPDATE_ROTO_IS_GE_ROTO',
+    materialId,
+    isGeRoto,
+    isDableBtn: !isGeRoto
   };
 }
 

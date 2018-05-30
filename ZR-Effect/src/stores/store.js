@@ -20,11 +20,20 @@ import fetchToken from './middlewares/fetch-token';
 import reducer from './reducers/reducer';
 
 export default function createStore () {
-  return buildStore(reducer,
-    compose(
-      applyMiddleware(fetchToken),
-      applyMiddleware(thunk),
-      applyMiddleware(logger)
-    )
-  );
+  if (env === 'dev') {
+    return buildStore(reducer,
+      compose(
+        applyMiddleware(fetchToken),
+        applyMiddleware(thunk),
+        applyMiddleware(logger)
+      )
+    );
+  } else {
+    return buildStore(reducer,
+      compose(
+        applyMiddleware(fetchToken),
+        applyMiddleware(thunk)
+      )
+    );
+  }
 }

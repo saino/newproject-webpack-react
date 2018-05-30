@@ -3,7 +3,6 @@
 .wrapper {
   padding: 0 16px;
   height: 100%;
-  overflow: auto;
 }
 
 .list {
@@ -19,4 +18,12 @@
   margin: 0 16px 16px 0;
   height: 154px;
   background: rgba(45,75,80,.8);
+}
+
+.wrapper > div:first-of-type > div:nth-of-type(3) {
+  background: #000!important;
+}
+
+.wrapper > div:first-of-type > div:nth-of-type(3) > div {
+  background: #254549!important;
 }

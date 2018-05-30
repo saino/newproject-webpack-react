@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import RotoAi from '../RotoAi/RotoAi';
-import rotoOperationPanelStyle from '../roto-operation-panel.css';
-import RotoedFrameList from '../RotoedFrameList/RotoedFrameList';
+import RotoAi from './RotoAi/RotoAi';
+import RotoGe from './RotoGe/RotoGe';
+import rotoOperationPanelStyle from './roto-operation-panel.css';
+import RotoedFrameList from './RotoedFrameList/RotoedFrameList';
 
 export default class RotoDownload extends Component {
   render() {
@@ -12,6 +13,9 @@ export default class RotoDownload extends Component {
         </div>
         <div className={ rotoOperationPanelStyle[ 'rotoed-frame-list' ] }>
           <RotoedFrameList />
+        </div>
+        <div className={ rotoOperationPanelStyle[ 'ge-roto' ] }>
+          <RotoGe />
         </div>
       </div>
     );

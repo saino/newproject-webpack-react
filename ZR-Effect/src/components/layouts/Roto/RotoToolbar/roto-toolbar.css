@@ -15,6 +15,7 @@
 
 .tool-save {
   flex: 0 0 40px;
+  cursor: pointer;
 }
 
 .tool-save-inner {

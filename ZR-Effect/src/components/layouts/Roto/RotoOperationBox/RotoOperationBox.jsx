@@ -6,6 +6,7 @@ import { message } from 'antd';
 import Snap from 'snapsvg-cjs';
 import { configureRotoToolType, addRotoedFrame, removeRotoedFrame } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { configure } from '../../../../stores/action-creators/roto-creator';
+import { removeAiRoto } from '../../../../stores/action-creators/roto-ai-creator';
 import defferPerform from '../../../../utils/deffer-perform';
 import { findItem, findIndex } from '../../../../utils/array-handle';
 import style from './style.css';
@@ -44,7 +45,7 @@ class RotoOperationBox extends Component {
       const updateObj = {};
       let point, focusEl, selectedFocusPathEl;
 
-      if (keyCode == 8) {
+      if (keyCode == 46) {
         if (rotoMode !== 0 && pathSelected) {
           point = findItem(pathSelected.points, 'isSelected', true);
 
@@ -111,7 +112,7 @@ class RotoOperationBox extends Component {
     });
 
     this.mouseDownHandle = (e) => {
-      const { configure, configureRotoToolType, addRotoedFrame, disabled } = this.props;
+      const { configure, configureRotoToolType, addRotoedFrame, removeAiRoto, disabled } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();
       const rotoToolType = this.getRotoToolType();
@@ -643,22 +644,6 @@ class RotoOperationBox extends Component {
     return { offX: clientX - x, offY: clientY - y };
   }
 
-  // 抠像素材id不同、当前操作帧不同、抠像数据不同避免重新渲染
-  validateIsResetRender(prevProps, nextProps) {
-    const prevMaterialId = this.getMaterialId(prevProps);
-    const prevMaterialFrame = this.getMaterialFrame(prevProps);
-    const nextMaterialId = this.getMaterialId(nextProps);
-    const nextMaterialFrame = this.getMaterialFrame(nextProps);
-
-    //console.log(prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame, 'ddd');
-    return prevMaterialId !== nextMaterialId || prevMaterialFrame !== nextMaterialFrame;
-    //console.log(prevMaterialId, nextMaterialId, 'dd');
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return this.validateIsResetRender(this.props, nextProps);
-  }
-
   render() {
     const pathData = this.getPathData();
     const rotoMode = this.getRotoMode();
@@ -707,6 +692,7 @@ const mapDispatchToProps = dispatch =>
     addRotoedFrame,
     removeRotoedFrame,
     configure,
+    removeAiRoto,
     configureRotoToolType
   }, dispatch
 )

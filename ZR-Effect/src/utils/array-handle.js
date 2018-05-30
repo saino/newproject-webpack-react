@@ -120,7 +120,7 @@ export const findItem = (target, key = 'id', value) => {
 
 // 根据条件查找元素集合
 export const finds = (target, key = 'id', value) =>
-  target.filter(getDiff(key));
+  target.filter(getDiff(key, value));
 
 // 追加
 export const add = (target, waitItem) => {
@@ -162,4 +162,11 @@ export const remove = (target, findKey, findValue) => {
   res.splice(index, 1);
 
   return [ ...res ];
+};
+
+// 删除多个
+export const removeMore = (target, findKey, findValue) => {
+  const res = [ ...target ];
+
+  return res.filter(item => item[ findKey ] !== findValue);
 };

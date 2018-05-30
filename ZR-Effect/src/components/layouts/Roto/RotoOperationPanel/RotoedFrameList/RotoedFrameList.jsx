@@ -6,8 +6,6 @@ import rotoedFrameListStyle from './rotoed-frame-list.css';
 import { findItem } from '../../../../../utils/array-handle';
 import config from '../../../../../config';
 import { selectedFrame } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
-// 测试的图片关键帧图片模块
-import testPNG from '../RotoAi/start-roto.png';
 import FrameImg from '../../FrameImg/FrameImg';
 
 class RotoedFrameList extends Component {
@@ -30,8 +28,9 @@ class RotoedFrameList extends Component {
   };
 
   getParseFrameCom() {
-    const coms = [];
     const rotoedFrames = this.getRotoedFrames();
+    const materialId = this.getMaterialId();
+    const coms = [];
     let frame;
 
     for (let i = 0; i < rotoedFrames.length; i++) {
@@ -39,7 +38,7 @@ class RotoedFrameList extends Component {
 
       coms.push(
         <li key={ `p_f_${ i }` } onClick={ this.selectedFrameHandle(frame) }>
-          <FrameImg width={ config.parseFrame.width } frame={ frame + 1 } displayFrame={ frame } />
+          <FrameImg materialId={ materialId } frame={ frame } />
         </li>
       );
     }
