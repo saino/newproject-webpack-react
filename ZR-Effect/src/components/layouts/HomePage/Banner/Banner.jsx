@@ -16,7 +16,7 @@ export default class Banner extends Component {
           <video
             className={ bannerStyle[ 'banner-advert-video' ] }
             src={ advertMP4 }
-            autoPlay
+            autoPlay={ true }
             loop />
           <div className={ bannerStyle[ 'banner-advert-show' ] }>
             <img src={ effTxtPNG } />

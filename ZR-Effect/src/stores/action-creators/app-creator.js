@@ -1,5 +1,5 @@
 import { post, error as fail } from '../../api/fetch';
-import { get, set } from '../../utils/configure-auth';
+import { get, set, del } from '../../utils/configure-auth';
 
 export function fetch (isFetch) {
   return {
@@ -70,5 +70,15 @@ export function register (phone, password, verifyCode, successFunc, errorFunc) {
         successFunc(resp);
       })
       .catch(error => fail(error.message, errorFunc))
+  };
+}
+
+export function logout () {
+  del('token');
+  del('isRecordUser');
+  del('username');
+
+  return {
+    type: 'LOGOUT'
   };
 }

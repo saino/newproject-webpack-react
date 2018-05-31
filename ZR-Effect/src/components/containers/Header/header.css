@@ -95,3 +95,13 @@
   color: #fff;
   text-decoration: none;
 }
+
+.logout {
+  color: #fff;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.logout:hover, .logout:active {
+  color: #fff;
+}

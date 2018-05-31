@@ -23,6 +23,9 @@ export default function app (state = defState, action) {
     case 'REGISTER':
       return { ...state, token: action.token };
 
+    case 'LOGOUT':
+      return { ...state, token: void 0, username: '' };
+
     case 'SEND_VERIFYCODE':
       return { ...state };
 
