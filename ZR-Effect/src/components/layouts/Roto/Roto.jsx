@@ -184,8 +184,7 @@ class Matting extends Component {
 
       if (currFrame < 0) {
         message.warning('不能小于最小帧');
-        configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(-1);
+        this.deferConfigureFrame(0);
 
         return;
       }
@@ -212,7 +211,6 @@ class Matting extends Component {
 
       if (currFrame >= totalFrame) {
         message.warning('不能大于最大帧');
-        configureIsValidFrameError(materialId, false);
         this.deferConfigureFrame(totalFrame);
 
         return;
