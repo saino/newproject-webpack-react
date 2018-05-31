@@ -243,17 +243,21 @@ class Matting extends Component {
 
       if (isNaN(parsedFrame)) {
         configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(totalFrame);
+        this.deferConfigureFrame(tempFrame);
       } else {
         if (parsedFrame >= totalFrame) {
           message.warning('不能大于最大帧');
           this.deferConfigureFrame(totalFrame);
+          // 设置当前抠像素材的帧
+          this.deferConfigureRotoMaterialFrame(materialId, totalFrame);
 
           return;
         }
         else if (parsedFrame < 0) {
           message.warning('不能小于最小帧');
           this.deferConfigureFrame(0);
+          // 设置当前抠像素材的帧
+          this.deferConfigureRotoMaterialFrame(materialId, 0);
 
           return;
         }
