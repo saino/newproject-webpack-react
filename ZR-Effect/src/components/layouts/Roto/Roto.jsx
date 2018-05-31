@@ -103,11 +103,11 @@ class Matting extends Component {
     };
 
     // 延迟10毫秒设置抠像素材的选择帧
-    this.deferConfigureRotoMaterialFrame = defferPerform((materialId, frame) => {
+    this.deferConfigureRotoMaterialFrame = (materialId, frame) => {
       const { selectedFrame } = this.props;
 
       selectedFrame(materialId, frame);
-    }, 10);
+    };
 
     // 延迟15毫秒设置是否合法
     this.deferConfigureIsValidFrameError = defferPerform((materialId, isValid) => {

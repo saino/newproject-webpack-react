@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <video id="xx" src="./猪屎一刀斩.mp4"></video>
+    <input id="shuai" />
+    <script>
+      var inputEl = document.querySelector('#shuai');
+      var videoEl = document.querySelector('#xx');
+
+      inputEl.addEventListener('blur', function () {
+        videoEl.currentTime = +inputEl.value;
+      }, false);
+    </script>
+  </body>
+</html>
