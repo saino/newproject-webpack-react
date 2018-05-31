@@ -89,13 +89,10 @@ export const changeWork = (newWork) => {
     }
 }
 export const saveWork = (body, successFUN) => {
-    // return () => {
     return  post("/fx/saveWork", body)
             .then((resp)=>{
-                // console.log(resp,"dddddddddd");
                 successFUN&&successFUN(resp);
             });
-    // }
 }
 export const buildWork = (body, successFUN) => {
     return post("/fx/build", body)

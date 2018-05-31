@@ -7,16 +7,14 @@ import AddImg from "../../statics/add.png";
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { changVideoPlay, changeWorkProperties } from "../../../stores/reducers/work";
+import { changeFrameNum } from "../../../stores/reducers/frame-num"
 import Scale from "../../../components/commons/Scale";
 import ScrollArea from 'react-custom-scrollbars';
 
 
 class TimeArea extends Component {
     configureTickHandle = (currentFrameNum) => {
-        const { work } = this.props;
-        const { properties } = work.config;
-        properties.currentFrameNum = currentFrameNum;
-        this.props.changeWorkProperties(properties);
+        this.props.changeFrameNum(currentFrameNum);
     }
     onChangeTick = (currentFrameNum) => {
         // const { work } = this.props;
@@ -34,12 +32,10 @@ class TimeArea extends Component {
         return frameNum;
     }
     getCurrentframeNum = () => {
-        const { work } = this.props;
-        const { properties } = work.config;
-        return properties.currentFrameNum;
+        const { frame } = this.props;
+        return frame.frameNum;
     }
     render() {
-        // console.log(this.getFrameNum());
         return <div className="time-area">
             <ScrollArea style={{ width: '100%', height: '100%' }}>
                 <div className="time-control">
@@ -106,15 +102,16 @@ class TimeArea extends Component {
         this.props.changeaActiveContainer("material", ["video"]);
     }
 }
-const mapStateToProps = ({work}) => {
+const mapStateToProps = ({ work, frame }) => {
     return {
-        work
+        work,
+        frame
     };
 }
 const mapDispatchToProps = (dispatch) => {
     return {
         changVideoPlay: bindActionCreators(changVideoPlay, dispatch),
-        changeWorkProperties: bindActionCreators(changeWorkProperties, dispatch),
+        changeFrameNum: bindActionCreators(changeFrameNum, dispatch),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(TimeArea);

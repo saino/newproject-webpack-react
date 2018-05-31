@@ -22,7 +22,7 @@ import MaterialContainer from "./components1/ui-layout/material-container";
 import AudioContainer from "./components1/ui-layout/audio-container";
 
 // import { loadMaterials } from "../stores/reducers/material"
-import { createWork, loadWork } from "../stores/reducers/work";
+import { createWork, loadWork, changeWorkProperties } from "../stores/reducers/work";
 
 class SpecialEffec extends Component {
 
