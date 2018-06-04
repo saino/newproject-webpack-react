@@ -45,3 +45,7 @@ export const removeMaterial = materialId => dispatch => {
     }))
     .catch(fail);
 }
+
+export const clear = () => ({
+  type: 'CLEAR_ROTO_MATERIALS'
+});

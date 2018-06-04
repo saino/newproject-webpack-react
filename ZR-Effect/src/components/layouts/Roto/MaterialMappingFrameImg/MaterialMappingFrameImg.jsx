@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
+//import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { findItem } from '../../../../utils/array-handle';
-import { configureIsPlay } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
+//import { configureIsPlay } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import style from './material-mapping-frame-img.css';
 
 class MaterialMappingFrameImg extends Component {
@@ -13,11 +13,11 @@ class MaterialMappingFrameImg extends Component {
     materialId: PropTypes.number
   };
 
-  playEndHandle = () => {
-    const { configureIsPlay, materialId } = this.props;
-
-    configureIsPlay(materialId, false);
-  };
+  // playEndHandle = () => {
+  //   const { configureIsPlay, materialId } = this.props;
+  //   console.log('播放完成！！！');
+  //   configureIsPlay(materialId, false);
+  // };
 
   getMaterial = (props) => {
     const { materialList, rfa } = props || this.props;
@@ -37,7 +37,7 @@ class MaterialMappingFrameImg extends Component {
     const { frame } = this.props;
     const { properties: { duration, length } } = this.getMaterial();
     const totalMs = frame / this.getMsFrame(length, duration);
-    console.log(totalMs, frame, 'dd');
+    
     this.videoEl.currentTime = totalMs;
   }
 
@@ -79,10 +79,10 @@ class MaterialMappingFrameImg extends Component {
     if (isPlay) {
       this.videoEl.play();
     } else {
-      if (!this.videoEl.paused) {
-        this.videoEl.pause();
-      }
-
+      // if (!this.videoEl.paused) {
+      //   this.videoEl.pause();
+      // }
+      this.videoEl.pause();
       this.setCurrTime();
     }
   }
@@ -92,15 +92,14 @@ class MaterialMappingFrameImg extends Component {
 
     // 监听当前视频播放完成后事件
     // 将当前播放状态改为不在播放状态
-    this.videoEl.addEventListener('ended', this.playEndHandle, false);
+    //this.videoEl.addEventListener('ended', this.playEndHandle, false);
   }
 
   componentWillUnmount() {
     const { onClearPlayTimer } = this.props;
 
-    this.videoEl.removeEventListener('ended', this.playEndHandle, false);
+    //this.videoEl.removeEventListener('ended', this.playEndHandle, false);
     onClearPlayTimer(this.getMaterial().id);
-
   }
 }
 
@@ -112,6 +111,6 @@ const mapStateToProps = ({
   rfa: rotoFrontendActeractive
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({ configureIsPlay }, dispatch)
+//const mapDispatchToProps = dispatch => bindActionCreators({ configureIsPlay }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(MaterialMappingFrameImg);
+export default connect(mapStateToProps)(MaterialMappingFrameImg);

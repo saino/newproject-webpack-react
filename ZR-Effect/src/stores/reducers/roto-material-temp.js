@@ -7,6 +7,9 @@ export default function rotoMaterialTemp (state = defState, action) {
     case 'ADD_MATERIALS_TEMP':
       return add(state, action.material);
 
+    case 'CLEAR_ROTO_TEMP_MATERIALS':
+      return [];
+
     default:
       return state;
   }

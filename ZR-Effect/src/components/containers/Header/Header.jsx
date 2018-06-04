@@ -4,6 +4,11 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { logout } from '../../../stores/action-creators/app-creator';
+import { clear as clearAiRotos } from '../../../stores/action-creators/roto-ai-creator';
+import { clear as clearRotos } from '../../../stores/action-creators/roto-creator';
+import { clear as clearRFAs } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
+import { clear as clearRotoMaterials } from '../../../stores/action-creators/roto-material-creator';
+import { clear as clearRotoTempMaterials } from '../../../stores/action-creators/roto-material-temp-creator';
 import { Avatar } from 'antd';
 import headerStyle from './header.css';
 import logoPNG from './logo.png';
@@ -25,8 +30,18 @@ class Header extends Component {
   registerHandle = () =>
     this.props.onOpenRegister();
 
-  logoutHandle = () =>
+  logoutHandle = () => {
     this.props.logout();
+
+    const { clearAiRotos, clearRotos, clearRFAs, clearRotoMaterials, clearRotoTempMaterials } = this.props;
+    
+    // 前端数据清空
+    clearAiRotos();
+    clearRotos();
+    clearRFAs();
+    clearRotoMaterials();
+    clearRotoTempMaterials();
+  };
 
   render() {
     const { token, activeIndex } = this.props;
@@ -77,6 +92,14 @@ class Header extends Component {
 
 const mapStateToProps = ({ app }) => ({ token: app.token });
 
-const mapDispatchToProps = dispatch => bindActionCreators({ logout }, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({
+    logout,
+    clearAiRotos,
+    clearRotos,
+    clearRFAs,
+    clearRotoMaterials,
+    clearRotoTempMaterials
+  }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

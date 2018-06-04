@@ -219,7 +219,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
 
     case 'ADD_ROTOED_FRAME':
       const { materialId, frame } = action;
-      const rotoMaterial = findItem(state, 'material_id', materialId);
+      const rotoMaterial = { ...findItem(state, 'material_id', materialId) };
       const rotoedFrames = rotoMaterial[ 'rotoed_frames' ] = add(rotoMaterial[ 'rotoed_frames' ], frame);
 
       return update(
@@ -337,6 +337,9 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'material_id',
         action.materialId
       );
+
+    case 'CLEAR_ROTO_FRAS':
+      return [];
 
     default:
       return state;

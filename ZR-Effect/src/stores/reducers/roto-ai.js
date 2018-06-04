@@ -11,6 +11,9 @@ export default function rotoAi (state = defState, action) {
     case 'REMOVE_AI_ROTO':
       return remove(state, item => item[ 'material_id' ] === action.materialId && item[ 'frame' ] === action.frame);
 
+    case 'CLEAR_AI_ROTOS':
+      return [];
+
     default:
       return state;
   }

@@ -53,7 +53,7 @@ class RotoGe extends Component {
     const isGeRoto = this.getIsGenerateMaterial(props);
     const aiId = this.getAiId(props);
     const { geRotoPercent } = this.state;
-    console.log(isGeRoto, geRotoPercent, aiId, 'xxxx');
+    
     if (!isGeRoto && geRotoPercent < 100 && aiId > 0) {
       this.timer = setInterval(() =>
         post('/getProgress', { type: 'export', object_id: aiId })

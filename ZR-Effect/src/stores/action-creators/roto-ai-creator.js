@@ -20,3 +20,9 @@ export function removeAiRoto (materialId, frame) {
     frame
   };
 }
+
+export function clear () {
+  return {
+    type: 'CLEAR_AI_ROTOS'
+  };
+}
