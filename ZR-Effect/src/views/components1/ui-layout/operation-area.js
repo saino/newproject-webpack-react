@@ -342,7 +342,7 @@ class OperationArea extends Component {
                 newWork.config.properties.height = "1080";
                 break;
             default: 
-                newWork.config.progress.width = "800";
+                newWork.config.properties.width = "800";
                 newWork.config.properties.height = "400";
         }
         switch (this.state.videoType){
@@ -364,6 +364,7 @@ class OperationArea extends Component {
             "height": newWork.config.properties.height,
             "width": newWork.config.properties.width
         };
+        console.log("ggggggggggg");
         // console.log(newWork, "kkkkkkkkkkkkk");
         this.props.changeWork(newWork);
         buildWork(options, (resp)=>{
