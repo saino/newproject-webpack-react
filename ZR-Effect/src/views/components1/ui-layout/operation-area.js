@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Progress } from "antd";
 import { changeWork, saveWork, buildWork, getProgress } from "../../../stores/reducers/work"
+import config from "../../../config"
 
 
 import CancelImg from "../../statics/cancel.png";
@@ -241,9 +242,11 @@ class OperationArea extends Component {
     }
 
     renderPubComplete = () => {
+        console.log(config.api.host, config.api.path, config.api.port, this.props.work.id);
         return <div className="alert-view-container">
             <div className="alert-view-title">视频发布为<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
             <div className="alert-view-content">
+                <a className="play-video" target="_blank" href={`${config.proxyTarget.host}:${config.proxyTarget.port}/data/works/${this.props.work.id}/output.mp4`}>播放视频</a>
                 <div>发布完成, 保存到云空间</div>
             </div>
             <style>{`
@@ -279,6 +282,11 @@ class OperationArea extends Component {
                     justify-content: center;
                     color: #fff;
                 }
+                .play-video{
+                    width: 100%;
+                    text-align: center;
+                    cursor: pointer;
+                }
             `}</style>
         </div>
     }
@@ -290,6 +298,7 @@ class OperationArea extends Component {
         this.setState({
             videoPX: value
         });
+        // console
     }
     onVideoTypeChange = (e) => {
         const value = e.target.value;
@@ -315,12 +324,47 @@ class OperationArea extends Component {
     onVideoPubClick = () => {
         const work = this.props.work;
         const newWork = {...work, config: {...work.config, properties: {...work.config.properties, videoPX: this.state.videoPX, videoType: this.state.videoType}}};
+        switch (this.state.videoPX){
+            case "px1":
+                newWork.config.properties.width = "800";
+                newWork.config.properties.height = "400";
+                break;
+            case "px2": 
+                newWork.config.properties.width = "960";
+                newWork.config.properties.height = "540";
+                break;
+            case "px3":
+                newWork.config.properties.width = "1280";
+                newWork.config.properties.height = "720";
+                break;
+            case "px4":
+                newWork.config.properties.width = "1920";
+                newWork.config.properties.height = "1080";
+                break;
+            default: 
+                newWork.config.progress.width = "800";
+                newWork.config.properties.height = "400";
+        }
+        switch (this.state.videoType){
+            case "mp4":
+                newWork.config.properties.format = "mp4";
+                break;
+            case "mp4":
+                newWork.config.properties.format = "avi";
+                break;
+            case "mp4":
+                newWork.config.properties.format = "3gp";
+                break;
+            default:
+                newWork.config.properties.format = "mp4";
+        }
         const options = {
             "id": newWork.id,
             "asTemplate": false,
             "height": newWork.config.properties.height,
             "width": newWork.config.properties.width
         };
+        // console.log(newWork, "kkkkkkkkkkkkk");
         this.props.changeWork(newWork);
         buildWork(options, (resp)=>{
             this._getProgress({
