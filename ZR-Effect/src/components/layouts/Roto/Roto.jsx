@@ -342,6 +342,8 @@ class Matting extends Component {
   getMiddleComponent(rfa, show, zoomValue, isSelected) {
     const moveParam = this.getMove() || {};
     const frame = this.getSelectedFrame();
+    const materialId = this.getMaterialId();
+
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] }>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
@@ -368,6 +370,7 @@ class Matting extends Component {
                       <RotoOperationBox disabled={ this.isReadyMove() }>
                         <MaterialMappingFrameImg
                           frame={ frame }
+                          materialId={ materialId }
                           isPlay={ this.getIsPlay() }
                           onClearPlayTimer={ this.playing.unsetTimer } />
                       </RotoOperationBox>

@@ -3,12 +3,20 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { findItem } from '../../../../utils/array-handle';
+import { configureIsPlay } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import style from './material-mapping-frame-img.css';
 
 class MaterialMappingFrameImg extends Component {
   static propTypes = {
     frame: PropTypes.number.isRequired,
-    isPlay: PropTypes.bool
+    isPlay: PropTypes.bool,
+    materialId: PropTypes.number
+  };
+
+  playEndHandle = () => {
+    const { configureIsPlay, materialId } = this.props;
+
+    configureIsPlay(materialId, false);
   };
 
   getMaterial = (props) => {
@@ -81,12 +89,18 @@ class MaterialMappingFrameImg extends Component {
 
   componentDidMount() {
     this.setCurrTime();
+
+    // 监听当前视频播放完成后事件
+    // 将当前播放状态改为不在播放状态
+    this.videoEl.addEventListener('ended', this.playEndHandle, false);
   }
 
   componentWillUnmount() {
     const { onClearPlayTimer } = this.props;
 
+    this.videoEl.removeEventListener('ended', this.playEndHandle, false);
     onClearPlayTimer(this.getMaterial().id);
+
   }
 }
 
@@ -98,4 +112,6 @@ const mapStateToProps = ({
   rfa: rotoFrontendActeractive
 });
 
-export default connect(mapStateToProps)(MaterialMappingFrameImg);
+const mapDispatchToProps = dispatch => bindActionCreators({ configureIsPlay }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(MaterialMappingFrameImg);
