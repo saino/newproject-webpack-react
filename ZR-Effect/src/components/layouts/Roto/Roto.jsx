@@ -103,11 +103,11 @@ class Matting extends Component {
     };
 
     // 延迟10毫秒设置抠像素材的选择帧
-    this.deferConfigureRotoMaterialFrame = defferPerform((materialId, frame) => {
+    this.deferConfigureRotoMaterialFrame = (materialId, frame) => {
       const { selectedFrame } = this.props;
 
       selectedFrame(materialId, frame);
-    }, 10);
+    };
 
     // 延迟15毫秒设置是否合法
     this.deferConfigureIsValidFrameError = defferPerform((materialId, isValid) => {
@@ -184,8 +184,7 @@ class Matting extends Component {
 
       if (currFrame < 0) {
         message.warning('不能小于最小帧');
-        configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(-1);
+        this.deferConfigureFrame(0);
 
         return;
       }
@@ -212,7 +211,6 @@ class Matting extends Component {
 
       if (currFrame >= totalFrame) {
         message.warning('不能大于最大帧');
-        configureIsValidFrameError(materialId, false);
         this.deferConfigureFrame(totalFrame);
 
         return;
@@ -243,17 +241,21 @@ class Matting extends Component {
 
       if (isNaN(parsedFrame)) {
         configureIsValidFrameError(materialId, false);
-        this.deferConfigureFrame(totalFrame);
+        this.deferConfigureFrame(tempFrame);
       } else {
         if (parsedFrame >= totalFrame) {
           message.warning('不能大于最大帧');
           this.deferConfigureFrame(totalFrame);
+          // 设置当前抠像素材的帧
+          this.deferConfigureRotoMaterialFrame(materialId, totalFrame);
 
           return;
         }
         else if (parsedFrame < 0) {
           message.warning('不能小于最小帧');
           this.deferConfigureFrame(0);
+          // 设置当前抠像素材的帧
+          this.deferConfigureRotoMaterialFrame(materialId, 0);
 
           return;
         }

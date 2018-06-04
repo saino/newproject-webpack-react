@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { logout } from '../../../stores/action-creators/app-creator';
 import { Avatar } from 'antd';
 import headerStyle from './header.css';
 import logoPNG from './logo.png';
@@ -17,18 +19,19 @@ class Header extends Component {
     activeIndex: 0
   };
 
-  loginHandle = () => {
+  loginHandle = () =>
     this.props.onOpenLogin();
-  };
 
-  registerHandle = () => {
+  registerHandle = () =>
     this.props.onOpenRegister();
-  };
+
+  logoutHandle = () =>
+    this.props.logout();
 
   render() {
     const { token, activeIndex } = this.props;
     const isLogined = !!token;
-    
+
     return (
       <div className={ headerStyle[ 'header' ] }>
         <div className={ headerStyle[ 'header-nav' ] }>
@@ -49,7 +52,10 @@ class Header extends Component {
 
             <div className={ headerStyle[ 'user-control-bar' ] }>
               { isLogined ? (
-                  <Avatar className={ headerStyle[ 'user-img' ] }></Avatar>
+                  <div>
+                    <a className={ headerStyle[ 'logout' ] } onClick={ this.logoutHandle }>退出</a>
+                    <Avatar className={ headerStyle[ 'user-img' ] }></Avatar>
+                  </div>
                 ) : (
                   <ul className={ headerStyle[ 'user-auth' ] }>
                     <li>
@@ -71,4 +77,6 @@ class Header extends Component {
 
 const mapStateToProps = ({ app }) => ({ token: app.token });
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = dispatch => bindActionCreators({ logout }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
