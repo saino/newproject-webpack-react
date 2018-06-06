@@ -36,6 +36,7 @@ class TimeArea extends Component {
         return frame.frameNum;
     }
     render() {
+        // console.log(this.props.work);
         return <div className="time-area">
             <ScrollArea style={{ width: '100%', height: '100%' }}>
                 <div className="time-control">
@@ -49,6 +50,11 @@ class TimeArea extends Component {
                 </div>
                 <div className="time-scale">
                     <Scale currTick={this.getCurrentframeNum()} maxTick={this.getFrameCount()} onChangeTick={this.onChangeTick} onEnd={this.configureTickHandle} />
+                </div>
+                <div className="time-video">
+                    {this.props.work.config.videos.map((video, index)=>{
+                        return <div className="time-video-item" key={index}>{video.id}</div>
+                    })}
                 </div>
             </ScrollArea>
             <style>{`
@@ -78,7 +84,7 @@ class TimeArea extends Component {
                 }
                 .control-video div{
                     cursor: pointer;
-                }
+                }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
                 .control-play{
                     margin-top: 6px;
                 }
@@ -91,6 +97,9 @@ class TimeArea extends Component {
                 .time-scale{
                     width: 100%;
                     height: 30px;
+                }
+                .time-video{
+                    display:flex;
                 }
             `}</style>
         </div>

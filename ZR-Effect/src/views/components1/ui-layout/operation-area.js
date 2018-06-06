@@ -364,8 +364,6 @@ class OperationArea extends Component {
             "height": newWork.config.properties.height,
             "width": newWork.config.properties.width
         };
-        console.log("ggggggggggg");
-        // console.log(newWork, "kkkkkkkkkkkkk");
         this.props.changeWork(newWork);
         buildWork(options, (resp)=>{
             this._getProgress({

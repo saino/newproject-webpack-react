@@ -50,7 +50,7 @@ class VideoMaterial extends Component {
         const useClass = "video-use " + (this.state.showUse ? "show" : "hide");
         return <div className="video-item" onMouseOver={this.onShowUse} onMouseOut={this.onHideUse}>
             <div className="video-thumb">
-                <img src={`${config.proxyTarget.host}:${config.proxyTarget.port}${config.proxyTarget.path}/materials/${model.id}/thumb.jpg`}/>
+                <img src={`${config.fileUpload.host}:${config.fileUpload.port}${config.proxyTarget.path}/materials/${model.id}/thumb.jpg`}/>
             </div>
             <div className="name-edit" onMouseOver={this.onNameMouseOver}>
                 <div className="video-name">{model.name}</div>
