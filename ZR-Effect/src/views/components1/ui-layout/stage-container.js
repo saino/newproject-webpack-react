@@ -171,7 +171,7 @@ class StageContainer extends Component {
                 }
             }
             videoItemDOM.setAttribute("crossOrigin", "use-credentials");
-            videoItemDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${videoItem.path}`;
+            videoItemDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${videoItem.path}`;
             return videoItemDOM;
         });
     }
@@ -280,13 +280,13 @@ class StageContainer extends Component {
             if(materialItem.type === "image"){
                 let imgDOM = document.createElement("IMG");
                 imgDOM.setAttribute("crossOrigin", "use-credentials");
-                imgDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${materialItem.path}`;
+                imgDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
                 const materialImg = new createjs.Bitmap(imgDOM);
                 this.materialImg[index] = materialImg;
             }else{
                 let videoDOM = document.createElement("VIDEO");
                 videoDOM.setAttribute("crossOrigin", "use-credentials");
-                videoDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${materialItem.path}`;
+                videoDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
                 const materialImg = new createjs.Bitmap(videoDOM);
                 this.materialImg[index] = materialImg;
                 // materialContainer.addChild(materialImg);
