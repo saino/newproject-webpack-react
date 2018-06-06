@@ -41,6 +41,9 @@ export default function rotoMaterial (state = defState, action) {
     case 'REMOVE_MATERIAL':
       return { ...state, list: remove(state.list, 'id', action.materialId) };
 
+    case 'CLEAR_ROTO_MATERIALS':
+      return { ...defState };
+
     default:
       return state;
   }

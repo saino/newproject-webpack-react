@@ -237,3 +237,9 @@ export function undo (materialId) {
     materialId
   };
 }
+
+export function clear () {
+  return {
+    type: 'CLEAR_ROTO_FRAS'
+  };
+}

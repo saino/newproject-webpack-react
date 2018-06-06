@@ -55,9 +55,6 @@ class Matting extends Component {
     // 获取素材路径
     this.getMaterialPath = this.registerGetMaterialInfo(material => material[ 'path' ]);
 
-    // 获取是否正在解帧
-    this.getIsParseFrame = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'is_parse_frame' ]);
-
     // 获取解帧进度
     this.getParseFramePercent = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'parse_frame_percent' ]);
 
@@ -128,13 +125,13 @@ class Matting extends Component {
 
     // 延时10毫秒恒定24fps播放帧动画(更改帧)
     this.playing = (() => {
-      const { configureIsPlay, rfa } = this.props;
+      const { configureIsPlay } = this.props;
       const unsetTimer = mId => {
+        const { rfa } = this.props;
         const isSelected = !!findItem(rfa, 'is_selected', true);
 
         clearInterval(timer);
         timer = null;
-
         isSelected && configureIsPlay(mId, false);
       };
       let timer;
@@ -144,12 +141,13 @@ class Matting extends Component {
           const isPlay = this.getIsPlay();
           const materialId = this.getMaterialId();
           const { length, duration } = this.getMaterialProps();
-          const ms = parseFloat((duration / length).toFixed(3)) * 1000;
-          let { tempFrame } = this.state;
+          const ms = 1 / (length / duration) * 1000 //parseFloat((duration / length).toFixed(3)) * 1000;
 
           if (isPlay) {
             timer = setInterval(() => {
-              if (tempFrame >= length) {
+              let { tempFrame } = this.state;
+
+              if (tempFrame >= length - 1) {
                 unsetTimer(materialId);
                 return;
               }
@@ -159,7 +157,7 @@ class Matting extends Component {
           } else {
             unsetTimer(materialId);
           }
-        }, 80),
+        }, 10),
         unsetTimer
       };
     })();
@@ -167,11 +165,18 @@ class Matting extends Component {
     // 播放或暂停操作
     this.playOrPauseHandle = () => {
       const { configureIsPlay } = this.props;
+      const { tempFrame } = this.state;
       const isPlay = this.getIsPlay();
       const materialId = this.getMaterialId();
+      const totalFrame = this.getMaterialProps()[ 'length' ];
 
-      configureIsPlay(materialId, !isPlay);
-      this.playing.startTimer();
+      if (tempFrame < totalFrame) {
+        configureIsPlay(materialId, !isPlay);
+        this.playing.startTimer();
+      } else {
+        message.warning('已经播放到最后一帧了');
+      }
+
     };
 
     // 播放上一帧操作
@@ -211,7 +216,7 @@ class Matting extends Component {
 
       if (currFrame >= totalFrame) {
         message.warning('不能大于最大帧');
-        this.deferConfigureFrame(totalFrame);
+        this.deferConfigureFrame(totalFrame - 1);
 
         return;
       }
@@ -245,9 +250,9 @@ class Matting extends Component {
       } else {
         if (parsedFrame >= totalFrame) {
           message.warning('不能大于最大帧');
-          this.deferConfigureFrame(totalFrame);
+          this.deferConfigureFrame(totalFrame - 1);
           // 设置当前抠像素材的帧
-          this.deferConfigureRotoMaterialFrame(materialId, totalFrame);
+          this.deferConfigureRotoMaterialFrame(materialId, totalFrame - 1);
 
           return;
         }
@@ -342,6 +347,8 @@ class Matting extends Component {
   getMiddleComponent(rfa, show, zoomValue, isSelected) {
     const moveParam = this.getMove() || {};
     const frame = this.getSelectedFrame();
+    const materialId = this.getMaterialId();
+
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] }>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
@@ -368,6 +375,7 @@ class Matting extends Component {
                       <RotoOperationBox disabled={ this.isReadyMove() }>
                         <MaterialMappingFrameImg
                           frame={ frame }
+                          materialId={ materialId }
                           isPlay={ this.getIsPlay() }
                           onClearPlayTimer={ this.playing.unsetTimer } />
                       </RotoOperationBox>
@@ -382,7 +390,7 @@ class Matting extends Component {
     return middleCom;
   }
 
-  getParseFrameCom(isParseFrame, percent) {
+  getParseFrameCom(percent) {
     const { width, iterate, gap } = config.parseFrame;
     const materialId = this.getMaterialId();
     const materialPath = this.getMaterialPath();
@@ -395,7 +403,6 @@ class Matting extends Component {
         <ParseFrameList
           materialId={ materialId }
           materialPath={ materialPath }
-          isParseFrame={ isParseFrame }
           percent={ percent }
           totalFrame={ length }
           frameRate={ duration / length }
@@ -416,7 +423,6 @@ class Matting extends Component {
   render() {
     const { showAddMaterialOrFrameImg, tempFrame } = this.state;
     const { rfa, token } = this.props;
-    const isParseFrame = this.getIsParseFrame
     const parseFramePercent = this.getParseFramePercent();
     const frame = this.getSelectedFrame();
     const isValidFrameError = this.getIsValidFrameError();
@@ -502,11 +508,11 @@ class Matting extends Component {
                         {/* 时间轴 */}
                         <Scale
                           currTick={ frame }
-                          maxTick={ 100 }
+                          maxTick={ this.getMaterialProps()[ 'length' ] - 1 }
                           onEnd={ this.configureTickHandle }>
 
                           {/* 解帧区展示帧图片 */}
-                          {this.getParseFrameCom(isParseFrame, parseFramePercent) }
+                          {this.getParseFrameCom(parseFramePercent) }
                         </Scale>
                       </div>
                     </ScrollArea>

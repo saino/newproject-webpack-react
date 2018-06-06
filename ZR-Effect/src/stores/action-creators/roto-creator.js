@@ -21,3 +21,9 @@ export function configure (materialId, frame, options) {
     options
   }
 }
+
+export function clear () {
+  return {
+    type: 'CLEAR_ROTOS'
+  };
+}

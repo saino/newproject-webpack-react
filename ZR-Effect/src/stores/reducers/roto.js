@@ -51,6 +51,9 @@ export default function roto (state = defState, action) {
             && roto[ 'frame' ] === action.frame
       );
 
+    case 'CLEAR_ROTOS':
+      return [];
+
     default:
       return state;
   }
