@@ -58,7 +58,7 @@ class SpecialEffec extends Component {
             }
         });
         // this.props.loadWork({
-        //     id: "269"
+        //     id: "386"
         // });
     }
 

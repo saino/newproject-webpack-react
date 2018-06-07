@@ -246,7 +246,7 @@ class OperationArea extends Component {
         return <div className="alert-view-container">
             <div className="alert-view-title">视频发布为<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
             <div className="alert-view-content">
-                <a className="play-video" target="_blank" href={`${config.proxyTarget.host}:${config.proxyTarget.port}/data/works/${this.props.work.id}/output.mp4`}>播放视频</a>
+                <a className="play-video" target="_blank" href={`${config.fileUpload.host}:${config.fileUpload.port}/data/works/${this.props.work.id}/output.mp4`}>播放视频</a>
                 <div>发布完成, 保存到云空间</div>
             </div>
             <style>{`
