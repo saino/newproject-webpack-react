@@ -31,7 +31,7 @@ class StageContainer extends Component {
         this.materialsContainerDOT = [];
         this.disX = 0;
         this.disY = 0;
-        this.colNum = 3;
+        this.colNum = 1;
     }
 
     // shouldComponentUpdate(nextProp, nextState){
@@ -53,18 +53,8 @@ class StageContainer extends Component {
     dragMouseMove = (target, model, evt) => {
         evt.stopPropagation();
         evt.preventDefault();
-        // if(target<4 && target>-1){
-        //     evt.target.x = evt.stageX - this.disX;
-        //     evt.target.y = evt.stageY - this.disY;
-        //     // console.log(model, evt, "ggggggggggggggg");
-        //     model.dots[target].x = evt.target.x + model.dotscopy[target].x;
-        //     model.dots[target].y = evt.target.y + model.dotscopy[target].y;
-        //     this.renderTransformContainer();
-        //     return;
-        // }
         evt[target].x = evt.stageX - this.disX;
         evt[target].y = evt.stageY - this.disY;
-        
     }
     dragMouseUp = (target, model, evt) => {
         evt.stopPropagation();
@@ -75,11 +65,16 @@ class StageContainer extends Component {
             model.positionX = evt[target].x;
             this.props.changWorkVideo(model);
         }else{
-            model.positionX = evt[target].x;
-            model.positionY = evt[target].y;
+            model.positionX += evt[target].x;
+            model.positionY += evt[target].y;
+            for(let i=0; i<4; i++){
+                model.control[i].x += evt[target].x;
+                model.control[i].y += evt[target].y;
+            }
+            evt[target].x = 0;
+            evt[target].y = 0;
             this.props.changeWorkMaterial(model);
         }
-        // console.log()
     }
 
     dragMouseControlMove = (controlNum, materialContainerIndex, evt) => {
@@ -87,7 +82,6 @@ class StageContainer extends Component {
         evt.preventDefault();
         evt.target.x = evt.stageX - this.disX;
         evt.target.y = evt.stageY - this.disY;
-        // console.log(model, evt, "ggggggggggggggg");
         this.materialsContainerDOT[materialContainerIndex].dots[controlNum].x = evt.target.x + this.materialsContainerDOT[materialContainerIndex].dotscopy[controlNum].x;
         this.materialsContainerDOT[materialContainerIndex].dots[controlNum].y = evt.target.y + this.materialsContainerDOT[materialContainerIndex].dotscopy[controlNum].y;
         this.renderTransformContainer(materialContainerIndex);
@@ -230,9 +224,10 @@ class StageContainer extends Component {
             this.transformMaterialsContainer[index] = transformMaterialsContainer;
             materialContainer.addChild(this.transformMaterialsContainer[index]);
 
-            materialContainer.x = materialItem.positionX;
-            materialContainer.y = materialItem.positionY;
-
+            // materialContainer.x = materialItem.positionX;
+            // materialContainer.y = materialItem.positionY;
+            materialContainer.x = 0;
+            materialContainer.y = 0;
             let materialContainerDOT = {
                 dotsFirst: [{
                     x: 0,

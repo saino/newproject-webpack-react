@@ -163,6 +163,17 @@ class EditArea extends Component{
         return (value) => {
             if (value == undefined || isNaN(value)) { return; }
             const currentMaterial = this.getcurrentmaterial();
+            if (prop === "positionX"){
+                for(let i=0; i<4; i++){
+                    currentMaterial.control[i].x += value - currentMaterial[prop];
+                }
+            }
+            if (prop === "positionY"){
+                for(let i=0; i<4; i++){
+                    currentMaterial.control[i].y += value - currentMaterial[prop];
+                }
+            }
+
             currentMaterial[prop] = value;
             this.props.changeWorkMaterial(currentMaterial);
         }

@@ -150,10 +150,10 @@ class VideoMaterial extends Component {
                 width: 100,
                 height: 100,
                 control: [
-                    { x: "", y: "" },
-                    { x: "", y: "" },
-                    { x: "", y: "" },
-                    { x: "", y: "" },
+                    { x: 0, y: 0 },
+                    { x: this.props.model.properties.width, y: 0 },
+                    { x: this.props.model.properties.width, y: this.props.model.properties.height },
+                    { x: 0, y: this.props.model.properties.height },
                 ],
                 timeEnd: {
                     hour: "",
