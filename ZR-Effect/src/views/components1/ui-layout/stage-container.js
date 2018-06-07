@@ -73,6 +73,10 @@ class StageContainer extends Component {
             }
             evt[target].x = 0;
             evt[target].y = 0;
+            model.height = 100;
+            model.width = 100;
+            const {control} = model;
+            model.scaleReferenceControl = JSON.parse(JSON.stringify(control));
             this.props.changeWorkMaterial(model);
         }
     }
@@ -92,6 +96,10 @@ class StageContainer extends Component {
         evt.preventDefault();
 
         materialmodel.control = this.materialsContainerDOT[materialContainerIndex].dots;
+        materialmodel.height = 100;
+        materialmodel.width = 100;
+        const { control } = materialmodel;
+        materialmodel.scaleReferenceControl = JSON.parse(JSON.stringify(control));
         this.props.changeWorkMaterial(materialmodel);
 
     }

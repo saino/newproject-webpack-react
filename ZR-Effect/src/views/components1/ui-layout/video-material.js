@@ -155,6 +155,12 @@ class VideoMaterial extends Component {
                     { x: this.props.model.properties.width, y: this.props.model.properties.height },
                     { x: 0, y: this.props.model.properties.height },
                 ],
+                scaleReferenceControl:[
+                    { x: 0, y: 0 },
+                    { x: this.props.model.properties.width, y: 0 },
+                    { x: this.props.model.properties.width, y: this.props.model.properties.height },
+                    { x: 0, y: this.props.model.properties.height },
+                ],
                 timeEnd: {
                     hour: "",
                     minute: "",

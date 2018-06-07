@@ -163,20 +163,58 @@ class EditArea extends Component{
         return (value) => {
             if (value == undefined || isNaN(value)) { return; }
             const currentMaterial = this.getcurrentmaterial();
-            if (prop === "positionX"){
-                for(let i=0; i<4; i++){
-                    currentMaterial.control[i].x += value - currentMaterial[prop];
-                }
+            switch (prop) {
+                case "positionX":
+                    for (let i = 0; i < 4; i++) {
+                        currentMaterial.control[i].x += value - currentMaterial[prop];
+                    }
+                    break;
+                case "positionY":
+                    for (let i = 0; i < 4; i++) {
+                        currentMaterial.control[i].y += value - currentMaterial[prop];
+                    }
+                    break;
+                case "width":
+                    let symmetryAxisX = (this.getMax(currentMaterial.scaleReferenceControl, "x") + this.getMin(currentMaterial.scaleReferenceControl, "x")) / 2;
+                    let scaleValueX = value / 100;
+                    for(let i=0; i<4; i++){
+                        currentMaterial.control[i].x = symmetryAxisX - (symmetryAxisX - currentMaterial.scaleReferenceControl[i].x) * scaleValueX;
+                    }
+                    break;
+                case "height":
+                    let symmetryAxisY = (this.getMax(currentMaterial.scaleReferenceControl, "y") + this.getMin(currentMaterial.scaleReferenceControl, "y")) / 2;
+                    let scaleValueY = value / 100;
+                    for (let i = 0; i < 4; i++) {
+                        currentMaterial.control[i].y = symmetryAxisY - (symmetryAxisY - currentMaterial.scaleReferenceControl[i].y) * scaleValueY;
+                    }
+                    break;
+                default:
+                    break;
             }
-            if (prop === "positionY"){
-                for(let i=0; i<4; i++){
-                    currentMaterial.control[i].y += value - currentMaterial[prop];
-                }
-            }
+
+
 
             currentMaterial[prop] = value;
             this.props.changeWorkMaterial(currentMaterial);
         }
+    }
+    getMax(point, prop){
+        let maxValue = point[0][prop];
+        for(let i=0; i<point.length; i++){
+            if (point[i][prop] > maxValue){
+                maxValue = point[i][prop];
+            }
+        }
+        return maxValue;
+    }
+    getMin(point, prop){
+        let minValue = point[0][prop];
+        for(let i=0; i < point.length; i++){
+            if(point[i][prop] < minValue){
+                minValue = point[i][prop];
+            }
+        }
+        return minValue;
     }
 }
 
