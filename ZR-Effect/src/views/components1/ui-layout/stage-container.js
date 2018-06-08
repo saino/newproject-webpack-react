@@ -325,6 +325,13 @@ class StageContainer extends Component {
         this.stage.removeAllChildren();
         this.stage.addChild(this.videoContainer);
         
+        // console.log(this.videoImg, this.videoContainer, "kkkkkkkkkkkkkkkkkkkgggggggggggggggggg");
+        console.log(currentVideoDate,this.props.work);
+        let scaleX = this.props.work.config.properties.width / currentVideoDate.properties.width;
+        let scaleY = this.props.work.config.properties.height / currentVideoDate.properties.height;
+        let scaleValue = scaleX > scaleY ? scaleX : scaleY;
+        this.videoContainer.scaleX = scaleValue;
+        this.videoContainer.scaleY = scaleValue;
 
         if (this.props.work.config.properties.videoPlay) {
             // currentVideo.currentTime = this.state.currentVideoDOMTime;
@@ -342,9 +349,9 @@ class StageContainer extends Component {
         });
         this.stage = new createjs.Stage("mycanvas");
         this.videoContainer = new createjs.Container();
-        this.videoContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", "video"));
-        this.videoContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, "currentTarget", "video"));
-        this.videoContainer.addEventListener("pressup", this.dragMouseUp.bind(null, "currentTarget", "video"));
+        // this.videoContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", "video"));
+        // this.videoContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, "currentTarget", "video"));
+        // this.videoContainer.addEventListener("pressup", this.dragMouseUp.bind(null, "currentTarget", "video"));
 
         createjs.Ticker.setFPS(10);
         createjs.Ticker.addEventListener("tick", ()=>{
