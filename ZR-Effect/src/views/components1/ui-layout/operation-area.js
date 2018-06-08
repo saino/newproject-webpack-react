@@ -198,7 +198,6 @@ class OperationArea extends Component {
     }
 
     renderPubProgerss = () => {
-        // console.log("ddddddddddddd", this.state.progress);
         return <div className="alert-view-container">
             <div className="alert-view-title">发布进度<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
             <div className="alert-view-content">
@@ -378,6 +377,7 @@ class OperationArea extends Component {
         AlertView.removeDom();
     }
     onPubClick = () => { 
+        this.onSaveClick();
         AlertView.render(this.renderAlert());
     }
     onMaterialLibClick = () => {
