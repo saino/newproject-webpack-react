@@ -45,8 +45,8 @@ class SpecialEffec extends Component {
                 videos: [],
                 materials: [],
                 properties: {
-                    height: "400",
-                    width: "800",
+                    height: "720",
+                    width: "1280",
                     scale: 1,
                     videoPlay: false,
                     duration: 0,
@@ -58,7 +58,7 @@ class SpecialEffec extends Component {
             }
         });
         // this.props.loadWork({
-        //     id: "269"
+        //     id: "386"
         // });
     }
 

@@ -73,7 +73,7 @@ class AddMaterial extends Component {
                     ${Math.round(properties.filesize / 1024)}K 
                     ${this.showTime()}
                 `}</div>
-                <audio ref="audio" style={{ display: "none" }} src={`${config.proxyTarget.host}:${config.proxyTarget.port}${model.path}`} controls/>
+                <audio ref="audio" style={{ display: "none" }} src={`${config.fileUpload.host}:${config.fileUpload.port}${model.path}`} controls/>
             </div>
             <div className={useClass}>
                 <div className="use-item" onClick={this.onUseClick}>使用</div>

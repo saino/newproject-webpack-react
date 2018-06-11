@@ -14,10 +14,10 @@ class PreView extends Component {
         if(model.type === "video"){
             return <video className="pre-view" 
                 controls
-                src={`${config.proxyTarget.host}:${config.proxyTarget.port}${model.path}`}/>
+                src={`${config.fileUpload.host}:${config.fileUpload.port}${model.path}`}/>
         }
         if(model.type === "image"){
-            return <img className="pre-view" src={`${config.proxyTarget.host}:${config.proxyTarget.port}${model.path}`}/>
+            return <img className="pre-view" src={`${config.fileUpload.host}:${config.fileUpload.port}${model.path}`}/>
         }
     }
 }

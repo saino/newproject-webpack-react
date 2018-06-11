@@ -31,7 +31,7 @@ class StageContainer extends Component {
         this.materialsContainerDOT = [];
         this.disX = 0;
         this.disY = 0;
-        this.colNum = 3;
+        this.colNum = 1;
     }
 
     // shouldComponentUpdate(nextProp, nextState){
@@ -53,18 +53,8 @@ class StageContainer extends Component {
     dragMouseMove = (target, model, evt) => {
         evt.stopPropagation();
         evt.preventDefault();
-        // if(target<4 && target>-1){
-        //     evt.target.x = evt.stageX - this.disX;
-        //     evt.target.y = evt.stageY - this.disY;
-        //     // console.log(model, evt, "ggggggggggggggg");
-        //     model.dots[target].x = evt.target.x + model.dotscopy[target].x;
-        //     model.dots[target].y = evt.target.y + model.dotscopy[target].y;
-        //     this.renderTransformContainer();
-        //     return;
-        // }
         evt[target].x = evt.stageX - this.disX;
         evt[target].y = evt.stageY - this.disY;
-        
     }
     dragMouseUp = (target, model, evt) => {
         evt.stopPropagation();
@@ -75,11 +65,20 @@ class StageContainer extends Component {
             model.positionX = evt[target].x;
             this.props.changWorkVideo(model);
         }else{
-            model.positionX = evt[target].x;
-            model.positionY = evt[target].y;
+            model.positionX += evt[target].x;
+            model.positionY += evt[target].y;
+            for(let i=0; i<4; i++){
+                model.control[i].x += evt[target].x;
+                model.control[i].y += evt[target].y;
+            }
+            evt[target].x = 0;
+            evt[target].y = 0;
+            model.height = 100;
+            model.width = 100;
+            const {control} = model;
+            model.scaleReferenceControl = JSON.parse(JSON.stringify(control));
             this.props.changeWorkMaterial(model);
         }
-        // console.log()
     }
 
     dragMouseControlMove = (controlNum, materialContainerIndex, evt) => {
@@ -87,7 +86,6 @@ class StageContainer extends Component {
         evt.preventDefault();
         evt.target.x = evt.stageX - this.disX;
         evt.target.y = evt.stageY - this.disY;
-        // console.log(model, evt, "ggggggggggggggg");
         this.materialsContainerDOT[materialContainerIndex].dots[controlNum].x = evt.target.x + this.materialsContainerDOT[materialContainerIndex].dotscopy[controlNum].x;
         this.materialsContainerDOT[materialContainerIndex].dots[controlNum].y = evt.target.y + this.materialsContainerDOT[materialContainerIndex].dotscopy[controlNum].y;
         this.renderTransformContainer(materialContainerIndex);
@@ -98,6 +96,10 @@ class StageContainer extends Component {
         evt.preventDefault();
 
         materialmodel.control = this.materialsContainerDOT[materialContainerIndex].dots;
+        materialmodel.height = 100;
+        materialmodel.width = 100;
+        const { control } = materialmodel;
+        materialmodel.scaleReferenceControl = JSON.parse(JSON.stringify(control));
         this.props.changeWorkMaterial(materialmodel);
 
     }
@@ -171,7 +173,7 @@ class StageContainer extends Component {
                 }
             }
             videoItemDOM.setAttribute("crossOrigin", "use-credentials");
-            videoItemDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${videoItem.path}`;
+            videoItemDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${videoItem.path}`;
             return videoItemDOM;
         });
     }
@@ -230,9 +232,10 @@ class StageContainer extends Component {
             this.transformMaterialsContainer[index] = transformMaterialsContainer;
             materialContainer.addChild(this.transformMaterialsContainer[index]);
 
-            materialContainer.x = materialItem.positionX;
-            materialContainer.y = materialItem.positionY;
-
+            // materialContainer.x = materialItem.positionX;
+            // materialContainer.y = materialItem.positionY;
+            materialContainer.x = 0;
+            materialContainer.y = 0;
             let materialContainerDOT = {
                 dotsFirst: [{
                     x: 0,
@@ -280,13 +283,13 @@ class StageContainer extends Component {
             if(materialItem.type === "image"){
                 let imgDOM = document.createElement("IMG");
                 imgDOM.setAttribute("crossOrigin", "use-credentials");
-                imgDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${materialItem.path}`;
+                imgDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
                 const materialImg = new createjs.Bitmap(imgDOM);
                 this.materialImg[index] = materialImg;
             }else{
                 let videoDOM = document.createElement("VIDEO");
                 videoDOM.setAttribute("crossOrigin", "use-credentials");
-                videoDOM.src = `${config.proxyTarget.host}:${config.proxyTarget.port}${materialItem.path}`;
+                videoDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
                 const materialImg = new createjs.Bitmap(videoDOM);
                 this.materialImg[index] = materialImg;
                 // materialContainer.addChild(materialImg);
@@ -322,6 +325,13 @@ class StageContainer extends Component {
         this.stage.removeAllChildren();
         this.stage.addChild(this.videoContainer);
         
+        // console.log(this.videoImg, this.videoContainer, "kkkkkkkkkkkkkkkkkkkgggggggggggggggggg");
+        console.log(currentVideoDate,this.props.work);
+        let scaleX = this.props.work.config.properties.width / currentVideoDate.properties.width;
+        let scaleY = this.props.work.config.properties.height / currentVideoDate.properties.height;
+        let scaleValue = scaleX > scaleY ? scaleX : scaleY;
+        this.videoContainer.scaleX = scaleValue;
+        this.videoContainer.scaleY = scaleValue;
 
         if (this.props.work.config.properties.videoPlay) {
             // currentVideo.currentTime = this.state.currentVideoDOMTime;
@@ -339,9 +349,9 @@ class StageContainer extends Component {
         });
         this.stage = new createjs.Stage("mycanvas");
         this.videoContainer = new createjs.Container();
-        this.videoContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", "video"));
-        this.videoContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, "currentTarget", "video"));
-        this.videoContainer.addEventListener("pressup", this.dragMouseUp.bind(null, "currentTarget", "video"));
+        // this.videoContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", "video"));
+        // this.videoContainer.addEventListener("pressmove", this.dragMouseMove.bind(null, "currentTarget", "video"));
+        // this.videoContainer.addEventListener("pressup", this.dragMouseUp.bind(null, "currentTarget", "video"));
 
         createjs.Ticker.setFPS(10);
         createjs.Ticker.addEventListener("tick", ()=>{

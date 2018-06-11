@@ -50,7 +50,7 @@ class VideoMaterial extends Component {
         const useClass = "video-use " + (this.state.showUse ? "show" : "hide");
         return <div className="video-item" onMouseOver={this.onShowUse} onMouseOut={this.onHideUse}>
             <div className="video-thumb">
-                <img src={`${config.proxyTarget.host}:${config.proxyTarget.port}${config.proxyTarget.path}/materials/${model.id}/thumb.jpg`}/>
+                <img src={`${config.fileUpload.host}:${config.fileUpload.port}${config.proxyTarget.path}/materials/${model.id}/thumb.jpg`}/>
             </div>
             <div className="name-edit" onMouseOver={this.onNameMouseOver}>
                 <div className="video-name">{model.name}</div>
@@ -150,10 +150,16 @@ class VideoMaterial extends Component {
                 width: 100,
                 height: 100,
                 control: [
-                    { x: "", y: "" },
-                    { x: "", y: "" },
-                    { x: "", y: "" },
-                    { x: "", y: "" },
+                    { x: 0, y: 0 },
+                    { x: this.props.model.properties.width, y: 0 },
+                    { x: this.props.model.properties.width, y: this.props.model.properties.height },
+                    { x: 0, y: this.props.model.properties.height },
+                ],
+                scaleReferenceControl:[
+                    { x: 0, y: 0 },
+                    { x: this.props.model.properties.width, y: 0 },
+                    { x: this.props.model.properties.width, y: this.props.model.properties.height },
+                    { x: 0, y: this.props.model.properties.height },
                 ],
                 timeEnd: {
                     hour: "",
