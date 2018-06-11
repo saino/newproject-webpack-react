@@ -82,7 +82,7 @@ class Matting extends Component {
       const { configureMove } = this.props;
       const materialId = this.getMaterialId();
       const [ x, y ] = this.moveEl.style.transform.replace(/[^0-9\-,]/g,'').split(',');
-      
+
       configureMove(materialId, { x: parseFloat(x), y: parseFloat(y) });
     };
 
@@ -349,7 +349,7 @@ class Matting extends Component {
     const materialId = this.getMaterialId();
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] }>
-        <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
+        <div className={ rotoStyle[ 'canvas-inner' ] }>
           { show
             ? (<MaterialList onSelectedRotoMaterial={ this.selectedRotoMaterialHandle } />)
             : !rfa.length
@@ -370,13 +370,18 @@ class Matting extends Component {
                       width: this.getMaterialProps()[ 'width' ],
                       position: 'absolute',
                       background: 'transparent' }}>
-                      <RotoOperationBox disabled={ this.isReadyMove() }>
-                        <MaterialMappingFrameImg
-                          frame={ frame }
-                          materialId={ materialId }
-                          isPlay={ this.getIsPlay() }
-                          onClearPlayTimer={ this.playing.unsetTimer } />
-                      </RotoOperationBox>
+                      <div style={{ transform: `scale(${ zoomValue })`, userSelect: 'none' }}>
+                        <RotoOperationBox
+                          width={ this.getMaterialProps()[ 'width' ] }
+                          height={ this.getMaterialProps()[ 'height' ] }
+                          disabled={ this.isReadyMove() }>
+                          <MaterialMappingFrameImg
+                            frame={ frame }
+                            materialId={ materialId }
+                            isPlay={ this.getIsPlay() }
+                            onClearPlayTimer={ this.playing.unsetTimer } />
+                        </RotoOperationBox>
+                      </div>
                     </div>
                   </Draggable>
                 )

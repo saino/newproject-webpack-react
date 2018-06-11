@@ -122,7 +122,7 @@ class RotoOperationBox extends Component {
       let pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
       const focusPaths = [];
-      const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
+      const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
 
       let path, point, entryIds, pathId, pointId, realPointId, type, focusEl, selectedFocusPathEl, pointSelected, pointSelectedId;
@@ -367,7 +367,7 @@ class RotoOperationBox extends Component {
       const moveX = this.getMoveX();
       const moveY = this.getMoveY();
       const focusPaths = [];
-      const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
+      const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
       let entryIds, pathId, pointId, path, point, p;
 
@@ -455,7 +455,7 @@ class RotoOperationBox extends Component {
       const pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
       const focusPaths = [];
-      const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
+      const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
 
       if (!disabled) {
@@ -467,12 +467,12 @@ class RotoOperationBox extends Component {
           pathSelected.confirmFloating();
           pathSelected.floatingPoint = new Point(offX, offY);
           updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-
+          console.log(offX, offY, 'dddddd');
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
+
         // 结束拖拽
         updateObj[ 'dragging' ] = false;
-
         configure(materialId, materialFrame, updateObj);
       }
       else if (dragging && rotoToolType === 5) {
@@ -637,14 +637,15 @@ class RotoOperationBox extends Component {
     e.stopPropagation();
   }
 
-  getOffPosition(clientX, clientY) {
+  getOffPosition(e) {
     const el = findDOMNode(this);
-    const { x, y } = el.getBoundingClientRect();
+    const eventObj = e.nativeEvent;
 
-    return { offX: clientX - x, offY: clientY - y };
+    return { offX: eventObj.offsetX, offY: eventObj.offsetY };
   }
 
   render() {
+    const { width, height } = this.props;
     const pathData = this.getPathData();
     const rotoMode = this.getRotoMode();
     const rotoDrawMode = this.getRotoDrawMode();
@@ -654,7 +655,7 @@ class RotoOperationBox extends Component {
 
     return (
       <div
-        className={ style[ 'wrapper' ] }
+        style={{ width, height }}
         onMouseDown={ this.mouseDownHandle }
         onMouseMove={ this.mouseMoveHandle }
         onMouseUp={ this.mouseUpHandle }>
