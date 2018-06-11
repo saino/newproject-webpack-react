@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import { bindActionCreators } from 'redux';
 /* 路由跳转前验证 -- start */
 import { Redirect } from 'react-router-dom';
@@ -77,11 +78,12 @@ class Matting extends Component {
     this.isReadyMove = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'roto_tool_type' ] === 1);
 
     // 移动画布
-    this.canvasStopHandle = ({ layerX, layerY, offsetX, offsetY }) => {
+    this.canvasStopHandle = (e) => {
       const { configureMove } = this.props;
       const materialId = this.getMaterialId();
-
-      configureMove(materialId, { x: layerX - offsetX, y: layerY - offsetY });
+      const [ x, y ] = this.moveEl.style.transform.replace(/[^0-9\-,]/g,'').split(',');
+      
+      configureMove(materialId, { x: parseFloat(x), y: parseFloat(y) });
     };
 
     // 延迟10毫秒跳转到显示帧图片组件
@@ -356,6 +358,7 @@ class Matting extends Component {
                 ? void 0
                 : (
                   <Draggable
+                    ref={ el => this.moveEl = findDOMNode(el) }
                     position={{ x: moveParam.x, y: moveParam.y }}
                     onStop={ this.canvasStopHandle }>
                     <div style={{
@@ -461,7 +464,7 @@ class Matting extends Component {
                 </div>
                 <div className={ rotoStyle[ 'middle' ] }>
                   <div className={ rotoStyle[ 'middle-inner' ] }>
-                    <div ref={ el => this.middleEl = el } className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
+                    <div className={ `${ rotoStyle[ 'canvas' ] } ${ !show && rfa.length && isSelected ? rotoStyle[ 'mapping' ] : '' }` }>
 
                       {/* 画布、素材列表、上传 */}
                       { this.getMiddleComponent(rfa, show, zoomValue, isSelected) }
