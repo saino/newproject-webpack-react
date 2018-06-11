@@ -77,14 +77,11 @@ class Matting extends Component {
     this.isReadyMove = this.registerGetRotoActeractiveInfo(rotoMaterial => rotoMaterial[ 'roto_tool_type' ] === 1);
 
     // 移动画布
-    this.canvasMoveStopHandle = ({ clientX, clientY, offsetX, offsetY }) => {
+    this.canvasStopHandle = ({ layerX, layerY, offsetX, offsetY }) => {
       const { configureMove } = this.props;
       const materialId = this.getMaterialId();
-      const { x, y } = this.middleEl.getBoundingClientRect();
-      const offX = clientX - offsetX - x;
-      const offY = clientY - offsetY - y;
 
-      configureMove(materialId, { x: offX, y: offY });
+      configureMove(materialId, { x: layerX - offsetX, y: layerY - offsetY });
     };
 
     // 延迟10毫秒跳转到显示帧图片组件
@@ -348,7 +345,6 @@ class Matting extends Component {
     const moveParam = this.getMove() || {};
     const frame = this.getSelectedFrame();
     const materialId = this.getMaterialId();
-
     const middleCom = (
       <div className={ rotoStyle[ 'canvas-inner-w' ] }>
         <div className={ rotoStyle[ 'canvas-inner' ] } style={{ transform: `scale(${ zoomValue })` }}>
@@ -361,9 +357,8 @@ class Matting extends Component {
                 : (
                   <Draggable
                     position={{ x: moveParam.x, y: moveParam.y }}
-                    onStop={ this.canvasMoveStopHandle }>
+                    onStop={ this.canvasStopHandle }>
                     <div style={{
-                      transform: `translate(${ moveParam.x }px, ${ moveParam.y }px`,
                       left: '50%',
                       top: '50%',
                       marginLeft: -this.getMaterialProps()[ 'width' ] / 2,
