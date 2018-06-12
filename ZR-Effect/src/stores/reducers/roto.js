@@ -4,6 +4,7 @@
  * state.roto.item { Object }
  *  material_id { Number } 素材id
  *  frame { Number } 帧
+ *  type { String } 本地扣还是ai扣
  *  mode { Number } 操作模式 0-钢笔工具(画线) | 1-编辑工具 | 2-选择工具
  *  draw_mode { Number } 画线模式 0-未开始 | 1-未闭合 | 2-已闭合
  *  path_selected { Object } 选中的path对象
@@ -15,7 +16,9 @@
  *  move_y { Number } 移动y坐标
  */
 
-import { add, update, remove, removeMore, findItem } from '../../utils/array-handle';
+import { add, update, remove, removeMore, findItem, finds } from '../../utils/array-handle';
+import Point from '../../libs/Point';
+import Path from '../../libs/Path';
 import PathList from '../../libs/PathList';
 
 const defState = [];
@@ -27,6 +30,7 @@ export default function roto (state = defState, action) {
         'material_id': action.materialId,
         'frame': action.frame,
         'mode': 0,
+        'type': 'manual',
         'draw_mode': 0,
         'path_selected': null,
         'is_visible_mask': true,
@@ -38,6 +42,30 @@ export default function roto (state = defState, action) {
       };
 
       return add(state, initRoto);
+
+    case 'GET_AI_ROTOS':
+      return action.aiRotos.map(aiRoto => {
+        const path = new Path;
+        const pathList = new PathList;
+        path.closed = (!aiRoto.svg || !aiRoto.svg.length) ? false : aiRoto.svg[ 0 ].closed;
+        path.points = (!aiRoto.svg || !aiRoto.svg.length) ? [] : aiRoto.svg[ 0 ].points.map(point => new Point(point.x, point.y, point.cx1, point.cy1, point.cx2, point.cy2));
+        pathList.list.push(path);
+
+        return {
+          'material_id': action.materialId,
+          'frame': aiRoto.frame,
+          'mode': 2,
+          'type': aiRoto.type,
+          'draw_mode': 0,
+          'path_selected': false,
+          'is_visible_mask': true,
+          'dragging': false,
+          'path_data': pathList,
+          'focus_paths': [],
+          'move_x': null,
+          'move_y': null
+        };
+      });
 
     case 'REMOVE_ROTOS':
       return removeMore(state, 'material_id', action.materialId);

@@ -140,6 +140,7 @@ class RotoOperationBox extends Component {
           updateObj[ 'path_selected' ].floatingPoint = new Point(offX, offY);
           // 画线模式为未闭合
           updateObj[ 'draw_mode' ] = 1;
+          updateObj[ 'type' ] = 'manual';
         }
         // 如果当前画线模式是未闭合，并且点击到初始
         else if (rotoDrawMode === 1 && pathSelected.firstPoint().isInside(offX, offY)) {
@@ -154,6 +155,7 @@ class RotoOperationBox extends Component {
 
           updateObj[ 'draw_mode' ] = 0;
           updateObj[ 'path_selected' ] = false;
+          updateObj[ 'type' ] = 'manual';
 
           //updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
           if (pathSelected) {
@@ -216,6 +218,8 @@ class RotoOperationBox extends Component {
           }
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
+          updateObj[ 'type' ] = 'manual';
+          addRotoedFrame(materialId, materialFrame);
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
         // 如果选中了path
@@ -237,6 +241,8 @@ class RotoOperationBox extends Component {
             path.isSelected = true;
 
             updateObj[ 'path_selected' ] = this.initPathSelected(path);
+            updateObj[ 'type' ] = 'manual';
+            addRotoedFrame(materialId, materialFrame);
             this.configurePathDataList(updateObj[ 'path_selected' ]);
             this.clickTimer.turnOn(path);
           }
@@ -260,8 +266,10 @@ class RotoOperationBox extends Component {
         updateObj[ 'dragging' ] = true;
         updateObj[ 'move_x' ] = offX;
         updateObj[ 'move_y' ] = offY;
+        updateObj[ 'type' ] = 'manual';
 
         this.configurePathDataList(updateObj[ 'path_selected' ]);
+        addRotoedFrame(materialId, materialFrame);
         configure(materialId, materialFrame, updateObj);
       }
       else if (rotoMode === 1 && rotoToolType === 7) {
@@ -299,7 +307,8 @@ class RotoOperationBox extends Component {
         					point.setControl(Point.CONTROL2, [params[3], params[4]]);
 
                   updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
-
+                  updateObj[ 'type' ] = 'manual';
+                  addRotoedFrame(materialId, materialFrame);
                   configure(materialId, materialFrame, updateObj);
                 }
               }
@@ -318,6 +327,8 @@ class RotoOperationBox extends Component {
             path.isSelected = true;
 
             updateObj[ 'path_selected' ] = this.initPathSelected(path);
+            updateObj[ 'type' ] = 'manual';
+            addRotoedFrame(materialId, materialFrame);
             this.configurePathDataList(updateObj[ 'path_selected' ]);
           }
         }

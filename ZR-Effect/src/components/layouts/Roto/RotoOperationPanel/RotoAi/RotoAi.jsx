@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import config from '../../../../../config';
 import { Progress, Button } from 'antd';
 import { aiRoto, saveRoto, updateRotoIsGeRoto, updateRotoIsAiRoto } from '../../../../../stores/action-creators/roto-frontend-acteractive-creator';
-import { getAiRotos } from '../../../../../stores/action-creators/roto-ai-creator';
+import { getAiRotos } from '../../../../../stores/action-creators/roto-creator';
 import { post, error } from '../../../../../api/fetch';
 import defferPerform from '../../../../../utils/deffer-perform';
 import { finds, findItem } from '../../../../../utils/array-handle';
@@ -38,7 +38,7 @@ class RotoAi extends Component {
 
       return finds(
         rotoList,
-        roto => roto[ 'material_id' ] === materialId
+        roto => roto[ 'material_id' ] === materialId && roto.type === 'manual'
       );
     });
 
@@ -85,11 +85,9 @@ class RotoAi extends Component {
       const materialId = this.getMaterialId();
       const aiId = this.getAiId();
 
-      if (aiId == null) {
-        this.saveRoto();
-      }
-
       del(`geRotoPercent${ materialId }`);
+      
+      this.saveRoto();
       this.deferAiRoto(materialId);
     }
   }
@@ -100,7 +98,7 @@ class RotoAi extends Component {
     const frames = this.getRotoFrames().map(frame => {
       return {
         frame: frame.frame,
-        type: 'manual',
+        type: frame.type,
         svg: frame[ 'path_data' ].list.map(path => ({
           points: path.points.map(point => ({
             x: point.x,
