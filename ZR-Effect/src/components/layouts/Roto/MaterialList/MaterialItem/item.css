@@ -34,7 +34,9 @@
 }
 
 .wrapper .gc-show {
-  flex: 1;
+  height: -webkit-calc(100% - 30px);
+  height: -moz-calc(100% - 30px);
+  height: calc(100% - 30px);
 }
 
 .wrapper .gc-show > div {
@@ -58,9 +60,8 @@
 }
 
 .wrapper .gc-show img {
-  object-fit: cover;
+  object-fit: contain;
   width: 100%;
-  height: 100%;
 }
 
 .wrapper .detail-show {
