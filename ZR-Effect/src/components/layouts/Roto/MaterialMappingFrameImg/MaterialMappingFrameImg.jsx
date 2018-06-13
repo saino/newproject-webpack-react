@@ -27,17 +27,12 @@ class MaterialMappingFrameImg extends Component {
     return material;
   };
 
-  getMsFrame(frameLength, duration) {
-    const frameRate = frameLength / duration;
-
-    return frameRate;
-  }
 
   setCurrTime() {
     const { frame } = this.props;
-    const { properties: { duration, length } } = this.getMaterial();
-    const totalMs = frame / this.getMsFrame(length, duration);
-    
+    const { properties: { fps } } = this.getMaterial();
+    const totalMs = (frame + 0.35) / fps;
+
     this.videoEl.currentTime = totalMs;
   }
 
