@@ -47,11 +47,6 @@ class SVG extends Component {
       roto => roto[ 'path_data' ].list
     );
 
-    // 获取'ai path'集合
-    this.getAiPaths = this.registerGetAiRotoInfo(
-      rotoAi => rotoAi.svg
-    );
-
     // 获取扣像选中的'is_visible_mask'
     this.getIsVisibleMask = this.registerGetRotoInfo(
       roto => roto[ 'is_visible_mask' ]
@@ -111,38 +106,38 @@ class SVG extends Component {
     let className = '';
     let focusPath, draggingPoint, pathEls, aiPaths, pathObj, pointObj, svgPathEl;
 
-    if (!paths.length) {
-      !(aiPaths = this.getAiPaths()) && (aiPaths = []);
+    //if (!paths.length) {
+      //!(aiPaths = this.getAiPaths()) && (aiPaths = []);
 
-      pathEls = aiPaths.map(path => {
-        pathObj = new Path();
-        pathObj.closed = path.closed;
-        pathObj.points = path.points.map(pt => {
-          pointObj = new Point(pt.x, pt.y, pt.cx1, pt.cy1, pt.cx2, pt.cy2);
-
-          return pointObj;
-        });
-        svgPathEl = this.paper.path(pathObj.svgStr());
-
-        pathObj.points.forEach(pt => pointEls.push(this.getPointEl(pt, pathObj.id)));
-
-        return (
-          <path
-            key={ pathObj.id }
-            id={ pathObj.id }
-            d={ svgPathEl.node.getAttribute('d') } />
-        );
-      });
-
-      return {
-        pointEls,
-        controlPointEls,
-        pathEls,
-        maskPathEls,
-        focusPathEls,
-        controlPathEls
-      };
-    }
+      // pathEls = aiPaths.map(path => {
+      //   pathObj = new Path();
+      //   pathObj.closed = path.closed;
+      //   pathObj.points = path.points.map(pt => {
+      //     pointObj = new Point(pt.x, pt.y, pt.cx1, pt.cy1, pt.cx2, pt.cy2);
+      //
+      //     return pointObj;
+      //   });
+      //   svgPathEl = this.paper.path(pathObj.svgStr());
+      //
+      //   pathObj.points.forEach(pt => pointEls.push(this.getPointEl(pt, pathObj.id)));
+      //
+      //   return (
+      //     <path
+      //       key={ pathObj.id }
+      //       id={ pathObj.id }
+      //       d={ svgPathEl.node.getAttribute('d') } />
+      //   );
+      // });
+      //
+      // return {
+      //   pointEls,
+      //   controlPointEls,
+      //   pathEls,
+      //   maskPathEls,
+      //   focusPathEls,
+      //   controlPathEls
+      // };
+    //}
 
     pathEls = paths.map(path => {
       const isCurrPath = pathSelected.id === path.id;

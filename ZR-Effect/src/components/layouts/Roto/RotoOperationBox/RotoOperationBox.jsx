@@ -56,16 +56,16 @@ class RotoOperationBox extends Component {
             // 删除完最后1个点，则删除整条'path'
             if (pathSelected.points.length <= 1) {
               pathData.delPath(pathSelected);
-              updateObj[ 'pathSelected' ] = false;
+              updateObj[ 'path_selected' ] = false;
             } else {
-              updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+              updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
             }
 
           }
           // 选中了'path'
           else {
             pathData.delPath(pathSelected);
-            updateObj[ 'pathSelected' ] = false;
+            updateObj[ 'path_selected' ] = false;
           }
 
           configure(materialId, materialFrame, updateObj);
@@ -93,7 +93,7 @@ class RotoOperationBox extends Component {
       					point.setControl(Point.CONTROL1, [params[1], params[2]]);
       					point.setControl(Point.CONTROL2, [params[3], params[4]]);
 
-                updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+                updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
 
                 configure(materialId, materialFrame, updateObj);
               }
@@ -122,7 +122,7 @@ class RotoOperationBox extends Component {
       let pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
       const focusPaths = [];
-      const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
+      const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
 
       let path, point, entryIds, pathId, pointId, realPointId, type, focusEl, selectedFocusPathEl, pointSelected, pointSelectedId;
@@ -140,6 +140,7 @@ class RotoOperationBox extends Component {
           updateObj[ 'path_selected' ].floatingPoint = new Point(offX, offY);
           // 画线模式为未闭合
           updateObj[ 'draw_mode' ] = 1;
+          updateObj[ 'type' ] = 'manual';
         }
         // 如果当前画线模式是未闭合，并且点击到初始
         else if (rotoDrawMode === 1 && pathSelected.firstPoint().isInside(offX, offY)) {
@@ -154,6 +155,7 @@ class RotoOperationBox extends Component {
 
           updateObj[ 'draw_mode' ] = 0;
           updateObj[ 'path_selected' ] = false;
+          updateObj[ 'type' ] = 'manual';
 
           //updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
           if (pathSelected) {
@@ -216,6 +218,8 @@ class RotoOperationBox extends Component {
           }
 
           updateObj[ 'path_selected' ] = this.initPathSelected(path);
+          updateObj[ 'type' ] = 'manual';
+          addRotoedFrame(materialId, materialFrame);
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
         // 如果选中了path
@@ -237,6 +241,8 @@ class RotoOperationBox extends Component {
             path.isSelected = true;
 
             updateObj[ 'path_selected' ] = this.initPathSelected(path);
+            updateObj[ 'type' ] = 'manual';
+            addRotoedFrame(materialId, materialFrame);
             this.configurePathDataList(updateObj[ 'path_selected' ]);
             this.clickTimer.turnOn(path);
           }
@@ -260,8 +266,10 @@ class RotoOperationBox extends Component {
         updateObj[ 'dragging' ] = true;
         updateObj[ 'move_x' ] = offX;
         updateObj[ 'move_y' ] = offY;
+        updateObj[ 'type' ] = 'manual';
 
         this.configurePathDataList(updateObj[ 'path_selected' ]);
+        addRotoedFrame(materialId, materialFrame);
         configure(materialId, materialFrame, updateObj);
       }
       else if (rotoMode === 1 && rotoToolType === 7) {
@@ -298,8 +306,9 @@ class RotoOperationBox extends Component {
         					point.setControl(Point.CONTROL1, [params[1], params[2]]);
         					point.setControl(Point.CONTROL2, [params[3], params[4]]);
 
-                  updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
-
+                  updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
+                  updateObj[ 'type' ] = 'manual';
+                  addRotoedFrame(materialId, materialFrame);
                   configure(materialId, materialFrame, updateObj);
                 }
               }
@@ -318,6 +327,8 @@ class RotoOperationBox extends Component {
             path.isSelected = true;
 
             updateObj[ 'path_selected' ] = this.initPathSelected(path);
+            updateObj[ 'type' ] = 'manual';
+            addRotoedFrame(materialId, materialFrame);
             this.configurePathDataList(updateObj[ 'path_selected' ]);
           }
         }
@@ -367,7 +378,7 @@ class RotoOperationBox extends Component {
       const moveX = this.getMoveX();
       const moveY = this.getMoveY();
       const focusPaths = [];
-      const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
+      const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
       let entryIds, pathId, pointId, path, point, p;
 
@@ -455,7 +466,7 @@ class RotoOperationBox extends Component {
       const pathSelected = this.getRotoPathSelected();
       const dragging = this.getRotoDragging();
       const focusPaths = [];
-      const { offX, offY } = this.getOffPosition(e.clientX, e.clientY);
+      const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
 
       if (!disabled) {
@@ -467,12 +478,12 @@ class RotoOperationBox extends Component {
           pathSelected.confirmFloating();
           pathSelected.floatingPoint = new Point(offX, offY);
           updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-
+          console.log(offX, offY, 'dddddd');
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
+
         // 结束拖拽
         updateObj[ 'dragging' ] = false;
-
         configure(materialId, materialFrame, updateObj);
       }
       else if (dragging && rotoToolType === 5) {
@@ -637,14 +648,15 @@ class RotoOperationBox extends Component {
     e.stopPropagation();
   }
 
-  getOffPosition(clientX, clientY) {
+  getOffPosition(e) {
     const el = findDOMNode(this);
-    const { x, y } = el.getBoundingClientRect();
+    const eventObj = e.nativeEvent;
 
-    return { offX: clientX - x, offY: clientY - y };
+    return { offX: eventObj.offsetX, offY: eventObj.offsetY };
   }
 
   render() {
+    const { width, height } = this.props;
     const pathData = this.getPathData();
     const rotoMode = this.getRotoMode();
     const rotoDrawMode = this.getRotoDrawMode();
@@ -654,7 +666,7 @@ class RotoOperationBox extends Component {
 
     return (
       <div
-        className={ style[ 'wrapper' ] }
+        style={{ width, height }}
         onMouseDown={ this.mouseDownHandle }
         onMouseMove={ this.mouseMoveHandle }
         onMouseUp={ this.mouseUpHandle }>

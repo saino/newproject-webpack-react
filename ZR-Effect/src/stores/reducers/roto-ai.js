@@ -4,7 +4,7 @@ const defState = [];
 
 export default function rotoAi (state = defState, action) {
   switch (action.type) {
-    case 'GET_AI_ROTOS':
+    case 'GET_AI_ROTOSs':
       return finds(action.aiRotos, 'type', 'ai')
         .map(aiRoto => ({ ...aiRoto, 'material_id': action.materialId }));
 

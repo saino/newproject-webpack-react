@@ -29,7 +29,7 @@ export const getMaterialList = materialParams => {
         dispatch({
           type: 'GET_MATERIALS',
           materials: resp.result,
-          page: resp.currentPage,
+          page: resp.currentPage < 1 ? 1 : resp.currentPage,
           isLoaded: !resp.result.length
         });
       })
