@@ -29,3 +29,9 @@ export function del (key) {
     localStorage.removeItem(key);
   }
 }
+
+export function clear () {
+  if (localStorage) {
+    localStorage.clear();
+  }
+}

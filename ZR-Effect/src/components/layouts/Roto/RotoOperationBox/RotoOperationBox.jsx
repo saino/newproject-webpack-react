@@ -56,16 +56,16 @@ class RotoOperationBox extends Component {
             // 删除完最后1个点，则删除整条'path'
             if (pathSelected.points.length <= 1) {
               pathData.delPath(pathSelected);
-              updateObj[ 'pathSelected' ] = false;
+              updateObj[ 'path_selected' ] = false;
             } else {
-              updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+              updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
             }
 
           }
           // 选中了'path'
           else {
             pathData.delPath(pathSelected);
-            updateObj[ 'pathSelected' ] = false;
+            updateObj[ 'path_selected' ] = false;
           }
 
           configure(materialId, materialFrame, updateObj);
@@ -93,7 +93,7 @@ class RotoOperationBox extends Component {
       					point.setControl(Point.CONTROL1, [params[1], params[2]]);
       					point.setControl(Point.CONTROL2, [params[3], params[4]]);
 
-                updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+                updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
 
                 configure(materialId, materialFrame, updateObj);
               }
@@ -306,7 +306,7 @@ class RotoOperationBox extends Component {
         					point.setControl(Point.CONTROL1, [params[1], params[2]]);
         					point.setControl(Point.CONTROL2, [params[3], params[4]]);
 
-                  updateObj[ 'pathSelected' ] = this.initPathSelected(pathSelected);
+                  updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
                   updateObj[ 'type' ] = 'manual';
                   addRotoedFrame(materialId, materialFrame);
                   configure(materialId, materialFrame, updateObj);

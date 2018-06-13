@@ -38,7 +38,7 @@ class RotoAi extends Component {
 
       return finds(
         rotoList,
-        roto => roto[ 'material_id' ] === materialId && roto.type === 'manual'
+        roto => roto[ 'material_id' ] === materialId && roto.type === 'manual' && !!roto[ 'path_data' ].list.length
       );
     });
 
@@ -86,7 +86,7 @@ class RotoAi extends Component {
       const aiId = this.getAiId();
 
       del(`geRotoPercent${ materialId }`);
-      
+
       this.saveRoto();
       this.deferAiRoto(materialId);
     }
