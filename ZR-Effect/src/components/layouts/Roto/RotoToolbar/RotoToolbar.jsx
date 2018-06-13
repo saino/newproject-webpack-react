@@ -265,27 +265,27 @@ class RotoToolbar extends Component {
 
     // 保存抠像
     this.saveRotoHandle = () => {
-      const { saveRoto } = this.props;
-      const materialId = this.getMaterialId();
-      const rotoFrames = this.getRotoFrames();
-      const frames = rotoFrames.map(frame => (
-        {
-          frame: frame.frame,
-          type: 'manual',
-          svg: frame[ 'path_data' ].list.map(path => ({
-            points: path.points.map(point => ({
-              x: point.x,
-              y: point.y,
-              cx1: point.cx1,
-              cy1: point.cy1,
-              cx2: point.cx2,
-              cy2: point.cy2
-            }))
-          }))
-        }
-      ));
-
-      saveRoto(materialId, frames);
+      // const { saveRoto } = this.props;
+      // const materialId = this.getMaterialId();
+      // const rotoFrames = this.getRotoFrames();
+      // const frames = rotoFrames.map(frame => (
+      //   {
+      //     frame: frame.frame,
+      //     type: 'manual',
+      //     svg: frame[ 'path_data' ].list.map(path => ({
+      //       points: path.points.map(point => ({
+      //         x: point.x,
+      //         y: point.y,
+      //         cx1: point.cx1,
+      //         cy1: point.cy1,
+      //         cx2: point.cx2,
+      //         cy2: point.cy2
+      //       }))
+      //     }))
+      //   }
+      // ));
+      //
+      // saveRoto(materialId, frames);
     };
   }
 
