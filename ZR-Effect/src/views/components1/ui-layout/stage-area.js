@@ -7,7 +7,8 @@ class StageArea extends Component {
             {/* <img className="stage" src={aaa}/> */}
             <style>{`
                 .stage-area{
-                    height: 574px;
+                    // height: 574px;
+                    height: calc(100% - 126px);
                     width: calc(100% - 440px);
                     // background: #666;
                     background: #031016;

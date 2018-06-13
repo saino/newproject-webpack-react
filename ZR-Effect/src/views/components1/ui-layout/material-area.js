@@ -27,7 +27,8 @@ class MaterialArea extends Component {
             </div>
             <style>{`
                 .material-area{
-                    height: 574px;
+                    // height: 574px;
+                    height: calc(100% - 126px);
                     width: 160px;
                     background: #264246;
                     z-index: 1;

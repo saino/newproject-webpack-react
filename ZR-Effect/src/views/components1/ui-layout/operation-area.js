@@ -49,12 +49,13 @@ class OperationArea extends Component {
             <style>{`
                 .operation-area{
                     position: relative;
-                    height: 574px;
+                    // height: 574px;
                     width: 40px;
                     background: rgba(13,29,33,1);
                     color: #fff;
                     font-size: 12px;
                     z-index: 1;
+                    height: calc(100% - 126px);
                 }
                 .operation-btn1{
                     height: 40px;
@@ -117,7 +118,7 @@ class OperationArea extends Component {
             <div className="alert-view-title">视频发布为<div className="close-alert" onClick={this.onAlertCloseClick}><img src={DeleImg} /></div></div>
             <div className="alert-view-content">
                 <div className="video-PX">
-                    <select onChange={this.onVideoPXChange} defaultValue={this.props.work.config.properties.videoPX}>
+                    <select onChange={this.onVideoPXChange} defaultValue={this.props.work.config.properties.videoPX || "px3"}>
                         <option value="px1">800*400</option>
                         <option value="px2">960*540</option>
                         <option value="px3">1280*720</option>

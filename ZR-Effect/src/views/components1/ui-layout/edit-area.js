@@ -23,7 +23,8 @@ class EditArea extends Component{
             </div>
             <style>{`
                 .edit-area{
-                    height: 700px;
+                    // height: 700px;
+                    // height: calc(100% - 126px);
                     width: 240px;
                     background: rgba(38,66,70,1);
                     z-index: 1;

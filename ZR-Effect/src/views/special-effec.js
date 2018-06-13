@@ -52,7 +52,7 @@ class SpecialEffec extends Component {
                     duration: 0,
                     positionX: 0,
                     positionY: 0,
-                    videoPX: "px1",
+                    videoPX: "px3",
                     videoType: "type1",
                 }
             }
@@ -105,6 +105,7 @@ class SpecialEffec extends Component {
                     .container-layout{
                         display: flex;
                         flex-wrap: wrap;
+                        height: 100%;
                     }
                     .header {
                         position: relative;
