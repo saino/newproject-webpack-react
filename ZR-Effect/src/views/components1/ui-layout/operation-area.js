@@ -316,7 +316,9 @@ class OperationArea extends Component {
                     AlertView.render(this.renderPubComplete());
                 }, 800);
             }else{
-                this._getProgress(body);
+                setTimeout(() => {
+                    this._getProgress(body);                    
+                }, 800);
             }
         });
     }
