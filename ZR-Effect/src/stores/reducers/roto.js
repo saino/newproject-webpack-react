@@ -44,7 +44,8 @@ export default function roto (state = defState, action) {
       return add(state, initRoto);
 
     case 'GET_AI_ROTOS':
-      return add(action.aiRotos.map(aiRoto => {
+      const res = {};
+      const aiRotos = add(action.aiRotos.map(aiRoto => {
         const pathList = new PathList;
         let path;
 
@@ -69,7 +70,13 @@ export default function roto (state = defState, action) {
           'move_x': null,
           'move_y': null
         };
-      }), state);
+      }), state).filter(roto => {
+        const key = `${ roto[ 'material_id' ] }-${ roto[ 'frame' ] }`;
+
+        return res.hasOwnProperty(key) ? false : (res[ key ] = true)
+      });
+
+      return aiRotos;
 
     case 'REMOVE_ROTOS':
       return removeMore(state, 'material_id', action.materialId);
