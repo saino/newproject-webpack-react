@@ -25,6 +25,10 @@ class RotoGe extends Component {
       rotoMaterial[ 'ai_id' ]
     );
 
+    this.getIsAiRoto = this.registerGetRotoMaterialInfo(rotoMaterial =>
+      rotoMaterial[ 'is_ai_roto' ]
+    );
+
     this.getIsGenerateMaterial = this.registerGetRotoMaterialInfo(rotoMaterial =>
       rotoMaterial[ 'is_generate_roto_material' ]
     );
@@ -53,7 +57,7 @@ class RotoGe extends Component {
     const isGeRoto = this.getIsGenerateMaterial(props);
     const aiId = this.getAiId(props);
     const { geRotoPercent } = this.state;
-    
+
     if (!isGeRoto && geRotoPercent < 100 && aiId > 0) {
       this.timer = setInterval(() =>
         post('/getProgress', { type: 'export', object_id: aiId })
@@ -139,6 +143,7 @@ class RotoGe extends Component {
   render() {
     const { geRotoPercent } = this.state;
     const aiId = this.getAiId();
+    const isAiRoto = this.getIsAiRoto();
     const isGeRoto = this.getIsGenerateMaterial();
     const isDable = this.getIsDisabledBtn();
 
@@ -149,7 +154,7 @@ class RotoGe extends Component {
           <label>开始生成抠像素材</label>
         </Button>
         {
-          !isGeRoto && geRotoPercent < 100 && aiId > 0
+          !isGeRoto && geRotoPercent < 100 && aiId > 0 && !isAiRoto
             ? (
                 <div className={ rotoAiStyle[ 'roto-percent' ] }>
                   <div className={ rotoAiStyle[ 'percent-inner' ] }>
