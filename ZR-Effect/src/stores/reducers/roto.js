@@ -45,11 +45,15 @@ export default function roto (state = defState, action) {
 
     case 'GET_AI_ROTOS':
       return add(action.aiRotos.map(aiRoto => {
-        const path = new Path;
         const pathList = new PathList;
-        path.closed = (!aiRoto.svg || !aiRoto.svg.length) ? false : aiRoto.svg[ 0 ].closed;
-        path.points = (!aiRoto.svg || !aiRoto.svg.length) ? [] : aiRoto.svg[ 0 ].points.map(point => new Point(point.x, point.y, point.cx1, point.cy1, point.cx2, point.cy2));
-        pathList.list.push(path);
+        let path;
+
+        aiRoto.svg.forEach(roto => {
+          path = new Path;
+          path.closed = roto.closed;
+          path.points = roto.points.map(point => new Point(point.x, point.y, point.cx1, point.cy1, point.cx2, point.cy2));
+          pathList.list.push(path);
+        });
 
         return {
           'material_id': action.materialId,
