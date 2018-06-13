@@ -44,7 +44,7 @@ export default function roto (state = defState, action) {
       return add(state, initRoto);
 
     case 'GET_AI_ROTOS':
-      return action.aiRotos.map(aiRoto => {
+      return add(action.aiRotos.map(aiRoto => {
         const path = new Path;
         const pathList = new PathList;
         path.closed = (!aiRoto.svg || !aiRoto.svg.length) ? false : aiRoto.svg[ 0 ].closed;
@@ -65,7 +65,7 @@ export default function roto (state = defState, action) {
           'move_x': null,
           'move_y': null
         };
-      });
+      }), state);
 
     case 'REMOVE_ROTOS':
       return removeMore(state, 'material_id', action.materialId);
