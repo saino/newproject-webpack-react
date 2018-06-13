@@ -32,7 +32,8 @@ export default function createStore () {
     return buildStore(reducer,
       compose(
         applyMiddleware(fetchToken),
-        applyMiddleware(thunk)
+        applyMiddleware(thunk),
+        applyMiddleware(logger)
       )
     );
   }
