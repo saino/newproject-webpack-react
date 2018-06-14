@@ -28,6 +28,8 @@ class StageContainer extends Component {
         this.materialsContainer = [];
         this.transformMaterialsContainer = [];
         this.materialImg = [];
+        this.materialVideoDOM = [];
+        this.materialVideoDOMBuf = [];
         this.materialsContainerDOT = [];
         this.disX = 0;
         this.disY = 0;
@@ -201,6 +203,11 @@ class StageContainer extends Component {
         }else{
             this.state.changeMainVideo = false;
         }
+        if (this.props.work.config.properties.videoPlay !== nextProp.work.config.properties.videoPlay){
+            this.state.changeMainVideoPlay = true;
+        }else{
+            this.state.changeMainVideoPlay = false;
+        }
     }
     componentDidUpdate(nextProp, nextState) {
         if (this.state.changeMainVideo) {
@@ -216,7 +223,9 @@ class StageContainer extends Component {
             this.state.allVideoDate = this.getAllVideo();
             this.state.allVideoDOM = this.createAllVideoDOM();
         }
+        // if(!this.state.changeMainVideoPlay){
         this.createMaterialsContainer();
+        // }
         this.playVideo();
     }
     //单位秒
@@ -298,16 +307,49 @@ class StageContainer extends Component {
             materialContainerDOT.idots = this.rectsplit(this.colNum, materialContainerDOT.dotsFirst[0], materialContainerDOT.dotsFirst[1], materialContainerDOT.dotsFirst[2], materialContainerDOT.dotsFirst[3]);
             this.materialsContainerDOT[index] = materialContainerDOT;
 
-            if(materialItem.type === "image"){
+
+            const materialPath = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
+            const materialId = materialItem.id;
+            let flag = true;
+            for (let i = index; i < this.materialVideoDOM.length; i++){
+                if(this.materialVideoDOM[i].src === materialPath){
+                    // console.log("已经存在", index);
+                    let videoDOM = this.materialVideoDOM.splice(i,1);
+                    this.materialVideoDOM.splice(index,0,videoDOM[0]);
+                    const materialImg = new createjs.Bitmap(videoDOM[0]);
+                    this.materialImg[index] = materialImg;
+                    flag = false;
+                    // console.log(videoDOM, videoDOM[0])
+                    break;
+                }
+            }
+            // console.log(flag, "false则已经创建过了",this.materialVideoDOM, this.materialVideoDOM[index]);
+            if(flag && materialItem.type === "image"){
                 let imgDOM = document.createElement("IMG");
                 imgDOM.setAttribute("crossOrigin", "use-credentials");
                 imgDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
+                this.materialVideoDOM[index] = videoDOM;
                 const materialImg = new createjs.Bitmap(imgDOM);
                 this.materialImg[index] = materialImg;
-            }else{
+            }else if(flag){
                 let videoDOM = document.createElement("VIDEO");
                 videoDOM.setAttribute("crossOrigin", "use-credentials");
+                videoDOM.setAttribute("muted", "123");
+                videoDOM.setAttribute("volume", 0);
                 videoDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
+
+
+                // this.materialVideoDOM[index] = videoDOM;
+                // console.log(videoDOM);
+                // if(this.materialVideoDOM[index]){
+                //     videoDOM.currentTime = this.materialVideoDOM[index].currentTime;
+                // }
+                // console.log(this.getAllVideoCurrentTime(), this.getAllVideoTime(), "kkkkkkkkkkkkk");
+                // console.log(this.getAllVideoCurrentTime(), videoDOM.duration, videoDOM, "gggggggggggddddddddddd");
+                // setTimeout(() => {
+                //     console.log(videoDOM.duration, "kkkkkkkkffffffff");
+                // }, 0);
+                this.materialVideoDOM[index] = videoDOM;
                 const materialImg = new createjs.Bitmap(videoDOM);
                 this.materialImg[index] = materialImg;
                 // materialContainer.addChild(materialImg);
@@ -326,6 +368,7 @@ class StageContainer extends Component {
             }
             return materialContainer;
         });
+        // this.materialVideoDOMBuf = JSON.parse(JSON.stringify(this.materialVideoDOM));
     }
     playVideo = () => {
         let currentVideo = this.getCurrentVideo();
@@ -409,8 +452,34 @@ class StageContainer extends Component {
         const materials = this.getWorkMaterials();
         for(let i=0; i<materials.length; i++){
             if(materials[i].durationStart<=this.state.allVideoCurentTime && materials[i].durationEnd >= this.state.allVideoCurentTime){
+                if (materials[i].type === "video" ) {
+                    if ((this.allVideoLoaded()) && (this.props.work.config.properties.videoPlay)){
+                        // console.log(this.materialVideoDOM[i].currentTime, "kkkkkkkkkkkkkk");
+                        // console.log(this.materialVideoDOM, this.materialVideoDOM[i], this.materialVideoDOM[i].duration, "视频应该去播放");
+                        if(this.materialVideoDOM[i].paused){
+                            // setTimeout(() => {
+                                // console.log(this.getAllVideoCurrentTime(), this.materialVideoDOM[i].duration, "暂停到播放，有没有视频");
+                                
+                            // }, 100);
+                            // console.log(this.materialVideoDOM[i], this.materialVideoDOM[i].duration, "开始播放");
+                            this.materialVideoDOM[i].play();
+                        }
+                        // console.log(this.materialVideoDOM[i].paused, "ddddddddd");
+                    }else{
+                        this.materialVideoDOM[i].pause();
+                        // console.log(this.materialVideoDOM[i].currentTime, "hhhhhhhhhggggggggggggggg");
+                        // this.materialVideoDOM[i].pause();
+                        // console.log(this.materialVideoDOM[i].currentTime, "ggggggggggggggg");
+                    }
+                    // console.log(this.getAllVideoCurrentTime(), this.materialVideoDOM[i].duration, "有没有视频", this.materialVideoDOM[i]);
+                }
                 if(this.stage.getChildIndex(this.materialsContainer[i]) === -1){
                     this.stage.addChild(this.materialsContainer[i]);
+                    // if(materials.type === "video"){
+                    //     console.log(this.materialVideoDOM[i], "kkkkkkkkkkkkkk");
+                    //     this.materialVideoDOM[i].play();
+                    // }
+                    // this.materialVideoDOM[i]
                     // for (let controlNum = 0; controlNum < 4; controlNum++) {
                     //     var controlPoint = new createjs.Shape();
                     //     controlPoint.addEventListener("mousedown", this.dragMouseDown.bind(null, "target", materialItem));//.bind(null, "target", ));
@@ -421,6 +490,9 @@ class StageContainer extends Component {
                     // }
                 }
             }else{
+                if (materials.type === "video") {
+                    this.materialVideoDOM[i].pause();
+                }
                 if(this.stage.getChildIndex(this.materialsContainer[i]) >= 0){
                     this.stage.removeChild(this.materialsContainer[i]);
                 }
