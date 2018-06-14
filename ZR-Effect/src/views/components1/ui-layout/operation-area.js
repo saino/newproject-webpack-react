@@ -344,8 +344,8 @@ class OperationArea extends Component {
                 newWork.config.properties.height = "1080";
                 break;
             default: 
-                newWork.config.properties.width = "800";
-                newWork.config.properties.height = "400";
+                newWork.config.properties.width = "1280";
+                newWork.config.properties.height = "720";
         }
         switch (this.state.videoType){
             case "mp4":
