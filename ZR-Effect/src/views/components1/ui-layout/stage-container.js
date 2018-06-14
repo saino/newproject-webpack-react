@@ -3,7 +3,7 @@ import { findDOMNode } from 'react-dom'
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { changeWork, changeWorkMaterial, changWorkVideo, changeWorkProperties } from "../../../stores/reducers/work";
+import { changeWork, changeWorkMaterial, changWorkVideo, changeWorkProperties, changVideoPlay } from "../../../stores/reducers/work";
 import { changeFrameNum } from "../../../stores/reducers/frame-num";
 import matrix from "../../../utils/matrix"
 import config from "../../../config";
@@ -158,6 +158,7 @@ class StageContainer extends Component {
      * 判断所有的视频是否全部加载完毕
      */
     allVideoLoaded = () => {
+        // console.log(this.state.loadedVideoNum, this.state.allVideoDOM.length);
         return this.state.loadedVideoNum === this.state.allVideoDOM.length;
     }
     createAllVideoDOM = () => {
@@ -183,7 +184,7 @@ class StageContainer extends Component {
         let timeNum = 0;
 
         for(let i=0; i<videos.length; i++){
-            timeNum += videos[i].duration;
+            timeNum = videos[i].properties.duration - 0 + timeNum;
         }
         return timeNum;
     }
@@ -193,7 +194,24 @@ class StageContainer extends Component {
     getCurrentVideoDate = () => {
         return this.state.allVideoDate[this.state.currentVideoDOMIndex];
     }
-    componentDidUpdate() {
+    componentWillReceiveProps(nextProp){
+        // console.log(this.props.work.config.videos, nextProp.work.config.videos);
+        if (this.props.work.config.videos !== nextProp.work.config.videos) {
+            this.state.changeMainVideo = true;
+        }else{
+            this.state.changeMainVideo = false;
+        }
+    }
+    componentDidUpdate(nextProp, nextState) {
+        if (this.state.changeMainVideo) {
+            this.state.loadedVideoNum = 0;
+            this.getCurrentVideo()&&this.getCurrentVideo().pause();
+            this.state.currentVideoDOMIndex = 0;
+            this.state.allVideoDate = this.getAllVideo();
+            this.state.allVideoDOM = this.createAllVideoDOM();
+            this.setAllVideoCurrentTime(0);
+            this.props.changeFrameNum(0);
+        }
         if(this.state.allVideoDate.length === 0){
             this.state.allVideoDate = this.getAllVideo();
             this.state.allVideoDOM = this.createAllVideoDOM();
@@ -326,7 +344,7 @@ class StageContainer extends Component {
         this.stage.addChild(this.videoContainer);
         
         // console.log(this.videoImg, this.videoContainer, "kkkkkkkkkkkkkkkkkkkgggggggggggggggggg");
-        console.log(currentVideoDate,this.props.work);
+        // console.log(currentVideoDate,this.props.work);
         let scaleX = this.props.work.config.properties.width / currentVideoDate.properties.width;
         let scaleY = this.props.work.config.properties.height / currentVideoDate.properties.height;
         let scaleValue = scaleX > scaleY ? scaleX : scaleY;
@@ -366,15 +384,19 @@ class StageContainer extends Component {
      */
     videoPlaying = () => {
         //如果 视频已经全部加载完 并且 作品处于播放状态
+        // console.log(this.allVideoLoaded(), this.props.work.config.properties.videoPlay, "ddddd");
         if ((this.allVideoLoaded()) && (this.props.work.config.properties.videoPlay)){
             const currentVideo = this.getCurrentVideo();
+            // console.log(currentVideo,"kkkkkkkkkkkkkkkk");
             //若 当前视频播放完毕则设置当前视频播放索引为一个视频的索引 循环播放
             if (currentVideo.currentTime === currentVideo.duration){
+                // console.log("gggggggggggggggggg", (this.state.currentVideoDOMIndex + 1) % (this.state.allVideoDOM.length));
                 this.setState({
                     currentVideoDOMIndex: (this.state.currentVideoDOMIndex+1)%(this.state.allVideoDOM.length),
                 });
             }
             this.state.allVideoCurentTime = this.getAllVideoCurrentTime();
+            // console.log(this.state.allVideoCurentTime, "dddddddddfffffffffffffff", this.getAllVideoTime());
             this.props.changeFrameNum(this.getCurrentFrameNum());
         }
         this.renderMaterial();
@@ -540,6 +562,7 @@ const mapDispatchToProps = (dispatch) => {
         changWorkVideo: bindActionCreators(changWorkVideo, dispatch),
         changeWorkMaterial: bindActionCreators(changeWorkMaterial, dispatch),
         changeFrameNum: bindActionCreators(changeFrameNum, dispatch),
+        changVideoPlay: bindActionCreators(changVideoPlay, dispatch),
     }
 }
 
