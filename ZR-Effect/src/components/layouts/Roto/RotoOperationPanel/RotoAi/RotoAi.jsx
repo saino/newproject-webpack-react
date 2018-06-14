@@ -79,7 +79,7 @@ class RotoAi extends Component {
 
       aiRoto(materialId, aiId, true);
       //this.requestAiPercent(this.props, 2000);
-    }, 100);
+    }, 10 00);
 
     this.aiRotoHandle = () => {
       const materialId = this.getMaterialId();
@@ -144,7 +144,7 @@ class RotoAi extends Component {
             }
           }
         )
-        .catch(errorMessage => error(errorMessage.message, () => clearInterval(this.timer))),
+        .catch(errorMessage => error(errorMessage.message, () => {})),
         howTime
       )
     }
