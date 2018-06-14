@@ -79,7 +79,7 @@ class RotoAi extends Component {
 
       aiRoto(materialId, aiId, true);
       //this.requestAiPercent(this.props, 2000);
-    }, 10 00);
+    }, 1000);
 
     this.aiRotoHandle = () => {
       const materialId = this.getMaterialId();
