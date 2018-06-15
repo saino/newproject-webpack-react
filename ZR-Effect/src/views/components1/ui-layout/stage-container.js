@@ -347,7 +347,7 @@ class StageContainer extends Component {
                 controlPoint.addEventListener("mousedown", this.dragMouseDown.bind(null, "target", this.materialsContainerDOT[index]));//.bind(null, "target", ));
                 controlPoint.addEventListener("pressmove", this.dragMouseControlMove.bind(null, i, index));//.bind(null, "target"));
                 controlPoint.addEventListener("pressup", this.dragMouseControlUp.bind(null, materialItem, index));
-                controlPoint.graphics.beginFill("#ff0000").drawCircle(this.materialsContainerDOT[index].dots[i].x, this.materialsContainerDOT[index].dots[i].y, 6);
+                controlPoint.graphics.beginFill("#ff0000").drawCircle(this.materialsContainerDOT[index].dots[i].x, this.materialsContainerDOT[index].dots[i].y, 8);
                 materialContainer.addChild(controlPoint);
             }
             return materialContainer;

@@ -169,11 +169,17 @@ class EditArea extends Component{
                     for (let i = 0; i < 4; i++) {
                         currentMaterial.control[i].x += value - currentMaterial[prop];
                     }
+                    currentMaterial.scaleReferenceControl = JSON.parse(JSON.stringify(currentMaterial.control));
+                    currentMaterial.height = 100;
+                    currentMaterial.width = 100;
                     break;
                 case "positionY":
                     for (let i = 0; i < 4; i++) {
                         currentMaterial.control[i].y += value - currentMaterial[prop];
                     }
+                    currentMaterial.scaleReferenceControl = JSON.parse(JSON.stringify(currentMaterial.control));
+                    currentMaterial.height = 100;
+                    currentMaterial.width = 100;
                     break;
                 case "width":
                     let symmetryAxisX = (this.getMax(currentMaterial.scaleReferenceControl, "x") + this.getMin(currentMaterial.scaleReferenceControl, "x")) / 2;
