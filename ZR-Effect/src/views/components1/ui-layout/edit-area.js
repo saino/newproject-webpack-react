@@ -154,8 +154,8 @@ class EditArea extends Component{
                 <div className="input-number-warp">旋转 <InputNumber className="input-number" value={currentMaterial.rotateZ} onChange={this.onWorkPropChange("rotateZ")} /> </div>
             </div>
             <div className="control">
-                <div className="input-number-warp">X<InputNumber className="input-number" min={0} value={currentMaterial.positionX} onChange={this.onWorkPropChange("positionX")} /></div>
-                <div className="input-number-warp">Y<InputNumber className="input-number" min={0} value={currentMaterial.positionY} onChange={this.onWorkPropChange("positionY")} /></div>
+                <div className="input-number-warp">X<InputNumber className="input-number" value={currentMaterial.positionX} onChange={this.onWorkPropChange("positionX")} /></div>
+                <div className="input-number-warp">Y<InputNumber className="input-number" value={currentMaterial.positionY} onChange={this.onWorkPropChange("positionY")} /></div>
             </div>
             <TimeControl key={currentMaterial.id} currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
         </div>)
