@@ -61,6 +61,9 @@ class SpecialEffec extends Component {
         //     id: "498"
         // });
     }
+    componentDidMount() {
+        // console.log(this, "dkkkkkkkkkkkkkjf");
+    }
 
     render(){
         const { work } = this.props;
