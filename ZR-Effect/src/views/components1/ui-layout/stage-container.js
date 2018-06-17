@@ -28,6 +28,8 @@ class StageContainer extends Component {
         this.materialsContainer = [];
         this.transformMaterialsContainer = [];
         this.materialImg = [];
+        this.materialVideoDOM = [];
+        this.materialVideoDOMBuf = [];
         this.materialsContainerDOT = [];
         this.disX = 0;
         this.disY = 0;
@@ -201,6 +203,11 @@ class StageContainer extends Component {
         }else{
             this.state.changeMainVideo = false;
         }
+        if (this.props.work.config.properties.videoPlay !== nextProp.work.config.properties.videoPlay){
+            this.state.changeMainVideoPlay = true;
+        }else{
+            this.state.changeMainVideoPlay = false;
+        }
     }
     componentDidUpdate(nextProp, nextState) {
         if (this.state.changeMainVideo) {
@@ -216,7 +223,9 @@ class StageContainer extends Component {
             this.state.allVideoDate = this.getAllVideo();
             this.state.allVideoDOM = this.createAllVideoDOM();
         }
+        // if(!this.state.changeMainVideoPlay){
         this.createMaterialsContainer();
+        // }
         this.playVideo();
     }
     //单位秒
@@ -298,19 +307,36 @@ class StageContainer extends Component {
             materialContainerDOT.idots = this.rectsplit(this.colNum, materialContainerDOT.dotsFirst[0], materialContainerDOT.dotsFirst[1], materialContainerDOT.dotsFirst[2], materialContainerDOT.dotsFirst[3]);
             this.materialsContainerDOT[index] = materialContainerDOT;
 
-            if(materialItem.type === "image"){
+
+            const materialPath = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
+            const materialId = materialItem.id;
+            let flag = true;
+            for (let i = index; i < this.materialVideoDOM.length; i++){
+                if(this.materialVideoDOM[i].src === materialPath){
+                    let videoDOM = this.materialVideoDOM.splice(i,1);
+                    this.materialVideoDOM.splice(index,0,videoDOM[0]);
+                    const materialImg = new createjs.Bitmap(videoDOM[0]);
+                    this.materialImg[index] = materialImg;
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag && materialItem.type === "image"){
                 let imgDOM = document.createElement("IMG");
                 imgDOM.setAttribute("crossOrigin", "use-credentials");
                 imgDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
+                this.materialVideoDOM[index] = videoDOM;
                 const materialImg = new createjs.Bitmap(imgDOM);
                 this.materialImg[index] = materialImg;
-            }else{
+            }else if(flag){
                 let videoDOM = document.createElement("VIDEO");
                 videoDOM.setAttribute("crossOrigin", "use-credentials");
+                videoDOM.setAttribute("muted", true);
+                videoDOM.setAttribute("volume", 0);
                 videoDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
+                this.materialVideoDOM[index] = videoDOM;
                 const materialImg = new createjs.Bitmap(videoDOM);
                 this.materialImg[index] = materialImg;
-                // materialContainer.addChild(materialImg);
             }
             this.renderTransformContainer(index);
             materialContainer.addEventListener("mousedown", this.dragMouseDown.bind(null, "currentTarget", materialItem));
@@ -321,7 +347,7 @@ class StageContainer extends Component {
                 controlPoint.addEventListener("mousedown", this.dragMouseDown.bind(null, "target", this.materialsContainerDOT[index]));//.bind(null, "target", ));
                 controlPoint.addEventListener("pressmove", this.dragMouseControlMove.bind(null, i, index));//.bind(null, "target"));
                 controlPoint.addEventListener("pressup", this.dragMouseControlUp.bind(null, materialItem, index));
-                controlPoint.graphics.beginFill("#000000").drawCircle(this.materialsContainerDOT[index].dots[i].x, this.materialsContainerDOT[index].dots[i].y, 6);
+                controlPoint.graphics.beginFill("#ff0000").drawCircle(this.materialsContainerDOT[index].dots[i].x, this.materialsContainerDOT[index].dots[i].y, 8);
                 materialContainer.addChild(controlPoint);
             }
             return materialContainer;
@@ -352,11 +378,9 @@ class StageContainer extends Component {
         this.videoContainer.scaleY = scaleValue;
 
         if (this.props.work.config.properties.videoPlay) {
-            // currentVideo.currentTime = this.state.currentVideoDOMTime;
             currentVideo.play();
         } else {
             currentVideo.pause();
-            // this.state.currentVideoDOMTime = this.getCurrentVideo().currentTime;
         }
     }
 
@@ -384,19 +408,15 @@ class StageContainer extends Component {
      */
     videoPlaying = () => {
         //如果 视频已经全部加载完 并且 作品处于播放状态
-        // console.log(this.allVideoLoaded(), this.props.work.config.properties.videoPlay, "ddddd");
         if ((this.allVideoLoaded()) && (this.props.work.config.properties.videoPlay)){
             const currentVideo = this.getCurrentVideo();
-            // console.log(currentVideo,"kkkkkkkkkkkkkkkk");
             //若 当前视频播放完毕则设置当前视频播放索引为一个视频的索引 循环播放
             if (currentVideo.currentTime === currentVideo.duration){
-                // console.log("gggggggggggggggggg", (this.state.currentVideoDOMIndex + 1) % (this.state.allVideoDOM.length));
                 this.setState({
                     currentVideoDOMIndex: (this.state.currentVideoDOMIndex+1)%(this.state.allVideoDOM.length),
                 });
             }
             this.state.allVideoCurentTime = this.getAllVideoCurrentTime();
-            // console.log(this.state.allVideoCurentTime, "dddddddddfffffffffffffff", this.getAllVideoTime());
             this.props.changeFrameNum(this.getCurrentFrameNum());
         }
         this.renderMaterial();
@@ -409,18 +429,24 @@ class StageContainer extends Component {
         const materials = this.getWorkMaterials();
         for(let i=0; i<materials.length; i++){
             if(materials[i].durationStart<=this.state.allVideoCurentTime && materials[i].durationEnd >= this.state.allVideoCurentTime){
+                if (materials[i].type === "video" ) {
+                    this.materialVideoDOM[i].setAttribute("muted", true);
+                    this.materialVideoDOM[i].setAttribute("volume", 0);
+                    if ((this.allVideoLoaded()) && (this.props.work.config.properties.videoPlay)){
+                        if(this.materialVideoDOM[i].paused){
+                            this.materialVideoDOM[i].play();
+                        }
+                    }else{
+                        this.materialVideoDOM[i].pause();
+                    }
+                }
                 if(this.stage.getChildIndex(this.materialsContainer[i]) === -1){
                     this.stage.addChild(this.materialsContainer[i]);
-                    // for (let controlNum = 0; controlNum < 4; controlNum++) {
-                    //     var controlPoint = new createjs.Shape();
-                    //     controlPoint.addEventListener("mousedown", this.dragMouseDown.bind(null, "target", materialItem));//.bind(null, "target", ));
-                    //     controlPoint.addEventListener("pressmove", this.dragMouseMove.bind(null, "target", materialItem));//.bind(null, "target"));
-                    //     // controlPoint
-                    //     controlPoint.graphics.beginFill("#000000").drawCircle(materialContainerDOT.dots[i].x, materialContainerDOT.dots[i].y, 6);
-                    //     this.materialContainer[i].addChild(controlPoint);
-                    // }
                 }
             }else{
+                if (materials.type === "video") {
+                    this.materialVideoDOM[i].pause();
+                }
                 if(this.stage.getChildIndex(this.materialsContainer[i]) >= 0){
                     this.stage.removeChild(this.materialsContainer[i]);
                 }

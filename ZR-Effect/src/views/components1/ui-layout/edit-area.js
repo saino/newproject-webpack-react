@@ -154,8 +154,8 @@ class EditArea extends Component{
                 <div className="input-number-warp">旋转 <InputNumber className="input-number" value={currentMaterial.rotateZ} onChange={this.onWorkPropChange("rotateZ")} /> </div>
             </div>
             <div className="control">
-                <div className="input-number-warp">X<InputNumber className="input-number" min={0} value={currentMaterial.positionX} onChange={this.onWorkPropChange("positionX")} /></div>
-                <div className="input-number-warp">Y<InputNumber className="input-number" min={0} value={currentMaterial.positionY} onChange={this.onWorkPropChange("positionY")} /></div>
+                <div className="input-number-warp">X<InputNumber className="input-number" value={currentMaterial.positionX} onChange={this.onWorkPropChange("positionX")} /></div>
+                <div className="input-number-warp">Y<InputNumber className="input-number" value={currentMaterial.positionY} onChange={this.onWorkPropChange("positionY")} /></div>
             </div>
             <TimeControl key={currentMaterial.id} currentMaterial={currentMaterial} duration={duration} timeStart={currentMaterial.timeStart} timeEnd={currentMaterial.timeEnd} />
         </div>)
@@ -169,11 +169,17 @@ class EditArea extends Component{
                     for (let i = 0; i < 4; i++) {
                         currentMaterial.control[i].x += value - currentMaterial[prop];
                     }
+                    currentMaterial.scaleReferenceControl = JSON.parse(JSON.stringify(currentMaterial.control));
+                    currentMaterial.height = 100;
+                    currentMaterial.width = 100;
                     break;
                 case "positionY":
                     for (let i = 0; i < 4; i++) {
                         currentMaterial.control[i].y += value - currentMaterial[prop];
                     }
+                    currentMaterial.scaleReferenceControl = JSON.parse(JSON.stringify(currentMaterial.control));
+                    currentMaterial.height = 100;
+                    currentMaterial.width = 100;
                     break;
                 case "width":
                     let symmetryAxisX = (this.getMax(currentMaterial.scaleReferenceControl, "x") + this.getMin(currentMaterial.scaleReferenceControl, "x")) / 2;
