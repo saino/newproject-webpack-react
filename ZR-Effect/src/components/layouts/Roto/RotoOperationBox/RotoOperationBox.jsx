@@ -176,7 +176,7 @@ class RotoOperationBox extends Component {
         //configure(materialId, materialFrame, { 'move_x':  })
         updateObj[ 'move_x' ] = offX;
         updateObj[ 'move_y' ] = offY;
-        
+
         // 如果选中了点
         if (entryIds.length > 1) {
           pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ], pointSelectedId = +entryIds[ 2 ], type = +entryIds[ 3 ]//, type = entryIds[ 2 ], realPointId = entryIds[3];
@@ -386,7 +386,7 @@ class RotoOperationBox extends Component {
       const { offX, offY } = this.getOffPosition(e);
       const updateObj = {};
       let entryIds, pathId, pointId, path, point, p;
-      console.log(moveX, 'cd');
+
       if (!disabled) {
       //console.log(rotoMode, dragging, 'j8');
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
@@ -484,7 +484,7 @@ class RotoOperationBox extends Component {
           pathSelected.confirmFloating();
           pathSelected.floatingPoint = new Point(offX, offY);
           updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-          console.log(offX, offY, 'dddddd');
+
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
 

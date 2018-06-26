@@ -25,7 +25,7 @@ export default function createStore () {
       compose(
         applyMiddleware(fetchToken),
         applyMiddleware(thunk),
-        // applyMiddleware(logger)
+        applyMiddleware(logger)
       )
     );
   } else {
