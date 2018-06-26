@@ -264,7 +264,7 @@ class RotoOperationBox extends Component {
         configure(materialId, materialFrame, updateObj);
       }
       // 如果操作模式是编辑，并且是移动'point'和'path'
-      else if (rotoMode === 1 && (rotoToolType === 6 || rotoToolType === 5 || rotoToolType === 7 )) {
+      else if (rotoMode === 1 && (rotoToolType === 6 || rotoToolType === 5)) {
         pathSelected || (pathSelected = pathData.list[ pathData.list.length - 1 ]);
         pathSelected.isSelected = true;
         updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
@@ -277,11 +277,11 @@ class RotoOperationBox extends Component {
         addRotoedFrame(materialId, materialFrame);
         configure(materialId, materialFrame, updateObj);
       }
-      else if (rotoMode === 1 && rotoToolType === 7) {
+      else if ((rotoMode === 1 || rotoMode === 2) && rotoToolType === 7) {
         entryIds = e.target.getAttribute('id')
           ? e.target.getAttribute('id').split('-')
           : [];
-
+        console.log('d');
         // 如果选中了点
         if (entryIds.length > 1) {
           pathId = entryIds[ 0 ], pointId = entryIds[ 1 ], type = entryIds[ 2 ], realPointId = entryIds[3];
@@ -442,7 +442,6 @@ class RotoOperationBox extends Component {
         // 如果选中了'path'
         else if (pathSelected && pathSelected.isSelected) {
           //console.log(offX - moveX, 'jjjj');
-          console.log(offX, moveX, 'dddd')
           pathSelected.move(offX - moveX, offY - moveY);
         }
 
