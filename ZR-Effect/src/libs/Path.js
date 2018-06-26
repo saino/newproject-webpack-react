@@ -56,7 +56,7 @@ export default class Path {
 	}
 	movePoint(p, dx, dy, movingControl){
 		const i = this.indexOf(p);
-		
+
 		try {	// 对面控制点不存在就忽略
 			switch( movingControl ){
 				case Point.CONTROL1:
@@ -77,7 +77,7 @@ export default class Path {
 		} catch(e) {}
 	}
 	move(dx, dy){
-		for( const p of this.points ){
+		for(const p of this.points ){
 			p.move(dx, dy);
 			p.move(dx, dy, Point.CONTROL1 | Point.CONTROL2);
 		}
