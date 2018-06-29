@@ -33,6 +33,12 @@ export default function createRouter (store) {
               loading: LayoutLoading
             })
           }></Route>
+          <Route exact path="/user-center" component={
+            Loadable({
+              loader: () => import('./components/user/center'),
+              loading: LayoutLoading
+            })
+          }></Route>
           <Route component={ NotMatch }></Route>
         </Switch>
       </BrowserRouter>

@@ -61,6 +61,10 @@ class Header extends Component {
               特效制作
               <div></div>
             </NavLink>
+            <NavLink to="/user-center" className={headerStyle['nav-btn']} activeClassName={headerStyle['active']}>
+              个人中心
+              <div></div>
+            </NavLink>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>价格方案</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>帮助中心</a>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>联系我们</a>

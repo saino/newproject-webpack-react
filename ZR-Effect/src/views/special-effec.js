@@ -39,27 +39,27 @@ class SpecialEffec extends Component {
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
     componentWillMount(){
-        this.props.createWork({
-            name: "自定义作品",
-            config: {
-                videos: [],
-                materials: [],
-                properties: {
-                    height: "720",
-                    width: "1280",
-                    scale: 1,
-                    videoPlay: false,
-                    duration: 0,
-                    positionX: 0,
-                    positionY: 0,
-                    videoPX: "px3",
-                    videoType: "type1",
-                }
-            }
-        });
-        // this.props.loadWork({
-        //     id: "498"
+        // this.props.createWork({
+        //     name: "自定义作品",
+        //     config: {
+        //         videos: [],
+        //         materials: [],
+        //         properties: {
+        //             height: "720",
+        //             width: "1280",
+        //             scale: 1,
+        //             videoPlay: false,
+        //             duration: 0,
+        //             positionX: 0,
+        //             positionY: 0,
+        //             videoPX: "px3",
+        //             videoType: "type1",
+        //         }
+        //     }
         // });
+        this.props.loadWork({
+            id: "791"
+        });
     }
     componentDidMount() {
         // console.log(this, "dkkkkkkkkkkkkkjf");
