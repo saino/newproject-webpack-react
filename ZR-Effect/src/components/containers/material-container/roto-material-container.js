@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { loadRotokMaterial, loadMoreRotoMaterial, deleteRotoMaterial, loadFirstPageRotoMaterial } from "../../../stores/reducers/user-material";
 import AddWork from "../../../views/statics/add-work.png";
-import RotoMaterialItem from "./Roto-material-item";
+import RotoMaterialItem from "./roto-material-item";
 import config from "../../../config";
 
 class RotoMaterialContainer extends MaterialContainer {
