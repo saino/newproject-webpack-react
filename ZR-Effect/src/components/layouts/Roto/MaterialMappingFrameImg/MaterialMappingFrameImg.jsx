@@ -54,14 +54,15 @@ class MaterialMappingFrameImg extends Component {
   }
 
   render() {
-    const { path, properties: { width, height } } = this.getMaterial();
+    const material = this.getMaterial();
+    const { properties: { width, height } } = material;
 
     return (
       <div className={ style[ 'wrapper' ] }>
         <video
           ref={ el => this.videoEl = el }
           style={{ width, height }}
-          src={ path }
+          src={ material.video_path }
           crossOrigin="use-credentials" />
       </div>
     );
