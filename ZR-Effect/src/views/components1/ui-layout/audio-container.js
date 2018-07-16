@@ -25,7 +25,7 @@ class AudioContainer extends Component {
             this.props.loadMaterials({
                 "types": "audio",
                 "page": pagination.audioLibPage,
-                "prepage": 20
+                "perpage": 20
             });
         }
     }
@@ -85,7 +85,7 @@ class AudioContainer extends Component {
         this.props.loadMaterials({
             "type": "audio",
             "page": this.props.pagination.audioLibPage,
-            "prepage": 20
+            "perpage": 20
         });
         setTimeout(() => {
             this.setState({
@@ -246,7 +246,7 @@ class AudioContainer extends Component {
             this.props.loadMaterials({
                 "types": types,
                 "page": pageNum,
-                "prepage": config.page.size
+                "perpage": config.page.size
             }, (resp) => {
                 setTimeout(() => {
                     this.setState({

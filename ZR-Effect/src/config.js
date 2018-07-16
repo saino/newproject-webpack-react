@@ -41,7 +41,8 @@ export default ({
   },
   // 分页
   page: {
-    size: 10
+    size: 40,
+    userCenterPageSize: 40,
   },
   // 对话框
   dialog: {

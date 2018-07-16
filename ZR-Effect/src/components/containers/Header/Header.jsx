@@ -53,7 +53,7 @@ class Header extends Component {
 
     return (
       <div className={ headerStyle[ 'header' ] }>
-        <div className={ headerStyle[ 'header-nav' ] }>
+        <div className={ headerStyle[ 'header-nav' ] }> 
             <NavLink to="/" className={ headerStyle[ 'nav-logo' ] }>
               <img src={ logoPNG }/>
             </NavLink>
@@ -61,8 +61,12 @@ class Header extends Component {
               智能抠像
               <div></div>
             </NavLink>
-            <NavLink to="/special-effec" className={ headerStyle[ 'nav-btn' ] } activeClassName={ headerStyle[ 'active' ] }>
+          <NavLink to={{ pathname: "/special-effec", state:{workId: false}}} className={ headerStyle[ 'nav-btn' ] } activeClassName={ headerStyle[ 'active' ] }>
               特效制作
+              <div></div>
+            </NavLink>
+            <NavLink to="/user-center" className={headerStyle['nav-btn']} activeClassName={headerStyle['active']}>
+              个人中心
               <div></div>
             </NavLink>
             <a href="javascript:;" className={ headerStyle[ 'nav-btn-disabled' ] }>价格方案</a>

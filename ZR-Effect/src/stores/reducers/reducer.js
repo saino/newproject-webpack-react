@@ -10,6 +10,7 @@ import rotoMaterial from './roto-material';
 import rotoMaterialTemp from './roto-material-temp';
 import pagination from './pagination';
 import frame from './frame-num';
+import userMaterial from './user-material';
 
 export default combineReducers({
   work,
@@ -22,5 +23,6 @@ export default combineReducers({
   rotoAi,
   rotoMaterialTemp,
   rotoFrontendActeractive,
-  roto
+  roto,
+  userMaterial
 });
