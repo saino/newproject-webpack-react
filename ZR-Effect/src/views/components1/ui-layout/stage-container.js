@@ -325,7 +325,7 @@ class StageContainer extends Component {
                 let imgDOM = document.createElement("IMG");
                 imgDOM.setAttribute("crossOrigin", "use-credentials");
                 imgDOM.src = `${config.fileUpload.host}:${config.fileUpload.port}${materialItem.path}`;
-                this.materialVideoDOM[index] = videoDOM;
+                this.materialVideoDOM[index] = imgDOM;
                 const materialImg = new createjs.Bitmap(imgDOM);
                 this.materialImg[index] = materialImg;
             }else if(flag){
@@ -402,6 +402,9 @@ class StageContainer extends Component {
         });
         this.stage.update();
 
+    }
+    componentWillUnmount(){
+        createjs.Ticker.removeAllEventListeners();
     }
     /**
      * 视频播放控制 播放时间控制

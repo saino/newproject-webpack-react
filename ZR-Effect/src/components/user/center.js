@@ -3,12 +3,20 @@ import Header from '../containers/Header/Header';
 import Body from '../layouts/body-page/body-page';
 import LeftSidebar from '../layouts/left-sidebar/left-sidebar';
 import RightSection from "../layouts/right-section/right-section";
+import MaterialContainer from "../containers/material-container/material-container";
+import WorkMaterialContainer from "../containers/material-container/work-material-container";
+import RotoMaterialContainer from "../containers/material-container/roto-material-container";
+import VideoMaterialContainer from "../containers/material-container/video-material-container";
+import ImageMaterialContainer from "../containers/material-container/image-material-container";
+import AudioMaterialContainer from "../containers/material-container/audio-material-container";
 
 import LoginPage from '../layouts/LoginPage/LoginPage';
 import RegisterPage from '../layouts/RegisterPage/RegisterPage';
+import ClassNames from "classnames"
 import config from '../../config';
 
 import fff from "../../views/statics/fff.png";
+import material from "../../stores/reducers/material";
 
 class UserCenter extends Component {
 
@@ -20,37 +28,71 @@ class UserCenter extends Component {
             userNavData: [{
                 title: "我的作品",
                 active: true,
-                handler: this.onClickNav,
+                type: 'Work',
+                handler: this.onClickNav.bind(this, 0),
             },{
                 title: "我的抠像",
                 active: false,
-                handler: this.onClickNav,
+                type: 'Roto',
+                handler: this.onClickNav.bind(this, 1),
             },{
                 title: "我的视频",
                 active: false,
-                handler: this.onClickNav,
+                type: 'Video',
+                handler: this.onClickNav.bind(this, 2),
             },{
                 title: "我的图片",
                 active: false,
-                handler: this.onClickNav,
+                type: 'Image',
+                handler: this.onClickNav.bind(this, 3),
             },{
                 title: "我的音频",
                 active: false,
-                handler: this.onClickNav,
+                type: 'Audio',
+                handler: this.onClickNav.bind(this, 4),
             }]
         };
         this.configureDialogHandle = (key, isShowDialog) =>
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
-    onClickNav = (e) => {
-        console.log("dddddddddd");
+    onClickNav = (activeIndex, e) => {
+        const userNavDataTemp = this.state.userNavData.map((userNavData, index)=>{
+            userNavData.active = index === activeIndex;
+            return userNavData;
+        });
+        this.setState({
+            userNavData: userNavDataTemp
+        });
     }
     renderUserNav = () => {
         return this.state.userNavData.map((navItem, index)=> {
-            return <div className="user-nav-item" key={index} onClick={navItem.handler}> {navItem.title} </div>
+            return <div className={ClassNames("user-nav-item",{ "active": navItem.active})} key={index} onClick={navItem.handler}> {navItem.title} </div>
         });
     }
+    renderActiveMaterial = () => {
+        const { userNavData } = this.state;
+        const history = this.props.history
+        for(let i=0; i<userNavData.length; i++){
+            if(userNavData[i].active){
+                switch (userNavData[i].type) {
+                    case "Work":
+                        return <WorkMaterialContainer type={userNavData[i].type} history={ history } />;
+                    case "Roto":
+                        return <RotoMaterialContainer type={userNavData[i].type} />;
+                    case "Video":
+                        return <VideoMaterialContainer type={userNavData[i].type} />;
+                    case "Image":
+                        return <ImageMaterialContainer type={userNavData[i].type} />;
+                    case "Audio":
+                        return <AudioMaterialContainer type={userNavData[i].type} />;
+                    default:
+                        return <WorkMaterialContainer type={userNavData[i].type} history={history} />;
+                }
+            }
+        }
+    }
     render(){
+        // console.log(this,"kkkkkkkkkkkkfffffffff");
         const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return <div className="warp">
             <div className="header">
@@ -69,6 +111,9 @@ class UserCenter extends Component {
                     <div className="user-navigation">
                         {this.renderUserNav()}
                     </div>
+                    {/* <div className="material-container"> */}
+                    {this.renderActiveMaterial()}
+                    {/* </div> */}
                 </RightSection>
             </Body>
             <div className='form-panel'>
@@ -114,6 +159,10 @@ class UserCenter extends Component {
                     cursor: pointer;
                     line-height: 40px;
                 }
+                .user-nav-item.active{
+                    color: #fff;
+                }
+                
                 .login-out{
                     position: absolute;
                     bottom: 0;

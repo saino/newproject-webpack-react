@@ -29,10 +29,18 @@ const actionTypes = {
     "CHANGE_WORK": "CHANGE_WORK",
     "CHANGE_WORK_VIDEO": "CHANGE_WORK_VIDEO",
     "CHANGE_WORK_PLAY": "CHANGE_WORK_PLAY",
-    "CHANGE_WORK_PROPERTIES": "CHANGE_WORK_PROPERTIES"
+    "CHANGE_WORK_PROPERTIES": "CHANGE_WORK_PROPERTIES",
+    "REMOVE_WORK": "REMOVE_WORK"
 }
 
-export const createWork = (body) => {
+export const removeWork = () => {
+    return {
+        type: actionTypes.REMOVE_WORK,
+        work: {}
+    }
+}
+
+export const createWork = (body, successFUN) => {
     return (dispatch) => {
         post("/fx/saveWork", body)
         .then((resp)=>{
@@ -40,6 +48,7 @@ export const createWork = (body) => {
                 type: actionTypes.CREATE_WORK,
                 work: resp
             });
+            successFUN && successFUN(resp);
         })
     }
 }
@@ -110,6 +119,9 @@ export const getProgress = (body, successFUN) => {
 
 export default (state = defaultState, action) => {
     switch (action.type) {
+        case actionTypes.REMOVE_WORK:
+            return {...action.work};
+            
         case actionTypes.CREATE_WORK: 
             return {...action.work}
         case actionTypes.GET_WORK:

@@ -27,14 +27,14 @@ class MaterialContainer extends Component {
             this.props.loadFirstVideoMaterials({
                 "types": "video",
                 "page": pagination.videoLibPage,
-                "prepage": config.page.size
+                "perpage": config.page.size
             });
         }
         if (pagination.videoAndImgLibPage === 1){
             this.props.loadFirstMaterials({
                 "types": "video|image",
                 "page": pagination.videoAndImgLibPage,
-                "prepage": config.page.size
+                "perpage": config.page.size
             });
         }
     }
@@ -97,7 +97,7 @@ class MaterialContainer extends Component {
         this.props.loadFirstVideoMaterials({
             "types": "video",
             "page": 1,
-            "prepage": config.page.size
+            "perpage": config.page.size
         });
         setTimeout(() => {
             this.setState({
@@ -270,7 +270,7 @@ class MaterialContainer extends Component {
                 this.props.loadVideoMaterials({
                     "types": types,
                     "page": pageNum,
-                    "prepage": config.page.size
+                    "perpage": config.page.size
                 }, (resp) => {
                     setTimeout(() => {
                         this.setState({
@@ -286,7 +286,7 @@ class MaterialContainer extends Component {
                 this.props.loadMaterials({
                     "types": types,
                     "page": pageNum,
-                    "prepage": config.page.size
+                    "perpage": config.page.size
                 }, (resp) => {
                     setTimeout(() => {
                         this.setState({

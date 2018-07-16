@@ -9,9 +9,9 @@ import { loadVideoMaterials } from '../../../stores/reducers/video-mateiral'
 import { setVideoAndImgLibPage, setVideoLibPage } from "../../../stores/reducers/pagination"
 
 import AlertView from "./alert-view";
-import config from "../../../config"
-import PreView from "./pre-view"
-import moment from 'moment'
+import config from "../../../config";
+import PreView from "./pre-view";
+import moment from 'moment';
 
 class VideoMaterial extends Component {
     constructor(){
@@ -201,13 +201,13 @@ class VideoMaterial extends Component {
                 this.props.loadMaterials({
                     "types": types,
                     "page": pagination.videoAndImgLibPage,
-                    "prepage": config.page.size,
+                    "perpage": config.page.size,
                 });
             } else {
                 this.props.loadVideoMaterials({
                     "types": types,
                     "page": pagination.videoLibPage,
-                    "prepage": config.page.size,
+                    "perpage": config.page.size,
                 });
             }
         });

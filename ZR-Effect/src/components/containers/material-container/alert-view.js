@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom"
 class AlertDom extends Component {
-    render(){
+    render() {
         return <div className="alert-xxxyyy" onClick={this.onAClick}>
             {this.props.children}
             <style>{`
@@ -21,24 +21,21 @@ class AlertDom extends Component {
         </div>
     }
     onAClick = (e) => {
-        if(this.props.noHidden){
-            return;
-        }
-        if(e.target.getAttribute("class") === "alert-xxxyyy"){
+        if (e.target.getAttribute("class") === "alert-xxxyyy") {
             this.props.removeDom();
         }
     }
 }
-class AlertViewClass{
-    constructor(){
+class AlertViewClass {
+    constructor() {
         this.domId = "alert-dom"
         let alerDom = document.createElement("DIV");
         alerDom.setAttribute("id", this.domId);
 
         document.querySelector("body").appendChild(alerDom);
     }
-    render(htmlDom, noHidden){
-        ReactDOM.render(<AlertDom noHidden={noHidden} removeDom={this.removeDom}>{htmlDom}</AlertDom>, document.querySelector("#"+this.domId));
+    render(htmlDom) {
+        ReactDOM.render(<AlertDom removeDom={this.removeDom}>{htmlDom}</AlertDom>, document.querySelector("#" + this.domId));
     }
     removeDom = () => {
         ReactDOM.render(<div><div></div></div>, document.querySelector("#" + this.domId));
