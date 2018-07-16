@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { loadAudiokMaterial, loadMoreAudioMaterial, deleteAudioMaterial, loadFirstPageAudioMaterial } from "../../../stores/reducers/user-material";
 import AddWork from "../../../views/statics/add-work.png";
-import AudioMaterialItem from "./Audio-material-item";
+import AudioMaterialItem from "./audio-material-item";
 import config from "../../../config";
 import FileUpload from 'react-fileupload';
 import AddMaterial from "../../../views/statics/add-material.png";
