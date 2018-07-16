@@ -172,6 +172,11 @@ class RotoOperationBox extends Component {
           ? e.target.getAttribute('id').split('-')
           : [];
 
+        // 修改当前抠像的move_x、move_y
+        //configure(materialId, materialFrame, { 'move_x':  })
+        updateObj[ 'move_x' ] = offX;
+        updateObj[ 'move_y' ] = offY;
+
         // 如果选中了点
         if (entryIds.length > 1) {
           pathId = +entryIds[ 0 ], pointId = +entryIds[ 1 ], pointSelectedId = +entryIds[ 2 ], type = +entryIds[ 3 ]//, type = entryIds[ 2 ], realPointId = entryIds[3];
@@ -259,7 +264,7 @@ class RotoOperationBox extends Component {
         configure(materialId, materialFrame, updateObj);
       }
       // 如果操作模式是编辑，并且是移动'point'和'path'
-      else if (rotoMode === 1 && rotoToolType === 6) {
+      else if (rotoMode === 1 && (rotoToolType === 6 || rotoToolType === 5)) {
         pathSelected || (pathSelected = pathData.list[ pathData.list.length - 1 ]);
         pathSelected.isSelected = true;
         updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
@@ -272,11 +277,11 @@ class RotoOperationBox extends Component {
         addRotoedFrame(materialId, materialFrame);
         configure(materialId, materialFrame, updateObj);
       }
-      else if (rotoMode === 1 && rotoToolType === 7) {
+      else if ((rotoMode === 1 || rotoMode === 2) && rotoToolType === 7) {
         entryIds = e.target.getAttribute('id')
           ? e.target.getAttribute('id').split('-')
           : [];
-
+        console.log('d');
         // 如果选中了点
         if (entryIds.length > 1) {
           pathId = entryIds[ 0 ], pointId = entryIds[ 1 ], type = entryIds[ 2 ], realPointId = entryIds[3];
@@ -383,6 +388,7 @@ class RotoOperationBox extends Component {
       let entryIds, pathId, pointId, path, point, p;
 
       if (!disabled) {
+      //console.log(rotoMode, dragging, 'j8');
       // 如果是操作模式是钢笔工具并且存在正在画的"path"
       if (rotoMode === 0 && pathSelected && rotoToolType === 4) {
         // 如果是mouseup后
@@ -425,9 +431,9 @@ class RotoOperationBox extends Component {
         configure(materialId, materialFrame, updateObj);
       }
       // 如果是进行移动'path'或'point'
-      else if (rotoMode === 1 && dragging && rotoToolType === 6) {
+      else if ((rotoMode === 1 || rotoMode == 2) && dragging && (rotoToolType === 5 || rotoToolType === 6)) {
         const point = findItem(pathSelected.points, 'isSelected', true);
-
+        //console.log(this.props.rotoList, 'dd');
         // 如果选中了点
         if (point) {
           // 选中了点旁边的控制点
@@ -435,6 +441,7 @@ class RotoOperationBox extends Component {
         }
         // 如果选中了'path'
         else if (pathSelected && pathSelected.isSelected) {
+          //console.log(offX - moveX, 'jjjj');
           pathSelected.move(offX - moveX, offY - moveY);
         }
 
@@ -442,8 +449,6 @@ class RotoOperationBox extends Component {
         updateObj[ 'move_y' ] = offY;
 
         configure(materialId, materialFrame, updateObj);
-
-
         // 如果选中了某'path'
         // if (pathSelected
         //     && pathSelected.isSelected
@@ -478,7 +483,7 @@ class RotoOperationBox extends Component {
           pathSelected.confirmFloating();
           pathSelected.floatingPoint = new Point(offX, offY);
           updateObj[ 'path_selected' ] = this.initPathSelected(pathSelected);
-          console.log(offX, offY, 'dddddd');
+
           this.configurePathDataList(updateObj[ 'path_selected' ]);
         }
 

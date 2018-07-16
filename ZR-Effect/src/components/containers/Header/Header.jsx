@@ -9,6 +9,7 @@ import { clear as clearRotos } from '../../../stores/action-creators/roto-creato
 import { clear as clearRFAs } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
 import { clear as clearRotoMaterials } from '../../../stores/action-creators/roto-material-creator';
 import { clear as clearRotoTempMaterials } from '../../../stores/action-creators/roto-material-temp-creator';
+import { post } from '../../../api/fetch'
 import { Avatar } from 'antd';
 import headerStyle from './header.css';
 import logoPNG from './logo.png';
@@ -33,8 +34,11 @@ class Header extends Component {
   logoutHandle = () => {
     this.props.logout();
 
+    // 刷新token
+    post('/user/refreshToken');
+
     const { clearAiRotos, clearRotos, clearRFAs, clearRotoMaterials, clearRotoTempMaterials } = this.props;
-    
+
     // 前端数据清空
     clearAiRotos();
     clearRotos();

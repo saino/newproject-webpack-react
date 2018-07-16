@@ -157,7 +157,7 @@ class RotoToolbar extends Component {
       this.deferVisibleMask(materialId, isVisibleMask);
     };
 
-    this.rotoCompleteHandle = () => {
+    this.rotoCompleteHandle = e => {
       const { addRotoedFrame, removeAiRoto } = this.props;
       const materialId = this.getMaterialId();
       const materialFrame = this.getMaterialFrame();

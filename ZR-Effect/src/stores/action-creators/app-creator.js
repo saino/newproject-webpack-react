@@ -28,7 +28,7 @@ export function sendVerifyCode (phone, successFunc, errorFunc) {
   return function () {
     post('/auth/sendVerifyCode', { phone })
       .then(resp => successFunc())
-      .catch(error => fail(error.message, errorFunc));
+      .catch(error => fail(error, errorFunc));
   }
 }
 
@@ -52,7 +52,7 @@ export function login (phone, password, successFunc, errorFunc) {
 
         successFunc(resp);
       })
-      .catch(error => fail(error.message, errorFunc));
+      .catch(error => fail(error, errorFunc));
   };
 }
 
@@ -69,7 +69,7 @@ export function register (phone, password, verifyCode, successFunc, errorFunc) {
 
         successFunc(resp);
       })
-      .catch(error => fail(error.message, errorFunc))
+      .catch(error => fail(error, errorFunc))
   };
 }
 
