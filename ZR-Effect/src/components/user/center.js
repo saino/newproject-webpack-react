@@ -10,6 +10,9 @@ import VideoMaterialContainer from "../containers/material-container/video-mater
 import ImageMaterialContainer from "../containers/material-container/image-material-container";
 import AudioMaterialContainer from "../containers/material-container/audio-material-container";
 
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import LoginPage from '../layouts/LoginPage/LoginPage';
 import RegisterPage from '../layouts/RegisterPage/RegisterPage';
 import ClassNames from "classnames"
@@ -93,6 +96,12 @@ class UserCenter extends Component {
     }
     render(){
         // console.log(this,"kkkkkkkkkkkkfffffffff");
+        const { token } = this.props;
+        if (token == null) {
+            return (
+                <Redirect to="/" />
+            );
+        }
         const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return <div className="warp">
             <div className="header">
@@ -179,5 +188,9 @@ class UserCenter extends Component {
         </div>
     }
 }
-
-export default UserCenter;
+const mapStateToProps = ( { app } ) => {
+    return {
+        token: app.token
+    }
+}
+export default connect(mapStateToProps)(UserCenter);

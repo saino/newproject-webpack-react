@@ -25,6 +25,7 @@ import AudioContainer from "./components1/ui-layout/audio-container";
 import { createWork, loadWork, removeWork, changeWorkProperties } from "../stores/reducers/work";
 import AlertView from "./components1/ui-layout/alert-view";
 import DeleImg from "./statics/dele.png";
+import { Redirect } from 'react-router-dom';
 
 class SpecialEffec extends Component {
 
@@ -45,7 +46,6 @@ class SpecialEffec extends Component {
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
     componentWillMount(){
-        console.log(this.props.location);
         if (this.props.location.state && this.props.location.state.workId){
             this.props.loadWork({
                 id: this.props.location.state.workId
@@ -216,7 +216,6 @@ class SpecialEffec extends Component {
         </div>
     }
     renderCreateContaienr() {
-        console.log(this.props.work, "kkkkkkkkkkkk", this.props.work.id);
         const { work } = this.props;
         if (!work.id){
             return <Container>
@@ -230,7 +229,6 @@ class SpecialEffec extends Component {
             </Container>
         }else{
             AlertView.removeDom();
-            console.log("ddddddddddddddddddddddffffffffffff");
             const { videos, materials, properties } = work.config;
             const { isShowLoginDialog, isShowRegisterDialog } = this.state;
             // AlertView.removeDom();
@@ -250,8 +248,12 @@ class SpecialEffec extends Component {
     }
 
     render(){
-        // const { work } = this.props;
-        // const { videos, materials, properties } = work.config;
+        const { token } = this.props;
+        if (token == null) {
+            return (
+                <Redirect to="/" />
+            );
+        }
         const { isShowLoginDialog, isShowRegisterDialog } = this.state;
         return (
             <div className="warp">
@@ -321,9 +323,10 @@ class SpecialEffec extends Component {
     }
 }
 
-const mapStateToProps = ({ work }) => {
+const mapStateToProps = ({ work, app }) => {
     return {
-        work
+        work,
+        token: app.token
     };
 }
 const mapDispatchToProps = (dispatch) => {
