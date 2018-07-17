@@ -33,7 +33,7 @@ const actionTypes = {
     GET_AUDIO_MATERIAL: "GET_AUDIO_MATERIAL",
     ADD_WORK_MATERIAL: "ADD_WORK_MATERIAL",
     ADD_VIDEO_MATERIAL: "ADD_VIDEO_MATERIAL",
-    ADD_ROTO_MATERIAL: "ADD_ROTO_MATERIAL",
+    ADD_ROTO_MATERIAL1: "ADD_ROTO_MATERIAL1",
     ADD_IMAGE_MATERIAL: "ADD_IMAGE_MATERIAL",
     ADD_AUDIO_MATERIAL: "ADD_AUDIO_MATERIAL",
     DELETE_WORK_MATERIAL: "DELETE_WORK_MATERIAL",
@@ -154,7 +154,7 @@ export const loadMoreRotoMaterial = (body, successFUN) => {
             .then((resp) => {
                 const pagination = resp.result.length >= config.page.userCenterPageSize ? body.page + 1 : body.page;
                 dispatch({
-                    type: actionTypes.ADD_ROTO_MATERIAL,
+                    type: actionTypes.ADD_ROTO_MATERIAL1,
                     materials: resp.result,
                     pagination
                 });
@@ -328,7 +328,7 @@ export default (state = defaultState, action) => {
 
         case actionTypes.GET_ROTO_MATERIAL:
             return { ...state, rotoMaterial: { ...state.rotoMaterial, materials: action.materials, pagination: action.pagination } }
-        case actionTypes.ADD_ROTO_MATERIAL:
+        case actionTypes.ADD_ROTO_MATERIAL1:
             return { ...state, rotoMaterial: { ...state.rotoMaterial, materials: add(state.rotoMaterial.materials, action.materials), pagination: action.pagination } }
 
         case actionTypes.GET_IMAGE_MATERIAL:

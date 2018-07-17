@@ -45,7 +45,11 @@ class RotoMaterialContainer extends MaterialContainer {
     }
     renderMaterialItem() {
         const { materials } = this.props;
+        console.log(materials, "ggggggggggggg");
         return materials.map((materialItem, index) => {
+            if(!materialItem.id){
+                console.log(materialItem,"fffffffff");
+            }
             return <RotoMaterialItem key={materialItem.id} model={materialItem} onDeleClick={this.onDeleClick}/>
         });
     }
