@@ -21,8 +21,9 @@ export default function rotoMaterial (state = defState, action) {
       const materialList = action.materials.map(material => ({
         ...material,
         id: +material.id,
-        path: `${ config.fileUpload.host }:${ config.fileUpload.port }${ material.path }` })
-      );
+        video_path: `${ config.fileUpload.host }:${ config.fileUpload.port }${ material.video_path || ''}`,
+        path: `${ config.fileUpload.host }:${ config.fileUpload.port }${ material.path }`
+      }));
 
       return {
         ...state,
