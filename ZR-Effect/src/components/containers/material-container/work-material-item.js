@@ -1,21 +1,37 @@
 import React, { Component } from "react";
 import { Icon } from "antd";
 import config from "../../../config";
+// import download from "downloadjs";
 
 class WorkMaterialItem extends Component{
     onClickDownload = () => {
-        // console.log("download");
+        const { model } = this.props;
+        window.open(`${config.fileUpload.host}:${config.fileUpload.port}${config.proxyTarget.path}/works/${model.id}/output.mp4?download=1`);
     }
     onClickEye = () => {
-        // console.log("eye");
+        const {model} = this.props;
+        window.open(`${config.fileUpload.host}:${config.fileUpload.port}${config.proxyTarget.path}/works/${model.id}/output.mp4`);
     }
     onClickEdit = () => {
         this.props.history.push("/special-effec", {workId: this.props.model.id});
-        // console.log("edit");
     }
     onClickDelete = () => {
         const { model } = this.props;
         this.props.onDeleClick(model);
+    }
+    renderPreView = () => {
+        const { model } = this.props;
+        if (model.build_job && model.build_job.status=="3"){
+            return <Icon className="operation" type="eye-o" onClick={this.onClickEye} />;
+        }
+        return null;
+    }
+    renderDownLoad = () => {
+        const { model } = this.props;
+        if(model.build_job && model.build_job.status=="3"){
+            return     <Icon className="operation" type="download" onClick={this.onClickDownload} />
+        }
+        return null;
     }
     render() {
         const { model } = this.props;
@@ -24,8 +40,8 @@ class WorkMaterialItem extends Component{
                 <img src={`${config.fileUpload.host}:${config.fileUpload.port}${config.proxyTarget.path}/works/${model.id}/thumb.jpg`} />
             </div>
             <div className="material-operation">
-                {/* <Icon className="operation" type="download" onClick={this.onClickDownload}/> 
-                <Icon className="operation" type="eye-o" onClick={this.onClickEye}/>  */}
+                {this.renderDownLoad()}
+                {this.renderPreView()}
                 <Icon className="operation" type="edit" onClick={this.onClickEdit}/>
                 <Icon className="operation" type="delete" onClick={this.onClickDelete}/>
             </div>

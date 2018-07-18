@@ -95,7 +95,6 @@ class UserCenter extends Component {
         }
     }
     render(){
-        // console.log(this,"kkkkkkkkkkkkfffffffff");
         const { token } = this.props;
         if (token == null) {
             return (
