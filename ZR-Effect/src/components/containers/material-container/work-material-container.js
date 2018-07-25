@@ -28,8 +28,8 @@ class WorkMaterialContainer extends MaterialContainer {
         return <div className="material-item add" onClick={this.onCreateWorkClick}><img src={AddWork} /></div>;
     }
     onCreateWorkClick = () => {
-        console.log(this);
-        this.props.history.push("/special-effec", {workId: false});
+        // console.log(this);
+        this.props.history.push("/special-effec");
     }
     onDeleClick = (model) => {
         const { pagination } = this.props;

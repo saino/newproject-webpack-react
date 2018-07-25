@@ -22,7 +22,7 @@ import MaterialContainer from "./components1/ui-layout/material-container";
 import AudioContainer from "./components1/ui-layout/audio-container";
 
 // import { loadMaterials } from "../stores/reducers/material"
-import { createWork, loadWork, removeWork, changeWorkProperties } from "../stores/reducers/work";
+import { createWork, loadWork, removeWork, changeWorkProperties, saveWork, deleteWork } from "../stores/reducers/work";
 import AlertView from "./components1/ui-layout/alert-view";
 import DeleImg from "./statics/dele.png";
 import { Redirect } from 'react-router-dom';
@@ -45,22 +45,43 @@ class SpecialEffec extends Component {
         this.configureDialogHandle = (key, isShowDialog) =>
             this.setState({ [`isShow${key}Dialog`]: isShowDialog });
     }
-    componentWillMount(){
-        if (this.props.location.state && this.props.location.state.workId){
+    componentWillMount(){   
+        const location = this.props.location;
+        if (location.state && location.state.workId){
+            if(location.state.workId === "buffer"){
+                return ;
+            }
             this.props.loadWork({
                 id: this.props.location.state.workId
             });
-        }else{
+        } else{
             let work = this.props.work;
             work.id = undefined;
             this.props.removeWork();
         }
+        // else{
+        //     console.log(this.props.work);
+        // }
+        // else{
+        //     let work = this.props.work;
+        //     work.id = undefined;
+        //     this.props.removeWork();
+        // }
     }
     componentWillUnmount(){
         AlertView.removeDom();
+        const work = this.props.work;
+        if (work.config){
+            if(work.config.videos.length>0){
+                saveWork(work);
+            }else{
+                deleteWork(work);
+            }
+        }
+        // console.log(work.config.videos.length,"hhhhhhhhhh");
     }
     componentDidMount() {
-        // console.log(this, "dkkkkkkkkkkkkkjf");
+
     }
     onWorkNameChange = (e) => {
         const value = e.target.value;
@@ -220,20 +241,13 @@ class SpecialEffec extends Component {
         if (!work.id){
             return <Container>
                 {AlertView.render(this.renderCreateWork(), true)}
-                {/* <div className="create-work">
-                    <div className="create-work-title">创建作品</div>
-                    <div className="create-work-input">
-
-                    </div>
-                </div> */}
             </Container>
         }else{
             AlertView.removeDom();
             const { videos, materials, properties } = work.config;
             const { isShowLoginDialog, isShowRegisterDialog } = this.state;
-            // AlertView.removeDom();
             return <Container>
-                 <div className="container-layout">
+                <div className="container-layout">
                     <MaterialArea materials={materials} changeaActiveContainer={this.changeaActiveContainer}></MaterialArea>
                     <StageArea>
                         {this.renderContainer()}

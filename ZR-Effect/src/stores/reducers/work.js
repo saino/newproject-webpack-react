@@ -103,6 +103,12 @@ export const saveWork = (body, successFUN) => {
                 successFUN&&successFUN(resp);
             });
 }
+export const deleteWork = (work, successFUN) => {
+    return post("/fx/deleteWork", { id: work.id })
+        .then((resp) => {
+            successFUN && successFUN(resp);
+        });
+}
 export const buildWork = (body, successFUN) => {
     return post("/fx/build", body)
             .then((resp)=>{

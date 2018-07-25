@@ -61,7 +61,7 @@ class Header extends Component {
               智能抠像
               <div></div>
             </NavLink>
-          <NavLink to={{ pathname: "/special-effec", state:{workId: false}}} className={ headerStyle[ 'nav-btn' ] } activeClassName={ headerStyle[ 'active' ] }>
+          <NavLink to={{ pathname: "/special-effec", state:{workId: "buffer"}}} className={ headerStyle[ 'nav-btn' ] } activeClassName={ headerStyle[ 'active' ] }>
               特效制作
               <div></div>
             </NavLink>

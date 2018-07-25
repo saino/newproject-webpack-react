@@ -46,9 +46,7 @@ class WorkMaterialItem extends Component{
                 <Icon className="operation" type="delete" onClick={this.onClickDelete}/>
             </div>
             <div className="material-info">
-                {/* <input className="material-name" value={model.name}></input> */}
                 <div className="material-name">{ model.name }</div>
-                {/* <div className="material-detail">作品描述。。。</div> */}
             </div>
             <style>{`
                 .material-thumb{
