@@ -81,7 +81,7 @@ class UserCenter extends Component {
                     case "Work":
                         return <WorkMaterialContainer type={userNavData[i].type} history={ history } />;
                     case "Roto":
-                        return <RotoMaterialContainer type={userNavData[i].type} />;
+                        return <RotoMaterialContainer type={userNavData[i].type} history={history} />;
                     case "Video":
                         return <VideoMaterialContainer type={userNavData[i].type} />;
                     case "Image":

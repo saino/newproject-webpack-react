@@ -44,13 +44,14 @@ class RotoMaterialContainer extends MaterialContainer {
         });
     }
     renderMaterialItem() {
+        console.log(this.props);
         const { materials } = this.props;
-        console.log(materials, "ggggggggggggg");
+        // console.log(materials, "ggggggggggggg");
         return materials.map((materialItem, index) => {
-            if(!materialItem.id){
-                console.log(materialItem,"fffffffff");
-            }
-            return <RotoMaterialItem key={materialItem.id} model={materialItem} onDeleClick={this.onDeleClick}/>
+            // if(!materialItem.id){
+            //     console.log(materialItem,"fffffffff");
+            // }
+            return <RotoMaterialItem key={materialItem.id} history={this.props.history} model={materialItem} onDeleClick={this.onDeleClick}/>
         });
     }
     loadMoreMaterial(loadEndFUN) {
