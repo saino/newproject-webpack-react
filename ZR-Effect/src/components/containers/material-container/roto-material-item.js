@@ -25,7 +25,6 @@ class RotoMaterialItem extends Component {
     }
     onEditClick = () => {
         const { model } = this.props;
-        console.log(model);
         this.props.history.push(`/roto?rotoId=${ model.id }`, { rotoId: model.id });
     }
     render() {
@@ -43,7 +42,7 @@ class RotoMaterialItem extends Component {
             </div>*/}
             <div className="material-info">
                 <div className="material-name">{model.material.name}</div>
-            </div>  
+            </div>
             <div className={useClass}>
                 <div className="use-item" onClick={this.onEditClick}>编辑</div>
                 <div className="use-item" onClick={this.onDeleClick}>删除</div>

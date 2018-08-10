@@ -33,6 +33,12 @@ export default function rotoMaterial (state = defState, action) {
         list: add(state.list, materialList)
       };
 
+    case 'ADD_MATERIAL':
+      return {
+        ...state,
+        list: add(state.list, action.material)
+      };
+
     case 'LOADING':
       return { ...state, isLoading: true };
 

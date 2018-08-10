@@ -304,7 +304,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
       const roMaterial = findItem(state, 'material_id', action.materialId);
       const noActions = roMaterial[ 'undo_actions' ];
       let undoCount = roMaterial[ 'undo_count' ];
-
+      
       noActions.pop();
 
       let prevAction = noActions.slice(-1)[0];

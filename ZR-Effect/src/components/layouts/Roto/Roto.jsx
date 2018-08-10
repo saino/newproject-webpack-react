@@ -5,10 +5,13 @@ import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { findItem } from '../../../utils/array-handle';
+
 /* 路由跳转前验证 -- end */
 import defferPerform from '../../../utils/deffer-perform';
 import config from '../../../config';
+import { post } from '../../../api/fetch';
 import {
+  addRotoMaterial,
   configureMove,
   cancelSelectedRotoMaterial,
   selectedRotoMaterial,
@@ -16,7 +19,8 @@ import {
   configureIsValidFrameError,
   configureIsPlay
 } from '../../../stores/action-creators/roto-frontend-acteractive-creator';
-import { addRoto, configure } from '../../../stores/action-creators/roto-creator';
+import { addRoto, configure, editAiRotos } from '../../../stores/action-creators/roto-creator';
+import { getMaterialList, addMaterial } from '../../../stores/action-creators/roto-material-creator';
 import { Icon, Progress, message } from 'antd';
 import Draggable from 'react-draggable';
 import ScrollArea from 'react-custom-scrollbars';
@@ -415,6 +419,47 @@ class Matting extends Component {
     );
   }
 
+  componentWillMount() {
+    let rotoId = /\?rotoId=(\d+).?$/i.test(location.href) && RegExp.$1;
+    let {
+      addRotoMaterial, editAiRotos, getMaterialList, addMaterial,
+      rfa, materialPage
+    } = this.props;
+    let { page, perpage } = materialPage;
+    let materialId, materialName;
+
+    // 如果是编辑进来
+    if (rotoId) {
+      post('/roto/loadRoto', { id: rotoId })
+        .then(resp => {
+          materialId = parseInt(resp.material_id);
+          materialName = resp.material.name;
+
+          getMaterialList({ type: 'video', page: !page ? 1 : page, perpage });
+
+          // 如果不存在该素材
+          setTimeout(() => {
+            addMaterial({ ...resp.material, id: materialId });
+          }, 20);
+
+          // 添加抠像素材
+          if (!findItem(rfa, 'material_id', materialId)) {
+            setTimeout(() => addRotoMaterial(materialId, materialName), 50);
+          }
+
+          // 添加抠像素材的抠像数据
+          setTimeout(() => {
+            editAiRotos(materialId, resp.config.frames);
+          }, 80);
+
+          // 选中该抠像素材
+          setTimeout(() => {
+            this.selectedRotoMaterialHandle(materialId);
+          }, 100);
+        });
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     const frame = this.getSelectedFrame(nextProps);
 
@@ -553,6 +598,7 @@ const mapStateToProps = ({
   rotoMaterialTemp
 }) => ({
   token: app.token,
+  materialPage: rotoMaterial.pageInfo,
   materialList: rotoMaterial.list,
   materialTempList: rotoMaterialTemp,
   rfa: rotoFrontendActeractive,
@@ -561,6 +607,9 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
+    getMaterialList,
+    addMaterial,
+    addRotoMaterial,
     configureMove,
     cancelSelectedRotoMaterial,
     selectedRotoMaterial,
@@ -568,6 +617,7 @@ const mapDispatchToProps = dispatch =>
     configureIsValidFrameError,
     configureIsPlay,
     addRoto,
+    editAiRotos,
     configure
   },
     dispatch

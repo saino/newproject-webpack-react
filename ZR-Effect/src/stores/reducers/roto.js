@@ -16,7 +16,7 @@
  *  move_y { Number } 移动y坐标
  */
 
-import { add, update, remove, removeMore, findItem, finds } from '../../utils/array-handle';
+import { add, update, remove, removeMore, findItem, findIndex, finds } from '../../utils/array-handle';
 import Point from '../../libs/Point';
 import Path from '../../libs/Path';
 import PathList from '../../libs/PathList';
@@ -89,6 +89,38 @@ export default function roto (state = defState, action) {
           roto[ 'material_id' ] === action.materialId
             && roto[ 'frame' ] === action.frame
       );
+
+    case 'UNDO_ROTO':
+      const index = findIndex(state, roto => roto[ 'material_id' ] === action.materialId && roto[ 'frame' ] === action.frame);
+      const undoedRotoItem = state[ index ];
+      let lastPath;
+
+      // 如果没有任何path
+      if (!undoedRotoItem[ 'path_data' ].list.length) {
+        return state;
+      }
+
+      lastPath = undoedRotoItem[ 'path_data' ].list.slice(-1)[ 0 ];
+
+      if (lastPath.points.length) {
+        lastPath.points = lastPath.points.slice(0, -1);
+
+        return update(
+          state,
+          { 'path_data': { ...undoedRotoItem }[ 'path_data' ] },
+          roto => roto[ 'material_id' ] === action.materialId && roto[ 'frame' ] === action.frame
+        );
+      } else {
+        undoedRotoItem[ 'path_data' ].list = [];
+
+        return update(
+          state,
+          { 'path_data': { ...undoedRotoItem }[ 'path_data' ] },
+          roto => roto[ 'material_id' ] === action.materialId && roto[ 'frame' ] === action.frame
+        );
+      }
+
+      return state;
 
     case 'CLEAR_ROTOS':
       return [];
