@@ -26,7 +26,7 @@ class RotoMaterialItem extends Component {
     onEditClick = () => {
         const { model } = this.props;
         console.log(model);
-        this.props.history.push(`/roto?rotoId=${ model.id }`, { rotoId: model.id });
+        this.props.history.push(`/roto/${ model.id }`, { rotoId: model.id });
     }
     render() {
         const { model } = this.props;
