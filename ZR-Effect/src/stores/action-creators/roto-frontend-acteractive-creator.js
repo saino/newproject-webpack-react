@@ -60,16 +60,19 @@ export function setDl (materialId, allowDl) {
   };
 }
 
-export function saveRoto (materialId, frames) {
+export function saveRoto (materialId, frames, successFun) {
   return dispatch => {
     post('/roto/saveRoto', {
       material_id: materialId,
       config: { frames }
-    }).then(resp => dispatch({
-      type: 'SAVE_ROTO',
-      materialId,
-      aiId: resp
-    })).catch(fail);
+    }).then(resp => {
+      dispatch({
+        type: 'SAVE_ROTO',
+        materialId,
+        aiId: resp
+      });
+      successFun&&successFun(resp);
+    }).catch(fail);
   };
 }
 

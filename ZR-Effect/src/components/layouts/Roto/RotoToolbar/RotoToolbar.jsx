@@ -263,30 +263,6 @@ class RotoToolbar extends Component {
       roto => roto[ 'is_visible_mask' ]
     );
 
-    // 保存抠像
-    this.saveRotoHandle = () => {
-      // const { saveRoto } = this.props;
-      // const materialId = this.getMaterialId();
-      // const rotoFrames = this.getRotoFrames();
-      // const frames = rotoFrames.map(frame => (
-      //   {
-      //     frame: frame.frame,
-      //     type: 'manual',
-      //     svg: frame[ 'path_data' ].list.map(path => ({
-      //       points: path.points.map(point => ({
-      //         x: point.x,
-      //         y: point.y,
-      //         cx1: point.cx1,
-      //         cy1: point.cy1,
-      //         cx2: point.cx2,
-      //         cy2: point.cy2
-      //       }))
-      //     }))
-      //   }
-      // ));
-      //
-      // saveRoto(materialId, frames);
-    };
   }
 
   // 初始化pathSelected
@@ -349,7 +325,31 @@ class RotoToolbar extends Component {
 
     return prevToolType !== nextToolType || prevIsVisibleMask !== nextIsVisibleMask;
   }
+  onSaveClickHandle = () => {
+    // console.log("xxxxxxxxxxxxxxxx");
+    const { saveRoto } = this.props;
+    const materialId = this.getMaterialId();
+    const frames = this.getRotoFrames().map(frame => {
+      return {
+        frame: frame.frame,
+        type: frame.type,
+        svg: frame['path_data'].list.map(path => ({
+          points: path.points.map(point => ({
+            x: point.x,
+            y: point.y,
+            cx1: point.cx1,
+            cy1: point.cy1,
+            cx2: point.cx2,
+            cy2: point.cy2
+          }))
+        }))
+      };
+    });
 
+    saveRoto(materialId, frames, ()=>{
+      message.success("保存成功！")
+    });
+  }
   render() {
     const toolType = this.getRotoToolType();
     const isVisibleMask = this.getRotoVisibleMask();
@@ -358,7 +358,7 @@ class RotoToolbar extends Component {
       <div className={ rotoToolbarStyle[ 'wrapper' ] }>
         <div className={ rotoToolbarStyle[ 'wrapper-inner' ] }>
           <div className={ rotoToolbarStyle[ 'tool-save' ] } onClick={ this.saveRotoHandle }>
-            <div className={ rotoToolbarStyle[ 'tool-save-inner' ] }>
+            <div className={ rotoToolbarStyle[ 'tool-save-inner' ] } onClick={ this.onSaveClickHandle}>
               <img src={ savePNG } />
               <div>保存</div>
             </div>
