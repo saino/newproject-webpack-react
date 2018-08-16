@@ -11,6 +11,7 @@ import defferPerform from '../../../utils/deffer-perform';
 import config from '../../../config';
 import { post } from '../../../api/fetch';
 import {
+  addRotoedFrame,
   addRotoMaterial,
   configureMove,
   cancelSelectedRotoMaterial,
@@ -423,7 +424,7 @@ class Matting extends Component {
     let rotoId = /\?rotoId=(\d+).?$/i.test(location.href) && RegExp.$1;
     let {
       addRotoMaterial, editAiRotos, getMaterialList, addMaterial,
-      rfa, materialPage
+      rfa, materialPage, addRotoedFrame
     } = this.props;
     let { page, perpage } = materialPage;
     let materialId, materialName;
@@ -456,6 +457,15 @@ class Matting extends Component {
           setTimeout(() => {
             this.selectedRotoMaterialHandle(materialId);
           }, 100);
+
+          // 添加扣像关键帧
+          setTimeout(() => {
+            resp.config.frames.forEach(frame => {
+              if (frame.type === 'manual') {
+                addRotoedFrame(materialId, frame.frame);    
+              }
+            });
+          }, 150);
         });
     }
   }
@@ -607,6 +617,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({
+    addRotoedFrame,
     getMaterialList,
     addMaterial,
     addRotoMaterial,
