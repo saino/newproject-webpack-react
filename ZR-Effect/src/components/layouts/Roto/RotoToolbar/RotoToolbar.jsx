@@ -8,7 +8,7 @@ import {
   undo, configureZoom, addRotoedFrame,
   configureRotoToolType, configureRotoVisibleMask, saveRoto
 } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
-import { configure } from '../../../../stores/action-creators/roto-creator';
+import { configure, undoRoto } from '../../../../stores/action-creators/roto-creator';
 import { removeAiRoto } from '../../../../stores/action-creators/roto-ai-creator';
 import rotoToolbarStyle from './roto-toolbar.css';
 import savePNG from './save.png';
@@ -111,8 +111,9 @@ class RotoToolbar extends Component {
     }
 
     this.backHandle = () => {
-      const { undo } = this.props;
+      const { undo, undoRoto } = this.props;
       const materialId = this.getMaterialId();
+      const materialFrame = this.getMaterialFrame();
       const undoCount = this.getUndoCount();
 
       if (undoCount >= 3) {
@@ -120,7 +121,8 @@ class RotoToolbar extends Component {
         return;
       }
 
-      undo(materialId);
+      undoRoto(materialId, materialFrame);
+      //undo(materialId);
     };
 
     this.moveHandle = () =>
@@ -427,7 +429,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     configure,
     configureRotoVisibleMask,
     addRotoedFrame,
-    saveRoto
+    saveRoto,
+    undoRoto
   },
   dispatch
 );

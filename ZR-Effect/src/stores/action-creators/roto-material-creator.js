@@ -22,6 +22,13 @@ export const clearLoadInfo = () => ({
   type: 'CLEAR_LOAD_INFO'
 });
 
+export const addMaterial = material => {
+  return {
+    type: 'ADD_MATERIAL',
+    material
+  };
+};
+
 export const getMaterialList = materialParams => {
   return (dispatch) => {
     post("/user/getMaterials", materialParams)
