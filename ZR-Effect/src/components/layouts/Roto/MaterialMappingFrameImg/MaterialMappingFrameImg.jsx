@@ -6,6 +6,8 @@ import { findItem } from '../../../../utils/array-handle';
 //import { configureIsPlay } from '../../../../stores/action-creators/roto-frontend-acteractive-creator';
 import style from './material-mapping-frame-img.css';
 
+import config from "../../../../config";
+
 class MaterialMappingFrameImg extends Component {
   static propTypes = {
     frame: PropTypes.number.isRequired,
@@ -62,7 +64,7 @@ class MaterialMappingFrameImg extends Component {
         <video
           ref={ el => this.videoEl = el }
           style={{ width, height }}
-          src={ material.video_path }
+          src={`${config.fileUpload.host}:${config.fileUpload.port}${material.video_path || ''}` }
           crossOrigin="use-credentials" />
       </div>
     );
