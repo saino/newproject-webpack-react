@@ -46,7 +46,7 @@ export default function rotoFrontendActerActive (state = defState, action) {
         'is_valid_frame_error': true,
         'is_play': false,
         'is_upload_or_detail': 0,
-        'ai_id': void 0,
+        'ai_id': action.rotoId || void 0,
         'is_ai_roto': false,
         'ai_roto_percent': void 0,
         'is_generate_roto_material': false,

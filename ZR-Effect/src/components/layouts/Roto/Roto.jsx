@@ -445,7 +445,7 @@ class Matting extends Component {
 
           // 添加抠像素材
           if (!findItem(rfa, 'material_id', materialId)) {
-            setTimeout(() => addRotoMaterial(materialId, materialName), 50);
+            setTimeout(() => addRotoMaterial(materialId, materialName, rotoId), 50);
           }
 
           // 添加抠像素材的抠像数据
@@ -629,9 +629,9 @@ const mapDispatchToProps = dispatch =>
     configureIsPlay,
     addRoto,
     editAiRotos,
-    configure
+    configure,
   },
     dispatch
-  );
+  )
 
 export default connect(mapStateToProps, mapDispatchToProps)(Matting);

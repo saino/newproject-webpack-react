@@ -204,6 +204,15 @@ class RotoToolbar extends Component {
       configure(materialId, materialFrame, updateObj);
     }, 10);
 
+    // 获取ai抠像id
+    this.getAiId = this.registerGetRotoActeractiveInfo(rotoMaterial => {
+        if(rotoMaterial && rotoMaterial['ai_id']) {
+          return rotoMaterial['ai_id'];
+        }
+        return "";
+      }
+    );
+
     // 获取扣像舞台工具类别
     this.getRotoToolType = this.registerGetRotoActeractiveInfo(
       rotoMaterial => rotoMaterial[ 'roto_tool_type' ]
@@ -328,9 +337,9 @@ class RotoToolbar extends Component {
     return prevToolType !== nextToolType || prevIsVisibleMask !== nextIsVisibleMask;
   }
   onSaveClickHandle = () => {
-    // console.log("xxxxxxxxxxxxxxxx");
     const { saveRoto } = this.props;
     const materialId = this.getMaterialId();
+    const aiId = this.getAiId();
     const frames = this.getRotoFrames().map(frame => {
       return {
         frame: frame.frame,
@@ -348,7 +357,11 @@ class RotoToolbar extends Component {
       };
     });
 
-    saveRoto(materialId, frames, ()=>{
+    saveRoto({
+      id: aiId || undefined,
+      material_id: materialId,
+      config: { frames }
+    }, ()=>{
       message.success("保存成功！")
     });
   }

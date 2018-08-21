@@ -8,7 +8,12 @@ export function getAiRotos (aiId, materialId) {
           type: 'GET_AI_ROTOS',
           materialId,
           aiRotos: resp.config.frames
-        })
+        });
+        // dispatch({
+        //   type: "SAVE_ROTO",
+        //   materialId,
+        //   aiId
+        // });
       }).catch(fail);
   };
 }

@@ -13,11 +13,12 @@ export function cancelSelectedRotoMaterial () {
   };
 }
 
-export function addRotoMaterial (materialId, materialName) {
+export function addRotoMaterial (materialId, materialName, rotoId) {
   return {
     type: 'ADD_ROTO_MATERIAL',
     materialId,
-    materialName
+    materialName,
+    rotoId
   };
 }
 
@@ -60,15 +61,12 @@ export function setDl (materialId, allowDl) {
   };
 }
 
-export function saveRoto (materialId, frames, successFun) {
+export function saveRoto (options, successFun) {
   return dispatch => {
-    post('/roto/saveRoto', {
-      material_id: materialId,
-      config: { frames }
-    }).then(resp => {
+    post('/roto/saveRoto', options).then(resp => {
       dispatch({
         type: 'SAVE_ROTO',
-        materialId,
+        materialId: options.material_id,
         aiId: resp
       });
       successFun&&successFun(resp);

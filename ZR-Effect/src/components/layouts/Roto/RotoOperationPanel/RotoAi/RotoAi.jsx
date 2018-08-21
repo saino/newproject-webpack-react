@@ -48,8 +48,12 @@ class RotoAi extends Component {
     );
 
     // 获取ai抠像id
-    this.getAiId = this.registerGetRotoMaterialInfo(rotoMaterial =>
-      rotoMaterial[ 'ai_id' ]
+    this.getAiId = this.registerGetRotoMaterialInfo(rotoMaterial =>{
+        if(rotoMaterial&&rotoMaterial['ai_id']){
+          return rotoMaterial['ai_id'];
+        }
+        return "";
+      }
     );
 
     // 获取ai扣像进度
@@ -87,14 +91,17 @@ class RotoAi extends Component {
 
       del(`geRotoPercent${ materialId }`);
 
-      this.saveRoto();
-      this.deferAiRoto(materialId);
+      this.saveRoto(()=>{
+        this.deferAiRoto(materialId);
+      });
+      // this.deferAiRoto(materialId);
     }
   }
 
-  saveRoto() {
+  saveRoto(successFun) {
     const { saveRoto } = this.props;
     const materialId = this.getMaterialId();
+    const aiId = this.getAiId();
     const frames = this.getRotoFrames().map(frame => {
       return {
         frame: frame.frame,
@@ -111,8 +118,11 @@ class RotoAi extends Component {
         }))
       };
     });
-
-    saveRoto(materialId, frames);
+    saveRoto({
+      id: aiId || undefined,
+      material_id: materialId,
+      config: { frames }
+    }, successFun);
   }
 
   requestAiPercent(props, howTime = 0) {
