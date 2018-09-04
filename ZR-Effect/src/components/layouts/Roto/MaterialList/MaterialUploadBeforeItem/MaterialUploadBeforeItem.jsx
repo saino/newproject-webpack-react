@@ -28,10 +28,10 @@ export default class MaterialUploadedBeforeItem extends Component {
       return false;
     }
 
-    if (size > maxSize) {
-      message.warning(`请选择小于${ maxSize / 1024 / 1024 }M的文件`);
-      return false;
-    }
+    // if (size > maxSize) {
+    //   message.warning(`请选择小于${ maxSize / 1024 / 1024 }M的文件`);
+    //   return false;
+    // }
 
     return true;
   };

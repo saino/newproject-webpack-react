@@ -52,7 +52,6 @@ class RotoGe extends Component {
   }
 
   requestGePercent(props, howTime) {
-    return;
     const { updateRotoIsGeRoto, setDl } = props;
     const materialId = this.getMaterialId(props);
     const isGeRoto = this.getIsGenerateMaterial(props);

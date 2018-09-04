@@ -61,14 +61,14 @@ class MaterialContainer extends Component {
     _handleBeforeUpload = (files, mill) => {
         const type = files[0].type;
         const size = files[0].size;
-        if (type.indexOf("image") >= 0 && (size > 1024 * 1024 * 10)) {
-            message.warning("图片不能超过10M");
-            return false;
-        }
-        if (type.indexOf("video" >= 0) && (size > 1024 * 1024 * 200)) {
-            message.warning("视频不能超过200M");
-            return false;
-        }
+        // if (type.indexOf("image") >= 0 && (size > 1024 * 1024 * 10)) {
+        //     message.warning("图片不能超过10M");
+        //     return false;
+        // }
+        // if (type.indexOf("video" >= 0) && (size > 1024 * 1024 * 200)) {
+        //     message.warning("视频不能超过200M");
+        //     return false;
+        // }
         this.setState({
             uploading: true,
             progressState: "active",
